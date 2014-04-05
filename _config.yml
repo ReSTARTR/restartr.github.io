@@ -8,11 +8,11 @@ rdiscount:
   extensions: [smart]
 exclude: [ Gemfile, Gemfile.lock, gems, _assets, bower_components ]
 
-title : I Will Service
+title : I Will Servive
 production_url : http://restartr.github.io
 description: "Ruby, Scala, Python, Golangとか"
 disqus_shortname: ReSTARTR
-analytics: #UA-32899481-1
+analytics: UA-894530-10
 gauges: #50f2b533613f5d7c8000000c
 author :
   name : ReSTARTR(Masaki Yoshida)
