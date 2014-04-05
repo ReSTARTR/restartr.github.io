@@ -1,0 +1,22 @@
+pygments: true
+permalink: /:year/:month/:day/:title
+port: 8080
+markdown: redcarpet
+redcarpet:
+    extensions: ["no_intra_emphasis", "fenced_code_blocks", "autolink", "tables",     "with_toc_data"]
+
+rdiscount:
+  extensions: [smart]
+exclude: [ Gemfile, Gemfile.lock, gems, _assets, bower_components ]
+
+title : I Will Service
+production_url : http://blog.restartr.com
+description: "Ruby, Scala, Python, Golangとか"
+disqus_shortname: ReSTARTR
+analytics: #UA-32899481-1
+gauges: #50f2b533613f5d7c8000000c
+author :
+  name : ReSTARTR(Masaki Yoshida)
+  github : ReSTARTR
+  twitter : ReSTARTR
+  email: yoshida.masaki@gmail.com
