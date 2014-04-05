@@ -28,10 +28,10 @@ sbtのアクション自体はじめてなので作法がよくわかってな�
 ※scalaファイルは最後に掲載しています。
 とりあえず下記を作成するサービス名に置き換えればOKです。
 
-{% highlight bash %}
+```bash
   val dotApplicationName = "APPNAME"
   val dotServiceName = dotApplicationName + ".SERVNAME"
-{% endhighlight %}
+```
 
 あとは、下記を順に実行すればOK(dot_prepareはdot_pushの前に必ず実行されるので省略可能)
 

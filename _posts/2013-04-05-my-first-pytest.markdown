@@ -46,7 +46,7 @@ pytestはかなり詳細に表示してくれるので、レポートの内容�
 
 かなり単純なクラスを対象にして例を書きます。
 
-{% highlight python %}
+```python
 # -*- coding: utf-8 -*-
 
 class Hoge(object):
@@ -56,13 +56,13 @@ class Hoge(object):
 
     def update(self, v):
         self.val = v
-{% endhighlight %}
+```
 
 #### python同梱のunittestで書く
 
 こんな感じで、self.hogeを使ってテスト対象を受け渡します。
 
-{% highlight python %}
+```python
 # -*- coding: utf-8 -*-
 from hoge import Hoge
 import unittest
@@ -83,11 +83,11 @@ class TestHoge1(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-{% endhighlight %}
+```
 
 pytestで書くとこんな感じになります。
 
-{% highlight python %}
+```python
 # -*- coding: utf-8 -*-
 from hoge import Hoge
 import pytest
@@ -108,7 +108,7 @@ class TestHoge1(object):
 
 if __name__ == '__main__':
     pytest.main()
-{% endhighlight %}
+```
 
 何が良いかっていうと、各テストメソッドで必要な初期化済みHogeインスタンスを、pytest_funcarg__hoge()で作って渡してやることができます。pytest_funcarg__NAMEを定義すれば、各テストメソッドでNAMEとして引数にとることができるわけです。(<a href="http://pytest.org/latest-ja/funcargs.html">テスト関数 (funcargs) にオブジェクトを注入</a>)
 

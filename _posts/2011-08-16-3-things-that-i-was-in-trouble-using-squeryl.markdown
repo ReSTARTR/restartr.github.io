@@ -42,11 +42,11 @@ ScalaのORMとしてSquerylってのがあります。
 <h3>１．プライマリーキーの指定での嵌りどころ</h3>
 1つのカラムがPKとなるテーブルスキーマの場合、org.squeryl.KeyedEntity[T]を継承して使います。
 
-{% highlight scala %}
+```scala
 
 class Users(id: Long, text: String) extends KeyedEntity[Long]
 
-{% endhighlight %}
+```
 
 KeyedEntityにはidというフィールドが用意されていて、継承時に型を指定することで、PKの型に適用させることができます。今回の場合であればLong型のPK「id」ということになります。
 
@@ -54,7 +54,7 @@ KeyedEntityにはidというフィールドが用意されていて、継承時�
 
 コード的には下記のようにKeyedEntity[T]を使わずSchema継承時に定義するのと同等になるわけです。
 
-{% highlight scala %}
+```scala
 
 class Users(id: Long, text: String)
 
@@ -68,11 +68,11 @@ class Db extends Schema {
 
 }
 
-{% endhighlight %}
+```
 
 これは結構困ります。そんな場合はSchemaを継承するときに定義を上書きすればOK。
 
-{% highlight scala %}
+```scala
 
 class Users(id: Long, text: String) extends KeyedEntity[Long]
 
@@ -86,7 +86,7 @@ class Db extends Schema {
 
 }
 
-{% endhighlight %}
+```
 
 これはSquerylのGoogleGroupに書いてました。
 
@@ -126,19 +126,19 @@ org.squeryl.adapter.MySQLInnoDBAdapter
 
 根本の原因は、org.squeryl.adapter.MySQLAdapterに
 
-{% highlight scala %}
+```scala
 
 override def supportsForeignKeyConstraints = false
 
-{% endhighlight %}
+```
 
 と定義してあり、一方のorg.squeryl.adapter.MySQLInnoDBAdapterには
 
-{% highlight scala %}
+```scala
 
 override def supportsForeignKeyConstraints = true
 
-{% endhighlight %}
+```
 
 と定義してあります。
 

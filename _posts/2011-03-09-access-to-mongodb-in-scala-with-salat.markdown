@@ -64,25 +64,25 @@ CasbahとSalatどちらも必要です。今回はCasbahは2.0.2を、Salatは0.
 
 <h3>CasbahでMongoDBへアクセス</h3>
 まずはCasbaとSalatをインポート。
-{% highlight scala %}
+```scala
 import com.novus.salat._
 import com.novus.salat.global._
 import com.mongodb.casbah.Imports._
-{% endhighlight %}
+```
 
 CasbahのみでMongoDBに入れる例を復習します。
-{% highlight scala %}
+```scala
 val collection = MongoConnection()("salat_test")("sample")
 collection += MongoDBObject("id"->1, "name"->"me", "age"->27)
 println(collection.findOne( MongoDBObject("id"->1)).get )
 // { "_id" : { "$oid" : "4d76475ce10d23dcda26857d"} , "id" : 1 , "name" : "me" , "age" : 27}
-{% endhighlight %}
+```
 で、このような値がすでにMongoDBに入っているとして、それぞれのフィールドにアクセスする場合、以下のようになります。
-{% highlight scala %}
+```scala
 val me2 = collection.findOne( MongoDBObject("id"->1)).get
 println( me2.getClass ) // class com.mongodb.BasicDBObject
 println( me2.get("name") ) // me
-{% endhighlight %}
+```
 最後の"me2.get("name")"というのが格好悪いですね。もしかしたらDBから取り出したときに"name"というキーが存在しないかもしれません。ということで、そのフォーマットをケースクラスで定義できるSalatの出番です。
 Salatでは、grater[<Type>]のインスタンスを用いてMongoDBObjectとケースクラスの変換を行います。シリアライズは
 DBに保存する際は「asDBObject」メソッドで取り出してクラスインスタンスとして扱う場合は「asObject」メソッドを使います。
@@ -90,16 +90,16 @@ DBに保存する際は「asDBObject」メソッドで取り出してクラス�
 まずはクラスインスタンスをDBに入れる例。
 
 Userというケースクラスを定義して、graterを用いてDBObjectに変換しています。
-{% highlight scala %}
+```scala
 case class User(id: Int, name: String, age: Int)
 
 val me = User(id=2, name="me2", age=54)
 val g = grater[User]
 collection += g.asDBObject(me)
-{% endhighlight %}
+```
 
 つぎに、DBからとりだした値をクラスインスタンスに変換する例です。
-{% highlight scala %}
+```scala
 val meInDB = collection.findOne( MongoDBObject("id"->2)).get
 println( meInDB.getClass )
 // class com.mongodb.BasicDBObject
@@ -107,7 +107,7 @@ println( meInDB )
 // { "_id" : { "$oid" : "4d764830e10d23dc4758c29a"} , "_typeHint" : "User" , "id" : 2 , "name" : "me2" , "age" : 54}
 println( g.asObject(meInDB) )
 // User(2,me2,54)
-{% endhighlight %}
+```
 このように、ケースクラスへのマッピングが行われることにより、Scalaのコード中で扱うMongoDBのドキュメントの型が明確になり、見通しがよくなります。
 
 「asObject(meInDB)」で変換する前の、DBからとりだしたままの状態(BasicDBObject型)の段階で
@@ -120,13 +120,13 @@ println( g.asObject(meInDB) )
 
 <h4>問題点：意図しないケースクラスへの変換</h4>
 別のケースクラスに変換しようとするとどうなるでしょうか。
-{% highlight scala %}
+```scala
 case class UserA(id: Int, name: String, age: Int)
 println( grater[UserA].asObject(meInDB) ) // UserA(2,me2,54)
 case class UserB(id: Int, name: String, salary: Int)
 println( grater[UserB].asObject(meInDB) )
 // java.lang.Exception: class UserB requires value for 'salary'
-{% endhighlight %}
+```
 クラス名が違うUserAに変換しようとすると変換できてしまいます。キー名が異なるUserBに変換しようとした場合はコンパイルエラーとなります。「_typeHint」の値がうまく機能しているのか、少々疑問が残ります…
 
 <h4>問題点：クラス階層の保持</h4>
@@ -137,7 +137,7 @@ println( grater[UserB].asObject(meInDB) )
 上記はテストケース用のモデル定義なのですが、Desmondのように別クラスの型を保持するケースクラスをDBObjectに変換する際に、Desmond型は保持できるのですが、それに含まれるAlice型が保持できずにリストに変換されてしまいます。
 
 こんな感じのコードで試してみました。
-{% highlight scala %}
+```scala
 case class Group(group_id: Int, name: String, leader: User, members: List[User])
 
 val me = User(id=11, name="me", age=27)
@@ -151,7 +151,7 @@ println(group)
 
 println(grater[Group].asDBObject(group))
 // // { "_typeHint" : "Group" , "group_id" : 1 , "name" : "you and me" , "leader" : [ 11 , "me" , 27] , "members" : [ [ 11 , "me" , 27] , [ 12 , "you" , 30]]}
-{% endhighlight %}
+```
 DBObjectに変換すると、leaderの値やmembersのList要素がリストに変換されてます。
 このままMongoDBに保存して、それを取り出したあとで"grater[Group].asObject(group)"しようとするとエラーになります。
 

@@ -77,7 +77,7 @@ make; make install</p></blockquote>
 <h4>今すぐ依頼して、結果を受け取るパターン</h4>
 <p>worker.php</p>
 
-{% highlight php %}
+```php
 <? php
 $worker = new GearmanWorker();
 $worker->addServer();
@@ -89,18 +89,18 @@ function hoge_func(GearmanJob $job)
 {
     return 'hoge'.$job-&gt;workload();
 }
-{% endhighlight %}
+```
 <? php
 
 <p>client.php</p>
 
-{% highlight php %}
+```php
 <? php
 $worker = new GearmanWorker();
 $worker->addServer();
 echo  $client-&gt;do('hoge', 'hello');
 echo "\n";
-{% endhighlight %}
+```
 
 <p>実行してみる</p>
 <blockquote><p>$ php woker.php &amp;<br />
@@ -110,7 +110,7 @@ hello, hoge</p></blockquote>
 <h4>今すぐ依頼して、結果を待たずに終了するパターン</h4>
 <p>worker.php</p>
 
-{% highlight php %}
+```php
 <? php
 $worker = new GearmanWorker();
 $worker-&gt;addServer();
@@ -129,11 +129,11 @@ function heavy_func(GearmanJob $job)
         sleep(10);
     return 'hoge, '.$job-&gt;workload();
 }
-{% endhighlight %}
+```
 
 <p>client.php</p>
 
-{% highlight php %}
+```php
 <? php
 $client = new GearmanClient();
 $client->addServer();
@@ -143,7 +143,7 @@ echo $client-&gt;do('heavy', 'hello (sync)');
 echo "\n";
 $client-&gt;doBackground('heavy', 'hello (async)');
 echo "\n";
-{% endhighlight %}
+```
 
 <p>実行してみる</p>
 <blockquote><p>$ php worker.php &amp;<br />
@@ -155,7 +155,7 @@ hoge, hello (sync)</p></blockquote>
 <h4>タスクを追加して、最後にまとめて実行して、その結果を受け取る</h4>
 <p>task_client.php</p>
 
-{% highlight php %}
+```php
 <? php
 $client = new GearmanClient();
 $client->addServer();
@@ -168,7 +168,7 @@ function task_cb(GearmanTask $task)
     echo '[result]'.$task->data();
     echo "\n";
 }
-{% endhighlight %}
+```
 
 <blockquote><p>
 $ worker.php &<br />
@@ -182,7 +182,7 @@ $ task_client.php<br />
 <p>重い処理をバックグラウンドのタスクとして登録します。<br />
 task_client.php</p>
 
-{% highlight php %}
+```php
 <? php
 
 $client = new GearmanClient();
@@ -197,7 +197,7 @@ function task_cb(GearmanTask $task)
         echo '[result]'.$task->data();
         echo "\n";
 }
-{% endhighlight %}
+```
 
 <p>実行</p>
 

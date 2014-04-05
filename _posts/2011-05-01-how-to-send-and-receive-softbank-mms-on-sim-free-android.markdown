@@ -56,9 +56,9 @@ SoftBankメールを送受信するための手順を下記に記しておきま
 * <a href="http://gadgetordiary.wordpress.com/2011/04/13/softbank%E3%83%A1%E3%83%BC%E3%83%AB%E3%82%A2%E3%83%97%E3%83%AA1-6%E3%82%92%E5%86%8D%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB/">Softbankメールアプリ1.6を再インストール &laquo; デジタルガジェッター日記</a>
 
 端末のブラウザからダウンロードしてインストールするか、android-sdkの入っているPCから
-{% highlight bash %}
+```bash
 adb install jp.softbank.mb.mail-1.6.apk
-{% endhighlight %}
+```
 でインストールできます。
 
 あとは、アプリを起動すればメールの閲覧や送信が自由にできます。

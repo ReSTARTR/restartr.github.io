@@ -58,15 +58,15 @@ TwitterのOAuthの鍵やDB接続情報など、アプリを書く上で環境に
 
 path/to/conf.properties
 
-{% highlight scala %}
+```scala
 hoge = "moge"
-{% endhighlight %}
+```
 
-{% highlight scala %}
+```scala
 val p = new java.util.Properties()
 val config = p.load(new java.io.FileInputStream("path/to/conf.properties");
 config.get("hoge") // "moge"
-{% endhighlight %}
+```
 
 ### twitterのconfiggy
 
@@ -96,7 +96,7 @@ config.get("hoge") // "moge"
 
 src/main/scala/com/restartr/utilSample/MyConfig.scala
 
-{% highlight scala %}
+```scala
 package com.restartr.utilSample
 
 trait MyConfig {
@@ -104,7 +104,7 @@ trait MyConfig {
   val str: String
 }
 
-{% endhighlight %}
+```
 
 実際の設定ファイルでは、設定のTraitを継承してインスタンス生成
 
@@ -112,21 +112,21 @@ trait MyConfig {
 
 path/to/config/MyConfig.scala
 
-{% highlight scala %}
+```scala
 import com.restartr.utilSample.MyConfig
 new MyConfig {
   val num = 1
   val str = "san"
 }
-{% endhighlight %}
+```
 
 使いたい場所でEval。
 
-{% highlight scala %}
+```scala
 val conf = Eval[MyConfig](new java.io.File("path/to/config/MyConfig.scala"))
 conf.num // 1
 conf.str // "san"
-{% endhighlight %}
+```
 
 ### configrity
 
@@ -150,13 +150,13 @@ conf.str // "san"
     * <del>正規表現で定義されてる</del>Scalaのパーザコンビネータ(RegexParsersを継承)で定義されている
      * "{"と"}"で階層構造を表現
 
-{% highlight scala %}
+```scala
 akka {
   cluster{
     name = "test-cluster"
   }
 }
-{% endhighlight %}
+```
 
  * 使える型
   * 数値

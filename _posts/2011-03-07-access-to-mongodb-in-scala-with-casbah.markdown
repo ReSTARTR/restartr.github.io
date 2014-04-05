@@ -78,7 +78,7 @@ project/build/SalatTestProject.scala
 Casbahでは、MongoDB上のドキュメントをMongoDBObjectとして取り扱います。
 
 MongoDBObjectをインスタンス化する、もしくはMongoDBObjectBuilderで逐次フィールドを定義するかのどちらかになります。
-{% highlight scala %}
+```scala
 // MongoDBObjectをインスタンス化
 val user = MongoDBObject("id"->1, "name"->"me")
 println(user) // { "id" : 1 , "name" : "me"}
@@ -88,67 +88,67 @@ val builder = MongoDBObject.newBuilder
 builder += "id"->2
 builder += "name"->"you"
 val user2 = builder.result // これでMongoDBObjectができる
-{% endhighlight %}
+```
 
 できたら、これをMongoDBに保存します。
 
 まずはコレクションのインスタンス取得から。
-{% highlight scala %}
+```scala
 val conn = MongoConnection()
 // MongoConnection("localhost", 27017)でホストおよびポート指定が可能
 val db = conn("casbah_test")
 val collection = db("sample")
-{% endhighlight %}
+```
 下記のように１行にまとめてもでもOKです。
-{% highlight scala %}
+```scala
 val collection = MongoConnection()("casbah_test")("sample")
-{% endhighlight %}
+```
 
 で、コレクションに保存します。「+=」を使うだけと、とてもシンプルな操作になっています。
-{% highlight scala %}
+```scala
 collection += user // { "_id" : ObjectId("4d7385ebf21423dcecb4c578"), "id" : 1, "name" : "me" }
 collection += user2 // { "_id" : ObjectId("4d7385ebf21423dcedb4c578"), "id" : 2, "name" : "you" }
-{% endhighlight %}
+```
 
 <h4>ドキュメントの検索</h4>
 保存したドキュメントを全件取得します。mongodbのコンソールでいう、db.collection.find()にあたる操作です。
-{% highlight scala %}
+```scala
 collection.find().foreach { println(_) }
-{% endhighlight %}
+```
 
 <h4>ドキュメントのJOIN</h4>
 MongoDBでJoinはできないので、アプリ側で対処する場合に使うんでしょうかね。
 
 やり方は、MongoDBObjectを「++」でつなぐだけ。簡単です。
-{% highlight scala %}
+```scala
 val identity = MongoDBObject("name"->"me", "age"->27)
 val address = MongoDBObject("country"->"Japan", "prefecture"->"Tokyo")
 val user = identity ++ address
 println(user) // { "age" : 27 , "country" : "Japan" , "prefecture" : "Tokyo" , "name" : "me"}
-{% endhighlight %}
+```
 
 <h4>ListObjectの生成</h4>
 List(javascriptでいうArrayのこと)はMongoDBListでつくります。
-{% highlight scala %}
+```scala
 val users1 = MongoDBList(
   MongoDBObject("name"->"me"),
   MongoDBObject("name"->"you"))
 println(users1) // [ { "name" : "me"} , { "name" : "you"}]
-{% endhighlight %}
+```
 当然ですが、Listの要素（MongoDBListの引数は）MongoDBObjectだけでなく、文字列や数値もOKです。
 
 でListの場合もBuilder経由で作成が可能です。
-{% highlight scala %}
+```scala
 val users = MongoDBList.newBuilder
 val user1 = MongoDBObject("name"->"me")
 val user2 = MongoDBObject("name"->"you")
 users += user1
 users += user2
 println(users.result) // [ { "name" : "me"} , { "name" : "you"}]
-{% endhighlight %}
+```
 
 <h4>クエリの構築</h4>
-{% highlight scala %}
+```scala
 // 取得条件を指定
 val condition = MongoDBObject("name"->"me")
 collection.find(condition).foreach( println )
@@ -160,7 +160,7 @@ collection.find(condition, fields).foreach( println )
 // 条件の指定をせずに取得フィールドのみ限定する場合
 val conditionEmpty = MongoDBObject.empty
 collection.find(conditionEmpty, fields).foreach( println )
-{% endhighlight %}
+```
 
 <h4>クエリの構築(DSLを利用)</h4>
 $exists, $gt, $ltなど、以下にあるものはDSLとして使えるらしいです。
@@ -169,19 +169,19 @@ $exists, $gt, $ltなど、以下にあるものはDSLとして使えるらしい
 <li><a href="http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-ConditionalOperators">Advanced Queries - MongoDB</a></li>
 </ul>
 findの引数にDSLを使って記述します。複数条件を組み合わせる場合は「++」でつなげます。
-{% highlight scala %}
+```scala
 collection.find( "name" $exists true ).foreach{ println }
 
 // 組み合わせる場合は"++"でつなげる
 collection.find( ("name" $exists true) ++ ("age" $gte 20 $lt 30 ) ).foreach{ println }
-{% endhighlight %}
+```
 『("age" $gte 20) ++ ("age" $lt 30)』と書かなくても、『("age" $gte 20 $lt 30 ) 』とかけるので記述量がへって良いですね。
 
 あと、追加ですけど、１ドキュメントのみ取得したい時はfindOneが使えます。
-{% highlight scala %}
+```scala
 val obj = collection.findOne().get // Option[DBObject]からDBObjectを取り出すためにgetを呼ぶ
 println(obj("name")) //me
-{% endhighlight %}
+```
 
 以上、かんたんにSasbahの使い方についてまとめてみました。
 

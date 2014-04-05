@@ -38,7 +38,7 @@ u10,Osaka
 <p>これの転置インデックスを作成したい。</p>
 <p>で、<a href="http://rainyday.blog.so-net.ne.jp/2007-12-01">こちらのブログ記事</a>とかを参考にしたりして、何回か試行錯誤してできたのがこちらのソース。</p>
 
-{% highlight scala %}
+```scala
 import scala.collection.mutable.HashMap
 import scala.io.Source
 import scala.io.BufferedSource
@@ -62,13 +62,13 @@ object ReadTsv
     }
   }
 }
-{% endhighlight %}
+```
 <p>実行</p>
-{% highlight bash %}
+```bash
 $ scalac ReadTsv.scala
 $ scala ReadTsv
 Map(Shiga -> List(u08), Nagoya -> List(u07, u06, u03), Tokyo -> List(u04, u01), Osaka -> List(u10, u02), Fukuoka -> List(u05), Hokkaido -> List(u09))
-{% endhighlight %}
+```
 <p>手続き型な感じが色濃い気がするけど、もっと関数型的になるのでしょうか。。<br />
 とりあえずコレクションとパターンマッチの練習にはなりました。</p>
 <p>他人のプログラムを拝見するなどして、もっとScalaの理解を深める必要がありそうです。</p>

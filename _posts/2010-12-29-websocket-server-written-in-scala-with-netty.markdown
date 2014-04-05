@@ -56,7 +56,7 @@ JavaではなくScalaで、です。<br />
 <p><a href="https://github.com/ReSTARTR/nettyws/blob/master/src/main/scala/com/restartr/nettyws/EchoServer.scala">EchoServer.scala</a><br />
 まずは起動元から。</p>
 
-{% highlight scala %}
+```scala
 object EchoServer {
   @throws(classOf[Exception])
   def main(args:Array[String]) {
@@ -78,7 +78,7 @@ object EchoServer {
     bootstrap.bind(new InetSocketAddress(8080))
   }
 }
-{% endhighlight %}
+```
 
 <p>で、ハンドラ側がこんなかんじ。<br />
 
@@ -90,7 +90,7 @@ SimpleChannelUpstreamHandlerの</p>
 <p>をオーバーライドして処理内容を定義すればOK。<br />
 何かを呼び出し元に返すには、"e.getChannel().write( {レスポンス} )"で。</p>
 
-{% highlight scala %}
+```scala
 class EchoServerHandler extends SimpleChannelUpstreamHandler {
   val logger = java.util.logging.Logger.getLogger("EchoServerHandler")
   val transferredBytes = new AtomicLong()
@@ -114,7 +114,7 @@ class EchoServerHandler extends SimpleChannelUpstreamHandler {
     e.getChannel().close()
   }
 }
-{% endhighlight %}
+```
 
 <h3>WebSocketサーバー</h3>
 <p>本題のWebSocketサーバーです。<br />
@@ -132,7 +132,7 @@ Echoサーバーの応用で、WebSocket用のハンドラを作成して、Boot
 <p><b>WebSocketServerIndexPage.scala</b><br />
 まずはクライアント側はこんな感じで、インプットフォームに入力した文字列をWebSocketサーバーに投げ、結果をdivに追記するだけです。</p>
 
-{% highlight scala %}
+```scala
       var socket; 
       if (window.WebSocket) {
         socket = new WebSocket( 'ws://localhost:8080/uppercase' );
@@ -155,26 +155,26 @@ Echoサーバーの応用で、WebSocket用のハンドラを作成して、Boot
           alert('the socket is not open.')
         }
       }
-{% endhighlight %}
+```
 
 <p><b>WebSocketServer.scala</b><br />
 サーバー起動オブジェクトです。<br />
 HTML/WebSocketを扱うハンドラを登録してポートで待ち受けます。</p>
 
-{% highlight scala %}
+```scala
     // WebSocket用ハンドラを含むPipelineFactoryを登録
     bootstrap.setPipelineFactory(new WebSocketServerPipelineFactory())
     
     // 8080番で待ち受け開始
     bootstrap.bind(new InetSocketAddress("localhost", 8080))
-{% endhighlight %}
+```
 
 <p><b>WebSocketServerHandler.scala</b><br />
 実装するのは、Echoサーバーと同じく、messageReceived()とexceptionCaught()の２つ。<br />
 処理を分割しているのですこしだけメソッド多めです。<br />
 messageRecieved()で受信内容によって実際のハンドラをHttp/WebSocketのどちらかに切り替えます。</p>
 
-{% highlight scala %}
+```scala
 class WebSocketServerHandler extends SimpleChannelUpstreamHandler {
   val WEBSOCKET_PATH = "/uppercase"
   
@@ -278,14 +278,14 @@ class WebSocketServerHandler extends SimpleChannelUpstreamHandler {
   def getWebSocketLocation(req: HttpRequest) = 
     "ws://" + req.getHeader(HttpHeaders.Names.HOST) + WEBSOCKET_PATH  
 }
-{% endhighlight %}
+```
 
 <p><b>WebSocketServerPipelineFactory.scala</b><br />
 パイプラインへの登録を定義します。<br />
 リクエストはDecoderを通り、ハンドラで処理され、Encoderを通って返される、という流れです。<br />
 ここでは初期状態としてHttp用の設定になっていますが、一旦WebSocket通信開始のリクエストを受け取ると、そのあとはWebSocketのDecoder/Encoderに切り替わります。</p>
 
-{% highlight scala %}
+```scala
 <pre class="brush:scala">
 class WebSocketServerPipelineFactory extends ChannelPipelineFactory{
   @throws(classOf[Exception])
@@ -300,7 +300,7 @@ class WebSocketServerPipelineFactory extends ChannelPipelineFactory{
     pipeline
   }
 }
-{% endhighlight %}
+```
 <p>実際、ブラウザでひらいてみると、Webフォームに入力されている「hello, world」が大文字に変換されてフォーム下部に追記されていきます。<br />
 まぁWebSocketサーバーを実装するだけなら、jetty7を使ったほうがシンプルに早くかけると思います。<br />
 Memcacheプロトコルを話すサービスをつくる場合とかには便利ですね。（messagepack-rpcでもnetty使っているとか。)</p>

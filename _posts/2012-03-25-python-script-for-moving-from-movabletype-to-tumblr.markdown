@@ -37,10 +37,10 @@ python2.6以外はテストしてません( ｰ`дｰ´)ｷﾘｯ
 
 oauth2に依存しているので、実行前にインストールしておいてください。
 
-{% highlight python %}
+```python
 pip install oauth2
 
-{% endhighlight %}
+```
 
 使い方はREADMEどおりです。いつもどおりのテキトー英文です。
 
@@ -50,19 +50,19 @@ pip install oauth2
 4. consumer_keyとconsumer_secretを入手
 5. config.pyを編集する
 
-{% highlight python %}
+```python
 CONSUMER_KEY = '<consumer_key>'
 CONSUMER_SECRET = '<consumer_secret>'
 BASE_HOSTNAME = '<your_tumblr_url>' # '<your-id>.tumblr.com'のように"http://"は抜きで。
 PARSE_FILE_PATH = 'path/to/movable_type_data.txt'
 POST_STATE = 'publish' # 動作テストしたいなら'draft'にすると良いです。
-{% endhighlight %}
+```
 
 実行する
 
-{% highlight bash %}
+```bash
 python run.py
-{% endhighlight %}
+```
   * まずはファイルの内容を読み込んで、日時、カテゴリ、タイトルが表示されるので問題ないか確認
 
 OAuth認証する。
@@ -70,12 +70,12 @@ OAuth認証する。
   * 下記のようにURLが表示されるのでブラウザでアクセス。
 
 
-{% highlight python %}
+```python
 open in browser:http://www.tumblr.com/oauth/authorize?oauth_token={OAUTH_TOKEN}
 
 oauth_verifier:
 
-{% endhighlight %}
+```
 
   * リダイレクト先のURLに含まれる"oauth_verifier"の値をコピーしてターミナルにペースト。
     * リダイレクト先は404になりますが、oauth_verifierが欲しいだけなのでそれで問題なしです。

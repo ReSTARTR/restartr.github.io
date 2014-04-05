@@ -60,34 +60,34 @@ DotCloudのMongoDBマニュアルはこちら
 事前に"dotcloud create example"は実行してあるものとします。
 詳しくはこちらの<a href="http://docs.dotcloud.com/tutorials/firststeps/#id2">マニュアル</a>を見てください。
 
-{% highlight bash %}
+```bash
 $ dotcloud deploy -t mongo example.mongo
-{% endhighlight %}
+```
 
-{% highlight bash %}
+```bash
 > Created "example.mongo".
-{% endhighlight %}
+```
 
 #### DB情報を確認（ID/PASS）
 
-{% highlight bash %}
+```bash
 $ dotcloud info example.mongo
-{% endhighlight %}
+```
 
 deployコマンド実行してから実際に作成されるまで少し時間がかかります。
 すぐにinfoコマンドを実行すると下記エラーがでます。
 ※正確に測ってませんが数十秒くらい？
 
-{% highlight bash %}
+```bash
 > Sat May 28 08:14:43 Error: couldn't connect to server 127.0.0.1 shell/mongo.js:79
 > exception: connect failed
 > Connection to mongo.example.dotcloud.com closed.
 > Abort.
-{% endhighlight %}
+```
 
 作成完了していれば、下記情報が表示されますので、"mongodb_password: ******"に記載されたパスワードをメモしておきます。
 
-{% highlight bash %}
+```bash
 cluster: wolverine
 config:
     mongodb_password: ******
@@ -101,17 +101,17 @@ ports:
     url: mongodb://root:******@mongo.example.dotcloud.com:5907
 state: running
 type: mongodb
-{% endhighlight %}
+```
 
 #### MongoDBサーバーへログイン
 
-{% highlight bash %}
+```bash
 $ dotcloud run example.mongo mongo
-{% endhighlight %}
+```
 
 infoコマンドで表示されたパスワードを使って、"sampledb"というdbにアプリユーザーを追加します。
 
-{% highlight bash %}
+```bash
 > use sampledb
 switched to db sampledb
 > db.getSisterDB("admin").auth("root", "<infoコマンドで表示されるパスワード>");
@@ -125,18 +125,18 @@ switched to db sampledb
 > exit
 bye
 Connection to mongo.example.dotcloud.com closed.
-{% endhighlight %}
+```
 
 ※とりあえず一旦ログアウトしてますが、別に必須じゃないです。
 
 #### 再度ログインしてテスト操作してみる
-{% highlight bash %}
+```bash
 $ dotcloud run example.mongo mongo
-{% endhighlight %}
+```
 
 新規作成したユーザーでDB操作が可能か確認してみます。
 
-{% highlight bash %}
+```bash
 # mongo
 Warning: Permanently added '[mongo.example.dotcloud.com]:5906,[174.129.17.131]:5906' (RSA) > to the list of known hosts.
 MongoDB shell version: 1.8.1
@@ -148,7 +148,7 @@ switched to db sampledb
 > db.sampledb.save({id:1,name:"foo"});
 > db.sampledb.find();
 { "_id" : ObjectId("4de0b033a1fd29eb0e1522fd"), "id" : 1, "name" : "foo" }
-{% endhighlight %}
+```
 
 問題なさそうなので、あとはアプリを"dotcloud push"して動かすだけです。
 
@@ -175,9 +175,9 @@ requirementsはイカのとおり。
 
 配置できたら、
 
-{% highlight bash %}
+```bash
 sbt reload update
-{% endhighlight %}
+```
 
 でライブラリを読み込みます。
 

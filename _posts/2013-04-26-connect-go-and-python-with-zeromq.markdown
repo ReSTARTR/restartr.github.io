@@ -27,7 +27,7 @@ comments: []
 
 構成はこんな感じで、Python(かGo)clientを起動し、Goで動くmonitorq経由でGoのserverにつながります。PUB/SUBでmonitorからモニタリングできるのがミソです。
 
-{% highlight ruby %}
+```ruby
                   +----------------------------------------+
                   |                                        |
   +------+        |--------------------------+     +-----+ |
@@ -42,42 +42,42 @@ comments: []
                   |      |monitor|                         |
                   |      +-------+                         |
                   +----------------------------------------+
-{% endhighlight %}
+```
 
 _※client/server/monitorは複数たちあげるとよしなに振り分けてくれます。_
 
  * monitorqでfan-in/outする
 
-{% highlight bash %}
+```bash
 $ go run queue.go monitorq
-{% endhighlight %}
+```
 
  * clientから"PING"を投げる(と、"PONG#<pid>"が帰る)
 
-{% highlight bash %}
+```bash
 $ python run queue.py client
 PONG#<28870>
 PONG#<28870>
  :
-{% endhighlight %}
+```
 
  * serverから"PONG"を返す(clientからのPINGを表示)
 
-{% highlight bash %}
+```bash
 $ go run queue.go serv
 Recv: PING#<73835>
 Recv: PING#<73835>
  :
-{% endhighlight %}
+```
 
  * monitorでリクエスト総数をモニタリング
 
-{% highlight bash %}
+```bash
 $ go run queue.go monitor
 MONITOR: IN: 2082, OUT 2082
 MONITOR: IN: 2083, OUT 2083
  :
-{% endhighlight%}
+```
 
 コードはgistにあげてます。
 

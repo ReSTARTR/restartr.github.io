@@ -21,7 +21,7 @@ comments: []
 ---
 ハマったので。
 
-{% highlight python %}
+```python
 a = 2
 double = lambda x: x*a
 double(4)  # 8 (=4*2)
@@ -29,7 +29,7 @@ double(10) # 20 (=10*3)
 a = 3
 double(4)  # 12 # WTF?
 double(10) # 30
-{% endhighlight %}
+```
 
 doubleというクロージャ内の変数aを、クロージャ宣言時のaで束縛したいのです。
 
@@ -42,7 +42,7 @@ doubleというクロージャ内の変数aを、クロージャ宣言時のaで
 
 参考：[closures - Python lambda's binding to local values - Stack Overflow](http://stackoverflow.com/questions/10452770/python-lambdas-binding-to-local-values)
 
-{% highlight python %}
+```python
 a = 2
 double = lambda x, y=a: x*y
 double(4)  # 8 (=4*2)
@@ -50,13 +50,13 @@ double(10) # 20 (=10*3)
 a = 3
 double(4)  # 12 (=4*2)
 double(10) # 30 (=10*2)
-{% endhighlight %}
+```
 
 ### 2. functools.partialで束縛する
 
 やってることは1と同じなのですが、一応動くよねということで。
 
-{% highlight python %}
+```python
 from functools import partial
 a = 2
 double = partial(lambda x, y=None: x*y, y=a)
@@ -65,7 +65,7 @@ double(10) # 30 (=10*2)
 a = 3
 double(4)  # 12 (=4*2)
 double(10) # 30 (=10*2)
-{% endhighlight %}
+```
 
 ### そもそも変数上書きしなければ良いんじゃない？
 
@@ -73,7 +73,7 @@ double(10) # 30 (=10*2)
 
 今回、プロジェクトオイラーを解くにあたって、素数ジェネレータをつくろうとした結果、ハマったのでした。
 
-{% highlight python %}
+```python
 from itertools import ifilter, count
 def gen_primes():
     it = count(2)  # [2, 3, 4, ...]
@@ -88,12 +88,12 @@ for v in gen_primes():
     print v
     if v > 100:
         break
-{% endhighlight %}
+```
 
 ### 余談1: functools.partialの使いどころ
 ちょくちょく[functools.partial](http://docs.python.jp/2.7/library/functools.html#functools.partial)使ってましたが、そんなの使わなくてもlambdaで事足りますね。今更気づきました...
 
-{% highlight python %}
+```python
 mul = lambda a, b: a * b
 mul(3,2)  # 6
 # lambda
@@ -103,12 +103,12 @@ double(3)  # 6
 import functools
 double = functools.partial(mul, 2)
 double(3)  # 6
-{% endhighlight %}
+```
 
 こうなると、functools.partialの使いどころが難しいですね。
 戻り値がpartialオブジェクトなので、あとで引数とかが参照できることくらいでしょうか...
 
-{% highlight python %}
+```python
 >>> f = functools.partial(lambda a, b=0:a+b, b=0)
 >>> f
 <functools.partial object at 0x1092b2ec0>
@@ -122,4 +122,4 @@ double(3)  # 6
 Traceback (most recent call last):
   File "<stdin>", line 1, in <module>
 TypeError: readonly attribute
-{% endhighlight %}
+```
