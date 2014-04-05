@@ -1,6 +1,5 @@
 pygments: true
 permalink: /:year/:month/:day/:title
-port: 8080
 markdown: redcarpet
 redcarpet:
     extensions: ["no_intra_emphasis", "fenced_code_blocks", "autolink", "tables",     "with_toc_data"]
@@ -10,7 +9,7 @@ rdiscount:
 exclude: [ Gemfile, Gemfile.lock, gems, _assets, bower_components ]
 
 title : I Will Service
-production_url : http://blog.restartr.com
+production_url : http://restartr.github.io
 description: "Ruby, Scala, Python, Golangとか"
 disqus_shortname: ReSTARTR
 analytics: #UA-32899481-1
