@@ -1,0 +1,59 @@
+---
+layout: post
+status: publish
+published: true
+title: Kauli株式会社を退職しました
+author: ReSTARTR
+author_login: admin
+author_email: yoshida.masaki+blog@gmail.com
+wordpress_id: 1346
+wordpress_url: http://blog.restartr.com/?p=1346
+date: '2013-04-02 22:45:29 +0900'
+date_gmt: '2013-04-02 13:45:29 +0900'
+categories:
+- 雑記
+tags: []
+comments: []
+---
+<a href="http://www.flickr.com/photos/53244662@N04/8599680561/" title="Cleanup my keyboard by ReSTARTR_y, on Flickr"><img src="http://farm9.staticflickr.com/8106/8599680561_da30653690.jpg" width="500" height="333" alt="Cleanup my keyboard"></a>
+
+_※2013/04/04 更新:会社名を公開しました_
+
+3月末付で<a href="http://kau.li">Kauli株式会社</a>を退職しました。
+
+4月1日だと嘘っぽくなるかなと思い、1日ずらしてのご報告です。
+
+2012年01月入社なので、1年3ヶ月という短い間でしたが、これまでで最も充実した1年だったように思います。
+
+大規模な広告配信という技術的に非常に挑戦しがいのある分野で、非常に技術力の高いエンジニアと共にPythonプログラマーとして充実した日々を過ごさせてもらいました。
+
+「大規模なトラフィックを直に感じながらアプリケーション開発に取り組みたい」という希望を胸に入った会社で、
+
+* データストアの検証(結果的にRedisを採用)
+* 合計数十台自作サーバーの組立(参考：<a href="https://gist.github.com/nekoya/3749146" title="Kauli自作サーバ組み立てマニュアル" target="_blank">Kauli自作サーバ組み立てマニュアル</a>)
+* 開発部総出でデータセンターでサーバーラッキング
+* 某社SOAP APIに難儀
+* 開発のベースをgithubに移行
+* nginx + Python(werkzeug+uWSGI) + Redisによる広告配信システムの開発
+* アプリケーションのパフォーマンスチューニング
+
+等々、これまでにない経験を1年ちょっとという短い期間に経験できました。
+
+正直離れるのが勿体無いとも思うのですが、キャリアの見直しをしたかったとか諸々の理由により、退職することを決意しました。
+
+同僚の方々には大変お世話になりました。どうもありがとうございました。
+
+転職先はまだ決まっていないので、転職活動を進めつつ、じっくり勉強しておきたかったことに１つずつ取り組んでいこうかという感じです。
+
+良い会社があればぜひ<a href="https://twitter.com/restartr">@ReSTARTR</a>にご紹介ください＞＜
+
+...
+
+なお、Kauli株式会社は継続してエンジニアを募集中のようですので、
+
+大規模広告配信システムをPythonで開発したい方々は下記からぜひぜひご応募を。
+
+* <b><a href="http://kau.li/jp/pages/recruit">Kauli - 採用情報</a></b>
+
+それでは。
+

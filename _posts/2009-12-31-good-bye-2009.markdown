@@ -1,0 +1,38 @@
+---
+layout: post
+status: publish
+published: true
+title: さようなら、2009年
+author: ReSTARTR
+author_login: admin
+author_email: yoshida.masaki+blog@gmail.com
+excerpt: "今年も残すところあとわずか。\r\n\r\n今はアカウントの整理に追われていますw\r\n\r\nお仕事やプライベートなど、いろんなところでいろんな方にお世話になりました。\r\n\r\n故郷の方では悲しいお別れもあったし、姉の結婚式もありました。\r\n\r\n今年やったことを総括してみます\r\n\r\n"
+wordpress_id: 150
+wordpress_url: http://blog.restartr.com/?p=150
+date: '2009-12-31 18:11:05 +0900'
+date_gmt: '2009-12-31 09:11:05 +0900'
+categories:
+- 雑記
+tags: []
+comments: []
+---
+<p>今年も残すところあとわずか。</p>
+<p>今はアカウントの整理に追われていますw</p>
+<p>お仕事やプライベートなど、いろんなところでいろんな方にお世話になりました。</p>
+<p>故郷の方では悲しいお別れもあったし、姉の結婚式もありました。</p>
+<p>今年やったことを総括してみます</p>
+<p><a id="more"></a><a id="more-150"></a></p>
+<ul>
+<li>４月は毎年恒例人事異動</li>
+<li>本格的にTwitterはじめた</li>
+<li>Twitterボットつくった</li>
+<li>MySQLに悩まされ、詳しくなった</li>
+<li>このブログをギリギリで始めた</li>
+<li>などなど</li>
+</ul>
+<p>そんなにニュースないですね…</p>
+<p>新年に目標をちゃんと掲げられるように今から練り始めようと思います。テレビでも観ながら。</p>
+<p>あ、僕の2009年はこんな漢字（感じ）らしいです。</p>
+<p><a href="http://cake.oresama.jp/result/13cd6ce78b00fc6f2526ff060d1de08e.html ">一文字２００９年版 あなたの今年を一文字で-</a></p>
+<p>…2010年はもう少し前向きな漢字で終われますように。</p>
+<p>では、皆様よいお年を。</p>

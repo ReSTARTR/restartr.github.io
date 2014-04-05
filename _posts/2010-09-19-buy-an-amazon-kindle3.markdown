@@ -1,0 +1,51 @@
+---
+layout: post
+status: publish
+published: true
+title: Amazon Kindle3 Free 3G + Wi-Fiを買ってみた
+author: ReSTARTR
+author_login: admin
+author_email: yoshida.masaki+blog@gmail.com
+excerpt: "<a title=\"IMG_2302 by ReSTARTR_y, on Flickr\" href=\"http://www.flickr.com/photos/53244662@N04/5003018900/\"><img
+  src=\"http://farm5.static.flickr.com/4087/5003018900_5a22f2eca5.jpg\" alt=\"IMG_2302\"
+  width=\"500\" height=\"333\" /></a>\r\n\r\n今流行の<a href=\"http://www.amazon.com/dp/B002FQJT3Q\">Amazon
+  Kindle3(3G+Wi-Fi)</a>を買ってみました。\r\n発売開始の翌日に注文して、２週間程度での受け取りでした。\r\nAmazon純正のKindle3用レザーカバーも頼んだんですが、そちらだけ先に届いてましたが、やっと本体も届きましたんで、\r\n軽くレビューでも書いてみます。\r\n\r\n"
+wordpress_id: 325
+wordpress_url: http://blog.restartr.com/?p=325
+date: '2010-09-19 10:48:29 +0900'
+date_gmt: '2010-09-19 01:48:29 +0900'
+categories:
+- 雑記
+tags:
+- kindle3
+- ebook
+comments: []
+---
+<p><a title="IMG_2302 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/5003018900/"><img src="http://farm5.static.flickr.com/4087/5003018900_5a22f2eca5.jpg" alt="IMG_2302" width="500" height="333" /></a></p>
+<p>今流行の<a href="http://www.amazon.com/dp/B002FQJT3Q">Amazon Kindle3(3G+Wi-Fi)</a>を買ってみました。<br />
+発売開始の翌日に注文して、２週間程度での受け取りでした。<br />
+Amazon純正のKindle3用レザーカバーも頼んだんですが、そちらだけ先に届いてましたが、やっと本体も届きましたんで、<br />
+軽くレビューでも書いてみます。</p>
+<p><a id="more"></a><a id="more-325"></a><br />
+注文したのがたしか、8/28日。発送の連絡がきたのが9/10なのでその間約二週間。さらに受け取りまでは以下のように、不在による再配達も影響して、長い道のりとなりました。<br />
+<a href="http://www.flickr.com/photos/53244662@N04/5002490605/" title="配達履歴 by ReSTARTR_y, on Flickr"><img src="http://farm5.static.flickr.com/4092/5002490605_3cfe829cef.jpg" width="488" height="500" alt="配達履歴" /></a></p>
+<p>先に受け取ったレザーカバーのときもそうだったんですが、箱が工夫されています。<br />
+ダンボールの箱はガムテープで閉じられているのが普通ですが、お菓子の箱のようにダンボール自体に切り取れる細工がしてあります。<br />
+<a href="http://www.flickr.com/photos/53244662@N04/5002411379/" title="IMG_2285 by ReSTARTR_y, on Flickr"><img src="http://farm5.static.flickr.com/4107/5002411379_a1ab728694_m.jpg" width="240" height="160" alt="IMG_2285" /></a><br />
+<a href="http://www.flickr.com/photos/53244662@N04/5003018636/" title="IMG_2289 by ReSTARTR_y, on Flickr"><img src="http://farm5.static.flickr.com/4131/5003018636_5681651c2c_m.jpg" width="240" height="160" alt="IMG_2289" /></a><br />
+汎用サイズのダンボールでは難しいかもしれませんが、こういう工夫はなんとなく嬉しいです。</p>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5003018740/" title="IMG_2290 by ReSTARTR_y, on Flickr"><img src="http://farm5.static.flickr.com/4154/5003018740_245397caef.jpg" width="500" height="333" alt="IMG_2290" /></a><br />
+箱を開けるとこんなかんじ。<br />
+画面にPC接続の指示が書いてあります。表面にはってあるシートにプリントされているかのように見える程に電子インクは素晴らしいです。</p>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5002411213/" title="IMG_2274 by ReSTARTR_y, on Flickr"><img src="http://farm5.static.flickr.com/4089/5002411213_8cf4392a79.jpg" width="500" height="333" alt="IMG_2274" /></a><br />
+ちなみにレザーカバーはこんなかんじ。</p>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5003018454/" title="IMG_2279 by ReSTARTR_y, on Flickr"><img src="http://farm5.static.flickr.com/4125/5003018454_ba7fc2faf4.jpg" width="500" height="333" alt="IMG_2279" /></a><br />
+Kindle本体とは↑の写真のようなカバーの「フック」にひっかけて固定するようになってます。</p>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5002412019/" title="IMG_2295 by ReSTARTR_y, on Flickr"><img src="http://farm5.static.flickr.com/4126/5002412019_02ef7106de.jpg" width="500" height="333" alt="IMG_2295" /></a><br />
+ということでカバーと本体をくっつけるとこんなかんじになります。<br />
+重量はカバーなしの二倍くらいに重くなったように感じますが、実際に電車内で片手で持っていても腕が疲れないレベルです。</p>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5003019014/" title="IMG_2307 by ReSTARTR_y, on Flickr"><img src="http://farm5.static.flickr.com/4109/5003019014_4b7343171c.jpg" width="333" height="500" alt="IMG_2307" /></a><br />
+Experimentalな機能としてwebkitなブラウザが搭載されています。Twitterを見るとこんな感じになります。<br />
+表示速度ははっきりいって遅いうえに正直見づらいですが、本を呼んでいる最中にTLをチラ見したいときとか役立ちます。</p>
+<p>TwitterへツイートできたりFacebookへShareできたり連携機能があるので、ブラウザが搭載されているのはそれらサービス認証が主な目的だと思います。</p>
+<p>まだ数日しか使っていないですが、かなり便利なシロモノでした。</p>

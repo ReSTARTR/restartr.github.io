@@ -1,0 +1,39 @@
+---
+layout: page
+status: publish
+published: true
+title: プロフィール
+author: ReSTARTR
+author_login: admin
+author_email: yoshida.masaki+blog@gmail.com
+wordpress_id: 2
+wordpress_url: http://msky.sakura.ne.jp/myblog/?page_id=2
+date: '2009-12-30 13:51:29 +0900'
+date_gmt: '2009-12-30 13:51:29 +0900'
+categories:
+- 雑記
+tags: []
+comments: []
+---
+<div id="_mcePaste">1983年12月：滋賀県で生活開始。</div>
+<div>2002年04月：徳島で大学生活開始</div>
+<div>2006年04月：東京進出してプログラマとしての日々を開始。某ポータルサイトの中の人。PHP5(ZendFramework)でサイト構築やHadoopを使ったログ解析基盤等を担当。</div>
+<div>2011年12月：退職</div>
+<div>2012年01月：転職。某アドテク企業のエンジニアに。nginx + python + werkzeug + uwsgi + MySQL + Redis + memcachedで広告配信システムの開発に従事。</div>
+<div>2013年03月：退職</div>
+<p></p>
+<div>現在求職中です。</div>
+<div>
+<ul>
+<li><a href="https://github.com/ReSTARTR">Github</a></li>
+<li><a href="https://twitter.com/ReSTARTR">Twitter</a></li>
+</ul>
+<p>他ソーシャル系は以下でやってます。</p>
+</div>
+<div>
+<ul>
+<li>twitter:<a href="http://twitter.com/ReSTARTR" target="_blank">http://twitter.com/ReSTARTR</a></li>
+<li>hatena:<a href="http://www.hatena.ne.jp/restartr/" target="_blank">http://www.hatena.ne.jp/restartr/</a></li>
+<li>delicious:<a href="http://delicious.com/msk_y" target="_blank">http://delicious.com/msk_y</a></li>
+</ul>
+</div>
