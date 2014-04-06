@@ -10,9 +10,8 @@
   <link rel="author" href="https://plus.google.com/103216164658230535238" />
 
   
-  <meta name="description" content="先日のPHPMatsuriのハッカソンにて作成したXHProfの結果がみれるCustomPanelですが、そのまま公開するにはお恥ずかしい感じだったので、多少マシに改修したものを公開してみます。
-DebugKit, XHProfPanelとは
-CakePHPのDebugKitというプラグインがあり &hellip;">
+  <meta name="description" content="2011.08.31 kmizushimaさんから頂いたコメントを元に、下記の記述を修正＆追記しました。 Twitterのutil-evalの一時ファイル生成について AkkaのConfigファイルのパース手法について
+&lt;/em&gt; TwitterのOAuthの鍵やDB接続情報など、 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -123,7 +122,7 @@ CakePHPのDebugKitというプラグインがあり &hellip;">
       
   <header>
     
-      <h1 class="entry-title"><a href="/2010/10/10/the-xhprofpanel-debugkit-custom-panel-cakephp/">CakePHPのDebugKitにプロファイル情報が見れるXHProfPanelを追加</a></h1>
+      <h1 class="entry-title"><a href="/2011/08/30/config-libraries-in-scala/">Scalaで設定ファイルを使いたい時どうしたらいいの？</a></h1>
     
     
       <p class="meta">
@@ -139,347 +138,90 @@ CakePHPのDebugKitというプラグインがあり &hellip;">
   
 
 
-<time datetime="2010-10-10T00:59:04+09:00" pubdate data-updated="true">2010-10-10 (Sun)</time>
+<time datetime="2011-08-30T00:02:15+09:00" pubdate data-updated="true">2011-08-30 (Tue)</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>先日のPHPMatsuriのハッカソンにて作成したXHProfの結果がみれるCustomPanelですが、そのまま公開するにはお恥ずかしい感じだったので、多少マシに改修したものを公開してみます。</p>
-<h3>DebugKit, XHProfPanelとは</h3>
-<p>CakePHPのDebugKitというプラグインがあり、それを使えばいろんなデバッグ情報がWeb画面上で確認できます。で、これにXHProfというphp拡張を使ってプロファイラ情報を見れるようにしてみました。</p>
-<p>こんな感じです。<br />
-<a href="http://blog.restartr.com/wp-content/uploads/2010/10/256d829a326e5fc745e5659600527bde.png"><img class="alignnone size-full wp-image-390" title="XHProfPanel-screenshot" src="http://blog.restartr.com/wp-content/uploads/2010/10/256d829a326e5fc745e5659600527bde.png" alt="" width="464" height="42" /></a></p>
-<p><a id="more"></a><a id="more-367"></a></p>
-<p>で、パネルを開くとこんな感じに各関数呼び出しごとの負荷情報などを閲覧できます。<br />
-<a href="http://blog.restartr.com/wp-content/uploads/2010/10/f0c2dac263680a94429c57bd5c1e81ff.png"><img class="alignnone size-medium wp-image-399" title="xhprofpanel-opned-screenshot" src="http://blog.restartr.com/wp-content/uploads/2010/10/f0c2dac263680a94429c57bd5c1e81ff-300x170.png" alt="" width="300" height="170" /></a></p>
-<p>さらに、<strong>&#8220;xhprof Result&#8221;</strong>というリンクをクリックすれば、XHProfが用意してくれているビューアを開くこともできます。ビューアではコールグラフも閲覧できます。</p>
-<h3>カスタムパネルの追加方法</h3>
-<blockquote><p>helloworld_controllerにプロファイル実行する、という例で説明します。</p></blockquote>
-<h4>事前準備</h4>
-<p>debugkitはインストール済みとします。入れ方は<br />
-<a href="http://d.hatena.ne.jp/cakephper/20090604/1244112188">超便利なDebugkitを画面キャプチャ付きで解説 - cakephperの日記(CakePHP, MongoDB, Lithium)</a><br />
-を参照してください。</p>
-<p>XHProfのインストールも済ませておきます。</p>
-<pre class="brush">wget http://pecl.php.net/get/xhprof-0.9.2.tgz
-pecl install xhprof-0.9.2.tgz</pre>
-<p>php.iniにも設定追加しておきます。</p>
-<pre class="brush">extension=xhprof.so</pre>
-<p>tgzファイルをtarで解凍した中身のうち、xhprof_html,xhprof_libをビューア用に用意したバーチャルホスト下において、<br />
-別ドメインでアクセスできるようにします。<br />
-cakeのアプリは<strong>cake.localhost</strong>、xhprofビューアは<strong>xhprof.localhost</strong>のような感じです。<br />
-ディレクトリはこんな感じできっています。</p>
-<pre class="brush:c">/var/
-  vhosts/
-    cake/ // cake.localhostのdocument_root
-      app/
-    xhprof/
-      xhprof_html/ // xhprof.localhostのdocument_root
-      xhprof_lib/</pre>
-<h4>ファイル構成</h4>
-<p>下記ファイルを修正もしくは新規作成します。</p>
-<pre class="brush:c">app/
-  controllers/
-    helloworld_controller.php //新規追加
-  plugins/
-    debug_kit/
-      controllers/
-        conmponents/
-          toolbar.php //修正
-      views/
-        elements/
-          xhprof_panel.ctp //新規追加</pre>
-<h4>1.XHProfPanelの追加</h4>
-<blockquote><p>app/plugins/debug_kit/controllers/components/toolbar.php</p></blockquote>
-<p>に下記クラスをコピペで追加。<br />
-<script src="http://gist.github.com/618254.js?file=toolbar.php"></script></p>
-<h4>2.デフォルトパネルにXHProfPanelを追加</h4>
-<blockquote><p>app/plugins/debug_kit/controllers/components/toolbar.php</p></blockquote>
-<p>の既存行（52行目あたり)に下記のように$_defaultPanelsに&#8217;xhprof&#8217;を追加。<br />
-<script src="http://gist.github.com/618254.js?file=toolbar_.php"></script></p>
-<h4>3.controllerの設定にもXHProfPanelを追加</h4>
-<p>下記のようにXhprofPanelへの設定情報も渡します。<br />
-<script src="http://gist.github.com/618254.js?file=helloworld_controller.php"></script></p>
-<h4>4.テンプレートの追加</h4>
-<blockquote><p>app/plugins/debug_kit/views/elements/xhprof_panel.ctp</p></blockquote>
-<p>を下記内容で新規作成します。<br />
-<script src="http://gist.github.com/618254.js?file=xhprof_panel.ctp"></script></p>
-<h4>ソート順の変更</h4>
-<p>デフォルトではwall timeの降順でソートしてあります。<br />
-コントローラでの設定で&#8217;sortBy&#8217;の値を変えれば変更できます。<br />
-(指定しなければ&#8217;wt&#8217;指定となります。)<br />
-設定できるのは<strong>ct, wt, cpu, mu, pmu</strong>の５つ。</p>
-<h4>プロファイル範囲</h4>
-<p>XhprofPanel::__constructからXhprofPanel::beforeRenderまでです。<br />
-結果をみるとLogPanelクラス（DebugKitプラグイン内のクラス）のメソッド呼び出しも含まれていたりするので、<br />
-もう少し適当な範囲にできないか検討したいと思います。</p>
-<h3>余談</h3>
-<p>Githubを有料アカウントにすべきか迷い中です。今回とりあえずgistで公開してみましたが、リポジトリは欲しいような、でも今のところ必要ないような…</p>
-</div>
-  
-  
+  <div class="entry-content"><p><em style="color:red">2011.08.31 kmizushimaさんから頂いた<a href="http://blog.restartr.com/2011/08/30/config-libraries-in-scala/?preview=true&amp;preview_id=1049&amp;preview_nonce=ad0bbeeef6#comment-108">コメント</a>を元に、下記の記述を修正＆追記しました。</em></p>
 
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2010/10/03/phpmatsuri-hack-days-by-php-hackers/">PHPMATSURI - PHPハッカー達による一泊二日のハックデイ</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2010-10-03T20:26:48+09:00" pubdate data-updated="true">2010-10-03 (Sun)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><a title="IMG_2470 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/5046336051/"><img src="http://farm5.static.flickr.com/4154/5046336051_aabef10eb4.jpg" alt="IMG_2470" width="500" height="333" /></a></p>
-<p><a href="http://2010.phpmatsuri.net/"><img class="alignnone size-medium wp-image-341" title="PHPMATSURI" src="http://blog.restartr.com/wp-content/uploads/2010/10/bunner-300x132.jpg" alt="" width="300" height="132" /></a><br />
-10月02日と03日の、一泊二日の<a href="http://2010.phpmatsuri.net/">PHPMASTURI</a>に参加してきました。</p>
 <ul>
-<li>ハッシュタグ: <a href="http://search.twitter.com/search?q=%23phpmatsuri">#phpmatsuri</a></li>
-<li>LTのustream: <a href="http://www.ustream.tv/channel/phpmatsuri">phpmatsuri on USTREAM</a></li>
+  <li>Twitterのutil-evalの一時ファイル生成について</li>
+  <li>AkkaのConfigファイルのパース手法について
+&lt;/em&gt;</li>
 </ul>
-<h3>とにかく内容が濃い</h3>
+
+<p>TwitterのOAuthの鍵やDB接続情報など、アプリを書く上で環境によって切り替える設定が大抵の場合あると思います。普段使っているPHPの場合、設定を外部ファイルに書きだす場合、ini,yaml,xml,phpのいずれかを使うことが多いのですが、Scalaの場合、設定ファイルってどうするのか気になりました。</p>
+
+<p>ということで、適当に思いついたライブラリやフレームワークがどのように対応しているのか調査。</p>
+
+<h2 id="section">ライブラリ</h2>
+
+<h3 id="properties">propertiesファイル</h3>
+
 <ul>
-<li>楽天の吉岡さんによる大人のプログラミングキャンプ</li>
-<li>CakePHP,Symfony,Lithiumのデベロッパーによるセッション</li>
-<li>彼らのライブコーディングを間近に見られる各フレームワークのワークショップ</li>
-<li>スポンサー各社のセッション</li>
-<li>PHPによる開発事例プレゼン大会のJIREI NIGHT</li>
-<li>ZyngaJapanのお二人によるTDDを実体験できるワークショップ</li>
-<li>深夜まで続くハッカソンと、総勢33名による大LT大会</li>
+  <li>javaの古くから使われている</li>
+  <li>キーと値のみ設定可能</li>
+  <li>依存関係がないので手軽。</li>
+  <li>すべてが文字列</li>
+  <li>例えばこんな感じ</li>
 </ul>
-<p>ざっと並べただけでもこんな感じに、とにかく内容てんこ盛りな二日間でした。</p>
-<p><a id="more"></a><a id="more-335"></a></p>
-<p><a title="IMG_2512 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/5046956568/"><img src="http://farm5.static.flickr.com/4133/5046956568_dd9b08f6eb.jpg" alt="IMG_2512" width="500" height="333" /></a></p>
-<p>まとめるのは得意ではないので、参加した感想を少しばかり。</p>
-<h3>イベントに参加するということがいかに重要であるか</h3>
-<p>最初の吉岡さんのセッションは「この祭りをいかに楽しく有意義に過ごすか」ということを教えていただきました。また、各セッションを聞いたり、たくさんのデベロッパーの方々とコミュニケーションをとるのも非常に有意義でした。<br />
-最後のLT大会では、参加したみなさんの変態ぶりに圧倒されっぱなし。これだけ多くの発表があるとそれぞれに目の付け所が違っているが故にアイデアももらえるし、そこで発表すれば多くの反応をいただくこともできます。参加することで得られるメリットは、参加費用にはかえがたいものがあったと思います。<br />
-最後の締めで@yandoさんが「個人によるイベント」と仰っていて、このイベントは有志のスタッフの方々に支えられている、ことを実感しました。企画・運営をしてくださったスタッフのみなさんには本当に感謝します。<br />
-そして、PHPMATSURIに関わったすべての方に感謝したいと思います。ありがとうございました。</p>
-<p><a title="IMG_2491 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/5046334983/"><img src="http://farm5.static.flickr.com/4086/5046334983_8bd1c1329a.jpg" alt="IMG_2491" width="500" height="333" /></a><br />
-今回のチャレンジをまとめてみます。</p>
-<h3>チャレンジできたこと</h3>
+
+<p>path/to/conf.properties</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="n">hoge</span> <span class="k">=</span> <span class="s">&quot;moge&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">val</span> <span class="n">p</span> <span class="k">=</span> <span class="k">new</span> <span class="n">java</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="nc">Properties</span><span class="o">()</span>
+</span><span class="line"><span class="k">val</span> <span class="n">config</span> <span class="k">=</span> <span class="n">p</span><span class="o">.</span><span class="n">load</span><span class="o">(</span><span class="k">new</span> <span class="n">java</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="nc">FileInputStream</span><span class="o">(</span><span class="s">&quot;path/to/conf.properties&quot;</span><span class="o">);</span>
+</span><span class="line"><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="s">&quot;hoge&quot;</span><span class="o">)</span> <span class="c1">// &quot;moge&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="twitterconfiggy">twitterのconfiggy</h3>
+
 <ul>
-<li>CakePHP,Symfony2,Lithium各フレームワークの特徴を知る</li>
-<li>プレゼン資料を拙いながらも英語で作成する</li>
-<li>内容に関係なく発表者になる</li>
-<li>動かなかったで終わらせず、動くまでハックする</li>
+  <li><a href="https://github.com/robey/configgy">https://github.com/robey/configgy</a></li>
+  <li>独自フォーマット</li>
+  <li>オワコン</li>
 </ul>
-<h3>チャレンジできなかったこと</h3>
+
+<h3 id="twitterutil-eval">twitterのutil-eval</h3>
+
 <ul>
-<li>各FWデベロッパーの方々とのコミュニケーション</li>
-<li>セッションで質問する(TDDのワークでは質問しましたが)</li>
-<li>ソースコード公開</li>
-<li>Beer Driven Development</li>
+  <li><a href="http://twitter.github.com/util/">http://twitter.github.com/util/</a></li>
+  <li>Evalした値をそのまま利用</li>
+  <li>Scalaのコンパイラに任せられる。つまりScalaコードがそのまま設定ファイルに。</li>
+  <li>型安全</li>
+  <li>詳しいことはこちらを参照
+    <ul>
+      <li><a href="http://d.hatena.ne.jp/xuwei/20110805/1312551980">twitter が Scala 大好きすぎて (?) 設定ファイルまで Scala のソースコードな件 - scalaとか・・・</a></li>
+      <li><a href="http://blog.youhei.jp/scala-util-eval">Scala アプリケーションのコンフィグレーションに Twitter 製の util-eval を使ってみた - blog.youhei.jp</a></li>
+    </ul>
+  </li>
+  <li>下記処理にて設定クラスインスタンスをapply経由で取り出せる
+    <ul>
+      <li><a href="https://github.com/twitter/util/blob/master/util-eval/src/main/scala/com/twitter/util/Eval.scala#L247">com.twitter.util.Eval#L247</a></li>
+    </ul>
+  </li>
+  <li><del>一時的にjarファイルを生成するので環境に制約あるとダメ（たぶん）</del>
+    <ul>
+      <li>一時ファイルを生成するのは、ローカルにcloneした古いままのバージョン（1.2.5）で動作確認していたためでした。</li>
+      <li>古いコード: <a href="https://github.com/twitter/util/blob/7c81842286f30aee4b2176bceb8c79ded710c88e/src/main/scala/com/twitter/util/Evaluator.scala">com.twitter.util.Evaluator</a>のコメントに<a href="https://github.com/twitter/util/blob/7c81842286f30aee4b2176bceb8c79ded710c88e/src/main/scala/com/twitter/util/Evaluator.scala#L57">All generated .scala and .class files are stored, by default, in System.getProperty(“java.io.tmpdir”)</a>と書いてあったので、「一時ファイルが生成される」と認識し、実際の動作確認でもその一時ファイルが確認できていました。</li>
+      <li>しかし、新しいコード: <a href="https://github.com/twitter/util/blob/master/util-eval/src/main/scala/com/twitter/util/Eval.scala">com.twitter.util.Eval</a>のコメントには<a href="https://github.com/twitter/util/blob/master/util-eval/src/main/scala/com/twitter/util/Eval.scala#L50">If target is None, the results are compiled to memory (and are therefore ephemeral)</a>とある通り、パス指定がない場合はメモリ上の仮想ディレクトリに対して操作を行う模様です。</li>
+    </ul>
+  </li>
+  <li>使い方</li>
 </ul>
-<h3>今後チャレンジしたいこと</h3>
-<ul>
-<li>今回の成果物のソースコード公開する</li>
-<li>英語を聞く力、話す力をつける</li>
-<li>発表の機会を自分でつくる</li>
-</ul>
-<h3>成果：XHProf CustomPanel</h3>
-<p>※詳しい話は別記事にてやります。</p>
-<div id="__ss_5344576" style="width: 425px;"><strong><a title="Php matusri xhprof custompanel" href="http://www.slideshare.net/restartr/php-matusri-xhprofcustompanelpublish">Php matusri xhprof custompanel</a></strong><object id="__sse5344576" classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" width="425" height="355" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,40,0"><param name="allowFullScreen" value="true" /><param name="allowScriptAccess" value="always" /><param name="src" value="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=phpmatusri-xhprofcustompanel-publish-101003011838-phpapp02&amp;stripped_title=php-matusri-xhprofcustompanelpublish&amp;userName=restartr" /><param name="name" value="__sse5344576" /><param name="allowfullscreen" value="true" /><embed id="__sse5344576" type="application/x-shockwave-flash" width="425" height="355" src="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=phpmatusri-xhprofcustompanel-publish-101003011838-phpapp02&amp;stripped_title=php-matusri-xhprofcustompanelpublish&amp;userName=restartr" name="__sse5344576" allowscriptaccess="always" allowfullscreen="true" /></object>
-<div style="padding: 5px 0 12px;">View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/restartr">Re STARTR</a>.</div>
-</div>
-<h3>おまけ</h3>
-<p>途中でレッドブルがふるまわれるというサービスまでありました。当日6時起きだったのに4時まで頑張れたのはレッドブルのおかげかもしれません。<br />
-<a title="IMG_2488 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/5046334797/"><img src="http://farm5.static.flickr.com/4108/5046334797_b3ed8b2f3e.jpg" alt="IMG_2488" width="500" height="333" /></a></p>
-<p>そして、最後にCakePHP開発者のGraham Weldonさんと記念撮影させてもらいました。<br />
-Thanks, Graham!<br />
-<a title="IMG_2514 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/5046335737/"><img src="http://farm5.static.flickr.com/4113/5046335737_4651050be6.jpg" alt="IMG_2514" width="500" height="333" /></a><br />
-#ほとんど会話できなかったのが悔やまれます。会話することを怖がらないことが大事ですね。反省。</p>
-</div>
-  
-  
 
+<p>設定のtraitを定義</p>
 
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2010/09/19/buy-an-amazon-kindle3/">Amazon Kindle3 Free 3G + Wi-Fiを買ってみた</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2010-09-19T10:48:29+09:00" pubdate data-updated="true">2010-09-19 (Sun)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><a title="IMG_2302 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/5003018900/"><img src="http://farm5.static.flickr.com/4087/5003018900_5a22f2eca5.jpg" alt="IMG_2302" width="500" height="333" /></a></p>
-<p>今流行の<a href="http://www.amazon.com/dp/B002FQJT3Q">Amazon Kindle3(3G+Wi-Fi)</a>を買ってみました。<br />
-発売開始の翌日に注文して、２週間程度での受け取りでした。<br />
-Amazon純正のKindle3用レザーカバーも頼んだんですが、そちらだけ先に届いてましたが、やっと本体も届きましたんで、<br />
-軽くレビューでも書いてみます。</p>
-<p><a id="more"></a><a id="more-325"></a><br />
-注文したのがたしか、8/28日。発送の連絡がきたのが9/10なのでその間約二週間。さらに受け取りまでは以下のように、不在による再配達も影響して、長い道のりとなりました。<br />
-<a href="http://www.flickr.com/photos/53244662@N04/5002490605/" title="配達履歴 by ReSTARTR_y, on Flickr"><img src="http://farm5.static.flickr.com/4092/5002490605_3cfe829cef.jpg" width="488" height="500" alt="配達履歴" /></a></p>
-<p>先に受け取ったレザーカバーのときもそうだったんですが、箱が工夫されています。<br />
-ダンボールの箱はガムテープで閉じられているのが普通ですが、お菓子の箱のようにダンボール自体に切り取れる細工がしてあります。<br />
-<a href="http://www.flickr.com/photos/53244662@N04/5002411379/" title="IMG_2285 by ReSTARTR_y, on Flickr"><img src="http://farm5.static.flickr.com/4107/5002411379_a1ab728694_m.jpg" width="240" height="160" alt="IMG_2285" /></a><br />
-<a href="http://www.flickr.com/photos/53244662@N04/5003018636/" title="IMG_2289 by ReSTARTR_y, on Flickr"><img src="http://farm5.static.flickr.com/4131/5003018636_5681651c2c_m.jpg" width="240" height="160" alt="IMG_2289" /></a><br />
-汎用サイズのダンボールでは難しいかもしれませんが、こういう工夫はなんとなく嬉しいです。</p>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5003018740/" title="IMG_2290 by ReSTARTR_y, on Flickr"><img src="http://farm5.static.flickr.com/4154/5003018740_245397caef.jpg" width="500" height="333" alt="IMG_2290" /></a><br />
-箱を開けるとこんなかんじ。<br />
-画面にPC接続の指示が書いてあります。表面にはってあるシートにプリントされているかのように見える程に電子インクは素晴らしいです。</p>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5002411213/" title="IMG_2274 by ReSTARTR_y, on Flickr"><img src="http://farm5.static.flickr.com/4089/5002411213_8cf4392a79.jpg" width="500" height="333" alt="IMG_2274" /></a><br />
-ちなみにレザーカバーはこんなかんじ。</p>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5003018454/" title="IMG_2279 by ReSTARTR_y, on Flickr"><img src="http://farm5.static.flickr.com/4125/5003018454_ba7fc2faf4.jpg" width="500" height="333" alt="IMG_2279" /></a><br />
-Kindle本体とは↑の写真のようなカバーの「フック」にひっかけて固定するようになってます。</p>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5002412019/" title="IMG_2295 by ReSTARTR_y, on Flickr"><img src="http://farm5.static.flickr.com/4126/5002412019_02ef7106de.jpg" width="500" height="333" alt="IMG_2295" /></a><br />
-ということでカバーと本体をくっつけるとこんなかんじになります。<br />
-重量はカバーなしの二倍くらいに重くなったように感じますが、実際に電車内で片手で持っていても腕が疲れないレベルです。</p>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5003019014/" title="IMG_2307 by ReSTARTR_y, on Flickr"><img src="http://farm5.static.flickr.com/4109/5003019014_4b7343171c.jpg" width="333" height="500" alt="IMG_2307" /></a><br />
-Experimentalな機能としてwebkitなブラウザが搭載されています。Twitterを見るとこんな感じになります。<br />
-表示速度ははっきりいって遅いうえに正直見づらいですが、本を呼んでいる最中にTLをチラ見したいときとか役立ちます。</p>
-<p>TwitterへツイートできたりFacebookへShareできたり連携機能があるので、ブラウザが搭載されているのはそれらサービス認証が主な目的だと思います。</p>
-<p>まだ数日しか使っていないですが、かなり便利なシロモノでした。</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2010/09/11/set-button-for-mixi-check-and-tweet-button-on-wordpress/">Wordpressにmixiチェックボタンを設置(公式tweetボタンも)</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2010-09-11T11:11:05+09:00" pubdate data-updated="true">2010-09-11 (Sat)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>タイトルそのまんまです。</p>
-<p>wordpressへのmixiチェックボタンの設置方法はこちら</p>
-<dl>
-<dt>mixiチェックキーの発行方法： </dt>
-<dt> </dt>
-<dd><a href="http://blog.fkoji.com/2010/09101830.html">ブログにmixiチェックを設置 - F.Ko-Jiの「一秒後は未来」</a></dd>
-<dt>wordpress用mixiチェックプラグイン：</dt>
-<dd><a href="http://github.com/takimo/mixi-check-for-wordpress/downloads">Downloads for takimo&#8217;s mixi-check-for-wordpress - GitHub</a></dd>
-</dl>
-<p>wordpressへのtweetボタンの導入プラグインはこちら</p>
-<dl>
-<dt>wordpress用tweetボタンプラグイン： </dt>
-<dt> </dt>
-<dd><a href="http://wordpress.org/extend/plugins/tweetbutton-for-wordpress/">WordPress ? TweetButton ? WordPress Plugins</a></dd>
-</dl>
-<p>それぞれプラグインをインストールしたら、管理画面で初期設定して、テンプレートをいじるだけ。<br />
-特に問題もなくスムーズに設置できました。</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2010/09/05/processing-the-file-formatted-tsv/">TSVファイルを処理する</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2010-09-05T18:22:53+09:00" pubdate data-updated="true">2010-09-05 (Sun)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Scalaプログラミング入門をざっと読んでから少し間が空いてしまいました。<br />
-第１回Scala座を見たりして刺激もらったのでちょっとScala弄りなど。<br />
-※Scala座については非公式にトゥギャらせてもらっています。：<a href="http://togetter.com/li/47287">第１回Scala座非公式勝手まとめ</a></p>
-<p>ちょっと雰囲気を振り返るため、普段PHPでよくやるTSVファイルの読み込みでテスト。</p>
-<p>foo.tsvの中身はこんな感じ。</p>
-<pre class="brush:c">
-u01,Tokyo
-u02,Osaka
-u03,Nagoya
-u04,Tokyo
-u05,Fukuoka
-u06,Nagoya
-u07,Nagoya
-u08,Shiga
-u09,Hokkaido
-u10,Osaka
-</pre>
-<p>これの転置インデックスを作成したい。</p>
-<p>で、<a href="http://rainyday.blog.so-net.ne.jp/2007-12-01">こちらのブログ記事</a>とかを参考にしたりして、何回か試行錯誤してできたのがこちらのソース。</p>
+<p>src/main/scala/com/restartr/utilSample/MyConfig.scala</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
@@ -487,394 +229,203 @@ u10,Osaka
 <span class="line-number">4</span>
 <span class="line-number">5</span>
 <span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-<span class="line-number">21</span>
-<span class="line-number">22</span>
-<span class="line-number">23</span>
-</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">import</span> <span class="nn">scala.collection.mutable.HashMap</span>
-</span><span class="line"><span class="k">import</span> <span class="nn">scala.io.Source</span>
-</span><span class="line"><span class="k">import</span> <span class="nn">scala.io.BufferedSource</span>
-</span><span class="line"><span class="k">object</span> <span class="nc">ReadTsv</span>
-</span><span class="line"><span class="o">{</span>
-</span><span class="line">  <span class="k">def</span> <span class="n">main</span><span class="o">(</span> <span class="n">args</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="o">)</span>
-</span><span class="line">  <span class="o">{</span>
-</span><span class="line">    <span class="k">val</span> <span class="n">source</span> <span class="k">=</span> <span class="nc">Source</span><span class="o">.</span><span class="n">fromFile</span><span class="o">(</span> <span class="s">&quot;foo.txt&quot;</span> <span class="o">)</span>
-</span><span class="line">    <span class="k">try</span> <span class="o">{</span>
-</span><span class="line">      <span class="k">var</span> <span class="n">m</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">[</span><span class="kt">String</span>,<span class="kt">List</span><span class="o">[</span><span class="kt">String</span><span class="o">]]</span>
-</span><span class="line">      <span class="k">for</span><span class="o">(</span> <span class="n">line</span> <span class="k">&lt;-</span> <span class="n">source</span><span class="o">.</span><span class="n">getLines</span> <span class="o">)</span> <span class="o">{</span>
-</span><span class="line">        <span class="k">val</span> <span class="n">x</span><span class="k">:</span><span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="n">line</span><span class="o">.</span><span class="n">stripLineEnd</span><span class="o">.</span><span class="n">split</span><span class="o">(</span><span class="s">&quot;,&quot;</span><span class="o">)</span>
-</span><span class="line">        <span class="n">m</span><span class="o">.</span><span class="n">update</span><span class="o">(</span><span class="n">x</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span> <span class="o">,</span> <span class="n">m</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="n">x</span><span class="o">(</span><span class="mi">1</span><span class="o">))</span> <span class="k">match</span> <span class="o">{</span>
-</span><span class="line">          <span class="k">case</span> <span class="nc">Some</span><span class="o">(</span><span class="n">s</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">x</span><span class="o">(</span><span class="mi">0</span><span class="o">)</span> <span class="o">::</span> <span class="n">s</span>
-</span><span class="line">          <span class="k">case</span> <span class="nc">None</span>    <span class="k">=&gt;</span> <span class="nc">List</span><span class="o">(</span> <span class="n">x</span><span class="o">(</span><span class="mi">0</span><span class="o">)</span> <span class="o">)</span>
-</span><span class="line">        <span class="o">})</span>
-</span><span class="line">      <span class="o">}</span>
-</span><span class="line">      <span class="n">println</span><span class="o">(</span> <span class="n">m</span> <span class="o">)</span>
-</span><span class="line">    <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
-</span><span class="line">      <span class="n">source</span><span class="o">.</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">BufferedSource</span><span class="o">].</span><span class="n">close</span>
-</span><span class="line">    <span class="o">}</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">package</span> <span class="nn">com.restartr.utilSample</span>
+</span><span class="line">
+</span><span class="line"><span class="k">trait</span> <span class="nc">MyConfig</span> <span class="o">{</span>
+</span><span class="line">  <span class="k">val</span> <span class="n">num</span><span class="k">:</span> <span class="kt">Int</span>
+</span><span class="line">  <span class="k">val</span> <span class="n">str</span><span class="k">:</span> <span class="kt">String</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>実際の設定ファイルでは、設定のTraitを継承してインスタンス生成</p>
+
+<p>※クラスインスタンスでなくても文字列やリストでもOK。</p>
+
+<p>path/to/config/MyConfig.scala</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">import</span> <span class="nn">com.restartr.utilSample.MyConfig</span>
+</span><span class="line"><span class="k">new</span> <span class="nc">MyConfig</span> <span class="o">{</span>
+</span><span class="line">  <span class="k">val</span> <span class="n">num</span> <span class="k">=</span> <span class="mi">1</span>
+</span><span class="line">  <span class="k">val</span> <span class="n">str</span> <span class="k">=</span> <span class="s">&quot;san&quot;</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>使いたい場所でEval。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">val</span> <span class="n">conf</span> <span class="k">=</span> <span class="nc">Eval</span><span class="o">[</span><span class="kt">MyConfig</span><span class="o">](</span><span class="k">new</span> <span class="n">java</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="nc">File</span><span class="o">(</span><span class="s">&quot;path/to/config/MyConfig.scala&quot;</span><span class="o">))</span>
+</span><span class="line"><span class="n">conf</span><span class="o">.</span><span class="n">num</span> <span class="c1">// 1</span>
+</span><span class="line"><span class="n">conf</span><span class="o">.</span><span class="n">str</span> <span class="c1">// &quot;san&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="configrity">configrity</h3>
+
+<ul>
+  <li><a href="https://github.com/paradigmatic/Configrity">https://github.com/paradigmatic/Configrity</a></li>
+  <li>akkaのフォーマットと同等
+    <ul>
+      <li><a href="https://github.com/paradigmatic/Configrity/wiki/Formats">設定のフォーマット</a></li>
+      <li>Scala 2.9以上対象。</li>
+      <li>configファイルの<strong>読み書き</strong>ができる
+        <ul>
+          <li>immutable, thread safe, allow functional design pattern</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="section-1">各種フレームワーク</h2>
+
+<p>以下のフレームワークはすべて独自実装でした。Propertiesじゃ役不足だし、かといってデファクトな設定用ライブラリがないからなのでしょうか。</p>
+
+<h3 id="akkaconfig">akkaのconfig</h3>
+
+<ul>
+  <li>akka.confとかがそれ。</li>
+  <li>独自パーサーを使用
+    <ul>
+      <li>70行程度のシンプルなパーサー</li>
+      <li><a href="https://github.com/jboner/akka/blob/master/akka-actor/src/main/scala/akka/config/ConfigParser.scala">akka.config.ConfigParser</a></li>
+      <li><del>正規表現で定義されてる</del>Scalaのパーザコンビネータ(RegexParsersを継承)で定義されている</li>
+      <li>”{“と”}”で階層構造を表現</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="n">akka</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">cluster</span><span class="o">{</span>
+</span><span class="line">    <span class="n">name</span> <span class="k">=</span> <span class="s">&quot;test-cluster&quot;</span>
 </span><span class="line">  <span class="o">}</span>
 </span><span class="line"><span class="o">}</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>実行</p>
+
+<ul>
+  <li>使える型</li>
+  <li>数値</li>
+  <li>文字列</li>
+  <li>真偽値（on/off , true/false)</li>
+  <li>リスト [1,2,3] / [“hoge”,”moge”]</li>
+</ul>
+
+<h3 id="playframeworkconfig">play!frameworkのconfig</h3>
+
+<ul>
+  <li>独自パーサー
+    <ul>
+      <li><a href="https://github.com/playframework/play/blob/master/framework/src/play/utils/OrderSafeProperties.java">play.utils.OrderSafeProperties</a></li>
+    </ul>
+  </li>
+  <li>java.util.propertiesを継承したもの。</li>
+  <li>環境ごとにIDを割り当てられる
+    <ul>
+      <li>http://playdocja.appspot.com/documentation/1.2.1/production</li>
+      <li>http://playdocja.appspot.com/documentation/1.2.1/guide11</li>
+      <li>IDごとに%{ID}を頭につければ切り替えてくれるみたい</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="lift">Lift</h3>
+
+<ul>
+  <li>LiftRulesが設定をもつ
+    <ul>
+      <li><a href="http://simply.liftweb.net/index-3.1.html#toc-Subsection-3.1.2">http://simply.liftweb.net/index-3.1.html#toc-Subsection-3.1.2</a></li>
+      <li>実装はここ
+*<a href="https://github.com/lift/framework/blob/master/web/webkit/src/main/scala/net/liftweb/http/LiftRules.scala">net.liftweb.http.LiftRules</a></li>
+      <li>たぶんこのへん
+        <ul>
+          <li><a href="https://github.com/lift/framework/blob/master/core/util/src/main/scala/net/liftweb/util/Props.scala">net.liftweb.util.Props</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<p>ざっと調べて使ってみたところ、手軽にやるならProperties、フレームワークを使うならそれに則り、厳密にやるならTwitterのEvalや、設定ファイルを読み書きできる独特なConfigrityなんかがよさそうです。</p>
+
+<p>XMLは…まぁないでしょうね。</p>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2011/08/16/3-things-that-i-was-in-trouble-using-squeryl/">ScalaのORMapperのSquerylを試してみてハマった３つのこと</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-08-16T08:00:15+09:00" pubdate data-updated="true">2011-08-16 (Tue)</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>ScalaのORMとしてSquerylってのがあります。</p>
+
+<ul>
+<li><a href="http://squeryl.org/index.html">Squeryl - A Scala ORM for SQL Databases</a></li>
+</ul>
+<p>使い方は上記リンク先を見ればだいたいわかります。</p>
+
+<p>あと、<a href="http://twitter.com/jugyo">@jugyo</a>さんのブログに導入あたりはまとまっていますし、つまづいたらGoogleGroupで検索すれば何か見つかるかもしれません。</p>
+
+<ul>
+<li><a href="http://blog.twiwt.org/e/f34763"> Twiwt:Blog / jugyo : squeryl を試す </a></li>
+<li><a href="http://blog.twiwt.org/e/7e40ce">Twiwt:Blog / jugyo : Squeryl の使い方 - セットアップ, モデルの定義, テーブル作成</a></li>
+<li><a href="https://groups.google.com/group/squeryl/about"> Squeryl | Google Groups </a></li>
+</ul>
+<p>さて、今回はTwitterっぽいものを想定して機能を試してみたのですが、３つほどハマったところを記しておきます。</p>
+
+<p>環境はScala2.9.0.1、Sbt0.7.7、MySQL5.5、Squeryl0.9.4です。</p>
+
+<p>ソースはgistに登録。それを本文末尾にも掲載しておきました。</p>
+
+<h3>１．プライマリーキーの指定での嵌りどころ</h3>
+<p>1つのカラムがPKとなるテーブルスキーマの場合、org.squeryl.KeyedEntity[T]を継承して使います。</p>
+
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>scalac ReadTsv.scala
-</span><span class="line"><span class="nv">$ </span>scala ReadTsv
-</span><span class="line">Map<span class="o">(</span>Shiga -&gt; List<span class="o">(</span>u08<span class="o">)</span>, Nagoya -&gt; List<span class="o">(</span>u07, u06, u03<span class="o">)</span>, Tokyo -&gt; List<span class="o">(</span>u04, u01<span class="o">)</span>, Osaka -&gt; List<span class="o">(</span>u10, u02<span class="o">)</span>, Fukuoka -&gt; List<span class="o">(</span>u05<span class="o">)</span>, Hokkaido -&gt; List<span class="o">(</span>u09<span class="o">))</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">class</span> <span class="nc">Users</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">text</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">KeyedEntity</span><span class="o">[</span><span class="kt">Long</span><span class="o">]</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>手続き型な感じが色濃い気がするけど、もっと関数型的になるのでしょうか。。<br />
-とりあえずコレクションとパターンマッチの練習にはなりました。</p>
-<p>他人のプログラムを拝見するなどして、もっとScalaの理解を深める必要がありそうです。</p>
-</div>
-  
-  
 
+<p>KeyedEntityにはidというフィールドが用意されていて、継承時に型を指定することで、PKの型に適用させることができます。今回の場合であればLong型のPK「id」ということになります。</p>
 
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2010/08/23/beginning-scala/">Scalaプログラミング入門(とその他Scala本)</a></h1>
-    
-    
-      <p class="meta">
-        
+<p>ただし、この場合、PKはautoincrementedになってしまいます。</p>
 
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2010-08-23T00:21:16+09:00" pubdate data-updated="true">2010-08-23 (Mon)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><ul>
-  <li><a href="http://www.amazon.co.jp/dp/4822284239">SCALAプログラミング入門 [単行本]</a></li>
-</ul>
-
-<p>お盆前にScalaプログラミング入門を購入して、少しづつScalaについて学んでいます。</p>
-
-<p><a id="more"></a><a id="more-295"></a></p>
-
-<p>通称「コップ本」と読み比べた上で、とっつきやすく実践寄りな「Scalaプログラミング入門」を選択しました。<br /></p>
-
-<ul>
-  <li><a href="http://www.amazon.co.jp/dp/4844327453">Scalaスケーラブルプログラミング[コンセプト&amp;コーディング] (Programming in Scala) [単行本]</a></li>
-</ul>
-
-<p>正直、「Scalaプログラミング入門」は自分にとっては手強いです。</p>
-
-<p>その文脈で説明している以外のところで唐突に新しい文法が含まれたコードが説明なしに含まれていたり。いきなり”sealed”とか書かれましても…</p>
-
-<p>まず文法について一通り把握するなら、こちらの「ボクらのScala」のほうが良いと思います。<br /></p>
-
-<ul>
-  <li><a href="http://www.amazon.co.jp/dp/4797359404">ボクらのScala ~ 次世代Java徹底入門 [単行本]</a></li>
-</ul>
-
-<p>「Scalaプログラミング入門」を一通り読んでモヤモヤがたまったあとに「ボクらのScala」を立ち読みして、「これはわかりやすい！ちゃんと整理されている！」と驚きました。</p>
-
-<p>順序良く学ぶなら、「ボクらのScala」→「Scalaプログラミング入門」→「Scalaスケーラブルプログラミング」の順が良いのではないでしょうか。<br />
-必要最低限の言語仕様を学び、実践よりの解説に目を通し、言語仕様の深いところを学ぶ、という流れになると思います。（すごく個人的な感想ですが。）</p>
-
-<p>まぁ、本の内容をひとつづつこのブログで解説する、なんてことはしませんが、少しづつでも得た知識をこのブログで整理していこうと思います。</p>
-
-<p>当面の目標は「ScalaでHadoopのジョブを書く」ですかね。</p>
-
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2010/08/22/change-my-iphone3gs-display/">バックライトがつかないiPhone3GSの液晶を交換してみた</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2010-08-22T21:45:17+09:00" pubdate data-updated="true">2010-08-22 (Sun)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><a title="IMG_2217 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/4914863453/"><img src="http://farm5.static.flickr.com/4119/4914863453_161bbe155f.jpg" alt="IMG_2217" width="333" height="500" /></a><br />
-タイトルそのまんまですが、iPhone3GSの液晶を交換しました。<br />
-<em>※参考にしていただいければ幸いですが、自己責任でお願いしますm(_ _)m</em></p>
-<p><strong><a id="more"></a><a id="more-284"></a>経緯</strong><br />
-FUJIROCK2010に行って、前夜祭で雨にやられてiPhone3GSのバックライトがつかなくなってしまいました。<br />
-ただし、液晶が見にくいだけで一応の一通りの機能に問題はありません。SoftBankショップに相談しにいったら修理するくらいならiPhone3GS/iPhone4に交換したほうが良いとのこと。でも今更iPhone4はスルーの予定だったし、iPhone3GSに変えるのもなんだかプライドが許さないわけです。<br />
-ということで、ひとまず3G回線をもともとつかっていた端末(SoftBank 911T)に機種変更してしのいでいました。</p>
-<p>が、iPhoneなしの生活がしんどくなってきたため、液晶交換に踏み切りました。ここまできたら保証もなにも気になりません。自己責任どんとこいです。</p>
-<p><a href="http://ilab.cc/lcd.html">交換作業を依頼することもできます</a>が、コスト削減のためにも自分でやります。必要なものは<a href="http://ilab.shop-pro.jp/?pid=15252505">iPhone3GS 液晶パネル</a>(<del>\7,800</del> \4,800(※2011/04/11現在))のみ。<a href="http://ilab.shop-pro.jp/?pid=14642995">専用の工具</a>(\800)も売っていますが、普通の精密ドライバーがあればなんとかなります。</p>
-<p><strong>交換の過程</strong><br />
-詳しい過程は<a href="http://mutodanoshi.com/blog/2009/08/iphne-3gs-lcd-replacement-01.html">こちら</a>を参照したほうが良いでしょうｗ（いちいち写真とるのめんどくさくて…）</p>
-<p><a title="IMG_2210 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/4914863441/"><img src="http://farm5.static.flickr.com/4122/4914863441_8cc97bce61.jpg" alt="IMG_2210" width="500" height="333" /></a><br />
-こんな感じのパッケージがダンボールに入れられて送られてきます。</p>
-<p>まずiPhoneの分解から。<br />
-本体を開けるとこんな感じで、本体右上あたりに「１」と「２」のシールが貼られたパーツで液晶とパネルが接続されています。それを引き抜けばOK。<br />
-<a title="IMG_2214 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/4914863445/"><img src="http://farm5.static.flickr.com/4118/4914863445_4e52429956.jpg" alt="IMG_2214" width="500" height="333" /></a></p>
-<p>次は液晶を全面のパネルからはずします。<br />
-液晶は金属フレームとくっついてるのですが、ただ粘着シートでくっついてるだけ（下写真）なです。<br />
-<a title="IMG_2219 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/4914863455/"><img src="http://farm5.static.flickr.com/4097/4914863455_f35d34792a.jpg" alt="IMG_2219" width="500" height="333" /></a></p>
-<p>そーっと液晶をひっペがすと鏡面が現れます（下写真右側がそれ）。で、新しい液晶の裏面のシートをはがして金属フレームとくっつけます。<br />
-<a title="IMG_2223 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/4914863461/"><img src="http://farm5.static.flickr.com/4138/4914863461_638b4d6a87.jpg" alt="IMG_2223" width="500" height="333" /></a></p>
-<p>ちなみにもともとくみこまれていたものにはQRコードのシールが貼ってますが、新しいものにはついてません。<br />
-（接続部分の「２」のシールもありません）<br />
-<a title="IMG_2222 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/4914863457/"><img src="http://farm5.static.flickr.com/4073/4914863457_6356258b66.jpg" alt="IMG_2222" width="500" height="333" /></a></p>
-<p>ちゃんと動作するか、バックライトが点くか確認してみます。<br />
-<a title="IMG_2232 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/4914890785/"><img src="http://farm5.static.flickr.com/4134/4914890785_2c2a32d671.jpg" alt="IMG_2232" width="500" height="333" /></a></p>
-<p>あとは元通りにするだけ。最後に本体下部のネジを締めて完了です。<br />
-<a title="IMG_2234 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/4914890885/"><img src="http://farm5.static.flickr.com/4137/4914890885_41b1e93b6d.jpg" alt="IMG_2234" width="500" height="333" /></a></p>
-<p>あ、前面パネルが緑色なのはこのシート使ってるからです。ヨドバシとかハンズとかに売ってます。印象がポップになるので気に入ってます。<br />
-<a title="IMG_2235 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/4914890933/"><img src="http://farm5.static.flickr.com/4115/4914890933_250318d01a.jpg" alt="IMG_2235" width="500" height="333" /></a></p>
-<p>機種変更は9月の締め日(9/11)まで待ち、それまではipod touchとして使います。</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2010/08/05/hadoop-hack-nignt-vol2/">Hadoop Hack Nignt Vol2に行ってきた</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2010-08-05T00:13:16+09:00" pubdate data-updated="true">2010-08-05 (Thu)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>今更ですが、8月4日に開催された<a href="http://gihyo.jp/event/2010/hadoophn2">Hadoop Hack Night vol.2</a>に行ってきました。<br />
-ハッシュタグは<a href="http://twitter.com/#search?q=%23hadoophn">#hadoophn</a>。</p>
-<p>詳細なレポートは以下を参照。</p>
-<ul>
-<li><a href="http://gihyo.jp/news/report/2010/08/0901">レポート：見えてきたHadoopの“使いどころ”─「Hadoop Hack Night Vol.2」開催｜gihyo.jp … 技術評論社</a></li>
-<li><a href="http://techblog.yahoo.co.jp/cat206/post_25/">満員御礼！「Hadoop Hack Night2」レポート (Yahoo! JAPAN Tech Blog)</a></li>
-</ul>
-<p>技評のレポートに、</p>
-<blockquote><p>古宮氏も，認証機能によって多くのユーザが使いながらジョブを立ち上げたままにできる点を指摘し，データを投げる入り口で認証をかけるため，共有使用時にだれかがオペレーションミスをしてもその影響で全体のデータが壊れることがないというメリットを挙げた。
-</p></blockquote>
-<p>とあるように、Hadoop with Securityのようなセキュリティ機能強化によって共用クラスタの可能性がみえてきた、というのが今回の一番の収穫ではないでしょうか。</p>
-<p>Hadoop with securityについては以下のOwen氏のスライドが参考になります。</p>
-<div style="width:425px" id="__ss_3553751"><strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/hadoopusergroup/hadoop-security-preview" title="Hadoop Security Preview">Hadoop Security Preview</a></strong><object id="__sse3553751" width="425" height="355"><param name="movie" value="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=hadoopsecuritypreview-100325134432-phpapp02&amp;stripped_title=hadoop-security-preview" /><param name="allowFullScreen" value="true" /><param name="allowScriptAccess" value="always" /><embed name="__sse3553751" src="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=hadoopsecuritypreview-100325134432-phpapp02&amp;stripped_title=hadoop-security-preview" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="355" /></object>
-<div style="padding:5px 0 12px">View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/hadoopusergroup">Hadoop User Group</a>.</div>
-</div>
-<p>まだ本格的にHadoopを利用していませんが、この可能性は大規模クラスタを準備するのが困難な企業にとって朗報だと思います。<br />
-今後の動向に注目ですね。</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2010/03/09/hadoop-hack-night/">Hadoop Hack Nightに行ってきた</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2010-03-09T23:39:08+09:00" pubdate data-updated="true">2010-03-09 (Tue)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>3月8日に開催された<a href="http://gihyo.jp/event/2010/hadoophn">Hadoop Hack Night</a>に行ってきました。<br />
-ハッシュタグは<a href="http://twitter.com/#search?q=%23hadoophn">#hadoophn</a>。</p>
-<p>最近Hadoop界隈を色々調査していたので、これは！と思い応募開始のアナウンスとともに申し込み。<br />
-応募者多数のため、申し込み期限が切り上げられたほどの人気ぶりだったようで。<br />
-抽選に当たったのは奇跡。なのでかなり気合入れていってきました。</p>
-<p>一番印象にのこったのは、</p>
-<ul>
-<li><a href="http://hadoop.apache.org/hdfs/">HDFS</a>は信頼性が低い</li>
-<li><a href="http://hadoop.apache.org/pig/">Pig</a>でカバーできない処理はほぼない</li>
-</ul>
-<p>の2点でした。</p>
-<p>以下、それについての感想です。</p>
-<h3>HDFSは信頼性が低い</h3>
-<p><a href="http://hadoop.apache.org/hdfs/">HDFS</a>はあくまで処理データの一時保存場所とすること。別にマスタデータは保持しておくべきだと。<br />
-まだ不安定性に遭遇したことがないのですが、この点はかなり重要になりそう。<br />
-確かに分散するのでコピーした分だけデータ量は増えるので、ずっとHDFS上のみで保管するのは現実的でないのかも。<br />
-<em>※ファイル圧縮の機能はHDFSは備えているけど、どちらかと言えば転送量を減らすのが目的のようですね。</em></p>
-<h3>PIGでカバーできない処理はほとんどない</h3>
-<p><a href="http://hadoop.apache.org/pig/">PIG</a>はMapReduceを使い易くした、一種のスクリプト言語のようなもの（と認識しています。）<br />
-逐次処理をJavaとかよりもと単純に書けます。<br />
-で、PIGはかなりドメインを限定して開発されたものと勝手にイメージしていたので、だいたいの処理がまかなえると聞いてちょっと驚き。<br />
-Hadoop本にはあまり細かいことが書かれていなかったし、「ほぼSQL」な<a href="http://hadoop.apache.org/hive/">Hive</a>中心に調査していたのですが、PIGもドキュメントとかもう少し見てみようと思います。</p>
-<p>主催者の皆様、講演者の皆様、参加者の皆様お疲れ様でした。<br />
-非常に有意義な時間が過ごせました。</p>
-<p><i>※全体を通してのメモは整理して後日追記します</i></p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2010/01/31/gearman%25e3%2581%25a7queueing/">Gearmanでqueueing</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2010-01-31T00:16:51+09:00" pubdate data-updated="true">2010-01-31 (Sun)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h3>queueing</h3>
-<p>webページを生成する際には、今すぐやらなきゃいけないことと、今すぐでなくても良いものがあります。<br />
-今すぐやらなきゃいけないこととは、ユーザーリクエストに対するDB参照結果等のことで、今すぐでなくても良いものとはアクセスログなどの処理をDBに書き込んだりメール送信したりなど。それ以外にもあるかもですが大体そんな感じです。</p>
-<p>通常であればすべて一回のHTTPリクエストの中でやるわけですが、queueingをすれば今やるべきでないことを後回しにできます。他にもメリットはありますが割愛で。</p>
-<p>で、phpでqueuingをやるとしたら、こんなのがあるそうです。</p>
-<ul>
-<li><a href="http://q4m.31tools.com/">Q4M<br />
-</a>
-</li>
-<li><a href="http://gearman.org">Gearman</a></li>
-<li><a href="http://activemq.apache.org/">ActiveMQ</a></li>
-<li><a href="http://kr.github.com/beanstalkd/">beanstalkd</a></li>
-</ul>
-<p>で、Q4Mを試そうとしたらMySQL5.1以降でないとダメとか。<br />
-ちょっとした事情で「5.1以降」という制約は避けたいので、Gearmanを試してみる事に。<br />
-※最後のbeanstalkdは<a href="http://rad-dev.org/">lithium</a>から使えるみたいです(<a href="http://rad-dev.org/li3_queue">li3_queue</a>)。<br />
-<a id="more"></a><a id="more-190"></a></p>
-<h3>仕組み</h3>
-<p>図解は<a href="http://gearman.org/images/gearman_stack.png">公式サイトの図</a>を見て下さい。</p>
-<p>登場人物は大きく３つ。</p>
-<ul>
-<li> ・Client：処理を依頼する人</li>
-<li> ・Worker：依頼された処理を実行する人</li>
-<li> ・JobServer：ClientとWorkerの橋渡しをする人</li>
-</ul>
-<p>JobServerはdaemonで常駐していて、<br />
-Clientからの要求がある度に、別途常駐しているWorkerに対して処理を投げます。<br />
-かなりシンプルです。</p>
-<h3>使い道</h3>
-<p>Client側から処理を依頼するパターンはだいたい４つ。</p>
-<ul>
-<li>今すぐ依頼して、その結果を受け取る</li>
-<li>今すぐ依頼して、結果を待たずに終了する</li>
-<li>タスクを追加して、最後にまとめて実行して、その結果を受け取る</li>
-<li>タスクを追加して、最後にまとめて実行して、結果を待たずに終了する</li>
-</ul>
-<h3>インストール</h3>
-<p>Gearmanサーバーのインストール</p>
-<blockquote><p>wget http://launchpad.net/gearmand/trunk/0.11/+download/gearmand-0.11.tar.gz<br />
-tar zxf gearmand-0.11.tar.gz<br />
-cd gearmand-0.11<br />
-./configure<br />
-make; make install</p></blockquote>
-<p>起動</p>
-<blockquote><p>/usr/local/sbin/gearmand  -u root &#8211;daemon</p></blockquote>
-<p>php extensionのインストール</p>
-<blockquote><p>wget http://pecl.php.net/get/gearman-0.6.0.tgz<br />
-tar zxf gearman-0.6.0.tgz<br />
-cd gearman-0.6.0<br />
-phpize<br />
-./configure<br />
-make; make install</p></blockquote>
-<h3>サンプル</h3>
-<h4>今すぐ依頼して、結果を受け取るパターン</h4>
-<p>worker.php</p>
+<p>コード的には下記のようにKeyedEntity[T]を使わずSchema継承時に定義するのと同等になるわけです。</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
@@ -887,41 +438,20 @@ make; make install</p></blockquote>
 <span class="line-number">9</span>
 <span class="line-number">10</span>
 <span class="line-number">11</span>
-</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="o">&lt;?</span> <span class="nx">php</span>
-</span><span class="line"><span class="nv">$worker</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GearmanWorker</span><span class="p">();</span>
-</span><span class="line"><span class="nv">$worker</span><span class="o">-&gt;</span><span class="na">addServer</span><span class="p">();</span>
-</span><span class="line"><span class="nv">$worker</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="nx">addFunction</span><span class="p">(</span><span class="s1">&#39;hoge&#39;</span><span class="p">,</span><span class="s1">&#39;hoge_func&#39;</span><span class="p">);</span>
-</span><span class="line"><span class="c1">// 常駐</span>
-</span><span class="line"><span class="k">while</span><span class="p">(</span><span class="nv">$worker</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="nx">work</span><span class="p">());</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">class</span> <span class="nc">Users</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">text</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span>
 </span><span class="line">
-</span><span class="line"><span class="k">function</span> <span class="nf">hoge_func</span><span class="p">(</span><span class="nx">GearmanJob</span> <span class="nv">$job</span><span class="p">)</span>
-</span><span class="line"><span class="p">{</span>
-</span><span class="line">    <span class="k">return</span> <span class="s1">&#39;hoge&#39;</span><span class="o">.</span><span class="nv">$job</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="nx">workload</span><span class="p">();</span>
-</span><span class="line"><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>&lt;? php</p>
-
-<p>client.php</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="o">&lt;?</span> <span class="nx">php</span>
-</span><span class="line"><span class="nv">$worker</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GearmanWorker</span><span class="p">();</span>
-</span><span class="line"><span class="nv">$worker</span><span class="o">-&gt;</span><span class="na">addServer</span><span class="p">();</span>
-</span><span class="line"><span class="k">echo</span>  <span class="nv">$client</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="k">do</span><span class="p">(</span><span class="s1">&#39;hoge&#39;</span><span class="p">,</span> <span class="s1">&#39;hello&#39;</span><span class="p">);</span>
-</span><span class="line"><span class="k">echo</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+</span><span class="line"><span class="k">class</span> <span class="nc">Db</span> <span class="k">extends</span> <span class="nc">Schema</span> <span class="o">{</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">val</span> <span class="n">users</span> <span class="k">=</span> <span class="n">table</span><span class="o">[</span><span class="kt">User</span><span class="o">](</span><span class="s">&quot;users&quot;</span><span class="o">)</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">on</span><span class="o">(</span><span class="n">users</span><span class="o">)(</span><span class="n">u</span> <span class="k">=&gt;</span> <span class="n">declare</span><span class="o">(</span>
+</span><span class="line">
+</span><span class="line">    <span class="n">u</span><span class="o">.</span><span class="n">id</span> <span class="n">is</span> <span class="o">(</span><span class="n">primaryKey</span><span class="o">,</span> <span class="n">autoincremented</span><span class="o">))</span>
+</span><span class="line">
+</span><span class="line"><span class="o">}</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>実行してみる</p>
-<blockquote><p>$ php woker.php &amp;<br />
-$ php client.php<br />
-hello, hoge</p></blockquote>
-<p>これだけだとほぼ意味ないので、重い処理を遅延実行させてみます。</p>
-<h4>今すぐ依頼して、結果を待たずに終了するパターン</h4>
-<p>worker.php</p>
+<p>これは結構困ります。そんな場合はSchemaを継承するときに定義を上書きすればOK。</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
@@ -934,156 +464,337 @@ hello, hoge</p></blockquote>
 <span class="line-number">9</span>
 <span class="line-number">10</span>
 <span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="o">&lt;?</span> <span class="nx">php</span>
-</span><span class="line"><span class="nv">$worker</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GearmanWorker</span><span class="p">();</span>
-</span><span class="line"><span class="nv">$worker</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="nx">addServer</span><span class="p">();</span>
-</span><span class="line"><span class="nv">$worker</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="nx">addFunction</span><span class="p">(</span><span class="s1">&#39;hoge&#39;</span><span class="p">,</span><span class="s1">&#39;hoge_func&#39;</span><span class="p">);</span>
-</span><span class="line"><span class="nv">$worker</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="nx">addFunction</span><span class="p">(</span><span class="s1">&#39;heavy&#39;</span><span class="p">,</span><span class="s1">&#39;heavy_func&#39;</span><span class="p">);</span>
-</span><span class="line"><span class="c1">// 常駐</span>
-</span><span class="line"><span class="k">while</span><span class="p">(</span><span class="nv">$worker</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="nx">work</span><span class="p">());</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">class</span> <span class="nc">Users</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">text</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">KeyedEntity</span><span class="o">[</span><span class="kt">Long</span><span class="o">]</span>
 </span><span class="line">
-</span><span class="line"><span class="k">function</span> <span class="nf">hoge_func</span><span class="p">(</span><span class="nx">GearmanJob</span> <span class="nv">$job</span><span class="p">)</span>
-</span><span class="line"><span class="p">{</span>
-</span><span class="line">    <span class="k">return</span> <span class="s1">&#39;hoge, &#39;</span><span class="o">.</span><span class="nv">$job</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="nx">workload</span><span class="p">();</span>
-</span><span class="line"><span class="p">}</span>
-</span><span class="line"><span class="k">function</span> <span class="nf">heavy_func</span><span class="p">(</span><span class="nx">GearmanJob</span> <span class="nv">$job</span><span class="p">)</span>
-</span><span class="line"><span class="p">{</span>
-</span><span class="line">        <span class="k">echo</span> <span class="s2">&quot;wait...&quot;</span><span class="p">;</span>
-</span><span class="line">        <span class="nb">sleep</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span>
-</span><span class="line">    <span class="k">return</span> <span class="s1">&#39;hoge, &#39;</span><span class="o">.</span><span class="nv">$job</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="nx">workload</span><span class="p">();</span>
-</span><span class="line"><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>client.php</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="o">&lt;?</span> <span class="nx">php</span>
-</span><span class="line"><span class="nv">$client</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GearmanClient</span><span class="p">();</span>
-</span><span class="line"><span class="nv">$client</span><span class="o">-&gt;</span><span class="na">addServer</span><span class="p">();</span>
-</span><span class="line"><span class="k">echo</span>  <span class="nv">$client</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="k">do</span><span class="p">(</span><span class="s1">&#39;hoge&#39;</span><span class="p">,</span> <span class="s1">&#39;hello&#39;</span><span class="p">);</span>
-</span><span class="line"><span class="k">echo</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
-</span><span class="line"><span class="k">echo</span> <span class="nv">$client</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="k">do</span><span class="p">(</span><span class="s1">&#39;heavy&#39;</span><span class="p">,</span> <span class="s1">&#39;hello (sync)&#39;</span><span class="p">);</span>
-</span><span class="line"><span class="k">echo</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
-</span><span class="line"><span class="nv">$client</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="nx">doBackground</span><span class="p">(</span><span class="s1">&#39;heavy&#39;</span><span class="p">,</span> <span class="s1">&#39;hello (async)&#39;</span><span class="p">);</span>
-</span><span class="line"><span class="k">echo</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>実行してみる</p>
-<blockquote><p>$ php worker.php &amp;<br />
-$ php client.php<br />
-hoge, hello<br />
-hoge, hello (sync)</p></blockquote>
-<p>とまぁ、doBackgroundで依頼したキューの場合、clientでは結果を受け取ってません。<br />
-これが基本的な使い方。</p>
-<h4>タスクを追加して、最後にまとめて実行して、その結果を受け取る</h4>
-<p>task_client.php</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="o">&lt;?</span> <span class="nx">php</span>
-</span><span class="line"><span class="nv">$client</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GearmanClient</span><span class="p">();</span>
-</span><span class="line"><span class="nv">$client</span><span class="o">-&gt;</span><span class="na">addServer</span><span class="p">();</span>
-</span><span class="line"><span class="nv">$client</span><span class="o">-&gt;</span><span class="na">setCompleteCallback</span><span class="p">(</span><span class="s1">&#39;task_cb&#39;</span><span class="p">);</span>
-</span><span class="line"><span class="nv">$client</span><span class="o">-&gt;</span><span class="na">addTask</span><span class="p">(</span><span class="s1">&#39;hoge&#39;</span><span class="p">,</span> <span class="s1">&#39;arg1&#39;</span><span class="p">);</span>
-</span><span class="line"><span class="nv">$client</span><span class="o">-&gt;</span><span class="na">addTask</span><span class="p">(</span><span class="s1">&#39;heavy&#39;</span><span class="p">,</span> <span class="s1">&#39;arg2&#39;</span><span class="p">);</span>
-</span><span class="line"><span class="nv">$client</span><span class="o">-&gt;</span><span class="na">runTasks</span><span class="p">();</span>
-</span><span class="line"><span class="k">function</span> <span class="nf">task_cb</span><span class="p">(</span><span class="nx">GearmanTask</span> <span class="nv">$task</span><span class="p">)</span>
-</span><span class="line"><span class="p">{</span>
-</span><span class="line">    <span class="k">echo</span> <span class="s1">&#39;[result]&#39;</span><span class="o">.</span><span class="nv">$task</span><span class="o">-&gt;</span><span class="na">data</span><span class="p">();</span>
-</span><span class="line">    <span class="k">echo</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
-</span><span class="line"><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<blockquote><p>
-$ worker.php &amp;<br />
-$ task_client.php<br />
-[result]hoge, arg1<br />
-[result]hoge, arg2
-</p></blockquote>
-
-<p>と、ひとつめの結果表示のあとには重い処理待ちが発生します。</p>
-<h4>タスクを追加して、最後にまとめて実行して、結果を待たずに終了する</h4>
-<p>重い処理をバックグラウンドのタスクとして登録します。<br />
-task_client.php</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="o">&lt;?</span> <span class="nx">php</span>
+</span><span class="line"><span class="k">class</span> <span class="nc">Db</span> <span class="k">extends</span> <span class="nc">Schema</span> <span class="o">{</span>
 </span><span class="line">
-</span><span class="line"><span class="nv">$client</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GearmanClient</span><span class="p">();</span>
-</span><span class="line"><span class="nv">$client</span><span class="o">-&gt;</span><span class="na">addServer</span><span class="p">();</span>
-</span><span class="line"><span class="nv">$client</span><span class="o">-&gt;</span><span class="na">setCompleteCallback</span><span class="p">(</span><span class="s1">&#39;task_cb&#39;</span><span class="p">);</span>
-</span><span class="line"><span class="nv">$client</span><span class="o">-&gt;</span><span class="na">addTask</span><span class="p">(</span><span class="s1">&#39;hoge&#39;</span><span class="p">,</span> <span class="s1">&#39;arg1&#39;</span><span class="p">);</span>
-</span><span class="line"><span class="nv">$client</span><span class="o">-&gt;</span><span class="na">addTaskBackground</span><span class="p">(</span><span class="s1">&#39;heavy&#39;</span><span class="p">,</span> <span class="s1">&#39;arg2&#39;</span><span class="p">);</span>
-</span><span class="line"><span class="nv">$client</span><span class="o">-&gt;</span><span class="na">runTasks</span><span class="p">();</span>
+</span><span class="line">  <span class="k">val</span> <span class="n">users</span> <span class="k">=</span> <span class="n">table</span><span class="o">[</span><span class="kt">User</span><span class="o">](</span><span class="s">&quot;users&quot;</span><span class="o">)</span>
 </span><span class="line">
-</span><span class="line"><span class="k">function</span> <span class="nf">task_cb</span><span class="p">(</span><span class="nx">GearmanTask</span> <span class="nv">$task</span><span class="p">)</span>
-</span><span class="line"><span class="p">{</span>
-</span><span class="line">        <span class="k">echo</span> <span class="s1">&#39;[result]&#39;</span><span class="o">.</span><span class="nv">$task</span><span class="o">-&gt;</span><span class="na">data</span><span class="p">();</span>
-</span><span class="line">        <span class="k">echo</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
-</span><span class="line"><span class="p">}</span>
+</span><span class="line">  <span class="n">on</span><span class="o">(</span><span class="n">users</span><span class="o">)(</span><span class="n">u</span> <span class="k">=&gt;</span> <span class="n">declare</span><span class="o">(</span>
+</span><span class="line">
+</span><span class="line">    <span class="n">u</span><span class="o">.</span><span class="n">id</span> <span class="n">is</span> <span class="o">(</span><span class="n">primaryKey</span><span class="o">))</span>
+</span><span class="line">
+</span><span class="line"><span class="o">}</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>実行</p>
+<p>これはSquerylのGoogleGroupに書いてました。</p>
 
-<blockquote><p>
-[result]hoge, arg1
-</p></blockquote>
-<p>addTaskBackgroundで追加したタスクの結果のみ待たずに処理が終了します。<br />
-この例だと意味ないですが、今すぐ結果を必要としない処理を後回しにすることでユーザーへのレスポンスを高速化することができます。</p>
-<h3>注意点</h3>
-<h4>引数は数字と文字列のみ</h4>
-<p>配列やオブジェクトではやりとりできないので、<br />
-そういったものはシリアライズするとかjsonにするとかして渡さないとだめです。
-<h4>workerが見つかるまで待つ</h4>
-<p>clientからリクエストするworker名が存在しない（常駐していない場合）は、<br />
-JobServerはworkerが見つかるまで待ちます。clientがバックグラウンドで依頼しなければそちらでも待ちが発生します。で、対象workerを起動すると即座にJobServerはキュー処理をworkerに渡します。当然ですが。</p>
-<p>もう少し現実的な処理の中でqueueingして試したかったのですが、<br />
-まずは入り口ということで。次回はもうちょっと突っ込んだ処理をやってみたいと。</p>
-<h3>参考資料</h3>
 <ul>
-<li><a href="http://gearman.org">Gearman(公式サイト)</a></li>
-<li><a href="http://www.php.net/manual/en/book.gearman.php">PHP: Gearman - Manual</a></li>
-<li><a href="http://www.ibm.com/developerworks/jp/opensource/library/os-php-gearman/">Gearman を使って PHP アプリケーションのワークロードを分散する</a></li>
+<li><a href="https://groups.google.com/forum/#!topic/squeryl/BTrKBwikMqs">how to cancel &#8220;autoincremented&#8221; from KeyedEntity[T]</a></li>
 </ul>
-</p>
+<h3>２．DDLのカラムの順番の嵌りどころ</h3>
+<p>Db.printDdlを実行した時にカラムの順番が予測できません。</p>
+
+<p>PKが最初にくるのかと思えばそうでもないみたい。ここは細かく追ってないですが、これもGoogleGroupに答えがありました。</p>
+
+<ul>
+<li><a href="https://groups.google.com/forum/#!topic/squeryl/ZwiDf5Q-IUI">CREATE TABLE columns in order of constructor arguments</a></li>
+</ul>
+<p>答えとしては、org.squeryl.internals.DatabaseAdapter:: writeCreateTableあたりをorverrideしてなんとかしてくれとのこと。</p>
+
+<p><a href="https://github.com/max-l/Squeryl/blob/master/src/main/scala/org/squeryl/internals/DatabaseAdapter.scala#L255">https://github.com/max-l/Squeryl/blob/master/src/main/scala/org/squeryl/internals/DatabaseAdapter.scala#L255</a></p>
+
+<p>なんか良い方法はないの…</p>
+
+<p>とりあえず、printDdlした結果をコピーして、順番だけ書き換えて、手動で直接DBにクエリ発行すればなんとかなるでしょう。</p>
+
+<h3>３．外部キーの利用でのはまりどころ</h3>
+<p>２つのテーブルにRelationを設定してからDb.createした際、外部キーが設定されない問題がありました。</p>
+
+<p>MySQLは5.5を使っているので外部キーに対応していない訳でもないです。</p>
+
+<p>問題はAdapterの選定にありました。</p>
+
+<p>org.squeryl.adapter.MySQLAdapter</p>
+
+<p>をつかっていたのですが、</p>
+
+<p>org.squeryl.adapter.MySQLInnoDBAdapter</p>
+
+<p>を使えばOKでした。</p>
+
+<p>根本の原因は、org.squeryl.adapter.MySQLAdapterに</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">override</span> <span class="k">def</span> <span class="n">supportsForeignKeyConstraints</span> <span class="k">=</span> <span class="kc">false</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>と定義してあり、一方のorg.squeryl.adapter.MySQLInnoDBAdapterには</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">override</span> <span class="k">def</span> <span class="n">supportsForeignKeyConstraints</span> <span class="k">=</span> <span class="kc">true</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>と定義してあります。</p>
+
+<p>この値がtrueになっていないとForeignKeyの制約がDDLに含まれなくなってしまうので注意です。</p>
+
+<p><a href="https://github.com/max-l/Squeryl/blob/master/src/main/scala/org/squeryl/adapters/MySQLAdapter.scala#L75">Docコメントにも書いてある</a>ので注意です。</p>
+
+<p>以上、Squerylを弄ってみて嵌ったことをまとめてみました。</p>
+
+<h3>Squerylの使用感</h3>
+<p>ちょっと前にTwitterのStreamAPIのデータをMySQLに格納するためにSquerylを使ったのと今回少し弄ってみただけなのでまだまだ知らないことだらけです。他にも機能的はたくさん用意されていると思いますし、APIも割となじみやすいので複雑すぎないテーブル定義の場合には積極的にSquerylを使っていこうと思います。</p>
+
+<p><em>※ドキュメントや本体のソースを追いかけたりしながら使い方を学ぶのは非常に楽しいです:)</em></p>
+
+<p>で、ソースは以下です。</p>
+
+<script src="https://gist.github.com/1146854.js"> </script>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2011/06/21/go-to-varnish-study-tokyovc/">Varnish勉強会 #tokyovcl に行ってきた</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-06-21T23:56:40+09:00" pubdate data-updated="true">2011-06-21 (Tue)</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><a href="http://www.flickr.com/photos/53244662@N04/5856931526/" title="IMAG0053 by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5029/5856931526_1119c53a87.jpg" width="500" height="299" alt="IMAG0053" /></a></p>
+
+<p>6/18(土)に開催された<a href="http://atnd.org/events/16681">Varnish勉強会 Tokyo.vcl : ATND</a>に行ってきました。
+初のクックパッドさんオフィス訪問です。</p>
+
+<p>Varnish3のリリースパーティーも兼ねての開催だったようで、ステッカーもいただいてしまいました。
+インフラ屋じゃない上に、Varnish触ったのは前日の晩という超初心者だったので結構不安でしたが、
+ビアバッシュを含め色々な話しが聞けた実りある良い勉強会でした。</p>
+
+<p>主催の@hmskさんをはじめ登壇者の皆様、ならびにビアバッシュで交流してくださった皆様ありがとうございました。</p>
+
+<h3 id="section">雑感</h3>
+<ul>
+  <li>Varnishは画像配信の事例が多い</li>
+  <li>HTTPサーバーの前だけじゃなくてSolrのような内部ネットワーク間の通信にも適用できる。</li>
+  <li>Varnish落ちたときにApacheの負荷を避けるためにSquidが使える。</li>
+  <li>拡張次第でHTTPサーバーにもKVSにも化ける（やりすぎ注意？）。</li>
+  <li>クラウドでの運用はフロンティア。</li>
+  <li>設定ファイルのvclはもはやプログラム</li>
+  <li>ESIの事例なかったけど使いにくいのかな？</li>
+  <li>とりあえず実戦投入して様子見ないとわからないことが多そう。</li>
+  <li>あ、どれだけ高速化したかについての言及がなかったような…</li>
+</ul>
+
+<h2 id="section-1">各発表メモ</h2>
+<p>スライドと、その丸写しみたいな感じのメモをペタペタ。</p>
+
+<h3 id="varnishcache30vupxcir">VarnishCache3.0新機能とVUPの仕方(@xcir)</h3>
+
+<div style="width:425px" id="__ss_8344516"> <strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/xcir/tokyovclvarnishcache30vup" title="tokyo.vcl発表資料（VarnishCache3.0新機能とVUPの仕方）">tokyo.vcl発表資料（VarnishCache3.0新機能とVUPの仕方）</a></strong> <iframe src="http://www.slideshare.net/slideshow/embed_code/8344516" width="425" height="355" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
+<div style="padding:5px 0 12px"> View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/xcir">xcir</a> </div>
+
+</div>
+<ul>
+  <li>ESIでのgzip
+    <ul>
+      <li>ブロックが圧縮されているとESIできなかった(~2）</li>
+      <li>defaultパラメータが改善された</li>
+    </ul>
+  </li>
+  <li>stream support
+    <ul>
+      <li>別のストリームは待機させられる（？</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="varnishphji">イカ娘も終わったしVarnishでも使うか(@phji)</h3>
+
+<div style="width:425px" id="__ss_8366215"> <strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/phji/varnishika" title="イカ娘も終わったしVarnishでも使うか">イカ娘も終わったしVarnishでも使うか</a></strong> <iframe src="http://www.slideshare.net/slideshow/embed_code/8366215" width="425" height="355" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
+<div style="padding:5px 0 12px"> View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/phji">Kazutoshi Fujimoto</a> </div>
+
+</div>
+<ul>
+  <li>[RAM8G Xeon 4core SSD256GB ] x 20servers</li>
+  <li>pixiv
+    <ul>
+      <li>nginx -&gt; (consistent hash) -&gt; quid -&gt; nginx -&gt; apache</li>
+      <li>lookupとかかないとキャッシュされないｗ</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="twitteryatsvarnishpenguinana">twitter検索(yats)でvarnish使ってみた(@PENGUINANA_)</h3>
+<ul>
+  <li>API 7000M req/month</li>
+  <li>PV 150Mreq/month</li>
+  <li>varnish(vps) -&gt; nginx[ webAPI -&gt; varnish -&gt; Solr ]</li>
+  <li>service : cache + failover</li>
+  <li>Solr: slaveのキャッシュクリアーが重いので、その前面にVarnishをおいている(ラウンドロビンとFailover）</li>
+  <li>autocomplete
+    <ul>
+      <li>キャッシュと相性よさそう</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="ec2varnishmirakui">EC2とvarnishで画像配信(@mirakui)</h3>
+
+<div style="width:425px" id="__ss_8352369"> <strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/mirakui/ec2varnish" title="EC2とVarnishで画像配信">EC2とVarnishで画像配信</a></strong> <iframe src="http://www.slideshare.net/slideshow/embed_code/8352369" width="425" height="355" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
+<div style="padding:5px 0 12px"> View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/mirakui">Issei Naruta</a> </div>
+
+</div>
+<ul>
+  <li>失敗談</li>
+  <li>TOFU
+    <ul>
+      <li>アップロード時ではなくオンデマンドでリサイズ</li>
+      <li>akamai（CDN)に7000RPSのうち、ELBには700RPSくる。60%受けるリクエストをキャッシュできればApache負荷軽減できるのでは？
+        <ul>
+          <li>という導入経緯（からの失敗</li>
+        </ul>
+      </li>
+      <li>1st challenge
+        <ul>
+          <li>EC2(M2.XLARGE[17.1GB RAM] + EBS[100GB for swap])</li>
+          <li>300rps</li>
+          <li>結果：オンメモリだけなら順調だけど、あふれてきてOSにSWAPさせたとたんLOADAVERAGEが爆発して死亡。</li>
+        </ul>
+      </li>
+      <li>2nd challenge
+        <ul>
+          <li>EC2(M2.XLARGE[17.1GB RAM] + EBS[100GB for ext3])</li>
+          <li>“file storage”を使っても結局メモリ容量が大量に必要</li>
+        </ul>
+      </li>
+      <li>ec2のxlargeインスタンスには、IO性能「標準」と「高」がある
+        <ul>
+          <li>今回は「標準」を利用して失敗</li>
+          <li>「高」ならうまくいくかも</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>varnish3
+    <ul>
+      <li>hash director
+        <ul>
+          <li>consistent hashingができるかも？</li>
+          <li>nginxいらずに複数varnish運用ができるかも？</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="puppetvarnishsquidar1">Puppetでvarnishもsquidも面倒みる(@ar1)</h3>
+<ul>
+  <li>ふつうはvarnishは落ちるのでLBつかって並列で運用</li>
+  <li>varnishおちるとWebサーバーが負荷かかってしまう
+    <ul>
+      <li>LB -&gt; varnish -&gt; squid -&gt; apache</li>
+      <li>squidどうしでキャッシュを共有できるので、１つSquidおちてもWebサーバーにききにいかずにすむ。</li>
+    </ul>
+  </li>
+  <li>puppet
+    <ul>
+      <li>設定をらくにする</li>
+      <li>cacheのExpire</li>
+      <li>サーバーのぬきさし</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="varnishspchidren">楽天でvarnish(@spchidren)</h3>
+<ul>
+  <li>L7 balancingがやりたくてVarnish導入
+    <ul>
+      <li>URLによってWebサーバーのグループを切り替えたい</li>
+    </ul>
+  </li>
+  <li>akamai -&gt; LB -&gt; varnish(RAM24G[malloc18G/hitrate 75%] -&gt; apache(+mod_thumb)</li>
+  <li>LBからVarnishを切り離すのはどうやる？</li>
+  <li>CDNやVarnishのcache clearをどうやるか
+    <ul>
+      <li>画像登録されたときにMQに登録して、必要に応じて消す</li>
+      <li>CDNは常にExpireされない状態にしておける。</li>
+    </ul>
+  </li>
+  <li>ImageMagicおもい
+    <ul>
+      <li>varnishにサムネイルをつくるしくみを組み込んでみれば？（FreeImage)</li>
+      <li>cc_commandでインクルードさせて、C言語でサムネイルつくるしくみをくみこむ</li>
+    </ul>
+  </li>
+  <li>varnishのいくさき
+    <ul>
+      <li>nginxにも近いしredisにもちかづいてきてる</li>
+      <li>どこにいくんでしょ</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="tddvclhmsk">TDDでVCL書いてデプロイ(@hmsk)</h3>
+<ul>
+  <li>varnishtest
+    <ul>
+      <li>RSpecぽい書き方できる</li>
+      <li>xxx.vcltestファイルにケースを記述</li>
+    </ul>
+  </li>
+  <li>vmod
+    <ul>
+      <li>vclの設定をC言語っぽく描ける</li>
+      <li>パージや圧縮、エラーなどに使える</li>
+      <li>モバイル端末のリストのチェックにもVCLから外出しできる</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="section-2">関連リンク</h2>
+<ul>
+  <li>ATND
+    <ul>
+      <li><a href="http://atnd.org/events/16681">Varnish勉強会 Tokyo.vcl : ATND</a></li>
+    </ul>
+  </li>
+  <li>Ustream
+    <ul>
+      <li><a href="http://www.ustream.tv/recorded/15453305">http://www.ustream.tv/recorded/15453305</a></li>
+      <li><a href="http://www.ustream.tv/recorded/15453834">http://www.ustream.tv/recorded/15453834</a></li>
+    </ul>
+  </li>
+  <li>Togetter
+    <ul>
+      <li><a href="http://togetter.com/li/151585">Togetter - 「第一回 Varnish勉強会 Tokyo.vcl」</a></li>
+    </ul>
+  </li>
+  <li>勉強会レポート
+    <ul>
+      <li><a href="http://d.hatena.ne.jp/hxmasaki/20110620/1308547067">Varnish勉強会 Tokyo.vclを行いました - ククラフト</a></li>
+      <li><a href="http://d.hatena.ne.jp/mirakui/20110619/1308497959">私がクックパッドの画像配信野郎です - 床のトルストイ、ゲイとするとのこと</a></li>
+      <li><a href="http://blog.xcir.net/?p=438">Tokyo.vclでVarnishCache3の新機能とVUPの仕方を話してきました « cat /dev/random &gt; /dev/null &amp;</a></li>
+      <li><a href="http://blog.udzura.jp/2011/06/20/summary-of-tokyo-varnish-study-on-20110618/">東京varnish勉強会(Tokyo.vcl)まとめ «  blog.udzura.jp</a></li>
+    </ul>
+  </li>
+</ul>
+
 </div>
   
   
