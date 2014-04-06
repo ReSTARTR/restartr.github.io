@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[I Will Servive]]></title>
-  <link href="http://ReSTARTR.github.io/atom.xml" rel="self"/>
-  <link href="http://ReSTARTR.github.io/"/>
-  <updated>2014-04-06T13:18:56+09:00</updated>
-  <id>http://ReSTARTR.github.io/</id>
+  <link href="http://blog.restartr.com/atom.xml" rel="self"/>
+  <link href="http://blog.restartr.com/"/>
+  <updated>2014-04-06T14:40:47+09:00</updated>
+  <id>http://blog.restartr.com/</id>
   <author>
     <name><![CDATA[ReSTARTR]]></name>
     <email><![CDATA[yoshida.masaki+restartr@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[WordpressからOctpressに移行]]></title>
-    <link href="http://ReSTARTR.github.io/2014/04/06/move-from-wordpress-to-octopress/"/>
+    <link href="http://blog.restartr.com/2014/04/06/move-from-wordpress-to-octopress/"/>
     <updated>2014-04-06T13:00:00+09:00</updated>
-    <id>http://ReSTARTR.github.io/2014/04/06/move-from-wordpress-to-octopress</id>
+    <id>http://blog.restartr.com/2014/04/06/move-from-wordpress-to-octopress</id>
     <content type="html"><![CDATA[<p>もともとさくらのレンサバ上でWordpressで構築していたブログをOctpressに移行してGithub Pagesでホスティングするように切り替え。
 最初はJekyllだけでやろうとしたけど、ブロクとしての機能を見るとOctopressのほうが良さそうだったので途中で方針転換。</p>
 
@@ -79,9 +79,9 @@
   
   <entry>
     <title type="html"><![CDATA[GoとPythonをZeroMQで繋ぐ]]></title>
-    <link href="http://ReSTARTR.github.io/2013/04/26/connect-go-and-python-with-zeromq/"/>
+    <link href="http://blog.restartr.com/2013/04/26/connect-go-and-python-with-zeromq/"/>
     <updated>2013-04-26T23:34:48+09:00</updated>
-    <id>http://ReSTARTR.github.io/2013/04/26/connect-go-and-python-with-zeromq</id>
+    <id>http://blog.restartr.com/2013/04/26/connect-go-and-python-with-zeromq</id>
     <content type="html"><![CDATA[<p>最近Rubyでプロジェクトオイラーを解きながらRubyに慣れようとしてるのですが、ちょっと飽きてきたので息抜きにGoを書いたりしています。</p>
 
 <p>ついでにZeroMQも試してみたかったので、GoとPythonをZeroMQで繋いでみました。</p>
@@ -190,9 +190,9 @@
   
   <entry>
     <title type="html"><![CDATA[pythonのクロージャに変数を束縛する方法]]></title>
-    <link href="http://ReSTARTR.github.io/2013/04/17/bind-a-variable-to-closure-in-python/"/>
+    <link href="http://blog.restartr.com/2013/04/17/bind-a-variable-to-closure-in-python/"/>
     <updated>2013-04-17T22:19:14+09:00</updated>
-    <id>http://ReSTARTR.github.io/2013/04/17/bind-a-variable-to-closure-in-python</id>
+    <id>http://blog.restartr.com/2013/04/17/bind-a-variable-to-closure-in-python</id>
     <content type="html"><![CDATA[<p>ハマったので。</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
@@ -356,9 +356,9 @@
   
   <entry>
     <title type="html"><![CDATA[pythonのテストにpytestを使ってみた]]></title>
-    <link href="http://ReSTARTR.github.io/2013/04/05/my-first-pytest/"/>
+    <link href="http://blog.restartr.com/2013/04/05/my-first-pytest/"/>
     <updated>2013-04-05T21:00:24+09:00</updated>
-    <id>http://ReSTARTR.github.io/2013/04/05/my-first-pytest</id>
+    <id>http://blog.restartr.com/2013/04/05/my-first-pytest</id>
     <content type="html"><![CDATA[<p>pytestを使い始めました。</p>
 
 <ul>
@@ -532,9 +532,9 @@ pytestはかなり詳細に表示してくれるので、レポートの内容�
   
   <entry>
     <title type="html"><![CDATA[Kauli株式会社を退職しました]]></title>
-    <link href="http://ReSTARTR.github.io/2013/04/02/retirement201303/"/>
+    <link href="http://blog.restartr.com/2013/04/02/retirement201303/"/>
     <updated>2013-04-02T22:45:29+09:00</updated>
-    <id>http://ReSTARTR.github.io/2013/04/02/retirement201303</id>
+    <id>http://blog.restartr.com/2013/04/02/retirement201303</id>
     <content type="html"><![CDATA[<p><a href="http://www.flickr.com/photos/53244662@N04/8599680561/" title="Cleanup my keyboard by ReSTARTR_y, on Flickr"><img src="http://farm9.staticflickr.com/8106/8599680561_da30653690.jpg" width="500" height="333" alt="Cleanup my keyboard" /></a></p>
 
 <p><em>※2013/04/04 更新:会社名を公開しました</em></p>
@@ -586,9 +586,9 @@ pytestはかなり詳細に表示してくれるので、レポートの内容�
   
   <entry>
     <title type="html"><![CDATA[プログラマーにとっての『UMLっぽい何か』]]></title>
-    <link href="http://ReSTARTR.github.io/2013/04/01/uml-for-programmer/"/>
+    <link href="http://blog.restartr.com/2013/04/01/uml-for-programmer/"/>
     <updated>2013-04-01T20:12:54+09:00</updated>
-    <id>http://ReSTARTR.github.io/2013/04/01/uml-for-programmer</id>
+    <id>http://blog.restartr.com/2013/04/01/uml-for-programmer</id>
     <content type="html"><![CDATA[<p>わりと普遍的な話題だったので便乗です。</p>
 
 <p><a href="http://nekoya.github.com/blog/2013/04/01/useful-uml/"> UMLも捨てたもんじゃない - nekoya press </a></p>
@@ -644,9 +644,9 @@ pytestはかなり詳細に表示してくれるので、レポートの内容�
   
   <entry>
     <title type="html"><![CDATA[EventStatsをConnpassに対応させました]]></title>
-    <link href="http://ReSTARTR.github.io/2012/12/22/eventstats-support-connpass/"/>
+    <link href="http://blog.restartr.com/2012/12/22/eventstats-support-connpass/"/>
     <updated>2012-12-22T22:54:54+09:00</updated>
-    <id>http://ReSTARTR.github.io/2012/12/22/eventstats-support-connpass</id>
+    <id>http://blog.restartr.com/2012/12/22/eventstats-support-connpass</id>
     <content type="html"><![CDATA[<p>ふと思い立って、イベントの登録者数の推移が見れるEventStatsをConnpassにも対応させました。</p>
 
 <ul>
@@ -666,9 +666,9 @@ pytestはかなり詳細に表示してくれるので、レポートの内容�
   
   <entry>
     <title type="html"><![CDATA[はてなダイアリーからTumblrへデータ移行するpythonスクリプト]]></title>
-    <link href="http://ReSTARTR.github.io/2012/03/25/python-script-for-moving-from-movabletype-to-tumblr/"/>
+    <link href="http://blog.restartr.com/2012/03/25/python-script-for-moving-from-movabletype-to-tumblr/"/>
     <updated>2012-03-25T02:30:19+09:00</updated>
-    <id>http://ReSTARTR.github.io/2012/03/25/python-script-for-moving-from-movabletype-to-tumblr</id>
+    <id>http://blog.restartr.com/2012/03/25/python-script-for-moving-from-movabletype-to-tumblr</id>
     <content type="html"><![CDATA[<p>どうも。もうすぐ入社３ヶ月が経って試用期間が終わろうとしている状況な僕です。</p>
 
 <p>すっかり停滞気味のブログですが保守も兼ねて投稿を。</p>
@@ -765,10 +765,10 @@ pytestはかなり詳細に表示してくれるので、レポートの内容�
   
   <entry>
     <title type="html"><![CDATA[EventStatsはherokuとMongoLabとさくらVPSで動いている]]></title>
-    <link href="http://ReSTARTR.github.io/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps/"/>
+    <link href="http://blog.restartr.com/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps/"/>
     <updated>2011-12-28T21:27:52+09:00</updated>
-    <id>http://ReSTARTR.github.io/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps</id>
-    <content type="html"><![CDATA[<p>今月頭に<a href="http://ReSTARTR.github.io/2011/12/10/eventststs">ブログ書きました</a>が、EventStatsという勉強会の参加者の推移が見れるサービスを公開しました。</p>
+    <id>http://blog.restartr.com/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps</id>
+    <content type="html"><![CDATA[<p>今月頭に<a href="http://blog.restartr.com/2011/12/10/eventststs">ブログ書きました</a>が、EventStatsという勉強会の参加者の推移が見れるサービスを公開しました。</p>
 
 <ul>
   <li><a href="http://eventstats.restartr.com">EventStats - イベントの統計情報が見れます</a></li>
@@ -988,9 +988,9 @@ atndとの違い
   
   <entry>
     <title type="html"><![CDATA[イベントの参加人数の遷移が見れるサービス『EventStats』を作りました。 #atnd #zusaar #partake]]></title>
-    <link href="http://ReSTARTR.github.io/2011/12/10/eventstats/"/>
+    <link href="http://blog.restartr.com/2011/12/10/eventstats/"/>
     <updated>2011-12-10T18:58:51+09:00</updated>
-    <id>http://ReSTARTR.github.io/2011/12/10/eventstats</id>
+    <id>http://blog.restartr.com/2011/12/10/eventstats</id>
     <content type="html"><![CDATA[<h3>イベント管理サービスについて</h3>
 <p>勉強会などでよく利用されるのが、イベント管理サービス。
 
@@ -1036,9 +1036,9 @@ ATNDやZusaar,Partakeなど、様々なサービスがあり、現在も新し�
   
   <entry>
     <title type="html"><![CDATA[（もうすぐ）退職します。]]></title>
-    <link href="http://ReSTARTR.github.io/2011/12/02/dropped-out/"/>
+    <link href="http://blog.restartr.com/2011/12/02/dropped-out/"/>
     <updated>2011-12-02T21:27:57+09:00</updated>
-    <id>http://ReSTARTR.github.io/2011/12/02/dropped-out</id>
+    <id>http://blog.restartr.com/2011/12/02/dropped-out</id>
     <content type="html"><![CDATA[<p>私事ですが現職の会社を退職することになり、本日無事に最終出社を終えてきました。</p>
 
 <p>退職日は年明けですが、これから有給消化期間に入ります。</p>
@@ -1091,9 +1091,9 @@ ATNDやZusaar,Partakeなど、様々なサービスがあり、現在も新し�
   
   <entry>
     <title type="html"><![CDATA[第二回 #Playframework 勉強会 in Tokyo #play_ja に行ってきた]]></title>
-    <link href="http://ReSTARTR.github.io/2011/10/10/play-framework-study-in-tokyo/"/>
+    <link href="http://blog.restartr.com/2011/10/10/play-framework-study-in-tokyo/"/>
     <updated>2011-10-10T15:59:13+09:00</updated>
-    <id>http://ReSTARTR.github.io/2011/10/10/play-framework-study-in-tokyo</id>
+    <id>http://blog.restartr.com/2011/10/10/play-framework-study-in-tokyo</id>
     <content type="html"><![CDATA[<ul>
   <li><a href="http://atnd.org/events/19107">第二回 #Playframework 勉強会 in Tokyo #play_ja</a></li>
 </ul>
@@ -1144,9 +1144,9 @@ ATNDやZusaar,Partakeなど、様々なサービスがあり、現在も新し�
   
   <entry>
     <title type="html"><![CDATA[Scalaで設定ファイルを使いたい時どうしたらいいの？]]></title>
-    <link href="http://ReSTARTR.github.io/2011/08/30/config-libraries-in-scala/"/>
+    <link href="http://blog.restartr.com/2011/08/30/config-libraries-in-scala/"/>
     <updated>2011-08-30T00:02:15+09:00</updated>
-    <id>http://ReSTARTR.github.io/2011/08/30/config-libraries-in-scala</id>
+    <id>http://blog.restartr.com/2011/08/30/config-libraries-in-scala</id>
     <content type="html"><![CDATA[<p><em style="color:red">2011.08.31 kmizushimaさんから頂いた<a href="http://blog.restartr.com/2011/08/30/config-libraries-in-scala/?preview=true&amp;preview_id=1049&amp;preview_nonce=ad0bbeeef6#comment-108">コメント</a>を元に、下記の記述を修正＆追記しました。</em></p>
 
 <ul>
@@ -1366,9 +1366,9 @@ ATNDやZusaar,Partakeなど、様々なサービスがあり、現在も新し�
   
   <entry>
     <title type="html"><![CDATA[ScalaのORMapperのSquerylを試してみてハマった３つのこと]]></title>
-    <link href="http://ReSTARTR.github.io/2011/08/16/3-things-that-i-was-in-trouble-using-squeryl/"/>
+    <link href="http://blog.restartr.com/2011/08/16/3-things-that-i-was-in-trouble-using-squeryl/"/>
     <updated>2011-08-16T08:00:15+09:00</updated>
-    <id>http://ReSTARTR.github.io/2011/08/16/3-things-that-i-was-in-trouble-using-squeryl</id>
+    <id>http://blog.restartr.com/2011/08/16/3-things-that-i-was-in-trouble-using-squeryl</id>
     <content type="html"><![CDATA[<p>ScalaのORMとしてSquerylってのがあります。</p>
 
 <ul>
@@ -1522,9 +1522,9 @@ ATNDやZusaar,Partakeなど、様々なサービスがあり、現在も新し�
   
   <entry>
     <title type="html"><![CDATA[Varnish勉強会 #tokyovcl に行ってきた]]></title>
-    <link href="http://ReSTARTR.github.io/2011/06/21/go-to-varnish-study-tokyovc/"/>
+    <link href="http://blog.restartr.com/2011/06/21/go-to-varnish-study-tokyovc/"/>
     <updated>2011-06-21T23:56:40+09:00</updated>
-    <id>http://ReSTARTR.github.io/2011/06/21/go-to-varnish-study-tokyovc</id>
+    <id>http://blog.restartr.com/2011/06/21/go-to-varnish-study-tokyovc</id>
     <content type="html"><![CDATA[<p><a href="http://www.flickr.com/photos/53244662@N04/5856931526/" title="IMAG0053 by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5029/5856931526_1119c53a87.jpg" width="500" height="299" alt="IMAG0053" /></a></p>
 
 <p>6/18(土)に開催された<a href="http://atnd.org/events/16681">Varnish勉強会 Tokyo.vcl : ATND</a>に行ってきました。
@@ -1748,9 +1748,9 @@ ATNDやZusaar,Partakeなど、様々なサービスがあり、現在も新し�
   
   <entry>
     <title type="html"><![CDATA[東京から福島へ一泊二日でボランティアに行ってきた]]></title>
-    <link href="http://ReSTARTR.github.io/2011/06/19/volunteer-at-shinchi-fukushima-pref/"/>
+    <link href="http://blog.restartr.com/2011/06/19/volunteer-at-shinchi-fukushima-pref/"/>
     <updated>2011-06-19T12:03:20+09:00</updated>
-    <id>http://ReSTARTR.github.io/2011/06/19/volunteer-at-shinchi-fukushima-pref</id>
+    <id>http://blog.restartr.com/2011/06/19/volunteer-at-shinchi-fukushima-pref</id>
     <content type="html"><![CDATA[<p><a href="http://www.flickr.com/photos/53244662@N04/5847245836/" title="IMG_5100 by ReSTARTR_y, on Flickr"><img src="http://farm4.static.flickr.com/3538/5847245836_ca37b883fe_z.jpg" width="640" height="427" alt="IMG_5100" /></a></p>
 
 <p>6/11,12の土日を利用して、福島県相馬郡新地町にボランティア活動に行ってきました。</p>
@@ -1885,9 +1885,9 @@ ATNDやZusaar,Partakeなど、様々なサービスがあり、現在も新し�
   
   <entry>
     <title type="html"><![CDATA[DotCloudのMongoDBをScalaから使ってみる]]></title>
-    <link href="http://ReSTARTR.github.io/2011/05/28/access-from-scala-to-mongodb-on-dotcloud/"/>
+    <link href="http://blog.restartr.com/2011/05/28/access-from-scala-to-mongodb-on-dotcloud/"/>
     <updated>2011-05-28T20:00:57+09:00</updated>
-    <id>http://ReSTARTR.github.io/2011/05/28/access-from-scala-to-mongodb-on-dotcloud</id>
+    <id>http://blog.restartr.com/2011/05/28/access-from-scala-to-mongodb-on-dotcloud</id>
     <content type="html"><![CDATA[<p>DotCloudにDuoStackが<a href="http://gigaom.com/cloud/exclusive-paas-startups-unite-dotcloud-buys-duostack/">買収され</a>て、DotCloudでもMongoDBが使えるようになりましたし、node.jsも使えるしで、ますますDotCloudが魅力的なものになってきました。</p>
 
 <p>ただし、node.jsはサポートされても、WebSocketは正式サポートされていないと<a href="http://docs.dotcloud.com/components/nodejs/">公式マニュアル</a>にも書いてありますがWebSocketサポート済みのDuoStack買収によってどう流れるか気になるところです。</p>
@@ -2118,9 +2118,9 @@ ATNDやZusaar,Partakeなど、様々なサービスがあり、現在も新し�
   
   <entry>
     <title type="html"><![CDATA[ScalaをDotCloudにアップロードするためのsbtサンプル]]></title>
-    <link href="http://ReSTARTR.github.io/2011/05/09/sample-sbt-project-for-dotcloud/"/>
+    <link href="http://blog.restartr.com/2011/05/09/sample-sbt-project-for-dotcloud/"/>
     <updated>2011-05-09T23:35:43+09:00</updated>
-    <id>http://ReSTARTR.github.io/2011/05/09/sample-sbt-project-for-dotcloud</id>
+    <id>http://blog.restartr.com/2011/05/09/sample-sbt-project-for-dotcloud</id>
     <content type="html"><![CDATA[<p><a href="http://dotcloud.com/">dotcloud</a>を必要最低限操作するためのactionをsbtに追加してみました。</p>
 
 <p>sbtのアクション自体はじめてなので作法がよくわかってないので、間違っているかも知れませんが。</p>
@@ -2183,9 +2183,9 @@ The java service will make your application available at http://frontend.myapp.d
   
   <entry>
     <title type="html"><![CDATA[SIMフリーのandroid端末でSoftBankのMMSを受信する方法]]></title>
-    <link href="http://ReSTARTR.github.io/2011/05/01/how-to-send-and-receive-softbank-mms-on-sim-free-android/"/>
+    <link href="http://blog.restartr.com/2011/05/01/how-to-send-and-receive-softbank-mms-on-sim-free-android/"/>
     <updated>2011-05-01T22:18:15+09:00</updated>
-    <id>http://ReSTARTR.github.io/2011/05/01/how-to-send-and-receive-softbank-mms-on-sim-free-android</id>
+    <id>http://blog.restartr.com/2011/05/01/how-to-send-and-receive-softbank-mms-on-sim-free-android</id>
     <content type="html"><![CDATA[<p>Desire SでS!メールを受信しようと、apnの設定をしてみたのですが、全く送受信が成功しませんでした。
 いろいろ調査していたところ、SoftBankメールのアプリのバージョンが原因だと判明しました。
 古いバージョンをインストールすれば問題ないようです。</p>
@@ -2296,9 +2296,9 @@ The java service will make your application available at http://frontend.myapp.d
   
   <entry>
     <title type="html"><![CDATA[Desire SをiPhone3GSと比較してみた ? カメラ編 ]]></title>
-    <link href="http://ReSTARTR.github.io/2011/04/28/compare-iphone3gs-to-desire-s-%25e2%2580%2593camera/"/>
+    <link href="http://blog.restartr.com/2011/04/28/compare-iphone3gs-to-desire-s-%25e2%2580%2593camera/"/>
     <updated>2011-04-28T09:00:42+09:00</updated>
-    <id>http://ReSTARTR.github.io/2011/04/28/compare-iphone3gs-to-desire-s-%e2%80%93camera</id>
+    <id>http://blog.restartr.com/2011/04/28/compare-iphone3gs-to-desire-s-%e2%80%93camera</id>
     <content type="html"><![CDATA[<p>今回は、Desire Sのカメラ性能がどの程度なのか、iPhone3GSとデジカメを比較しながらみていきます。</p>
 
 <p>iPhoneもDesire Sどちらもデフォルトのカメラアプリをデフォルトの設定で使用しました。

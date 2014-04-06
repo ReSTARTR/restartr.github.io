@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Webサービス | I Will Servive]]></title>
-  <link href="http://ReSTARTR.github.io/blog/categories/websabisu/atom.xml" rel="self"/>
-  <link href="http://ReSTARTR.github.io/"/>
-  <updated>2014-04-06T13:18:56+09:00</updated>
-  <id>http://ReSTARTR.github.io/</id>
+  <link href="http://blog.restartr.com/blog/categories/websabisu/atom.xml" rel="self"/>
+  <link href="http://blog.restartr.com/"/>
+  <updated>2014-04-06T14:40:47+09:00</updated>
+  <id>http://blog.restartr.com/</id>
   <author>
     <name><![CDATA[ReSTARTR]]></name>
     <email><![CDATA[yoshida.masaki+restartr@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[EventStatsをConnpassに対応させました]]></title>
-    <link href="http://ReSTARTR.github.io/2012/12/22/eventstats-support-connpass/"/>
+    <link href="http://blog.restartr.com/2012/12/22/eventstats-support-connpass/"/>
     <updated>2012-12-22T22:54:54+09:00</updated>
-    <id>http://ReSTARTR.github.io/2012/12/22/eventstats-support-connpass</id>
+    <id>http://blog.restartr.com/2012/12/22/eventstats-support-connpass</id>
     <content type="html"><![CDATA[<p>ふと思い立って、イベントの登録者数の推移が見れるEventStatsをConnpassにも対応させました。</p>
 
 <ul>
@@ -37,9 +37,9 @@
   
   <entry>
     <title type="html"><![CDATA[EventStatsはherokuとMongoLabとさくらVPSで動いている]]></title>
-    <link href="http://ReSTARTR.github.io/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps/"/>
+    <link href="http://blog.restartr.com/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps/"/>
     <updated>2011-12-28T21:27:52+09:00</updated>
-    <id>http://ReSTARTR.github.io/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps</id>
+    <id>http://blog.restartr.com/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps</id>
     <content type="html"><![CDATA[<p>今月頭に<a href="/2011/12/10/eventststs">ブログ書きました</a>が、EventStatsという勉強会の参加者の推移が見れるサービスを公開しました。</p>
 
 <ul>
@@ -260,9 +260,9 @@ atndとの違い
   
   <entry>
     <title type="html"><![CDATA[イベントの参加人数の遷移が見れるサービス『EventStats』を作りました。 #atnd #zusaar #partake]]></title>
-    <link href="http://ReSTARTR.github.io/2011/12/10/eventstats/"/>
+    <link href="http://blog.restartr.com/2011/12/10/eventstats/"/>
     <updated>2011-12-10T18:58:51+09:00</updated>
-    <id>http://ReSTARTR.github.io/2011/12/10/eventstats</id>
+    <id>http://blog.restartr.com/2011/12/10/eventstats</id>
     <content type="html"><![CDATA[<h3>イベント管理サービスについて</h3>
 <p>勉強会などでよく利用されるのが、イベント管理サービス。
 

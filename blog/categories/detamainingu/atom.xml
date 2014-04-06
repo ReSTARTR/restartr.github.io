@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: データマイニング | I Will Servive]]></title>
-  <link href="http://ReSTARTR.github.io/blog/categories/detamainingu/atom.xml" rel="self"/>
-  <link href="http://ReSTARTR.github.io/"/>
-  <updated>2014-04-06T13:18:56+09:00</updated>
-  <id>http://ReSTARTR.github.io/</id>
+  <link href="http://blog.restartr.com/blog/categories/detamainingu/atom.xml" rel="self"/>
+  <link href="http://blog.restartr.com/"/>
+  <updated>2014-04-06T14:40:47+09:00</updated>
+  <id>http://blog.restartr.com/</id>
   <author>
     <name><![CDATA[ReSTARTR]]></name>
     <email><![CDATA[yoshida.masaki+restartr@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[第一回 にこにこテキストマイニングに参加してきた #nicoTextMining]]></title>
-    <link href="http://ReSTARTR.github.io/2011/02/20/attended-nicotextmining-1st/"/>
+    <link href="http://blog.restartr.com/2011/02/20/attended-nicotextmining-1st/"/>
     <updated>2011-02-20T09:30:52+09:00</updated>
-    <id>http://ReSTARTR.github.io/2011/02/20/attended-nicotextmining-1st</id>
+    <id>http://blog.restartr.com/2011/02/20/attended-nicotextmining-1st</id>
     <content type="html"><![CDATA[<p>第一回 にこにこテキストマイニングに参加してきました。</p>
 
 <ul>

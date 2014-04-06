@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: golang | I Will Servive]]></title>
-  <link href="http://ReSTARTR.github.io/blog/categories/golang/atom.xml" rel="self"/>
-  <link href="http://ReSTARTR.github.io/"/>
-  <updated>2014-04-06T13:18:56+09:00</updated>
-  <id>http://ReSTARTR.github.io/</id>
+  <link href="http://blog.restartr.com/blog/categories/golang/atom.xml" rel="self"/>
+  <link href="http://blog.restartr.com/"/>
+  <updated>2014-04-06T14:40:47+09:00</updated>
+  <id>http://blog.restartr.com/</id>
   <author>
     <name><![CDATA[ReSTARTR]]></name>
     <email><![CDATA[yoshida.masaki+restartr@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[GoとPythonをZeroMQで繋ぐ]]></title>
-    <link href="http://ReSTARTR.github.io/2013/04/26/connect-go-and-python-with-zeromq/"/>
+    <link href="http://blog.restartr.com/2013/04/26/connect-go-and-python-with-zeromq/"/>
     <updated>2013-04-26T23:34:48+09:00</updated>
-    <id>http://ReSTARTR.github.io/2013/04/26/connect-go-and-python-with-zeromq</id>
+    <id>http://blog.restartr.com/2013/04/26/connect-go-and-python-with-zeromq</id>
     <content type="html"><![CDATA[<p>最近Rubyでプロジェクトオイラーを解きながらRubyに慣れようとしてるのですが、ちょっと飽きてきたので息抜きにGoを書いたりしています。</p>
 
 <p>ついでにZeroMQも試してみたかったので、GoとPythonをZeroMQで繋いでみました。</p>

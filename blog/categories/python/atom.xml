@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: python | I Will Servive]]></title>
-  <link href="http://ReSTARTR.github.io/blog/categories/python/atom.xml" rel="self"/>
-  <link href="http://ReSTARTR.github.io/"/>
-  <updated>2014-04-06T13:18:56+09:00</updated>
-  <id>http://ReSTARTR.github.io/</id>
+  <link href="http://blog.restartr.com/blog/categories/python/atom.xml" rel="self"/>
+  <link href="http://blog.restartr.com/"/>
+  <updated>2014-04-06T14:40:47+09:00</updated>
+  <id>http://blog.restartr.com/</id>
   <author>
     <name><![CDATA[ReSTARTR]]></name>
     <email><![CDATA[yoshida.masaki+restartr@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[GoとPythonをZeroMQで繋ぐ]]></title>
-    <link href="http://ReSTARTR.github.io/2013/04/26/connect-go-and-python-with-zeromq/"/>
+    <link href="http://blog.restartr.com/2013/04/26/connect-go-and-python-with-zeromq/"/>
     <updated>2013-04-26T23:34:48+09:00</updated>
-    <id>http://ReSTARTR.github.io/2013/04/26/connect-go-and-python-with-zeromq</id>
+    <id>http://blog.restartr.com/2013/04/26/connect-go-and-python-with-zeromq</id>
     <content type="html"><![CDATA[<p>最近Rubyでプロジェクトオイラーを解きながらRubyに慣れようとしてるのですが、ちょっと飽きてきたので息抜きにGoを書いたりしています。</p>
 
 <p>ついでにZeroMQも試してみたかったので、GoとPythonをZeroMQで繋いでみました。</p>
@@ -104,9 +104,9 @@ MONITOR: IN: 2083, OUT 2083
   
   <entry>
     <title type="html"><![CDATA[pythonのクロージャに変数を束縛する方法]]></title>
-    <link href="http://ReSTARTR.github.io/2013/04/17/bind-a-variable-to-closure-in-python/"/>
+    <link href="http://blog.restartr.com/2013/04/17/bind-a-variable-to-closure-in-python/"/>
     <updated>2013-04-17T22:19:14+09:00</updated>
-    <id>http://ReSTARTR.github.io/2013/04/17/bind-a-variable-to-closure-in-python</id>
+    <id>http://blog.restartr.com/2013/04/17/bind-a-variable-to-closure-in-python</id>
     <content type="html"><![CDATA[<p>ハマったので。</p>
 
 <p><code>python
@@ -218,9 +218,9 @@ TypeError: readonly attribute
   
   <entry>
     <title type="html"><![CDATA[pythonのテストにpytestを使ってみた]]></title>
-    <link href="http://ReSTARTR.github.io/2013/04/05/my-first-pytest/"/>
+    <link href="http://blog.restartr.com/2013/04/05/my-first-pytest/"/>
     <updated>2013-04-05T21:00:24+09:00</updated>
-    <id>http://ReSTARTR.github.io/2013/04/05/my-first-pytest</id>
+    <id>http://blog.restartr.com/2013/04/05/my-first-pytest</id>
     <content type="html"><![CDATA[<p>pytestを使い始めました。</p>
 
 <ul>
@@ -350,9 +350,9 @@ def test_val(self, hoge):
   
   <entry>
     <title type="html"><![CDATA[はてなダイアリーからTumblrへデータ移行するpythonスクリプト]]></title>
-    <link href="http://ReSTARTR.github.io/2012/03/25/python-script-for-moving-from-movabletype-to-tumblr/"/>
+    <link href="http://blog.restartr.com/2012/03/25/python-script-for-moving-from-movabletype-to-tumblr/"/>
     <updated>2012-03-25T02:30:19+09:00</updated>
-    <id>http://ReSTARTR.github.io/2012/03/25/python-script-for-moving-from-movabletype-to-tumblr</id>
+    <id>http://blog.restartr.com/2012/03/25/python-script-for-moving-from-movabletype-to-tumblr</id>
     <content type="html"><![CDATA[<p>どうも。もうすぐ入社３ヶ月が経って試用期間が終わろうとしている状況な僕です。</p>
 
 <p>すっかり停滞気味のブログですが保守も兼ねて投稿を。</p>
@@ -443,9 +443,9 @@ open in browser:http://www.tumblr.com/oauth/authorize?oauth_token={OAUTH_TOKEN}<
   
   <entry>
     <title type="html"><![CDATA[EventStatsはherokuとMongoLabとさくらVPSで動いている]]></title>
-    <link href="http://ReSTARTR.github.io/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps/"/>
+    <link href="http://blog.restartr.com/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps/"/>
     <updated>2011-12-28T21:27:52+09:00</updated>
-    <id>http://ReSTARTR.github.io/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps</id>
+    <id>http://blog.restartr.com/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps</id>
     <content type="html"><![CDATA[<p>今月頭に<a href="/2011/12/10/eventststs">ブログ書きました</a>が、EventStatsという勉強会の参加者の推移が見れるサービスを公開しました。</p>
 
 <ul>
