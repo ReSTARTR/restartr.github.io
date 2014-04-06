@@ -1,0 +1,645 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: PHP | I Will Servive]]></title>
+  <link href="http://blog.restartr.com/blog/categories/php/atom.xml" rel="self"/>
+  <link href="http://blog.restartr.com/"/>
+  <updated>2014-04-06T13:07:51+09:00</updated>
+  <id>http://blog.restartr.com/</id>
+  <author>
+    <name><![CDATA[ReSTARTR]]></name>
+    <email><![CDATA[yoshida.masaki+restartr@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[ScalaとErlangとPHPと私]]></title>
+    <link href="http://blog.restartr.com/2010/11/23/scala-erlang-php-and-me/"/>
+    <updated>2010-11-23T18:57:35+09:00</updated>
+    <id>http://blog.restartr.com/2010/11/23/scala-erlang-php-and-me</id>
+    <content type="html"><![CDATA[<p>PHPよりScalaが簡単である、という議論に対するふたつのポストがあったので、自分向けにまとめました。</p>
+<ul>
+<li>元記事：<a href="http://wadearnold.com/blog/scala/scala-is-easier-than-php">Wade Arnold ? Scala is easier than PHP</a></li>
+<li>返信：<a href="http://videlalvaro.github.com/2010/11/reply-to-scala-is-easier-than-php.html">Reply to "Scala is Easier than PHP"</a></li>
+</ul>
+<h3>概要</h3>
+<p>ざっとこんな感じにまとめてしまいました。</p>
+<ul>
+<li>議論の中心はWebページ生成言語としての言語の比較ではない</li>
+<li>ふたりともWebページ生成ならPHPが優れているという立場にかわりはない</li>
+<li>議論の中心は主にスケーラビリティの確保とプロセス間通信</li>
+<li>元記事のWade ArnoldさんはScala推進派</li>
+<li>返信者のvidelalvaroさんはErlang推進派</li>
+<li>スケーラビリティ確保のためには関数型言語という結論</li>
+<li>ScalaかErlangどちらが簡単か、という議論はない</li>
+</ul>
+<p><a id="more"></a><a id="more-410"></a></p>
+<h3>ScalaがPHPより簡単な理由</h3>
+<p>Wade Arnoldさんが元記事「Scala is easier than PHP」において、マルチコア時代にはScalaが必要だ、みたいなことを書きました。彼はPHP３のころからPHPの開発に関わっていて、最近はZendFrameworkのコミッタをやっていたそうです。<br />
+PHPはいまだに最高の言語であると最初に断っておきつつ、Scalaの技術的な点を整理しておこう、という内容。</p>
+<p>スケーラビリティの確保のためには、PHPのようにたくさんのツールを必要とせずとも、言語仕様的に多くをサポートするScalaが簡単な理由である、と。Scalaへの移行は時間を必要とするが、スケーラビリティには必要な選択であるといっています。</p>
+<blockquote><p>No need for amqp with actors, no beanstalkd with mutable queues, and it’s fast as hell!</p></blockquote>
+<p><em>ActorによってAMQPはいらなくなる。ミュータブルなキューもbeanstalkdなしに。そしてそれはものすごく速い。<br />
+</em></p>
+<h3>PHPの代わりにErlangを使う理由</h3>
+<p>それに対してvidelalvaroさんが「Reply to "Scala is easier than PHP"」でコメントをしています。<br />
+おおむねWadeさんの意見に同意で、彼はScalaではなくErlangを推しているようです。</p>
+<p>意見としてはこんな感じでしょうか。</p>
+<ul>
+<li>サーバーのような長時間実行するプログラムにはErlangつかうといい</li>
+<li>スレッド間通信にはErlangをつかうといい</li>
+<li>Webページを生成するだけならPHPをつかうといい</li>
+<li>CPUの全コアを利用したいだけならPHP-FPMをつかうといい</li>
+</ul>
+<h3>スケーラビリティ確保のために必要なもの</h3>
+<p>元記事ではPHPのスケーラビリティ確保のために必要なものをあげ、これらを使うのは大変骨が折れると言っています。</p>
+<blockquote>
+<ul>
+<li>Fantastic at PHP internals</li>
+<li>Amazing at Apache HTTPD and compiling appropriate PHP extensions.</li>
+<li>Nginx</li>
+<li>BigIP ? More than round robin load balancing</li>
+<li>Intimately know how sessions work and probably write your own handlers</li>
+<li>Memcached</li>
+<li>APC</li>
+<li>AMQP</li>
+<li>BeanStalkd</li>
+<li>Code based sharding or at least master/slave logic</li>
+<li>C/C++</li>
+<li>Lots of security! It’s a problem with all dynamic languages.</li>
+<li>Zend Framework.</li>
+</ul>
+</blockquote>
+<p>それに対してScalaはたった５つ。</p>
+<blockquote>
+<ul>
+<li>6 months of scala</li>
+<li>Functional programming</li>
+<li><a onclick="javascript:_gaq.push(['_trackEvent','outbound-article','akkasource.org']);" href="http://akkasource.org/">Akka Framework</a></li>
+<li><a onclick="javascript:_gaq.push(['_trackEvent','outbound-article','liftweb.net']);" href="http://liftweb.net/">Lift Framework</a></li>
+<li>Nginx / Jetty</li>
+</ul>
+</blockquote>
+<p>ツールに頼らずとも言語が機能を備えているから気にすべきところが非常にシンプルになるようです。</p>
+<h3>個人的感想</h3>
+<p>PHPをWebページ生成以外で対決させるのはどうなんだろうと思いつつも、Scalaをどのような場面で使っていけばよいか考える良い機会になりました。<br />
+個人的な話をすると、Scalaは言語仕様を学ぶばかりで実際のプログラムを書くまでには至っていませんし、性能評価もまだやってないので「PHPからScalaに移行すべきだ」、と言い切るには至っていないのが現状です。<br />
+が、Wadeさんは後ほどもっと突っ込んだ記事を書くと冒頭に言っていますし、videlalvaroさんも最後に</p>
+<blockquote><p>if we want to sell functional languages like Erlang or Scala to the PHP programmer then we have to look for more compelling features that may attract them to look into these languages. What I think are those features ?I guess?, should be part of another blog post.</p></blockquote>
+<p>と、ScalaやErlangをPHPerに売り込むための魅力的な点をPOSTしてくれるかも。<br />
+それも楽しみにしておこうと思います。</p>
+<h3>余談</h3>
+<p>最近思うのが、Scalaって言語仕様があまりに多くて、それを学ぶことが楽しいです。<br />
+が、学ぶべき仕様がどこまでなのか見えてこず、さらに、仕様を学ぶこと自体が目的になってきているような気がします。<br />
+ということで(?)そろそろ、実際につくりたいプログラムを書きながら仕様を学ぶ方向にシフトしようと思います。</p>
+<p>※あとPHP-FPMもちゃんと調査・検証したいし、Kestrelのソースも読みたい。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[CakePHPのDebugKitにプロファイル情報が見れるXHProfPanelを追加]]></title>
+    <link href="http://blog.restartr.com/2010/10/10/the-xhprofpanel-debugkit-custom-panel-cakephp/"/>
+    <updated>2010-10-10T00:59:04+09:00</updated>
+    <id>http://blog.restartr.com/2010/10/10/the-xhprofpanel-debugkit-custom-panel-cakephp</id>
+    <content type="html"><![CDATA[<p>先日のPHPMatsuriのハッカソンにて作成したXHProfの結果がみれるCustomPanelですが、そのまま公開するにはお恥ずかしい感じだったので、多少マシに改修したものを公開してみます。</p>
+<h3>DebugKit, XHProfPanelとは</h3>
+<p>CakePHPのDebugKitというプラグインがあり、それを使えばいろんなデバッグ情報がWeb画面上で確認できます。で、これにXHProfというphp拡張を使ってプロファイラ情報を見れるようにしてみました。</p>
+<p>こんな感じです。<br />
+<a href="http://blog.restartr.com/wp-content/uploads/2010/10/256d829a326e5fc745e5659600527bde.png"><img class="alignnone size-full wp-image-390" title="XHProfPanel-screenshot" src="http://blog.restartr.com/wp-content/uploads/2010/10/256d829a326e5fc745e5659600527bde.png" alt="" width="464" height="42" /></a></p>
+<p><a id="more"></a><a id="more-367"></a></p>
+<p>で、パネルを開くとこんな感じに各関数呼び出しごとの負荷情報などを閲覧できます。<br />
+<a href="http://blog.restartr.com/wp-content/uploads/2010/10/f0c2dac263680a94429c57bd5c1e81ff.png"><img class="alignnone size-medium wp-image-399" title="xhprofpanel-opned-screenshot" src="http://blog.restartr.com/wp-content/uploads/2010/10/f0c2dac263680a94429c57bd5c1e81ff-300x170.png" alt="" width="300" height="170" /></a></p>
+<p>さらに、<strong>"xhprof Result"</strong>というリンクをクリックすれば、XHProfが用意してくれているビューアを開くこともできます。ビューアではコールグラフも閲覧できます。</p>
+<h3>カスタムパネルの追加方法</h3>
+<blockquote><p>helloworld_controllerにプロファイル実行する、という例で説明します。</p></blockquote>
+<h4>事前準備</h4>
+<p>debugkitはインストール済みとします。入れ方は<br />
+<a href="http://d.hatena.ne.jp/cakephper/20090604/1244112188">超便利なDebugkitを画面キャプチャ付きで解説 - cakephperの日記(CakePHP, MongoDB, Lithium)</a><br />
+を参照してください。</p>
+<p>XHProfのインストールも済ませておきます。</p>
+<pre class="brush">wget http://pecl.php.net/get/xhprof-0.9.2.tgz
+pecl install xhprof-0.9.2.tgz</pre>
+<p>php.iniにも設定追加しておきます。</p>
+<pre class="brush">extension=xhprof.so</pre>
+<p>tgzファイルをtarで解凍した中身のうち、xhprof_html,xhprof_libをビューア用に用意したバーチャルホスト下において、<br />
+別ドメインでアクセスできるようにします。<br />
+cakeのアプリは<strong>cake.localhost</strong>、xhprofビューアは<strong>xhprof.localhost</strong>のような感じです。<br />
+ディレクトリはこんな感じできっています。</p>
+<pre class="brush:c">/var/
+  vhosts/
+    cake/ // cake.localhostのdocument_root
+      app/
+    xhprof/
+      xhprof_html/ // xhprof.localhostのdocument_root
+      xhprof_lib/</pre>
+<h4>ファイル構成</h4>
+<p>下記ファイルを修正もしくは新規作成します。</p>
+<pre class="brush:c">app/
+  controllers/
+    helloworld_controller.php //新規追加
+  plugins/
+    debug_kit/
+      controllers/
+        conmponents/
+          toolbar.php //修正
+      views/
+        elements/
+          xhprof_panel.ctp //新規追加</pre>
+<h4>1.XHProfPanelの追加</h4>
+<blockquote><p>app/plugins/debug_kit/controllers/components/toolbar.php</p></blockquote>
+<p>に下記クラスをコピペで追加。<br />
+<script src="http://gist.github.com/618254.js?file=toolbar.php"></script></p>
+<h4>2.デフォルトパネルにXHProfPanelを追加</h4>
+<blockquote><p>app/plugins/debug_kit/controllers/components/toolbar.php</p></blockquote>
+<p>の既存行（52行目あたり)に下記のように$_defaultPanelsに'xhprof'を追加。<br />
+<script src="http://gist.github.com/618254.js?file=toolbar_.php"></script></p>
+<h4>3.controllerの設定にもXHProfPanelを追加</h4>
+<p>下記のようにXhprofPanelへの設定情報も渡します。<br />
+<script src="http://gist.github.com/618254.js?file=helloworld_controller.php"></script></p>
+<h4>4.テンプレートの追加</h4>
+<blockquote><p>app/plugins/debug_kit/views/elements/xhprof_panel.ctp</p></blockquote>
+<p>を下記内容で新規作成します。<br />
+<script src="http://gist.github.com/618254.js?file=xhprof_panel.ctp"></script></p>
+<h4>ソート順の変更</h4>
+<p>デフォルトではwall timeの降順でソートしてあります。<br />
+コントローラでの設定で'sortBy'の値を変えれば変更できます。<br />
+(指定しなければ'wt'指定となります。)<br />
+設定できるのは<strong>ct, wt, cpu, mu, pmu</strong>の５つ。</p>
+<h4>プロファイル範囲</h4>
+<p>XhprofPanel::__constructからXhprofPanel::beforeRenderまでです。<br />
+結果をみるとLogPanelクラス（DebugKitプラグイン内のクラス）のメソッド呼び出しも含まれていたりするので、<br />
+もう少し適当な範囲にできないか検討したいと思います。</p>
+<h3>余談</h3>
+<p>Githubを有料アカウントにすべきか迷い中です。今回とりあえずgistで公開してみましたが、リポジトリは欲しいような、でも今のところ必要ないような…</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[PHPMATSURI - PHPハッカー達による一泊二日のハックデイ]]></title>
+    <link href="http://blog.restartr.com/2010/10/03/phpmatsuri-hack-days-by-php-hackers/"/>
+    <updated>2010-10-03T20:26:48+09:00</updated>
+    <id>http://blog.restartr.com/2010/10/03/phpmatsuri-hack-days-by-php-hackers</id>
+    <content type="html"><![CDATA[<p><a title="IMG_2470 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/5046336051/"><img src="http://farm5.static.flickr.com/4154/5046336051_aabef10eb4.jpg" alt="IMG_2470" width="500" height="333" /></a></p>
+<p><a href="http://2010.phpmatsuri.net/"><img class="alignnone size-medium wp-image-341" title="PHPMATSURI" src="http://blog.restartr.com/wp-content/uploads/2010/10/bunner-300x132.jpg" alt="" width="300" height="132" /></a><br />
+10月02日と03日の、一泊二日の<a href="http://2010.phpmatsuri.net/">PHPMASTURI</a>に参加してきました。</p>
+<ul>
+<li>ハッシュタグ: <a href="http://search.twitter.com/search?q=%23phpmatsuri">#phpmatsuri</a></li>
+<li>LTのustream: <a href="http://www.ustream.tv/channel/phpmatsuri">phpmatsuri on USTREAM</a></li>
+</ul>
+<h3>とにかく内容が濃い</h3>
+<ul>
+<li>楽天の吉岡さんによる大人のプログラミングキャンプ</li>
+<li>CakePHP,Symfony,Lithiumのデベロッパーによるセッション</li>
+<li>彼らのライブコーディングを間近に見られる各フレームワークのワークショップ</li>
+<li>スポンサー各社のセッション</li>
+<li>PHPによる開発事例プレゼン大会のJIREI NIGHT</li>
+<li>ZyngaJapanのお二人によるTDDを実体験できるワークショップ</li>
+<li>深夜まで続くハッカソンと、総勢33名による大LT大会</li>
+</ul>
+<p>ざっと並べただけでもこんな感じに、とにかく内容てんこ盛りな二日間でした。</p>
+<p><a id="more"></a><a id="more-335"></a></p>
+<p><a title="IMG_2512 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/5046956568/"><img src="http://farm5.static.flickr.com/4133/5046956568_dd9b08f6eb.jpg" alt="IMG_2512" width="500" height="333" /></a></p>
+<p>まとめるのは得意ではないので、参加した感想を少しばかり。</p>
+<h3>イベントに参加するということがいかに重要であるか</h3>
+<p>最初の吉岡さんのセッションは「この祭りをいかに楽しく有意義に過ごすか」ということを教えていただきました。また、各セッションを聞いたり、たくさんのデベロッパーの方々とコミュニケーションをとるのも非常に有意義でした。<br />
+最後のLT大会では、参加したみなさんの変態ぶりに圧倒されっぱなし。これだけ多くの発表があるとそれぞれに目の付け所が違っているが故にアイデアももらえるし、そこで発表すれば多くの反応をいただくこともできます。参加することで得られるメリットは、参加費用にはかえがたいものがあったと思います。<br />
+最後の締めで@yandoさんが「個人によるイベント」と仰っていて、このイベントは有志のスタッフの方々に支えられている、ことを実感しました。企画・運営をしてくださったスタッフのみなさんには本当に感謝します。<br />
+そして、PHPMATSURIに関わったすべての方に感謝したいと思います。ありがとうございました。</p>
+<p><a title="IMG_2491 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/5046334983/"><img src="http://farm5.static.flickr.com/4086/5046334983_8bd1c1329a.jpg" alt="IMG_2491" width="500" height="333" /></a><br />
+今回のチャレンジをまとめてみます。</p>
+<h3>チャレンジできたこと</h3>
+<ul>
+<li>CakePHP,Symfony2,Lithium各フレームワークの特徴を知る</li>
+<li>プレゼン資料を拙いながらも英語で作成する</li>
+<li>内容に関係なく発表者になる</li>
+<li>動かなかったで終わらせず、動くまでハックする</li>
+</ul>
+<h3>チャレンジできなかったこと</h3>
+<ul>
+<li>各FWデベロッパーの方々とのコミュニケーション</li>
+<li>セッションで質問する(TDDのワークでは質問しましたが)</li>
+<li>ソースコード公開</li>
+<li>Beer Driven Development</li>
+</ul>
+<h3>今後チャレンジしたいこと</h3>
+<ul>
+<li>今回の成果物のソースコード公開する</li>
+<li>英語を聞く力、話す力をつける</li>
+<li>発表の機会を自分でつくる</li>
+</ul>
+<h3>成果：XHProf CustomPanel</h3>
+<p>※詳しい話は別記事にてやります。</p>
+<div id="__ss_5344576" style="width: 425px;"><strong><a title="Php matusri xhprof custompanel" href="http://www.slideshare.net/restartr/php-matusri-xhprofcustompanelpublish">Php matusri xhprof custompanel</a></strong><object id="__sse5344576" classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" width="425" height="355" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,40,0"><param name="allowFullScreen" value="true" /><param name="allowScriptAccess" value="always" /><param name="src" value="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=phpmatusri-xhprofcustompanel-publish-101003011838-phpapp02&amp;stripped_title=php-matusri-xhprofcustompanelpublish&amp;userName=restartr" /><param name="name" value="__sse5344576" /><param name="allowfullscreen" value="true" /><embed id="__sse5344576" type="application/x-shockwave-flash" width="425" height="355" src="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=phpmatusri-xhprofcustompanel-publish-101003011838-phpapp02&amp;stripped_title=php-matusri-xhprofcustompanelpublish&amp;userName=restartr" name="__sse5344576" allowscriptaccess="always" allowfullscreen="true" /></object>
+<div style="padding: 5px 0 12px;">View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/restartr">Re STARTR</a>.</div>
+</div>
+<h3>おまけ</h3>
+<p>途中でレッドブルがふるまわれるというサービスまでありました。当日6時起きだったのに4時まで頑張れたのはレッドブルのおかげかもしれません。<br />
+<a title="IMG_2488 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/5046334797/"><img src="http://farm5.static.flickr.com/4108/5046334797_b3ed8b2f3e.jpg" alt="IMG_2488" width="500" height="333" /></a></p>
+<p>そして、最後にCakePHP開発者のGraham Weldonさんと記念撮影させてもらいました。<br />
+Thanks, Graham!<br />
+<a title="IMG_2514 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/5046335737/"><img src="http://farm5.static.flickr.com/4113/5046335737_4651050be6.jpg" alt="IMG_2514" width="500" height="333" /></a><br />
+#ほとんど会話できなかったのが悔やまれます。会話することを怖がらないことが大事ですね。反省。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Gearmanでqueueing]]></title>
+    <link href="http://blog.restartr.com/2010/01/31/gearman%25e3%2581%25a7queueing/"/>
+    <updated>2010-01-31T00:16:51+09:00</updated>
+    <id>http://blog.restartr.com/2010/01/31/gearman%e3%81%a7queueing</id>
+    <content type="html"><![CDATA[<h3>queueing</h3>
+<p>webページを生成する際には、今すぐやらなきゃいけないことと、今すぐでなくても良いものがあります。<br />
+今すぐやらなきゃいけないこととは、ユーザーリクエストに対するDB参照結果等のことで、今すぐでなくても良いものとはアクセスログなどの処理をDBに書き込んだりメール送信したりなど。それ以外にもあるかもですが大体そんな感じです。</p>
+<p>通常であればすべて一回のHTTPリクエストの中でやるわけですが、queueingをすれば今やるべきでないことを後回しにできます。他にもメリットはありますが割愛で。</p>
+<p>で、phpでqueuingをやるとしたら、こんなのがあるそうです。</p>
+<ul>
+<li><a href="http://q4m.31tools.com/">Q4M<br />
+</a>
+</li>
+<li><a href="http://gearman.org">Gearman</a></li>
+<li><a href="http://activemq.apache.org/">ActiveMQ</a></li>
+<li><a href="http://kr.github.com/beanstalkd/">beanstalkd</a></li>
+</ul>
+<p>で、Q4Mを試そうとしたらMySQL5.1以降でないとダメとか。<br />
+ちょっとした事情で「5.1以降」という制約は避けたいので、Gearmanを試してみる事に。<br />
+※最後のbeanstalkdは<a href="http://rad-dev.org/">lithium</a>から使えるみたいです(<a href="http://rad-dev.org/li3_queue">li3_queue</a>)。<br />
+<a id="more"></a><a id="more-190"></a></p>
+<h3>仕組み</h3>
+<p>図解は<a href="http://gearman.org/images/gearman_stack.png">公式サイトの図</a>を見て下さい。</p>
+<p>登場人物は大きく３つ。</p>
+<ul>
+<li> ・Client：処理を依頼する人</li>
+<li> ・Worker：依頼された処理を実行する人</li>
+<li> ・JobServer：ClientとWorkerの橋渡しをする人</li>
+</ul>
+<p>JobServerはdaemonで常駐していて、<br />
+Clientからの要求がある度に、別途常駐しているWorkerに対して処理を投げます。<br />
+かなりシンプルです。</p>
+<h3>使い道</h3>
+<p>Client側から処理を依頼するパターンはだいたい４つ。</p>
+<ul>
+<li>今すぐ依頼して、その結果を受け取る</li>
+<li>今すぐ依頼して、結果を待たずに終了する</li>
+<li>タスクを追加して、最後にまとめて実行して、その結果を受け取る</li>
+<li>タスクを追加して、最後にまとめて実行して、結果を待たずに終了する</li>
+</ul>
+<h3>インストール</h3>
+<p>Gearmanサーバーのインストール</p>
+<blockquote><p>wget http://launchpad.net/gearmand/trunk/0.11/+download/gearmand-0.11.tar.gz<br />
+tar zxf gearmand-0.11.tar.gz<br />
+cd gearmand-0.11<br />
+./configure<br />
+make; make install</p></blockquote>
+<p>起動</p>
+<blockquote><p>/usr/local/sbin/gearmand  -u root --daemon</p></blockquote>
+<p>php extensionのインストール</p>
+<blockquote><p>wget http://pecl.php.net/get/gearman-0.6.0.tgz<br />
+tar zxf gearman-0.6.0.tgz<br />
+cd gearman-0.6.0<br />
+phpize<br />
+./configure<br />
+make; make install</p></blockquote>
+<h3>サンプル</h3>
+<h4>今すぐ依頼して、結果を受け取るパターン</h4>
+<p>worker.php</p>
+
+<p>```php
+&lt;? php
+$worker = new GearmanWorker();
+$worker-&gt;addServer();
+$worker-&gt;addFunction(‘hoge’,’hoge_func’);
+// 常駐
+while($worker-&gt;work());</p>
+
+<p>function hoge_func(GearmanJob $job)
+{
+    return ‘hoge’.$job-&gt;workload();
+}
+```
+&lt;? php</p>
+
+<p>client.php</p>
+
+<p><code>php
+&lt;? php
+$worker = new GearmanWorker();
+$worker-&gt;addServer();
+echo  $client-&amp;gt;do('hoge', 'hello');
+echo "\n";
+</code></p>
+
+<p>実行してみる</p>
+<blockquote><p>$ php woker.php &amp;<br />
+$ php client.php<br />
+hello, hoge</p></blockquote>
+<p>これだけだとほぼ意味ないので、重い処理を遅延実行させてみます。</p>
+<h4>今すぐ依頼して、結果を待たずに終了するパターン</h4>
+<p>worker.php</p>
+
+<p>```php
+&lt;? php
+$worker = new GearmanWorker();
+$worker-&gt;addServer();
+$worker-&gt;addFunction(‘hoge’,’hoge_func’);
+$worker-&gt;addFunction(‘heavy’,’heavy_func’);
+// 常駐
+while($worker-&gt;work());</p>
+
+<p>function hoge_func(GearmanJob $job)
+{
+    return ‘hoge, ‘.$job-&gt;workload();
+}
+function heavy_func(GearmanJob $job)
+{
+        echo “wait…”;
+        sleep(10);
+    return ‘hoge, ‘.$job-&gt;workload();
+}
+```</p>
+
+<p>client.php</p>
+
+<p><code>php
+&lt;? php
+$client = new GearmanClient();
+$client-&gt;addServer();
+echo  $client-&amp;gt;do('hoge', 'hello');
+echo "\n";
+echo $client-&amp;gt;do('heavy', 'hello (sync)');
+echo "\n";
+$client-&amp;gt;doBackground('heavy', 'hello (async)');
+echo "\n";
+</code></p>
+
+<p>実行してみる</p>
+<blockquote><p>$ php worker.php &amp;<br />
+$ php client.php<br />
+hoge, hello<br />
+hoge, hello (sync)</p></blockquote>
+<p>とまぁ、doBackgroundで依頼したキューの場合、clientでは結果を受け取ってません。<br />
+これが基本的な使い方。</p>
+<h4>タスクを追加して、最後にまとめて実行して、その結果を受け取る</h4>
+<p>task_client.php</p>
+
+<p><code>php
+&lt;? php
+$client = new GearmanClient();
+$client-&gt;addServer();
+$client-&gt;setCompleteCallback('task_cb');
+$client-&gt;addTask('hoge', 'arg1');
+$client-&gt;addTask('heavy', 'arg2');
+$client-&gt;runTasks();
+function task_cb(GearmanTask $task)
+{
+    echo '[result]'.$task-&gt;data();
+    echo "\n";
+}
+</code></p>
+
+<blockquote><p>
+$ worker.php &amp;<br />
+$ task_client.php<br />
+[result]hoge, arg1<br />
+[result]hoge, arg2
+</p></blockquote>
+
+<p>と、ひとつめの結果表示のあとには重い処理待ちが発生します。</p>
+<h4>タスクを追加して、最後にまとめて実行して、結果を待たずに終了する</h4>
+<p>重い処理をバックグラウンドのタスクとして登録します。<br />
+task_client.php</p>
+
+<p>```php
+&lt;? php</p>
+
+<p>$client = new GearmanClient();
+$client-&gt;addServer();
+$client-&gt;setCompleteCallback(‘task_cb’);
+$client-&gt;addTask(‘hoge’, ‘arg1’);
+$client-&gt;addTaskBackground(‘heavy’, ‘arg2’);
+$client-&gt;runTasks();</p>
+
+<p>function task_cb(GearmanTask $task)
+{
+        echo ‘[result]’.$task-&gt;data();
+        echo “\n”;
+}
+```</p>
+
+<p>実行</p>
+
+<blockquote><p>
+[result]hoge, arg1
+</p></blockquote>
+<p>addTaskBackgroundで追加したタスクの結果のみ待たずに処理が終了します。<br />
+この例だと意味ないですが、今すぐ結果を必要としない処理を後回しにすることでユーザーへのレスポンスを高速化することができます。</p>
+<h3>注意点</h3>
+<h4>引数は数字と文字列のみ</h4>
+<p>配列やオブジェクトではやりとりできないので、<br />
+そういったものはシリアライズするとかjsonにするとかして渡さないとだめです。
+<h4>workerが見つかるまで待つ</h4>
+<p>clientからリクエストするworker名が存在しない（常駐していない場合）は、<br />
+JobServerはworkerが見つかるまで待ちます。clientがバックグラウンドで依頼しなければそちらでも待ちが発生します。で、対象workerを起動すると即座にJobServerはキュー処理をworkerに渡します。当然ですが。</p>
+<p>もう少し現実的な処理の中でqueueingして試したかったのですが、<br />
+まずは入り口ということで。次回はもうちょっと突っ込んだ処理をやってみたいと。</p>
+<h3>参考資料</h3>
+<ul>
+<li><a href="http://gearman.org">Gearman(公式サイト)</a></li>
+<li><a href="http://www.php.net/manual/en/book.gearman.php">PHP: Gearman - Manual</a></li>
+<li><a href="http://www.ibm.com/developerworks/jp/opensource/library/os-php-gearman/">Gearman を使って PHP アプリケーションのワークロードを分散する</a></li>
+</ul>
+</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[phpのテンプレートエンジンtwigとは]]></title>
+    <link href="http://blog.restartr.com/2009/12/31/twig-is-the-template-engine-written-in-php/"/>
+    <updated>2009-12-31T02:10:55+09:00</updated>
+    <id>http://blog.restartr.com/2009/12/31/twig-is-the-template-engine-written-in-php</id>
+    <content type="html"><![CDATA[<div>最近、PHPのテンプレートエンジン<a href="http://www.twig-project.org/" target="_blank">Twig</a>の紹介記事をちらほら見かけるようになってきました。</div>
+<div>
+<ul>
+<li><span style="font-family: Consolas, Monaco, 'Courier New', Courier, monospace; line-height: 18px; font-size: 12px; white-space: pre;"><a href="http://labs.unoh.net/2009/12/phptwig.html" target="_blank">ウノウラボ Unoh Labs: PHPテンプレートエンジンTwigをいじってみました</a></span></li>
+<li><span style="font-family: Consolas, Monaco, 'Courier New', Courier, monospace; line-height: 18px; font-size: 12px; white-space: pre;"><a href="http://d.hatena.ne.jp/anatoo/20091225/1261749843" target="_blank">テンプレートエンジンを素のPHPからTwigに乗り換えた理由 - id:anatooのブログ</a></span></li>
+<li><a href="http://blog.nully.org/archives/154">[Twig]なにやら話題のテンプレートエンジンTwigを使ってみた | Nullyのぶろぐ</a></li>
+</ul>
+</div>
+<div>自分自身も気になってはいたのですが、試してみるきっかけがなく今に至ってしまいました。現在のプロジェクトではviewは関わらないのですが、それまではSmarty2を使っていました。Smarty3や他テンプレートエンジンも気になるところですが、次はTwigがくるだろうと勝手に予測しています。</div>
+<div>とりあえず今回はTwigの特徴と他テンプレートエンジンとの比較をまとめてみます。</div>
+<div><a id="more"></a><a id="more-3"></a></div>
+<h2>Twigの特徴</h2>
+<p>公式サイトから英訳（適当に）してみました。</p>
+<div>
+<ul>
+<li>簡潔に書ける</li>
+<li>テンプレート指向文法である</li>
+<li>自動エスケープなど必要なものをすべてサポートしている</li>
+<li>文法を簡単に学習できる（※他テンプレートエンジンはPHP4ベースで作られていたりして、web開発においてベストプラクティスとして採用できない。）</li>
+<li>高い拡張性で独自DSLも作れる</li>
+<li>ユニットテストされているのでライブラリは堅牢で、大きなプロジェクトにもすぐに使える。</li>
+<li>ちゃんとドキュメント化されている：</li>
+<li>セキュリティでは自動出力エスケープやsandboxモードによって安全性を確保</li>
+<li>詳細なエラーメッセージでデバッグもカンタン</li>
+<li>テンプレートを素のPHPコードにコンパイルするので、普通のPHPコードに比べてオーバーヘッドを最小限に抑えることができる。</li>
+</ul>
+</div>
+<h2>開発者について</h2>
+<div>Symfony開発者でもある<a href="http://fabien.potencier.org/article/34/templating-engines-in-php" target="_blank">Fabienのブログ記事</a>（と<a href="http://fabien.potencier.org/article/35/templating-engines-in-php-follow-up" target="_blank">そのフォロー記事</a>）を見れば、開発の経緯や他テンプレートエンジンとの比較、それからPHP自体テンプレートエンジンじゃないかという点について言及しています。</div>
+<div>素のPHPをViewとして使いたい人はSymfonyTemplateComponentがスタンドアロンで動作するのでそれを使うと良いと。ViewでPHP的な文法を用いることに疑問を持っていたようです。</div>
+<div>
+<h2>既存テンプレートエンジンとの比較</h2>
+</div>
+<div>
+<div>もともと彼は以下機能を求めてテンプレートエンジンを探していたので、この観点でそれぞれのテンプレートエンジンを評価しています。(なのでこれがそのままTwigの特徴になっています。）</div>
+<div>
+<div>
+<ul>
+<li>Concision (記述が簡潔)</li>
+<li>Template oriented syntax (テンプレート指向な文法)</li>
+<li>Reusability (再利用性)</li>
+<li>Security (安全性)</li>
+<li>Sandbox mode (砂場モード)</li>
+</ul>
+</div>
+</div>
+</div>
+<div>
+<div><strong><a href="http://www.smarty.net/" target="_blank">Smarty</a></strong><strong>:<span style="font-weight: normal;">Smarty3で機能要求を満たしているものの、パフォーマンスが悪い。<br />
+<strong><a href="http://phptal.org/" target="_blank">PHPTAL</a></strong><strong>:<span style="font-weight: normal;">よく設計されていて、機能もあるが、webデザイナにはとっつきにくく、テンプレートの継承的なことは特にそう。</span></strong></span></strong></div>
+<div><strong><span style="font-weight: normal;"><strong><a href="http://www.ezcomponents.org/docs/tutorials/Template" target="_blank">ezComponents Template</a></strong><strong>:<span style="font-weight: normal;">よく設計されていて、多くの機能を持つが、継承をサポートしていないのと、パフォーマンスが他よりかなり劣る。<br />
+<strong><a href="http://dwoo.org/" target="_blank">Dowoo</a></strong><strong>:<span style="font-weight: normal;">Smartyの代替プロジェクトとしてSmartyを真似てつくられていて、継承などの新機能も追加されている。パフォーマンスもSmartyより良いけど、sandboxがないのと、コアシステムの拡張性が十分でない。<br />
+<strong><a href="http://www.beberlei.de/calypso/" target="_blank">Calyps</a></strong><strong><a href="http://www.beberlei.de/calypso/" target="_blank">o</a></strong><strong>:</strong>DjangoのPHPクローンだけど諸問題により開発停止している。</span></strong></span></strong></span></strong></div>
+</div>
+<h3>ベンチマーク</h3>
+<p>既存のテンプレートエンジンに関するベンチマーク結果です。</p>
+<h4>ベンチマーク方法</h4>
+<div>
+<div id="_mcePaste">
+<ul>
+<li>３つのアイテムをループさせ、シンプルな装飾のレイアウト出力の比較。</li>
+<li>10000回表示するテストを１０回実行した平均値。</li>
+<li>継承はヘッダとフィッタを代わりに使用。</li>
+<li>自動出力エスケープができないものは手動でエスケープ処理。</li>
+<li>コマンドラインでPHPAcceleratorなどを使用しない環境で実行</li>
+</ul>
+</div>
+<h4>処理時間とメモリ消費</h4>
+</div>
+<div>
+<table border="1">
+<tbody>
+<tr>
+<th>Library</th>
+<th>Time (sec)</th>
+<th>Memory (Ko)</th>
+<th>Templates rendered per second</th>
+</tr>
+<tr>
+<th>Twig</th>
+<td>3</td>
+<td>1,190</td>
+<td>3,333</td>
+</tr>
+<tr>
+<th>PHPTAL</th>
+<td>3.8</td>
+<td>2,100</td>
+<td>2,632</td>
+</tr>
+<tr>
+<th>Dwoo</th>
+<td>6.9</td>
+<td>1,870</td>
+<td>1,449</td>
+</tr>
+<tr>
+<th>Smarty 2</th>
+<td>12.9</td>
+<td>2,350</td>
+<td>775</td>
+</tr>
+<tr>
+<th>Smarty 3</th>
+<td>14.9</td>
+<td>3,230</td>
+<td>671</td>
+</tr>
+<tr>
+<th>Calypso</th>
+<td>34.3</td>
+<td>620</td>
+<td>292</td>
+</tr>
+<tr>
+<th>eZ Templates</th>
+<td>53</td>
+<td>5,850</td>
+<td>189</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h4>コンパイル後のメモリ消費</h4>
+<p>※フォロー記事の方がSmartyの数値が妥当らしいのでそっちを引用しています。</p>
+<table border="1">
+<tbody>
+<tr>
+<th>Library</th>
+<td>Time(sec)</td>
+<td>Memory without compilation (Ko)</td>
+</tr>
+<tr>
+<th>Plain PHP</th>
+<td>2.4</td>
+<td>114</td>
+</tr>
+<tr>
+<th>Twig</th>
+<td>3</td>
+<td>383</td>
+</tr>
+<tr>
+<th>PHPTAL</th>
+<td>3.8</td>
+<td>598</td>
+</tr>
+<tr>
+<th>Dwoo</th>
+<td>6.9</td>
+<td>1,645</td>
+</tr>
+<tr>
+<th>Smarty 2</th>
+<td>12.9</td>
+<td>610</td>
+</tr>
+<tr>
+<th>Smarty 3</th>
+<td>14.9</td>
+<td>799</td>
+</tr>
+<tr>
+<th>Calypso</th>
+<td>34.3</td>
+<td>614</td>
+</tr>
+<tr>
+<th>eZ Templates</th>
+<td>53</td>
+<td>2,783</td>
+</tr>
+</tbody>
+</table>
+<h2>まとめ</h2>
+<div>機能性だけでなく速さも兼ね備えたテンプレートエンジンTwig。</div>
+<div>便利なテンプレートエンジンはSmartyがデファクトでしたが、Twigはそれを追い抜くかもしれませんね。</div>
+<div>Symfony2.0でオプションのViewとして用意するかも、とFabienは個人的見解として言っているので、そうなると日本語圏でも利用が加速するかもしれません。ただ、Symfony2.0はPHP5.3以上必須なのでPHP5.3への移行に依存しますかね。Smarty3が正式リリースまでにどこまでパフォーマンス改善してくるかも楽しみなところです。</div>
+<div>
+<p>Smartyから乗り換える場合はプログラマよりデザイナの移行コストが高いと思われるのですが、それがクリアできるならぜひ移行してみたいですね。素のPHPよりは断然読みやすく理解しやすですし。</p>
+</div>
+<p>次は機能的なところをまとめたいと思います。</p>
+]]></content>
+  </entry>
+  
+</feed>

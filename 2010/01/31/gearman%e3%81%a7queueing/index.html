@@ -1,0 +1,641 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Gearmanでqueueing - I Will Servive</title>
+  <meta name="author" content="ReSTARTR">
+
+  
+  <meta name="description" content="queueing
+webページを生成する際には、今すぐやらなきゃいけないことと、今すぐでなくても良いものがあります。
+今すぐやらなきゃいけないこととは、ユーザーリクエストに対するDB参照結果等のことで、今すぐでなくても良いものとはアクセスログなどの処理をDBに書き込んだりメール送信したりなど。 &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://blog.restartr.com/2010/01/31/gearman%25e3%2581%25a7queueing/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+   <link href="/stylesheets/data-table.css" media="screen, projection" rel="stylesheet" type="text/css" />
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="I Will Servive" type="application/atom+xml">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+
+<!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href='http://fonts.googleapis.com/css?family=Lato:400,100,100italic,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:200,300,400,500,600,700,900' rel='stylesheet' type='text/css'>
+
+
+	<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$$','$$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-894530-10']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+  <style>html{background: url("/images/background.png") no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;}</style>
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+</hgroup>
+
+</header>
+  <!-- <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:blog.restartr.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav> -->
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Gearmanでqueueing</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-01-31T00:16:51+09:00" pubdate data-updated="true">2010-01-31 (Sun)</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h3>queueing</h3>
+<p>webページを生成する際には、今すぐやらなきゃいけないことと、今すぐでなくても良いものがあります。<br />
+今すぐやらなきゃいけないこととは、ユーザーリクエストに対するDB参照結果等のことで、今すぐでなくても良いものとはアクセスログなどの処理をDBに書き込んだりメール送信したりなど。それ以外にもあるかもですが大体そんな感じです。</p>
+<p>通常であればすべて一回のHTTPリクエストの中でやるわけですが、queueingをすれば今やるべきでないことを後回しにできます。他にもメリットはありますが割愛で。</p>
+<p>で、phpでqueuingをやるとしたら、こんなのがあるそうです。</p>
+<ul>
+<li><a href="http://q4m.31tools.com/">Q4M<br />
+</a>
+</li>
+<li><a href="http://gearman.org">Gearman</a></li>
+<li><a href="http://activemq.apache.org/">ActiveMQ</a></li>
+<li><a href="http://kr.github.com/beanstalkd/">beanstalkd</a></li>
+</ul>
+<p>で、Q4Mを試そうとしたらMySQL5.1以降でないとダメとか。<br />
+ちょっとした事情で「5.1以降」という制約は避けたいので、Gearmanを試してみる事に。<br />
+※最後のbeanstalkdは<a href="http://rad-dev.org/">lithium</a>から使えるみたいです(<a href="http://rad-dev.org/li3_queue">li3_queue</a>)。<br />
+<a id="more"></a><a id="more-190"></a></p>
+<h3>仕組み</h3>
+<p>図解は<a href="http://gearman.org/images/gearman_stack.png">公式サイトの図</a>を見て下さい。</p>
+<p>登場人物は大きく３つ。</p>
+<ul>
+<li> ・Client：処理を依頼する人</li>
+<li> ・Worker：依頼された処理を実行する人</li>
+<li> ・JobServer：ClientとWorkerの橋渡しをする人</li>
+</ul>
+<p>JobServerはdaemonで常駐していて、<br />
+Clientからの要求がある度に、別途常駐しているWorkerに対して処理を投げます。<br />
+かなりシンプルです。</p>
+<h3>使い道</h3>
+<p>Client側から処理を依頼するパターンはだいたい４つ。</p>
+<ul>
+<li>今すぐ依頼して、その結果を受け取る</li>
+<li>今すぐ依頼して、結果を待たずに終了する</li>
+<li>タスクを追加して、最後にまとめて実行して、その結果を受け取る</li>
+<li>タスクを追加して、最後にまとめて実行して、結果を待たずに終了する</li>
+</ul>
+<h3>インストール</h3>
+<p>Gearmanサーバーのインストール</p>
+<blockquote><p>wget http://launchpad.net/gearmand/trunk/0.11/+download/gearmand-0.11.tar.gz<br />
+tar zxf gearmand-0.11.tar.gz<br />
+cd gearmand-0.11<br />
+./configure<br />
+make; make install</p></blockquote>
+<p>起動</p>
+<blockquote><p>/usr/local/sbin/gearmand  -u root &#8211;daemon</p></blockquote>
+<p>php extensionのインストール</p>
+<blockquote><p>wget http://pecl.php.net/get/gearman-0.6.0.tgz<br />
+tar zxf gearman-0.6.0.tgz<br />
+cd gearman-0.6.0<br />
+phpize<br />
+./configure<br />
+make; make install</p></blockquote>
+<h3>サンプル</h3>
+<h4>今すぐ依頼して、結果を受け取るパターン</h4>
+<p>worker.php</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="o">&lt;?</span> <span class="nx">php</span>
+</span><span class="line"><span class="nv">$worker</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GearmanWorker</span><span class="p">();</span>
+</span><span class="line"><span class="nv">$worker</span><span class="o">-&gt;</span><span class="na">addServer</span><span class="p">();</span>
+</span><span class="line"><span class="nv">$worker</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="nx">addFunction</span><span class="p">(</span><span class="s1">&#39;hoge&#39;</span><span class="p">,</span><span class="s1">&#39;hoge_func&#39;</span><span class="p">);</span>
+</span><span class="line"><span class="c1">// 常駐</span>
+</span><span class="line"><span class="k">while</span><span class="p">(</span><span class="nv">$worker</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="nx">work</span><span class="p">());</span>
+</span><span class="line">
+</span><span class="line"><span class="k">function</span> <span class="nf">hoge_func</span><span class="p">(</span><span class="nx">GearmanJob</span> <span class="nv">$job</span><span class="p">)</span>
+</span><span class="line"><span class="p">{</span>
+</span><span class="line">    <span class="k">return</span> <span class="s1">&#39;hoge&#39;</span><span class="o">.</span><span class="nv">$job</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="nx">workload</span><span class="p">();</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>&lt;? php</p>
+
+<p>client.php</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="o">&lt;?</span> <span class="nx">php</span>
+</span><span class="line"><span class="nv">$worker</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GearmanWorker</span><span class="p">();</span>
+</span><span class="line"><span class="nv">$worker</span><span class="o">-&gt;</span><span class="na">addServer</span><span class="p">();</span>
+</span><span class="line"><span class="k">echo</span>  <span class="nv">$client</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="k">do</span><span class="p">(</span><span class="s1">&#39;hoge&#39;</span><span class="p">,</span> <span class="s1">&#39;hello&#39;</span><span class="p">);</span>
+</span><span class="line"><span class="k">echo</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>実行してみる</p>
+<blockquote><p>$ php woker.php &amp;<br />
+$ php client.php<br />
+hello, hoge</p></blockquote>
+<p>これだけだとほぼ意味ないので、重い処理を遅延実行させてみます。</p>
+<h4>今すぐ依頼して、結果を待たずに終了するパターン</h4>
+<p>worker.php</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="o">&lt;?</span> <span class="nx">php</span>
+</span><span class="line"><span class="nv">$worker</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GearmanWorker</span><span class="p">();</span>
+</span><span class="line"><span class="nv">$worker</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="nx">addServer</span><span class="p">();</span>
+</span><span class="line"><span class="nv">$worker</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="nx">addFunction</span><span class="p">(</span><span class="s1">&#39;hoge&#39;</span><span class="p">,</span><span class="s1">&#39;hoge_func&#39;</span><span class="p">);</span>
+</span><span class="line"><span class="nv">$worker</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="nx">addFunction</span><span class="p">(</span><span class="s1">&#39;heavy&#39;</span><span class="p">,</span><span class="s1">&#39;heavy_func&#39;</span><span class="p">);</span>
+</span><span class="line"><span class="c1">// 常駐</span>
+</span><span class="line"><span class="k">while</span><span class="p">(</span><span class="nv">$worker</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="nx">work</span><span class="p">());</span>
+</span><span class="line">
+</span><span class="line"><span class="k">function</span> <span class="nf">hoge_func</span><span class="p">(</span><span class="nx">GearmanJob</span> <span class="nv">$job</span><span class="p">)</span>
+</span><span class="line"><span class="p">{</span>
+</span><span class="line">    <span class="k">return</span> <span class="s1">&#39;hoge, &#39;</span><span class="o">.</span><span class="nv">$job</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="nx">workload</span><span class="p">();</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line"><span class="k">function</span> <span class="nf">heavy_func</span><span class="p">(</span><span class="nx">GearmanJob</span> <span class="nv">$job</span><span class="p">)</span>
+</span><span class="line"><span class="p">{</span>
+</span><span class="line">        <span class="k">echo</span> <span class="s2">&quot;wait...&quot;</span><span class="p">;</span>
+</span><span class="line">        <span class="nb">sleep</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span>
+</span><span class="line">    <span class="k">return</span> <span class="s1">&#39;hoge, &#39;</span><span class="o">.</span><span class="nv">$job</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="nx">workload</span><span class="p">();</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>client.php</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="o">&lt;?</span> <span class="nx">php</span>
+</span><span class="line"><span class="nv">$client</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GearmanClient</span><span class="p">();</span>
+</span><span class="line"><span class="nv">$client</span><span class="o">-&gt;</span><span class="na">addServer</span><span class="p">();</span>
+</span><span class="line"><span class="k">echo</span>  <span class="nv">$client</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="k">do</span><span class="p">(</span><span class="s1">&#39;hoge&#39;</span><span class="p">,</span> <span class="s1">&#39;hello&#39;</span><span class="p">);</span>
+</span><span class="line"><span class="k">echo</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+</span><span class="line"><span class="k">echo</span> <span class="nv">$client</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="k">do</span><span class="p">(</span><span class="s1">&#39;heavy&#39;</span><span class="p">,</span> <span class="s1">&#39;hello (sync)&#39;</span><span class="p">);</span>
+</span><span class="line"><span class="k">echo</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+</span><span class="line"><span class="nv">$client</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="nx">doBackground</span><span class="p">(</span><span class="s1">&#39;heavy&#39;</span><span class="p">,</span> <span class="s1">&#39;hello (async)&#39;</span><span class="p">);</span>
+</span><span class="line"><span class="k">echo</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>実行してみる</p>
+<blockquote><p>$ php worker.php &amp;<br />
+$ php client.php<br />
+hoge, hello<br />
+hoge, hello (sync)</p></blockquote>
+<p>とまぁ、doBackgroundで依頼したキューの場合、clientでは結果を受け取ってません。<br />
+これが基本的な使い方。</p>
+<h4>タスクを追加して、最後にまとめて実行して、その結果を受け取る</h4>
+<p>task_client.php</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="o">&lt;?</span> <span class="nx">php</span>
+</span><span class="line"><span class="nv">$client</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GearmanClient</span><span class="p">();</span>
+</span><span class="line"><span class="nv">$client</span><span class="o">-&gt;</span><span class="na">addServer</span><span class="p">();</span>
+</span><span class="line"><span class="nv">$client</span><span class="o">-&gt;</span><span class="na">setCompleteCallback</span><span class="p">(</span><span class="s1">&#39;task_cb&#39;</span><span class="p">);</span>
+</span><span class="line"><span class="nv">$client</span><span class="o">-&gt;</span><span class="na">addTask</span><span class="p">(</span><span class="s1">&#39;hoge&#39;</span><span class="p">,</span> <span class="s1">&#39;arg1&#39;</span><span class="p">);</span>
+</span><span class="line"><span class="nv">$client</span><span class="o">-&gt;</span><span class="na">addTask</span><span class="p">(</span><span class="s1">&#39;heavy&#39;</span><span class="p">,</span> <span class="s1">&#39;arg2&#39;</span><span class="p">);</span>
+</span><span class="line"><span class="nv">$client</span><span class="o">-&gt;</span><span class="na">runTasks</span><span class="p">();</span>
+</span><span class="line"><span class="k">function</span> <span class="nf">task_cb</span><span class="p">(</span><span class="nx">GearmanTask</span> <span class="nv">$task</span><span class="p">)</span>
+</span><span class="line"><span class="p">{</span>
+</span><span class="line">    <span class="k">echo</span> <span class="s1">&#39;[result]&#39;</span><span class="o">.</span><span class="nv">$task</span><span class="o">-&gt;</span><span class="na">data</span><span class="p">();</span>
+</span><span class="line">    <span class="k">echo</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<blockquote><p>
+$ worker.php &amp;<br />
+$ task_client.php<br />
+[result]hoge, arg1<br />
+[result]hoge, arg2
+</p></blockquote>
+
+<p>と、ひとつめの結果表示のあとには重い処理待ちが発生します。</p>
+<h4>タスクを追加して、最後にまとめて実行して、結果を待たずに終了する</h4>
+<p>重い処理をバックグラウンドのタスクとして登録します。<br />
+task_client.php</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="o">&lt;?</span> <span class="nx">php</span>
+</span><span class="line">
+</span><span class="line"><span class="nv">$client</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GearmanClient</span><span class="p">();</span>
+</span><span class="line"><span class="nv">$client</span><span class="o">-&gt;</span><span class="na">addServer</span><span class="p">();</span>
+</span><span class="line"><span class="nv">$client</span><span class="o">-&gt;</span><span class="na">setCompleteCallback</span><span class="p">(</span><span class="s1">&#39;task_cb&#39;</span><span class="p">);</span>
+</span><span class="line"><span class="nv">$client</span><span class="o">-&gt;</span><span class="na">addTask</span><span class="p">(</span><span class="s1">&#39;hoge&#39;</span><span class="p">,</span> <span class="s1">&#39;arg1&#39;</span><span class="p">);</span>
+</span><span class="line"><span class="nv">$client</span><span class="o">-&gt;</span><span class="na">addTaskBackground</span><span class="p">(</span><span class="s1">&#39;heavy&#39;</span><span class="p">,</span> <span class="s1">&#39;arg2&#39;</span><span class="p">);</span>
+</span><span class="line"><span class="nv">$client</span><span class="o">-&gt;</span><span class="na">runTasks</span><span class="p">();</span>
+</span><span class="line">
+</span><span class="line"><span class="k">function</span> <span class="nf">task_cb</span><span class="p">(</span><span class="nx">GearmanTask</span> <span class="nv">$task</span><span class="p">)</span>
+</span><span class="line"><span class="p">{</span>
+</span><span class="line">        <span class="k">echo</span> <span class="s1">&#39;[result]&#39;</span><span class="o">.</span><span class="nv">$task</span><span class="o">-&gt;</span><span class="na">data</span><span class="p">();</span>
+</span><span class="line">        <span class="k">echo</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>実行</p>
+
+<blockquote><p>
+[result]hoge, arg1
+</p></blockquote>
+<p>addTaskBackgroundで追加したタスクの結果のみ待たずに処理が終了します。<br />
+この例だと意味ないですが、今すぐ結果を必要としない処理を後回しにすることでユーザーへのレスポンスを高速化することができます。</p>
+<h3>注意点</h3>
+<h4>引数は数字と文字列のみ</h4>
+<p>配列やオブジェクトではやりとりできないので、<br />
+そういったものはシリアライズするとかjsonにするとかして渡さないとだめです。
+<h4>workerが見つかるまで待つ</h4>
+<p>clientからリクエストするworker名が存在しない（常駐していない場合）は、<br />
+JobServerはworkerが見つかるまで待ちます。clientがバックグラウンドで依頼しなければそちらでも待ちが発生します。で、対象workerを起動すると即座にJobServerはキュー処理をworkerに渡します。当然ですが。</p>
+<p>もう少し現実的な処理の中でqueueingして試したかったのですが、<br />
+まずは入り口ということで。次回はもうちょっと突っ込んだ処理をやってみたいと。</p>
+<h3>参考資料</h3>
+<ul>
+<li><a href="http://gearman.org">Gearman(公式サイト)</a></li>
+<li><a href="http://www.php.net/manual/en/book.gearman.php">PHP: Gearman - Manual</a></li>
+<li><a href="http://www.ibm.com/developerworks/jp/opensource/library/os-php-gearman/">Gearman を使って PHP アプリケーションのワークロードを分散する</a></li>
+</ul>
+</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">ReSTARTR</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-01-31T00:16:51+09:00" pubdate data-updated="true">2010-01-31 (Sun)</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/php/'>PHP</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2010/01/31/gearman%25e3%2581%25a7queueing/" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2010/01/31/gearman%25e3%2581%25a7queueing/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/2010/01/01/10-targets-that-i-want-to-achieve-in-2010/" title="Previous Post: こんにちは、2010年 - 今年達成したい10の目標">&laquo; こんにちは、2010年 - 今年達成したい10の目標</a>
+      
+      
+        <a class="basic-alignment right" href="/2010/03/09/hadoop-hack-night/" title="Next Post: Hadoop Hack Nightに行ってきた">Hadoop Hack Nightに行ってきた &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section id="titles">
+  <a href="http://blog.restartr.com" title="I Will Servive"><img id="logo" src="http://blog.restartr.com/images/portrait.jpg" /></a>
+  <h1 id="site_title"><a href="http://blog.restartr.com" title="I Will Servive">I Will Servive</a></h1>
+  <h3 id="site_subtitle">An application depelopper's blog.</h3>
+</section>
+
+<section id="menu">
+  <ul>
+    <li><i class="fa fa-home fa-lg"></i><a href="http://blog.restartr.com"> Home </a></li>
+    <li><i class="fa fa-calendar fa-lg"></i><a href="http://blog.restartr.com/blog/archives/"> Archives </a></li>
+    <li><i class="fa fa-user fa-lg"></i><a href="http://blog.restartr.com/about/"> About </a></li>
+    <li><i class="fa fa-rss fa-lg"></i><a href="http://blog.restartr.com/atom.xml"> Feed </a></li>
+  </ul>
+</section>
+
+<section id="social">
+  
+
+  
+
+  
+    <a href="" title="g+#103216164658230535238"><i class="fa fa-google-plus fa-2x"></i></a>
+  
+
+  
+    <a href="https://github.com/ReSTARTR" title="ReSTARTR"><i class="fa fa-github fa-2x"></i></a>
+  
+
+  
+
+  
+    <a href="https://twitter.com/ReSTARTR" title="ReSTARTR"><i class="fa fa-twitter fa-2x"></i></a>
+  
+</section>
+
+
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/2014/04/06/move-from-wordpress-to-octopress/">WordpressからOctpressに移行</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2013/04/26/connect-go-and-python-with-zeromq/">GoとPythonをZeroMQで繋ぐ</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2013/04/17/bind-a-variable-to-closure-in-python/">pythonのクロージャに変数を束縛する方法</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2013/04/05/my-first-pytest/">pythonのテストにpytestを使ってみた</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2013/04/02/retirement201303/">Kauli株式会社を退職しました</a>
+      </li>
+    
+  </ul>
+</section>
+
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/ReSTARTR">@ReSTARTR</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'ReSTARTR',
+            count: 4,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+<section class="googleplus">
+  <h1>
+    <a href="https://plus.google.com/103216164658230535238?rel=author">
+      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
+      Google+
+    </a>
+  </h1>
+</section>
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - ReSTARTR -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ReSTARTR';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
