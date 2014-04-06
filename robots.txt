@@ -1,4 +1,4 @@
 User-agent: *
 Disallow: 
 
-Sitemap: http://blog.restartr.com/sitemap.xml 
+Sitemap: http://blogs.restartr.com/sitemap.xml 

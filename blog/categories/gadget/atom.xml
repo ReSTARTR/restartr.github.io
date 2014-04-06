@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: gadget | I Will Survive]]></title>
-  <link href="http://blog.restartr.com/blog/categories/gadget/atom.xml" rel="self"/>
-  <link href="http://blog.restartr.com/"/>
-  <updated>2014-04-06T16:26:37+09:00</updated>
-  <id>http://blog.restartr.com/</id>
+  <link href="http://blogs.restartr.com/blog/categories/gadget/atom.xml" rel="self"/>
+  <link href="http://blogs.restartr.com/"/>
+  <updated>2014-04-06T22:30:16+09:00</updated>
+  <id>http://blogs.restartr.com/</id>
   <author>
     <name><![CDATA[ReSTARTR]]></name>
     <email><![CDATA[yoshida.masaki+restartr@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[SIMフリーのandroid端末でSoftBankのMMSを受信する方法]]></title>
-    <link href="http://blog.restartr.com/2011/05/01/how-to-send-and-receive-softbank-mms-on-sim-free-android/"/>
+    <link href="http://blogs.restartr.com/2011/05/01/how-to-send-and-receive-softbank-mms-on-sim-free-android/"/>
     <updated>2011-05-01T22:18:15+09:00</updated>
-    <id>http://blog.restartr.com/2011/05/01/how-to-send-and-receive-softbank-mms-on-sim-free-android</id>
+    <id>http://blogs.restartr.com/2011/05/01/how-to-send-and-receive-softbank-mms-on-sim-free-android</id>
     <content type="html"><![CDATA[<p>Desire SでS!メールを受信しようと、apnの設定をしてみたのですが、全く送受信が成功しませんでした。
 いろいろ調査していたところ、SoftBankメールのアプリのバージョンが原因だと判明しました。
 古いバージョンをインストールすれば問題ないようです。</p>
@@ -128,9 +128,9 @@ adb install jp.softbank.mb.mail-1.6.apk
   
   <entry>
     <title type="html"><![CDATA[Desire SをiPhone3GSと比較してみた ? カメラ編 ]]></title>
-    <link href="http://blog.restartr.com/2011/04/28/compare-iphone3gs-to-desire-s-%25e2%2580%2593camera/"/>
+    <link href="http://blogs.restartr.com/2011/04/28/compare-iphone3gs-to-desire-s-%25e2%2580%2593camera/"/>
     <updated>2011-04-28T09:00:42+09:00</updated>
-    <id>http://blog.restartr.com/2011/04/28/compare-iphone3gs-to-desire-s-%e2%80%93camera</id>
+    <id>http://blogs.restartr.com/2011/04/28/compare-iphone3gs-to-desire-s-%e2%80%93camera</id>
     <content type="html"><![CDATA[<p>今回は、Desire Sのカメラ性能がどの程度なのか、iPhone3GSとデジカメを比較しながらみていきます。</p>
 
 <p>iPhoneもDesire Sどちらもデフォルトのカメラアプリをデフォルトの設定で使用しました。
@@ -300,9 +300,9 @@ Desire Sのカメラのレンズ前面をプラスチックが覆っているせ
   
   <entry>
     <title type="html"><![CDATA[Desire SをiPhone3GSと比較してみた - 外観編]]></title>
-    <link href="http://blog.restartr.com/2011/04/27/compare-desire-s-andiphone-3gs-f/"/>
+    <link href="http://blogs.restartr.com/2011/04/27/compare-desire-s-andiphone-3gs-f/"/>
     <updated>2011-04-27T09:00:30+09:00</updated>
-    <id>http://blog.restartr.com/2011/04/27/compare-desire-s-andiphone-3gs-f</id>
+    <id>http://blogs.restartr.com/2011/04/27/compare-desire-s-andiphone-3gs-f</id>
     <content type="html"><![CDATA[<p>先日購入したばかりのHTC Desire S。
 今回は基本スペックの確認と、今まで現役使用していたiPhone3GSとの外観の比較をしてみます。</p>
 
@@ -489,9 +489,9 @@ Desire S, iPhone3GS, iPhone4, Nexus Sの主要項目(独断と偏見)の比較�
   
   <entry>
     <title type="html"><![CDATA[HTC Desire Sを買ってみた]]></title>
-    <link href="http://blog.restartr.com/2011/04/25/bought-htc-desire-s/"/>
+    <link href="http://blogs.restartr.com/2011/04/25/bought-htc-desire-s/"/>
     <updated>2011-04-25T23:12:59+09:00</updated>
-    <id>http://blog.restartr.com/2011/04/25/bought-htc-desire-s</id>
+    <id>http://blogs.restartr.com/2011/04/25/bought-htc-desire-s</id>
     <content type="html"><![CDATA[<p><a href="http://www.flickr.com/photos/53244662@N04/5653772980/" title="IMG_4557 by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5310/5653772980_b12c71a761_z.jpg" width="640" height="427" alt="IMG_4557" /></a></p>
 
 <p>はじめてのAndroidとして<a href="http://www.htc.com/www/product/desires/overview.html">HTC Desire S</a>を買ってみました。</p>

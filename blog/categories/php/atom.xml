@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: PHP | I Will Survive]]></title>
-  <link href="http://blog.restartr.com/blog/categories/php/atom.xml" rel="self"/>
-  <link href="http://blog.restartr.com/"/>
-  <updated>2014-04-06T16:26:37+09:00</updated>
-  <id>http://blog.restartr.com/</id>
+  <link href="http://blogs.restartr.com/blog/categories/php/atom.xml" rel="self"/>
+  <link href="http://blogs.restartr.com/"/>
+  <updated>2014-04-06T22:30:16+09:00</updated>
+  <id>http://blogs.restartr.com/</id>
   <author>
     <name><![CDATA[ReSTARTR]]></name>
     <email><![CDATA[yoshida.masaki+restartr@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[ScalaとErlangとPHPと私]]></title>
-    <link href="http://blog.restartr.com/2010/11/23/scala-erlang-php-and-me/"/>
+    <link href="http://blogs.restartr.com/2010/11/23/scala-erlang-php-and-me/"/>
     <updated>2010-11-23T18:57:35+09:00</updated>
-    <id>http://blog.restartr.com/2010/11/23/scala-erlang-php-and-me</id>
+    <id>http://blogs.restartr.com/2010/11/23/scala-erlang-php-and-me</id>
     <content type="html"><![CDATA[<p>PHPよりScalaが簡単である、という議論に対するふたつのポストがあったので、自分向けにまとめました。</p>
 <ul>
 <li>元記事：<a href="http://wadearnold.com/blog/scala/scala-is-easier-than-php">Wade Arnold ? Scala is easier than PHP</a></li>
@@ -99,9 +99,9 @@ PHPはいまだに最高の言語であると最初に断っておきつつ、Sc
   
   <entry>
     <title type="html"><![CDATA[CakePHPのDebugKitにプロファイル情報が見れるXHProfPanelを追加]]></title>
-    <link href="http://blog.restartr.com/2010/10/10/the-xhprofpanel-debugkit-custom-panel-cakephp/"/>
+    <link href="http://blogs.restartr.com/2010/10/10/the-xhprofpanel-debugkit-custom-panel-cakephp/"/>
     <updated>2010-10-10T00:59:04+09:00</updated>
-    <id>http://blog.restartr.com/2010/10/10/the-xhprofpanel-debugkit-custom-panel-cakephp</id>
+    <id>http://blogs.restartr.com/2010/10/10/the-xhprofpanel-debugkit-custom-panel-cakephp</id>
     <content type="html"><![CDATA[<p>先日のPHPMatsuriのハッカソンにて作成したXHProfの結果がみれるCustomPanelですが、そのまま公開するにはお恥ずかしい感じだったので、多少マシに改修したものを公開してみます。</p>
 <h3>DebugKit, XHProfPanelとは</h3>
 <p>CakePHPのDebugKitというプラグインがあり、それを使えばいろんなデバッグ情報がWeb画面上で確認できます。で、これにXHProfというphp拡張を使ってプロファイラ情報を見れるようにしてみました。</p>
@@ -177,9 +177,9 @@ cakeのアプリは<strong>cake.localhost</strong>、xhprofビューアは<stron
   
   <entry>
     <title type="html"><![CDATA[PHPMATSURI - PHPハッカー達による一泊二日のハックデイ]]></title>
-    <link href="http://blog.restartr.com/2010/10/03/phpmatsuri-hack-days-by-php-hackers/"/>
+    <link href="http://blogs.restartr.com/2010/10/03/phpmatsuri-hack-days-by-php-hackers/"/>
     <updated>2010-10-03T20:26:48+09:00</updated>
-    <id>http://blog.restartr.com/2010/10/03/phpmatsuri-hack-days-by-php-hackers</id>
+    <id>http://blogs.restartr.com/2010/10/03/phpmatsuri-hack-days-by-php-hackers</id>
     <content type="html"><![CDATA[<p><a title="IMG_2470 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/5046336051/"><img src="http://farm5.static.flickr.com/4154/5046336051_aabef10eb4.jpg" alt="IMG_2470" width="500" height="333" /></a></p>
 <p><a href="http://2010.phpmatsuri.net/"><img class="alignnone size-medium wp-image-341" title="PHPMATSURI" src="http://blog.restartr.com/wp-content/uploads/2010/10/bunner-300x132.jpg" alt="" width="300" height="132" /></a><br />
 10月02日と03日の、一泊二日の<a href="http://2010.phpmatsuri.net/">PHPMASTURI</a>に参加してきました。</p>
@@ -245,9 +245,9 @@ Thanks, Graham!<br />
   
   <entry>
     <title type="html"><![CDATA[Gearmanでqueueing]]></title>
-    <link href="http://blog.restartr.com/2010/01/31/gearman%25e3%2581%25a7queueing/"/>
+    <link href="http://blogs.restartr.com/2010/01/31/gearman%25e3%2581%25a7queueing/"/>
     <updated>2010-01-31T00:16:51+09:00</updated>
-    <id>http://blog.restartr.com/2010/01/31/gearman%e3%81%a7queueing</id>
+    <id>http://blogs.restartr.com/2010/01/31/gearman%e3%81%a7queueing</id>
     <content type="html"><![CDATA[<h3>queueing</h3>
 <p>webページを生成する際には、今すぐやらなきゃいけないことと、今すぐでなくても良いものがあります。<br />
 今すぐやらなきゃいけないこととは、ユーザーリクエストに対するDB参照結果等のことで、今すぐでなくても良いものとはアクセスログなどの処理をDBに書き込んだりメール送信したりなど。それ以外にもあるかもですが大体そんな感じです。</p>
@@ -454,9 +454,9 @@ JobServerはworkerが見つかるまで待ちます。clientがバックグラ�
   
   <entry>
     <title type="html"><![CDATA[phpのテンプレートエンジンtwigとは]]></title>
-    <link href="http://blog.restartr.com/2009/12/31/twig-is-the-template-engine-written-in-php/"/>
+    <link href="http://blogs.restartr.com/2009/12/31/twig-is-the-template-engine-written-in-php/"/>
     <updated>2009-12-31T02:10:55+09:00</updated>
-    <id>http://blog.restartr.com/2009/12/31/twig-is-the-template-engine-written-in-php</id>
+    <id>http://blogs.restartr.com/2009/12/31/twig-is-the-template-engine-written-in-php</id>
     <content type="html"><![CDATA[<div>最近、PHPのテンプレートエンジン<a href="http://www.twig-project.org/" target="_blank">Twig</a>の紹介記事をちらほら見かけるようになってきました。</div>
 <div>
 <ul>

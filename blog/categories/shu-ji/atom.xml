@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: 書籍 | I Will Survive]]></title>
-  <link href="http://blog.restartr.com/blog/categories/shu-ji/atom.xml" rel="self"/>
-  <link href="http://blog.restartr.com/"/>
-  <updated>2014-04-06T16:26:37+09:00</updated>
-  <id>http://blog.restartr.com/</id>
+  <link href="http://blogs.restartr.com/blog/categories/shu-ji/atom.xml" rel="self"/>
+  <link href="http://blogs.restartr.com/"/>
+  <updated>2014-04-06T22:30:16+09:00</updated>
+  <id>http://blogs.restartr.com/</id>
   <author>
     <name><![CDATA[ReSTARTR]]></name>
     <email><![CDATA[yoshida.masaki+restartr@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[エンジニアとしての生き方 -IT技術者たちよ、世界へ出よう！-]]></title>
-    <link href="http://blog.restartr.com/2011/04/12/how-to-live-as-an-engineer/"/>
+    <link href="http://blogs.restartr.com/2011/04/12/how-to-live-as-an-engineer/"/>
     <updated>2011-04-12T09:30:35+09:00</updated>
-    <id>http://blog.restartr.com/2011/04/12/how-to-live-as-an-engineer</id>
+    <id>http://blogs.restartr.com/2011/04/12/how-to-live-as-an-engineer</id>
     <content type="html"><![CDATA[<ul>
   <li><a href="http://www.amazon.co.jp/dp/4844329944">エンジニアとしての生き方　　IT技術者たちよ、世界へ出よう！ (インプレス選書) [単行本（ソフトカバー）]</a></li>
 </ul>
@@ -111,9 +111,9 @@ P81に「企画に関わる人を減らして、魂のあるものを作る」�
   
   <entry>
     <title type="html"><![CDATA[600万人の女性に支持されるクックパッドというビジネス]]></title>
-    <link href="http://blog.restartr.com/2011/02/14/cookpad-the-business-that-supported-by-600-million-women/"/>
+    <link href="http://blogs.restartr.com/2011/02/14/cookpad-the-business-that-supported-by-600-million-women/"/>
     <updated>2011-02-14T08:00:42+09:00</updated>
-    <id>http://blog.restartr.com/2011/02/14/cookpad-the-business-that-supported-by-600-million-women</id>
+    <id>http://blogs.restartr.com/2011/02/14/cookpad-the-business-that-supported-by-600-million-women</id>
     <content type="html"><![CDATA[<p>[tmkm-amazon]4827550719[/tmkm-amazon]</p>
 
 <p>2009年5月発刊なので、2年以上前の本です。発刊時から存在は知ってましたが、ブックオフにてちょうど目に入ってきて、興味があったので購入してみました。ボリュームとしては2時間弱。
@@ -154,9 +154,9 @@ P81に「企画に関わる人を減らして、魂のあるものを作る」�
   
   <entry>
     <title type="html"><![CDATA[数式を使わないデータマイニング入門]]></title>
-    <link href="http://blog.restartr.com/2011/02/06/introduction-of-data-mining-without-formul/"/>
+    <link href="http://blogs.restartr.com/2011/02/06/introduction-of-data-mining-without-formul/"/>
     <updated>2011-02-06T22:47:11+09:00</updated>
-    <id>http://blog.restartr.com/2011/02/06/introduction-of-data-mining-without-formul</id>
+    <id>http://blogs.restartr.com/2011/02/06/introduction-of-data-mining-without-formul</id>
     <content type="html"><![CDATA[<ul>
   <li><a href="http://www.amazon.co.jp/dp/4334033555">数式を使わないデータマイニング入門 隠れた法則を発見する (光文社新書) [新書]</a></li>
 </ul>
@@ -196,9 +196,9 @@ P81に「企画に関わる人を減らして、魂のあるものを作る」�
   
   <entry>
     <title type="html"><![CDATA[pythonをはじめるために]]></title>
-    <link href="http://blog.restartr.com/2011/01/30/how-to-start-learning-python-programming/"/>
+    <link href="http://blogs.restartr.com/2011/01/30/how-to-start-learning-python-programming/"/>
     <updated>2011-01-30T22:04:12+09:00</updated>
-    <id>http://blog.restartr.com/2011/01/30/how-to-start-learning-python-programming</id>
+    <id>http://blogs.restartr.com/2011/01/30/how-to-start-learning-python-programming</id>
     <content type="html"><![CDATA[<p><a href="http://blog.restartr.com/2011/01/10/6-targets-i-want-to-achieve-in-2011/">今年の目標</a>として</p>
 <blockquote><p>3.pythonに手を出す</p></blockquote>
 <p>というのを掲げていて、「エキスパートPythonプログラミング」を買ったので、pythonの学習をこんな感じではじめてみるつもり、というのを書いておきます。</p>
@@ -259,9 +259,9 @@ Scalaでも少し手をつけていたりますが、JMV系とPythonでどのよ
   
   <entry>
     <title type="html"><![CDATA[プログラマが知るべき97のこと]]></title>
-    <link href="http://blog.restartr.com/2011/01/15/97things-every-programmers-should-know/"/>
+    <link href="http://blogs.restartr.com/2011/01/15/97things-every-programmers-should-know/"/>
     <updated>2011-01-15T00:39:03+09:00</updated>
-    <id>http://blog.restartr.com/2011/01/15/97things-every-programmers-should-know</id>
+    <id>http://blogs.restartr.com/2011/01/15/97things-every-programmers-should-know</id>
     <content type="html"><![CDATA[<p>「プログラマが知るべき97のこと」を読みました。</p>
 
 <ul>
