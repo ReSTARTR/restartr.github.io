@@ -1,0 +1,509 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>I Will Survive</title>
+  <meta name="author" content="ReSTARTR">
+  <link rel="author" href="https://plus.google.com/103216164658230535238" />
+
+  
+  <meta name="description" content="先日のPHPMatsuriのハッカソンにて作成したXHProfの結果がみれるCustomPanelですが、そのまま公開するにはお恥ずかしい感じだったので、多少マシに改修したものを公開してみます。
+DebugKit, XHProfPanelとは
+CakePHPのDebugKitというプラグインがあり &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://blog.restartr.com/page/21/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+   <link href="/stylesheets/data-table.css" media="screen, projection" rel="stylesheet" type="text/css" />
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="I Will Survive" type="application/atom+xml">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+
+<!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href='http://fonts.googleapis.com/css?family=Lato:400,100,100italic,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:200,300,400,500,600,700,900' rel='stylesheet' type='text/css'>
+
+
+	<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$$','$$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-894530-10']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+  <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
+  <style>html{background: url("/images/background.png") no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;}</style>
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+</hgroup>
+
+</header>
+  <!-- <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:blog.restartr.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav> -->
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2010/10/10/the-xhprofpanel-debugkit-custom-panel-cakephp/">CakePHPのDebugKitにプロファイル情報が見れるXHProfPanelを追加</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-10-10T00:59:04+09:00" pubdate data-updated="true">2010-10-10 (Sun)</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>先日のPHPMatsuriのハッカソンにて作成したXHProfの結果がみれるCustomPanelですが、そのまま公開するにはお恥ずかしい感じだったので、多少マシに改修したものを公開してみます。</p>
+<h3>DebugKit, XHProfPanelとは</h3>
+<p>CakePHPのDebugKitというプラグインがあり、それを使えばいろんなデバッグ情報がWeb画面上で確認できます。で、これにXHProfというphp拡張を使ってプロファイラ情報を見れるようにしてみました。</p>
+<p>こんな感じです。<br />
+<a href="http://blog.restartr.com/wp-content/uploads/2010/10/256d829a326e5fc745e5659600527bde.png"><img class="alignnone size-full wp-image-390" title="XHProfPanel-screenshot" src="http://blog.restartr.com/wp-content/uploads/2010/10/256d829a326e5fc745e5659600527bde.png" alt="" width="464" height="42" /></a></p>
+<p><a id="more"></a><a id="more-367"></a></p>
+<p>で、パネルを開くとこんな感じに各関数呼び出しごとの負荷情報などを閲覧できます。<br />
+<a href="http://blog.restartr.com/wp-content/uploads/2010/10/f0c2dac263680a94429c57bd5c1e81ff.png"><img class="alignnone size-medium wp-image-399" title="xhprofpanel-opned-screenshot" src="http://blog.restartr.com/wp-content/uploads/2010/10/f0c2dac263680a94429c57bd5c1e81ff-300x170.png" alt="" width="300" height="170" /></a></p>
+<p>さらに、<strong>&#8220;xhprof Result&#8221;</strong>というリンクをクリックすれば、XHProfが用意してくれているビューアを開くこともできます。ビューアではコールグラフも閲覧できます。</p>
+<h3>カスタムパネルの追加方法</h3>
+<blockquote><p>helloworld_controllerにプロファイル実行する、という例で説明します。</p></blockquote>
+<h4>事前準備</h4>
+<p>debugkitはインストール済みとします。入れ方は<br />
+<a href="http://d.hatena.ne.jp/cakephper/20090604/1244112188">超便利なDebugkitを画面キャプチャ付きで解説 - cakephperの日記(CakePHP, MongoDB, Lithium)</a><br />
+を参照してください。</p>
+<p>XHProfのインストールも済ませておきます。</p>
+<pre class="brush">wget http://pecl.php.net/get/xhprof-0.9.2.tgz
+pecl install xhprof-0.9.2.tgz</pre>
+<p>php.iniにも設定追加しておきます。</p>
+<pre class="brush">extension=xhprof.so</pre>
+<p>tgzファイルをtarで解凍した中身のうち、xhprof_html,xhprof_libをビューア用に用意したバーチャルホスト下において、<br />
+別ドメインでアクセスできるようにします。<br />
+cakeのアプリは<strong>cake.localhost</strong>、xhprofビューアは<strong>xhprof.localhost</strong>のような感じです。<br />
+ディレクトリはこんな感じできっています。</p>
+<pre class="brush:c">/var/
+  vhosts/
+    cake/ // cake.localhostのdocument_root
+      app/
+    xhprof/
+      xhprof_html/ // xhprof.localhostのdocument_root
+      xhprof_lib/</pre>
+<h4>ファイル構成</h4>
+<p>下記ファイルを修正もしくは新規作成します。</p>
+<pre class="brush:c">app/
+  controllers/
+    helloworld_controller.php //新規追加
+  plugins/
+    debug_kit/
+      controllers/
+        conmponents/
+          toolbar.php //修正
+      views/
+        elements/
+          xhprof_panel.ctp //新規追加</pre>
+<h4>1.XHProfPanelの追加</h4>
+<blockquote><p>app/plugins/debug_kit/controllers/components/toolbar.php</p></blockquote>
+<p>に下記クラスをコピペで追加。<br />
+<script src="http://gist.github.com/618254.js?file=toolbar.php"></script></p>
+<h4>2.デフォルトパネルにXHProfPanelを追加</h4>
+<blockquote><p>app/plugins/debug_kit/controllers/components/toolbar.php</p></blockquote>
+<p>の既存行（52行目あたり)に下記のように$_defaultPanelsに&#8217;xhprof&#8217;を追加。<br />
+<script src="http://gist.github.com/618254.js?file=toolbar_.php"></script></p>
+<h4>3.controllerの設定にもXHProfPanelを追加</h4>
+<p>下記のようにXhprofPanelへの設定情報も渡します。<br />
+<script src="http://gist.github.com/618254.js?file=helloworld_controller.php"></script></p>
+<h4>4.テンプレートの追加</h4>
+<blockquote><p>app/plugins/debug_kit/views/elements/xhprof_panel.ctp</p></blockquote>
+<p>を下記内容で新規作成します。<br />
+<script src="http://gist.github.com/618254.js?file=xhprof_panel.ctp"></script></p>
+<h4>ソート順の変更</h4>
+<p>デフォルトではwall timeの降順でソートしてあります。<br />
+コントローラでの設定で&#8217;sortBy&#8217;の値を変えれば変更できます。<br />
+(指定しなければ&#8217;wt&#8217;指定となります。)<br />
+設定できるのは<strong>ct, wt, cpu, mu, pmu</strong>の５つ。</p>
+<h4>プロファイル範囲</h4>
+<p>XhprofPanel::__constructからXhprofPanel::beforeRenderまでです。<br />
+結果をみるとLogPanelクラス（DebugKitプラグイン内のクラス）のメソッド呼び出しも含まれていたりするので、<br />
+もう少し適当な範囲にできないか検討したいと思います。</p>
+<h3>余談</h3>
+<p>Githubを有料アカウントにすべきか迷い中です。今回とりあえずgistで公開してみましたが、リポジトリは欲しいような、でも今のところ必要ないような…</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2010/10/03/phpmatsuri-hack-days-by-php-hackers/">PHPMATSURI - PHPハッカー達による一泊二日のハックデイ</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-10-03T20:26:48+09:00" pubdate data-updated="true">2010-10-03 (Sun)</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><a title="IMG_2470 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/5046336051/"><img src="http://farm5.static.flickr.com/4154/5046336051_aabef10eb4.jpg" alt="IMG_2470" width="500" height="333" /></a></p>
+<p><a href="http://2010.phpmatsuri.net/"><img class="alignnone size-medium wp-image-341" title="PHPMATSURI" src="http://blog.restartr.com/wp-content/uploads/2010/10/bunner-300x132.jpg" alt="" width="300" height="132" /></a><br />
+10月02日と03日の、一泊二日の<a href="http://2010.phpmatsuri.net/">PHPMASTURI</a>に参加してきました。</p>
+<ul>
+<li>ハッシュタグ: <a href="http://search.twitter.com/search?q=%23phpmatsuri">#phpmatsuri</a></li>
+<li>LTのustream: <a href="http://www.ustream.tv/channel/phpmatsuri">phpmatsuri on USTREAM</a></li>
+</ul>
+<h3>とにかく内容が濃い</h3>
+<ul>
+<li>楽天の吉岡さんによる大人のプログラミングキャンプ</li>
+<li>CakePHP,Symfony,Lithiumのデベロッパーによるセッション</li>
+<li>彼らのライブコーディングを間近に見られる各フレームワークのワークショップ</li>
+<li>スポンサー各社のセッション</li>
+<li>PHPによる開発事例プレゼン大会のJIREI NIGHT</li>
+<li>ZyngaJapanのお二人によるTDDを実体験できるワークショップ</li>
+<li>深夜まで続くハッカソンと、総勢33名による大LT大会</li>
+</ul>
+<p>ざっと並べただけでもこんな感じに、とにかく内容てんこ盛りな二日間でした。</p>
+<p><a id="more"></a><a id="more-335"></a></p>
+<p><a title="IMG_2512 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/5046956568/"><img src="http://farm5.static.flickr.com/4133/5046956568_dd9b08f6eb.jpg" alt="IMG_2512" width="500" height="333" /></a></p>
+<p>まとめるのは得意ではないので、参加した感想を少しばかり。</p>
+<h3>イベントに参加するということがいかに重要であるか</h3>
+<p>最初の吉岡さんのセッションは「この祭りをいかに楽しく有意義に過ごすか」ということを教えていただきました。また、各セッションを聞いたり、たくさんのデベロッパーの方々とコミュニケーションをとるのも非常に有意義でした。<br />
+最後のLT大会では、参加したみなさんの変態ぶりに圧倒されっぱなし。これだけ多くの発表があるとそれぞれに目の付け所が違っているが故にアイデアももらえるし、そこで発表すれば多くの反応をいただくこともできます。参加することで得られるメリットは、参加費用にはかえがたいものがあったと思います。<br />
+最後の締めで@yandoさんが「個人によるイベント」と仰っていて、このイベントは有志のスタッフの方々に支えられている、ことを実感しました。企画・運営をしてくださったスタッフのみなさんには本当に感謝します。<br />
+そして、PHPMATSURIに関わったすべての方に感謝したいと思います。ありがとうございました。</p>
+<p><a title="IMG_2491 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/5046334983/"><img src="http://farm5.static.flickr.com/4086/5046334983_8bd1c1329a.jpg" alt="IMG_2491" width="500" height="333" /></a><br />
+今回のチャレンジをまとめてみます。</p>
+<h3>チャレンジできたこと</h3>
+<ul>
+<li>CakePHP,Symfony2,Lithium各フレームワークの特徴を知る</li>
+<li>プレゼン資料を拙いながらも英語で作成する</li>
+<li>内容に関係なく発表者になる</li>
+<li>動かなかったで終わらせず、動くまでハックする</li>
+</ul>
+<h3>チャレンジできなかったこと</h3>
+<ul>
+<li>各FWデベロッパーの方々とのコミュニケーション</li>
+<li>セッションで質問する(TDDのワークでは質問しましたが)</li>
+<li>ソースコード公開</li>
+<li>Beer Driven Development</li>
+</ul>
+<h3>今後チャレンジしたいこと</h3>
+<ul>
+<li>今回の成果物のソースコード公開する</li>
+<li>英語を聞く力、話す力をつける</li>
+<li>発表の機会を自分でつくる</li>
+</ul>
+<h3>成果：XHProf CustomPanel</h3>
+<p>※詳しい話は別記事にてやります。</p>
+<div id="__ss_5344576" style="width: 425px;"><strong><a title="Php matusri xhprof custompanel" href="http://www.slideshare.net/restartr/php-matusri-xhprofcustompanelpublish">Php matusri xhprof custompanel</a></strong><object id="__sse5344576" classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" width="425" height="355" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,40,0"><param name="allowFullScreen" value="true" /><param name="allowScriptAccess" value="always" /><param name="src" value="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=phpmatusri-xhprofcustompanel-publish-101003011838-phpapp02&amp;stripped_title=php-matusri-xhprofcustompanelpublish&amp;userName=restartr" /><param name="name" value="__sse5344576" /><param name="allowfullscreen" value="true" /><embed id="__sse5344576" type="application/x-shockwave-flash" width="425" height="355" src="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=phpmatusri-xhprofcustompanel-publish-101003011838-phpapp02&amp;stripped_title=php-matusri-xhprofcustompanelpublish&amp;userName=restartr" name="__sse5344576" allowscriptaccess="always" allowfullscreen="true" /></object>
+<div style="padding: 5px 0 12px;">View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/restartr">Re STARTR</a>.</div>
+</div>
+<h3>おまけ</h3>
+<p>途中でレッドブルがふるまわれるというサービスまでありました。当日6時起きだったのに4時まで頑張れたのはレッドブルのおかげかもしれません。<br />
+<a title="IMG_2488 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/5046334797/"><img src="http://farm5.static.flickr.com/4108/5046334797_b3ed8b2f3e.jpg" alt="IMG_2488" width="500" height="333" /></a></p>
+<p>そして、最後にCakePHP開発者のGraham Weldonさんと記念撮影させてもらいました。<br />
+Thanks, Graham!<br />
+<a title="IMG_2514 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/5046335737/"><img src="http://farm5.static.flickr.com/4113/5046335737_4651050be6.jpg" alt="IMG_2514" width="500" height="333" /></a><br />
+#ほとんど会話できなかったのが悔やまれます。会話することを怖がらないことが大事ですね。反省。</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+      <a class="prev" href="/page/22/">&larr; Older</a>
+    
+    <a href="/blog/archives/"> Archives </a>
+    
+    <a class="next" href="/page/20/">Newer &rarr;</a>
+    
+  </div>
+</div>
+<aside class="sidebar">
+  
+    <section id="titles">
+  <a href="http://blog.restartr.com" title="I Will Survive"><img id="logo" src="http://blog.restartr.com/images/portrait.jpg" /></a>
+  <h1 id="site_title"><a href="http://blog.restartr.com" title="I Will Survive">I Will Survive</a></h1>
+  <h3 id="site_subtitle">An application depelopper&#8217;s blog.</h3>
+</section>
+
+<section id="menu">
+  <ul>
+    <li><i class="fa fa-home fa-lg"></i><a href="http://blog.restartr.com"> Home </a></li>
+    <li><i class="fa fa-calendar fa-lg"></i><a href="http://blog.restartr.com/blog/archives/"> Archives </a></li>
+    <li><i class="fa fa-user fa-lg"></i><a href="http://blog.restartr.com/about/"> About </a></li>
+    <li><i class="fa fa-rss fa-lg"></i><a href="http://blog.restartr.com/atom.xml"> Feed </a></li>
+  </ul>
+</section>
+
+<section id="social">
+  
+
+  
+
+  
+    <a href="" title="g+#103216164658230535238"><i class="fa fa-google-plus fa-2x"></i></a>
+  
+
+  
+    <a href="https://github.com/ReSTARTR" title="ReSTARTR"><i class="fa fa-github fa-2x"></i></a>
+  
+
+  
+
+  
+    <a href="https://twitter.com/ReSTARTR" title="ReSTARTR"><i class="fa fa-twitter fa-2x"></i></a>
+  
+
+  
+</section>
+
+
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/2014/04/06/move-from-wordpress-to-octopress/">WordpressからOctpressに移行</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2013/04/26/connect-go-and-python-with-zeromq/">GoとPythonをZeroMQで繋ぐ</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2013/04/17/bind-a-variable-to-closure-in-python/">pythonのクロージャに変数を束縛する方法</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2013/04/05/my-first-pytest/">pythonのテストにpytestを使ってみた</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2013/04/02/retirement201303/">Kauli株式会社を退職しました</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+  <h1>Categories</h1>
+  <ul id="categories">
+    <li><a href='/categories/gadget/'>gadget</a></li><li><a href='/categories/golang/'>golang</a></li><li><a href='/categories/hadoop/'>hadoop</a></li><li><a href='/categories/php/'>PHP</a></li><li><a href='/categories/python/'>python</a></li><li><a href='/categories/scala/'>Scala</a></li><li><a href='/categories/websabisu/'>Webサービス</a></li><li><a href='/categories/detamainingu/'>データマイニング</a></li><li><a href='/categories/puroguramingu/'>プログラミング</a></li><li><a href='/categories/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/categories/shu-ji/'>書籍</a></li><li><a href='/categories/za-ji/'>雑記</a></li>
+  </ul>
+</section>
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/ReSTARTR">@ReSTARTR</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'ReSTARTR',
+            count: 4,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+<section class="googleplus">
+  <h1>
+    <a href="https://plus.google.com/103216164658230535238?rel=author">
+      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
+      Google+
+    </a>
+  </h1>
+</section>
+
+
+
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - ReSTARTR -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ReSTARTR';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
