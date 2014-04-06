@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: Scala | I Will Servive]]></title>
-  <link href="http://blog.restartr.com/blog/categories/scala/atom.xml" rel="self"/>
-  <link href="http://blog.restartr.com/"/>
-  <updated>2014-04-06T13:15:29+09:00</updated>
-  <id>http://blog.restartr.com/</id>
+  <link href="http://ReSTARTR.github.io/blog/categories/scala/atom.xml" rel="self"/>
+  <link href="http://ReSTARTR.github.io/"/>
+  <updated>2014-04-06T13:18:56+09:00</updated>
+  <id>http://ReSTARTR.github.io/</id>
   <author>
     <name><![CDATA[ReSTARTR]]></name>
     <email><![CDATA[yoshida.masaki+restartr@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[EventStatsはherokuとMongoLabとさくらVPSで動いている]]></title>
-    <link href="http://blog.restartr.com/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps/"/>
+    <link href="http://ReSTARTR.github.io/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps/"/>
     <updated>2011-12-28T21:27:52+09:00</updated>
-    <id>http://blog.restartr.com/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps</id>
+    <id>http://ReSTARTR.github.io/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps</id>
     <content type="html"><![CDATA[<p>今月頭に<a href="/2011/12/10/eventststs">ブログ書きました</a>が、EventStatsという勉強会の参加者の推移が見れるサービスを公開しました。</p>
 
 <ul>
@@ -238,9 +238,9 @@ atndとの違い
   
   <entry>
     <title type="html"><![CDATA[第二回 #Playframework 勉強会 in Tokyo #play_ja に行ってきた]]></title>
-    <link href="http://blog.restartr.com/2011/10/10/play-framework-study-in-tokyo/"/>
+    <link href="http://ReSTARTR.github.io/2011/10/10/play-framework-study-in-tokyo/"/>
     <updated>2011-10-10T15:59:13+09:00</updated>
-    <id>http://blog.restartr.com/2011/10/10/play-framework-study-in-tokyo</id>
+    <id>http://ReSTARTR.github.io/2011/10/10/play-framework-study-in-tokyo</id>
     <content type="html"><![CDATA[<ul>
   <li><a href="http://atnd.org/events/19107">第二回 #Playframework 勉強会 in Tokyo #play_ja</a></li>
 </ul>
@@ -291,9 +291,9 @@ atndとの違い
   
   <entry>
     <title type="html"><![CDATA[Scalaで設定ファイルを使いたい時どうしたらいいの？]]></title>
-    <link href="http://blog.restartr.com/2011/08/30/config-libraries-in-scala/"/>
+    <link href="http://ReSTARTR.github.io/2011/08/30/config-libraries-in-scala/"/>
     <updated>2011-08-30T00:02:15+09:00</updated>
-    <id>http://blog.restartr.com/2011/08/30/config-libraries-in-scala</id>
+    <id>http://ReSTARTR.github.io/2011/08/30/config-libraries-in-scala</id>
     <content type="html"><![CDATA[<p><em style="color:red">2011.08.31 kmizushimaさんから頂いた<a href="http://blog.restartr.com/2011/08/30/config-libraries-in-scala/?preview=true&amp;preview_id=1049&amp;preview_nonce=ad0bbeeef6#comment-108">コメント</a>を元に、下記の記述を修正＆追記しました。</em></p>
 
 <ul>
@@ -497,9 +497,9 @@ akka {
   
   <entry>
     <title type="html"><![CDATA[ScalaのORMapperのSquerylを試してみてハマった３つのこと]]></title>
-    <link href="http://blog.restartr.com/2011/08/16/3-things-that-i-was-in-trouble-using-squeryl/"/>
+    <link href="http://ReSTARTR.github.io/2011/08/16/3-things-that-i-was-in-trouble-using-squeryl/"/>
     <updated>2011-08-16T08:00:15+09:00</updated>
-    <id>http://blog.restartr.com/2011/08/16/3-things-that-i-was-in-trouble-using-squeryl</id>
+    <id>http://ReSTARTR.github.io/2011/08/16/3-things-that-i-was-in-trouble-using-squeryl</id>
     <content type="html"><![CDATA[<p>ScalaのORMとしてSquerylってのがあります。</p>
 
 <ul>
@@ -645,9 +645,9 @@ akka {
   
   <entry>
     <title type="html"><![CDATA[DotCloudのMongoDBをScalaから使ってみる]]></title>
-    <link href="http://blog.restartr.com/2011/05/28/access-from-scala-to-mongodb-on-dotcloud/"/>
+    <link href="http://ReSTARTR.github.io/2011/05/28/access-from-scala-to-mongodb-on-dotcloud/"/>
     <updated>2011-05-28T20:00:57+09:00</updated>
-    <id>http://blog.restartr.com/2011/05/28/access-from-scala-to-mongodb-on-dotcloud</id>
+    <id>http://ReSTARTR.github.io/2011/05/28/access-from-scala-to-mongodb-on-dotcloud</id>
     <content type="html"><![CDATA[<p>DotCloudにDuoStackが<a href="http://gigaom.com/cloud/exclusive-paas-startups-unite-dotcloud-buys-duostack/">買収され</a>て、DotCloudでもMongoDBが使えるようになりましたし、node.jsも使えるしで、ますますDotCloudが魅力的なものになってきました。</p>
 
 <p>ただし、node.jsはサポートされても、WebSocketは正式サポートされていないと<a href="http://docs.dotcloud.com/components/nodejs/">公式マニュアル</a>にも書いてありますがWebSocketサポート済みのDuoStack買収によってどう流れるか気になるところです。</p>

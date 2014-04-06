@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: 雑記 | I Will Servive]]></title>
-  <link href="http://blog.restartr.com/blog/categories/za-ji/atom.xml" rel="self"/>
-  <link href="http://blog.restartr.com/"/>
-  <updated>2014-04-06T13:15:29+09:00</updated>
-  <id>http://blog.restartr.com/</id>
+  <link href="http://ReSTARTR.github.io/blog/categories/za-ji/atom.xml" rel="self"/>
+  <link href="http://ReSTARTR.github.io/"/>
+  <updated>2014-04-06T13:18:56+09:00</updated>
+  <id>http://ReSTARTR.github.io/</id>
   <author>
     <name><![CDATA[ReSTARTR]]></name>
     <email><![CDATA[yoshida.masaki+restartr@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Kauli株式会社を退職しました]]></title>
-    <link href="http://blog.restartr.com/2013/04/02/retirement201303/"/>
+    <link href="http://ReSTARTR.github.io/2013/04/02/retirement201303/"/>
     <updated>2013-04-02T22:45:29+09:00</updated>
-    <id>http://blog.restartr.com/2013/04/02/retirement201303</id>
+    <id>http://ReSTARTR.github.io/2013/04/02/retirement201303</id>
     <content type="html"><![CDATA[<p><a href="http://www.flickr.com/photos/53244662@N04/8599680561/" title="Cleanup my keyboard by ReSTARTR_y, on Flickr"><img src="http://farm9.staticflickr.com/8106/8599680561_da30653690.jpg" width="500" height="333" alt="Cleanup my keyboard" /></a></p>
 
 <p><em>※2013/04/04 更新:会社名を公開しました</em></p>
@@ -69,9 +69,9 @@
   
   <entry>
     <title type="html"><![CDATA[（もうすぐ）退職します。]]></title>
-    <link href="http://blog.restartr.com/2011/12/02/dropped-out/"/>
+    <link href="http://ReSTARTR.github.io/2011/12/02/dropped-out/"/>
     <updated>2011-12-02T21:27:57+09:00</updated>
-    <id>http://blog.restartr.com/2011/12/02/dropped-out</id>
+    <id>http://ReSTARTR.github.io/2011/12/02/dropped-out</id>
     <content type="html"><![CDATA[<p>私事ですが現職の会社を退職することになり、本日無事に最終出社を終えてきました。</p>
 
 <p>退職日は年明けですが、これから有給消化期間に入ります。</p>
@@ -124,9 +124,9 @@
   
   <entry>
     <title type="html"><![CDATA[Varnish勉強会 #tokyovcl に行ってきた]]></title>
-    <link href="http://blog.restartr.com/2011/06/21/go-to-varnish-study-tokyovc/"/>
+    <link href="http://ReSTARTR.github.io/2011/06/21/go-to-varnish-study-tokyovc/"/>
     <updated>2011-06-21T23:56:40+09:00</updated>
-    <id>http://blog.restartr.com/2011/06/21/go-to-varnish-study-tokyovc</id>
+    <id>http://ReSTARTR.github.io/2011/06/21/go-to-varnish-study-tokyovc</id>
     <content type="html"><![CDATA[<p><a href="http://www.flickr.com/photos/53244662@N04/5856931526/" title="IMAG0053 by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5029/5856931526_1119c53a87.jpg" width="500" height="299" alt="IMAG0053" /></a></p>
 
 <p>6/18(土)に開催された<a href="http://atnd.org/events/16681">Varnish勉強会 Tokyo.vcl : ATND</a>に行ってきました。
@@ -350,9 +350,9 @@
   
   <entry>
     <title type="html"><![CDATA[東京から福島へ一泊二日でボランティアに行ってきた]]></title>
-    <link href="http://blog.restartr.com/2011/06/19/volunteer-at-shinchi-fukushima-pref/"/>
+    <link href="http://ReSTARTR.github.io/2011/06/19/volunteer-at-shinchi-fukushima-pref/"/>
     <updated>2011-06-19T12:03:20+09:00</updated>
-    <id>http://blog.restartr.com/2011/06/19/volunteer-at-shinchi-fukushima-pref</id>
+    <id>http://ReSTARTR.github.io/2011/06/19/volunteer-at-shinchi-fukushima-pref</id>
     <content type="html"><![CDATA[<p><a href="http://www.flickr.com/photos/53244662@N04/5847245836/" title="IMG_5100 by ReSTARTR_y, on Flickr"><img src="http://farm4.static.flickr.com/3538/5847245836_ca37b883fe_z.jpg" width="640" height="427" alt="IMG_5100" /></a></p>
 
 <p>6/11,12の土日を利用して、福島県相馬郡新地町にボランティア活動に行ってきました。</p>
@@ -487,9 +487,9 @@
   
   <entry>
     <title type="html"><![CDATA[大震災を通じて感じた違和感]]></title>
-    <link href="http://blog.restartr.com/2011/03/16/i-feel-a-wrongness-about-terrible-disaster/"/>
+    <link href="http://ReSTARTR.github.io/2011/03/16/i-feel-a-wrongness-about-terrible-disaster/"/>
     <updated>2011-03-16T22:09:05+09:00</updated>
-    <id>http://blog.restartr.com/2011/03/16/i-feel-a-wrongness-about-terrible-disaster</id>
+    <id>http://ReSTARTR.github.io/2011/03/16/i-feel-a-wrongness-about-terrible-disaster</id>
     <content type="html"><![CDATA[<p>大震災から早くも５日が経過しました。</p>
 
 <p>私は東京で震度５を体験しました。感じたあの揺れの大きさは今も鮮明に残っています。現在も余震が続いていたり、様々な二次災害が続いていますが、これまでに感じた違和感を書きだしてみました。</p>

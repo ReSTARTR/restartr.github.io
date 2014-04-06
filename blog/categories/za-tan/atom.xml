@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: 雑談 | I Will Servive]]></title>
-  <link href="http://blog.restartr.com/blog/categories/za-tan/atom.xml" rel="self"/>
-  <link href="http://blog.restartr.com/"/>
-  <updated>2014-04-06T13:15:29+09:00</updated>
-  <id>http://blog.restartr.com/</id>
+  <link href="http://ReSTARTR.github.io/blog/categories/za-tan/atom.xml" rel="self"/>
+  <link href="http://ReSTARTR.github.io/"/>
+  <updated>2014-04-06T13:18:56+09:00</updated>
+  <id>http://ReSTARTR.github.io/</id>
   <author>
     <name><![CDATA[ReSTARTR]]></name>
     <email><![CDATA[yoshida.masaki+restartr@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[WordpressからOctpressに移行]]></title>
-    <link href="http://blog.restartr.com/2014/04/06/move-from-wordpress-to-octopress/"/>
+    <link href="http://ReSTARTR.github.io/2014/04/06/move-from-wordpress-to-octopress/"/>
     <updated>2014-04-06T13:00:00+09:00</updated>
-    <id>http://blog.restartr.com/2014/04/06/move-from-wordpress-to-octopress</id>
+    <id>http://ReSTARTR.github.io/2014/04/06/move-from-wordpress-to-octopress</id>
     <content type="html"><![CDATA[<p>もともとさくらのレンサバ上でWordpressで構築していたブログをOctpressに移行してGithub Pagesでホスティングするように切り替え。
 最初はJekyllだけでやろうとしたけど、ブロクとしての機能を見るとOctopressのほうが良さそうだったので途中で方針転換。</p>
 

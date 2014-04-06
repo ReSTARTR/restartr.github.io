@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: 入門 自然言語処理 | I Will Servive]]></title>
-  <link href="http://blog.restartr.com/blog/categories/ru-men-zi-ran-yan-yu-chu-li/atom.xml" rel="self"/>
-  <link href="http://blog.restartr.com/"/>
-  <updated>2014-04-06T13:15:29+09:00</updated>
-  <id>http://blog.restartr.com/</id>
+  <link href="http://ReSTARTR.github.io/blog/categories/ru-men-zi-ran-yan-yu-chu-li/atom.xml" rel="self"/>
+  <link href="http://ReSTARTR.github.io/"/>
+  <updated>2014-04-06T13:18:56+09:00</updated>
+  <id>http://ReSTARTR.github.io/</id>
   <author>
     <name><![CDATA[ReSTARTR]]></name>
     <email><![CDATA[yoshida.masaki+restartr@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[入門 自然言語処理 第一章]]></title>
-    <link href="http://blog.restartr.com/2011/02/13/analysing-text-with-the-natual-language-toolkit-chap1/"/>
+    <link href="http://ReSTARTR.github.io/2011/02/13/analysing-text-with-the-natual-language-toolkit-chap1/"/>
     <updated>2011-02-13T09:00:29+09:00</updated>
-    <id>http://blog.restartr.com/2011/02/13/analysing-text-with-the-natual-language-toolkit-chap1</id>
+    <id>http://ReSTARTR.github.io/2011/02/13/analysing-text-with-the-natual-language-toolkit-chap1</id>
     <content type="html"><![CDATA[<p><a href="http://www.amazon.co.jp/dp/4873114705/">入門 自然言語処理</a>は11月に購入してから寝かせたままでしたが、本日より読み始めることにしました。</p>
 
 <p>本日は第一章です。内容は大きく以下2点。</p>
