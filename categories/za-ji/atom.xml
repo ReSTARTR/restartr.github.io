@@ -4,7 +4,7 @@
   <title><![CDATA[Category: 雑記 | I Will Survive]]></title>
   <link href="http://blog.restartr.com/categories/za-ji/atom.xml" rel="self"/>
   <link href="http://blog.restartr.com/"/>
-  <updated>2014-04-07T00:00:19+09:00</updated>
+  <updated>2014-04-07T00:06:03+09:00</updated>
   <id>http://blog.restartr.com/</id>
   <author>
     <name><![CDATA[ReSTARTR]]></name>
@@ -14,12 +14,12 @@
 
   
   <entry>
-    <title type="html"><![CDATA[WordpressからOctpressに移行]]></title>
+    <title type="html"><![CDATA[WordpressからOctopressに移行]]></title>
     <link href="http://blog.restartr.com/2014/04/06/move-from-wordpress-to-octopress/"/>
     <updated>2014-04-06T13:00:00+09:00</updated>
     <id>http://blog.restartr.com/2014/04/06/move-from-wordpress-to-octopress</id>
-    <content type="html"><![CDATA[<p>もともとさくらのレンサバ上でWordpressで構築していたブログをOctpressに移行してGithub Pagesでホスティングするように切り替え。
-最初はJekyllだけでやろうとしたけど、ブロクとしての機能を見るとOctopressのほうが良さそうだったので途中で方針転換。</p>
+    <content type="html"><![CDATA[<p>もともとさくらのレンサバ上でWordpressで構築していたブログを<a href="http://octopress.org/">Octopress</a>に移行してGithub Pagesでホスティングするように切り替え。
+最初は<a href="http://jekyllrb.com/">Jekyll</a>だけでやろうとしてたけど、ブロクとしての機能を見るとOctopressのほうが良さそうだったので途中で方針転換。</p>
 
 <h4 id="section">手順</h4>
 
@@ -81,7 +81,7 @@
   <li><a href="http://hadihariri.com/2013/12/24/migrating-from-wordpress-to-jekyll/">Migrating from WordPress.com to Jekyll – Hadi Hariri</a></li>
   <li><a href="http://blog.glidenote.com/blog/2011/12/20/how-to-use-custom-domain-on-github-pages/">GitHub PagesでCustom Domainを利用する - Glide Note - グライドノート</a></li>
   <li>ベースにしたテーマ</li>
-  <li><a href="http://carlosbecker.com/posts/up-a-jekyll-theme/">UP: A jekyll theme</a></li>
+  <li><a href="https://github.com/bijumon/oct2">bijumon/oct2</a></li>
 </ul>
 ]]></content>
   </entry>
