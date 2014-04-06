@@ -1,0 +1,667 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: python | I Will Survive]]></title>
+  <link href="http://blog.restartr.com/category/python/atom.xml" rel="self"/>
+  <link href="http://blog.restartr.com/"/>
+  <updated>2014-04-07T00:13:23+09:00</updated>
+  <id>http://blog.restartr.com/</id>
+  <author>
+    <name><![CDATA[ReSTARTR]]></name>
+    <email><![CDATA[yoshida.masaki+restartr@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[GoとPythonをZeroMQで繋ぐ]]></title>
+    <link href="http://blog.restartr.com/2013/04/26/connect-go-and-python-with-zeromq/"/>
+    <updated>2013-04-26T23:34:48+09:00</updated>
+    <id>http://blog.restartr.com/2013/04/26/connect-go-and-python-with-zeromq</id>
+    <content type="html"><![CDATA[<p>最近Rubyでプロジェクトオイラーを解きながらRubyに慣れようとしてるのですが、ちょっと飽きてきたので息抜きにGoを書いたりしています。</p>
+
+<p>ついでにZeroMQも試してみたかったので、GoとPythonをZeroMQで繋いでみました。</p>
+
+<p>構成はこんな感じで、Python(かGo)clientを起動し、Goで動くmonitorq経由でGoのserverにつながります。PUB/SUBでmonitorからモニタリングできるのがミソです。</p>
+
+<p><code>ruby
+                  +----------------------------------------+
+                  |                                        |
+  +------+        |--------------------------+     +-----+ |
+  |client|--------|9001     monitorq     9002|-----|serv | |
+  |(REQ) |        |(ROUTER)   9003   (DEALER)|     |(REP)| |
+  +------+        |--------------------------+     +-----+ |
+                  |          |(PUB)                        |
+                  |          |                             |
+                  |          |                             |
+                  |          |(SUB)                        |
+                  |      +-------+                         |
+                  |      |monitor|                         |
+                  |      +-------+                         |
+                  +----------------------------------------+
+</code></p>
+
+<p><em>※client/server/monitorは複数たちあげるとよしなに振り分けてくれます。</em></p>
+
+<ul>
+  <li>monitorqでfan-in/outする</li>
+</ul>
+
+<p><code>bash
+$ go run queue.go monitorq
+</code></p>
+
+<ul>
+  <li>clientから”PING”を投げる(と、”PONG#<pid>"が帰る)</pid></li>
+</ul>
+
+<p><code>bash
+$ python run queue.py client
+PONG#&lt;28870&gt;
+PONG#&lt;28870&gt;
+ :
+</code></p>
+
+<ul>
+  <li>serverから”PONG”を返す(clientからのPINGを表示)</li>
+</ul>
+
+<p><code>bash
+$ go run queue.go serv
+Recv: PING#&lt;73835&gt;
+Recv: PING#&lt;73835&gt;
+ :
+</code></p>
+
+<ul>
+  <li>monitorでリクエスト総数をモニタリング</li>
+</ul>
+
+<p><code>bash
+$ go run queue.go monitor
+MONITOR: IN: 2082, OUT 2082
+MONITOR: IN: 2083, OUT 2083
+ :
+</code></p>
+
+<p>コードはgistにあげてます。</p>
+
+<ul>
+  <li><a href="https://gist.github.com/ReSTARTR/5467656">gist</a></li>
+</ul>
+
+<p>ZeroMQなら他にもいろんな構成がとれるので、使いどころは結構あるのではないかと。</p>
+
+<p>今回、不慣れなGoで書いてみましたが、これくらいであればもわりと素直にかけるなぁという印象です。</p>
+
+<p>Goで書かれたZeroMQのサンプルは以下githubリポジトリにたくさんあるので、覗いてみると色々勉強になります。</p>
+
+<ul>
+  <li><a href="https://github.com/imatix/zguide/tree/master/examples/Go">zguide/examples/Go at master ? imatix/zguide</a></li>
+</ul>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[pythonのクロージャに変数を束縛する方法]]></title>
+    <link href="http://blog.restartr.com/2013/04/17/bind-a-variable-to-closure-in-python/"/>
+    <updated>2013-04-17T22:19:14+09:00</updated>
+    <id>http://blog.restartr.com/2013/04/17/bind-a-variable-to-closure-in-python</id>
+    <content type="html"><![CDATA[<p>ハマったので。</p>
+
+<p><code>python
+a = 2
+double = lambda x: x*a
+double(4)  # 8 (=4*2)
+double(10) # 20 (=10*3)
+a = 3
+double(4)  # 12 # WTF?
+double(10) # 30
+</code></p>
+
+<p>doubleというクロージャ内の変数aを、クロージャ宣言時のaで束縛したいのです。</p>
+
+<p>対応は２つ。</p>
+
+<ol>
+  <li>lambdaのデフォルト引数で束縛する</li>
+  <li>functools.partialで束縛する</li>
+</ol>
+
+<h3 id="lambda">1. lambdaのデフォルト引数で束縛する</h3>
+
+<p>参考：<a href="http://stackoverflow.com/questions/10452770/python-lambdas-binding-to-local-values">closures - Python lambda’s binding to local values - Stack Overflow</a></p>
+
+<p><code>python
+a = 2
+double = lambda x, y=a: x*y
+double(4)  # 8 (=4*2)
+double(10) # 20 (=10*3)
+a = 3
+double(4)  # 12 (=4*2)
+double(10) # 30 (=10*2)
+</code></p>
+
+<h3 id="functoolspartial">2. functools.partialで束縛する</h3>
+
+<p>やってることは1と同じなのですが、一応動くよねということで。</p>
+
+<p><code>python
+from functools import partial
+a = 2
+double = partial(lambda x, y=None: x*y, y=a)
+double(4) # 8 (=8*2)
+double(10) # 30 (=10*2)
+a = 3
+double(4)  # 12 (=4*2)
+double(10) # 30 (=10*2)
+</code></p>
+
+<h3 id="section">そもそも変数上書きしなければ良いんじゃない？</h3>
+
+<p>普段は変数の上書きは基本的にやりません。なので変数の束縛とかあまり意識してませんでした。</p>
+
+<p>今回、プロジェクトオイラーを解くにあたって、素数ジェネレータをつくろうとした結果、ハマったのでした。</p>
+
+<p><code>python
+from itertools import ifilter, count
+def gen_primes():
+    it = count(2)  # [2, 3, 4, ...]
+    while True:
+        v = it.next()
+        yield v
+        it = ifilter(lambda x, y=v: x % y &gt; 0, it)
+        # 当初は以下のようにしていた
+        # これだと次のループ時のifilter内でvの値が変わってしまう
+        # it = ifilter(lambda x: x % v &gt; 0, it)
+for v in gen_primes():
+    print v
+    if v &gt; 100:
+        break
+</code></p>
+
+<h3 id="functoolspartial-1">余談1: functools.partialの使いどころ</h3>
+<p>ちょくちょく<a href="http://docs.python.jp/2.7/library/functools.html#functools.partial">functools.partial</a>使ってましたが、そんなの使わなくてもlambdaで事足りますね。今更気づきました…</p>
+
+<p><code>python
+mul = lambda a, b: a * b
+mul(3,2)  # 6
+# lambda
+double = lambda a, b=2: mul(a,b)
+double(3)  # 6
+# functools.partial
+import functools
+double = functools.partial(mul, 2)
+double(3)  # 6
+</code></p>
+
+<p>こうなると、functools.partialの使いどころが難しいですね。
+戻り値がpartialオブジェクトなので、あとで引数とかが参照できることくらいでしょうか…</p>
+
+<p><code>python
+&gt;&gt;&gt; f = functools.partial(lambda a, b=0:a+b, b=0)
+&gt;&gt;&gt; f
+&lt;functools.partial object at 0x1092b2ec0&gt;
+&gt;&gt;&gt; f.args
+()
+&gt;&gt;&gt; f.keywords
+{'b': 0}
+&gt;&gt;&gt; f.func
+&lt;function &lt;lambda&gt; at 0x1092eab18&gt;
+&gt;&gt;&gt; f.args = (1,)  # 引数を後から上書きはできない
+Traceback (most recent call last):
+  File "&lt;stdin&gt;", line 1, in &lt;module&gt;
+TypeError: readonly attribute
+</code></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[pythonのテストにpytestを使ってみた]]></title>
+    <link href="http://blog.restartr.com/2013/04/05/my-first-pytest/"/>
+    <updated>2013-04-05T21:00:24+09:00</updated>
+    <id>http://blog.restartr.com/2013/04/05/my-first-pytest</id>
+    <content type="html"><![CDATA[<p>pytestを使い始めました。</p>
+
+<ul>
+  <li><a href="http://pytest.org/latest/">pytest: helps you write better programs</a></li>
+</ul>
+
+<p>まだまだ機能は把握しきれていませんが、良いと思ったことは3つ。</p>
+
+<ol>
+  <li>テストがコケた箇所のコードがレポート内容に表示される</li>
+  <li>テスト対象を初期化したものの受け渡し方をスマートにできる</li>
+  <li>pytest.vimがなかなか使える</li>
+</ol>
+
+<h3 id="section">1.テストがコケた箇所のコードがレポート内容に表示される</h3>
+
+<p>これが巷でよく聞く一番のメリットかとは思いますが、コケたときの情報が全然違います。
+pytestはかなり詳細に表示してくれるので、レポートの内容だけでどこをどう直せば良いか把握できます。</p>
+
+<h4 id="unittest-v">unittestの実行結果(-vオプション付き)</h4>
+
+<p><a href="http://www.flickr.com/photos/53244662@N04/8621946368/" title="unittest by ReSTARTR_y, on Flickr"><img src="http://farm9.staticflickr.com/8523/8621946368_d7bc9a450d_z.jpg" width="640" height="220" alt="unittest" /></a></p>
+
+<h4 id="pytest-v">pytestの実行結果(-vオプション付き)</h4>
+
+<p><a href="http://www.flickr.com/photos/53244662@N04/8620844529/" title="pytest by ReSTARTR_y, on Flickr"><img src="http://farm9.staticflickr.com/8244/8620844529_ce66ff7f9c_z.jpg" width="640" height="401" alt="pytest" /></a></p>
+
+<p>文字列比較の場合は差分表示してくれたりするので便利です。</p>
+
+<h3 id="section-1">2. テスト対象を初期化したものの受け渡し方をスマートにできる</h3>
+
+<p>これが結構良い感じだと思いました。</p>
+
+<p>かなり単純なクラスを対象にして例を書きます。</p>
+
+<p>```python
+# -<em>- coding: utf-8 -</em>-</p>
+
+<p>class Hoge(object):</p>
+
+<pre><code>def __init__(self, v):
+    self.val = v
+
+def update(self, v):
+    self.val = v ```
+</code></pre>
+
+<h4 id="pythonunittest">python同梱のunittestで書く</h4>
+
+<p>こんな感じで、self.hogeを使ってテスト対象を受け渡します。</p>
+
+<p>```python
+# -<em>- coding: utf-8 -</em>-
+from hoge import Hoge
+import unittest</p>
+
+<p>class TestHoge1(unittest.TestCase):</p>
+
+<pre><code>def setUp(self):
+    self.hoge = Hoge(1)
+
+def test_type(self):
+    self.assertIsInstance(self.hoge, Hoge)
+
+def test_val(self):
+    self.assertEqual(self.hoge.val, 1)
+
+    self.hoge.update('hoge')
+    self.assertEqual(self.hoge.val, 'hige')
+</code></pre>
+
+<p>if <strong>name</strong> == ‘<strong>main</strong>’:
+    unittest.main()
+```</p>
+
+<p>pytestで書くとこんな感じになります。</p>
+
+<p>```python
+# -<em>- coding: utf-8 -</em>-
+from hoge import Hoge
+import pytest</p>
+
+<p>class TestHoge1(object):</p>
+
+<pre><code>def pytest_funcarg__hoge(request):
+    return Hoge(1)
+
+def test_type(self, hoge):
+    assert isinstance(hoge, Hoge)
+
+def test_val(self, hoge):
+    assert hoge.val == 1
+
+    hoge.update('hoge')
+    assert hoge.val == 'hige'
+</code></pre>
+
+<p>if <strong>name</strong> == ‘<strong>main</strong>’:
+    pytest.main()
+```</p>
+
+<p>何が良いかっていうと、各テストメソッドで必要な初期化済みHogeインスタンスを、pytest_funcarg__hoge()で作って渡してやることができます。pytest_funcarg__NAMEを定義すれば、各テストメソッドでNAMEとして引数にとることができるわけです。(<a href="http://pytest.org/latest-ja/funcargs.html">テスト関数 (funcargs) にオブジェクトを注入</a>)</p>
+
+<p>unittest.TestCaseのsetUpを使う場合、self.hogeに一旦入れてやらないといけないし、各テストメソッドではself.hogeでアクセスする必要も出てきます。</p>
+
+<p>見た目が簡潔になるのはとても良いことです。</p>
+
+<h3 id="pytestvim">3. pytest.vimがなかなか使える</h3>
+
+<p>vimのプラグインにpytest.vimっていうのがありました。
+これもなかなか使い勝手が良いです。</p>
+
+<p>詳しくは下記動画を御覧ください。</p>
+
+<ul>
+  <li><a href="http://vimeo.com/19774046"> pytest.vim 0.0.5 on Vimeo </a></li>
+</ul>
+
+<p>pytestの概要は以下スライドにて。</p>
+
+<iframe src="http://www.slideshare.net/slideshow/embed_code/14006990" width="427" height="356" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC;border-width:1px 1px 0;margin-bottom:5px" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen=""> </iframe>
+<div style="margin-bottom:5px"> <strong> <a href="http://www.slideshare.net/pfctdayelise/funcargs-other-fun-with-pytest" title="Funcargs &amp; other fun with pytest" target="_blank">Funcargs &amp; other fun with pytest</a> </strong> from <strong><a href="http://www.slideshare.net/pfctdayelise" target="_blank">Brianna Laugher</a></strong> </div>
+<p>他の機能は触りながらおいおい掴んでいければなと。</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[はてなダイアリーからTumblrへデータ移行するpythonスクリプト]]></title>
+    <link href="http://blog.restartr.com/2012/03/25/python-script-for-moving-from-movabletype-to-tumblr/"/>
+    <updated>2012-03-25T02:30:19+09:00</updated>
+    <id>http://blog.restartr.com/2012/03/25/python-script-for-moving-from-movabletype-to-tumblr</id>
+    <content type="html"><![CDATA[<p>どうも。もうすぐ入社３ヶ月が経って試用期間が終わろうとしている状況な僕です。</p>
+
+<p>すっかり停滞気味のブログですが保守も兼ねて投稿を。</p>
+
+<h3 id="deldeltumblr">はてダから<del>はてブロ</del>Tumblrへ</h3>
+
+<p>とあるブログをはてなダイアリーで書いていたのですが、Tumblrへブログのデータを移行したいという要求が出てきました。ということでpythonで移行スクリプトを書いてみました。</p>
+
+<h3 id="section">ソースコード</h3>
+
+<p>例によってGitHubにて公開しておきます。</p>
+
+<ul>
+  <li><a href="https://github.com/ReSTARTR/mt2tumblr">https://github.com/ReSTARTR/mt2tumblr</a></li>
+</ul>
+
+<p>python2.6以外はテストしてません( ｰ`дｰ´)ｷﾘｯ</p>
+
+<h3 id="section-1">使い方</h3>
+
+<p>oauth2に依存しているので、実行前にインストールしておいてください。</p>
+
+<p>```python
+pip install oauth2</p>
+
+<p>```</p>
+
+<p>使い方はREADMEどおりです。いつもどおりのテキトー英文です。</p>
+
+<ol>
+  <li>はてなダイアリーの管理画面から”管理 &gt; インポート/エクスポート”でMovableType形式のファイルをダウンロード</li>
+  <li>ダウンロードしたファイルをresourcesディレクトリに配置</li>
+  <li>tumblrにアプリケーションを登録( <a href="http://www.tumblr.com/oauth/apps">http://www.tumblr.com/oauth/apps</a> )</li>
+  <li>consumer_keyとconsumer_secretを入手</li>
+  <li>config.pyを編集する</li>
+</ol>
+
+<p><code>python
+CONSUMER_KEY = '&lt;consumer_key&gt;'
+CONSUMER_SECRET = '&lt;consumer_secret&gt;'
+BASE_HOSTNAME = '&lt;your_tumblr_url&gt;' # '&lt;your-id&gt;.tumblr.com'のように"http://"は抜きで。
+PARSE_FILE_PATH = 'path/to/movable_type_data.txt'
+POST_STATE = 'publish' # 動作テストしたいなら'draft'にすると良いです。
+</code></p>
+
+<p>実行する</p>
+
+<p><code>bash
+python run.py
+</code>
+  * まずはファイルの内容を読み込んで、日時、カテゴリ、タイトルが表示されるので問題ないか確認</p>
+
+<p>OAuth認証する。</p>
+
+<ul>
+  <li>下記のようにURLが表示されるのでブラウザでアクセス。</li>
+</ul>
+
+<p>```python
+open in browser:http://www.tumblr.com/oauth/authorize?oauth_token={OAUTH_TOKEN}</p>
+
+<p>oauth_verifier:</p>
+
+<p>```</p>
+
+<ul>
+  <li>リダイレクト先のURLに含まれる”oauth_verifier”の値をコピーしてターミナルにペースト。
+    <ul>
+      <li>リダイレクト先は404になりますが、oauth_verifierが欲しいだけなのでそれで問題なしです。</li>
+    </ul>
+  </li>
+</ul>
+
+<p>これで、Tumblerへのインポートが始まります。</p>
+
+<p>(ﾟдﾟ)ｳﾏｰ</p>
+
+<h3 id="section-2">注意事項</h3>
+
+<ul>
+  <li>APIの呼び出し回数の制限に引っかかるかもしれませんがそのへんのエラー制御はできていません。</li>
+  <li>MovableType形式のデータをTumblrに移行するスクリプトとしてつくっていますが、実際にははてなダイアリーからMovableType形式でエクスポートしたデータでしかテストしていません。それ以外で動くかは保証できません…</li>
+  <li>投稿時間はJSTからGMTに変換してます。不要なら適当に編集してください。</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[EventStatsはherokuとMongoLabとさくらVPSで動いている]]></title>
+    <link href="http://blog.restartr.com/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps/"/>
+    <updated>2011-12-28T21:27:52+09:00</updated>
+    <id>http://blog.restartr.com/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps</id>
+    <content type="html"><![CDATA[<p>今月頭に<a href="/2011/12/10/eventststs">ブログ書きました</a>が、EventStatsという勉強会の参加者の推移が見れるサービスを公開しました。</p>
+
+<ul>
+  <li><a href="http://eventstats.restartr.com">EventStats - イベントの統計情報が見れます</a></li>
+</ul>
+
+<p>まぁ自分が欲しかっただけなんですけど、使ってみて頂ければ幸いです。
+今回はそのサービスの構成とかについて書いてみます。</p>
+
+<h3 id="section">アジェンダ</h3>
+
+<ol>
+  <li>全体像</li>
+  <li>システム構成</li>
+  <li>Gitリポジトリ</li>
+  <li>MongoDBのPaaS</li>
+  <li>各イベント管理サービスAPIの違い</li>
+  <li>開発メモ</li>
+</ol>
+
+<h3 id="section-1">1.全体像</h3>
+
+<p>開発環境も含めて全体像を図にしてみました。(初Cacooですが超べんりですね！)</p>
+
+<p>赤い線がGit操作で、黒い点線がMongoDBへのアクセスです。</p>
+
+<p><a href="https://cacoo.com/diagrams/Cp2yo6tQNlxCm5av"><img border="1" alt="全体像" src="https://cacoo.com/diagrams/Cp2yo6tQNlxCm5av-2260A.png" /></a></p>
+
+<h3 id="section-2">2.システム構成</h3>
+
+<p>大きく分けてwebとクローラーの２つです。
+webはherokuに、クローラーはさくらのVPSに配置。</p>
+
+<p>まずは優先してデータ蓄積を…ということでクローラーをpythonとmongodbで作成しました。
+(サービス的にはやいとこデータためないと意味ないので。)</p>
+
+<p>クローラーは５分おきに起動するのでScalaよりPythonを選択しました。起動コスト重視です。
+(Scalaでサクサク開発できる程のスキルではないというのもありますが… )</p>
+
+<p>実行場所はherokuのworkerも考えたましたが、最終的に既に利用していたさくらVPSでcronジョブとして運用することに。</p>
+
+<p>ということでScalaのWebはデータ参照のみで、データの更新はしません。</p>
+
+<h3 id="git">3.Gitリポジトリ</h3>
+
+<p>webとクローラーは分けてGitで管理。リモートリポジトリはどちらもさくらのVPS上においています。
+ただし、本番リリースは開発PCからherokuに別途pushします。</p>
+
+<p>※webもさくらVPSにリモートリポジトリを持って、本番データを参照するステージング環境として利用しています。</p>
+
+<h4 id="eventstats-web">eventstats-web</h4>
+
+<ul>
+  <li>host: <a href="http://www.heroku.com/">heroku</a> (Chedar)</li>
+  <li>scala
+    <ul>
+      <li>フレームワーク: <a href="https://github.com/unfiltered/unfiltered">unfiltered</a> 0.5.1</li>
+      <li>mongodb接続: <a href="http://api.mongodb.org/scala/casbah/2.1.5.0/">casbah</a> 2.1.5-1</li>
+      <li>テンプレートエンジン: <a href="https://github.com/unfiltered/unfiltered/tree/master/scalate">unfiltered-scalate</a> (ssp)</li>
+      <li>テスティングライブラリ: <a href="https://github.com/unfiltered/unfiltered/tree/master/spec">unfiltered-specs</a></li>
+    </ul>
+  </li>
+  <li>チャートのレンダリング: <a href="http://code.google.com/apis/chart/index.html">Google Chart Tools</a></li>
+</ul>
+
+<h4 id="eventstats-crawler">eventstats-crawler</h4>
+
+<ul>
+  <li>host: さくらのvps</li>
+  <li>python 2.6
+    <ul>
+      <li>フレームワーク: なし</li>
+      <li>mongodb接続: <a href="http://api.mongodb.org/python/1.11/">pymongo</a> 1.11</li>
+      <li>テスティングライブラリ: <a href="http://readthedocs.org/docs/nose/en/latest/">nose</a></li>
+      <li>その他: <a href="http://www.crummy.com/software/BeautifulSoup/">BeautifulSoup</a> (<em>partake.inのwebスクレイピングに利用</em>)</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="mongodbpaas">4.MongoDBのPaas</h3>
+
+<p>herokuプラグインとして<a href="https://addons.heroku.com/mongolab">MongoLab</a>と<a href="https://addons.heroku.com/mongohq">MongoHQ</a>の２つが提供されています。どちらも無料枠があるのですが、MongoLabの方が無料で利用できる容量が大きいのでこちらを選択。</p>
+
+<p>月額の利用料金は以下です。（括弧内は1MBあたりの金額の目安です）
+<em>これ以上の容量も利用可能ですが個人で払う範囲ではないと思い除外してます。</em></p>
+
+<h4 id="mongolab">MongoLab</h4>
+<ul>
+  <li>$ 0.00/240MB</li>
+  <li>$10.00/0.5GB  ($0.020/MB)</li>
+  <li>$20.00/2.0GB  ($0.009/MB)</li>
+</ul>
+
+<h4 id="mongohq">MongoHQ</h4>
+
+<ul>
+  <li>$ 0.00/ 16MB</li>
+  <li>$ 5.00/256MB  ($0.019/MB)</li>
+  <li>$15.00/2.0GB  ($0.007/MB)</li>
+</ul>
+
+<h3 id="api">5.各イベント管理サービスAPIの違い</h3>
+
+<p>まずは<strong>atnd, zusaar, partake.inの３サービスに対応</strong>。</p>
+
+<p>それぞれ検索APIを提供してくれているのですが、当然ながら規格とかもないのでリクエストもレスポンスも違いがあります。</p>
+
+<p>データ蓄積する際にそのAPIの差異を吸収して、webアプリから参照する際は気にしなくていい戦略をとりました。
+APIの違い検索のみに特化して違いをまとめると以下の通りです。</p>
+
+<h4 id="atnd">atnd</h4>
+
+<p>イベント数も多いので、このAPIをスタンダードに設定。
+* API仕様
+ * <a href="http://api.atnd.org/">http://api.atnd.org/</a>
+* リクエストパス
+ * <a href="http://api.atnd.org/events/">/events/</a>
+   * イベントの検索
+ * <a href="http://api.atnd.org/events/users/">/events/users/</a>
+   * イベントに参加しているユーザーの検索</p>
+
+<h4 id="zusaar">zusaar</h4>
+
+<p>基本的にはatnd準拠っぽい感じだけど細かい違いがあります。
+ * API仕様
+   * <a href="http://www.zusaar.com/doc/api.html">http://www.zusaar.com/doc/api.html</a>
+ * リクエストパス
+   * <a href="http://www.zusaar.com/api/event/">/api/event/</a>
+     * イベントの検索
+   * <a href="http://www.zusaar.com/api/event/user/">/api/event/user/</a>
+     * イベントに参加しているユーザーの検索
+atndとの違い
+ * エントリポイントやデータのキー名が単数形
+   * events→event
+   * users→user
+ * 明確なフィールドとしてのtwitter_idが無い
+    * 管理者も参加ユーザーも
+ * ハッシュタグがない
+ * レスポンスはjson一択</p>
+
+<h4 id="partakein">partake.in</h4>
+
+<p>全然違うAPI。APIリストにあっても未実装がほとんどなので、利用する際はソースを確認したほうが良いです。
+今回必要になりそうなAPIは２つくらいでした。</p>
+
+<ul>
+  <li>API仕様
+    <ul>
+      <li><a href="http://code.google.com/p/partakein/wiki/PublicWebAPI">http://code.google.com/p/partakein/wiki/PublicWebAPI</a></li>
+    </ul>
+  </li>
+  <li>リクエストパス
+    <ul>
+      <li><a href="http://partake.in/api/event/search/">/api/event/search</a>
+        <ul>
+          <li>イベントの検索</li>
+        </ul>
+      </li>
+      <li><a href="http://partake.in/api/event/get/">/api/event/get</a>
+        <ul>
+          <li>イベントの詳細データ取得</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>APIのソース(抜粋)
+    <ul>
+      <li><a href="http://code.google.com/p/partakein/source/browse/trunk/Partake/src/main/java/in/partake/controller/api/event/SearchAction.java">in.partake.controller.api.event.SearchAction.java</a></li>
+      <li><a href="http://code.google.com/p/partakein/source/browse/trunk/Partake/src/main/java/in/partake/controller/api/event/EventAction.java">in.partake.controller.api.event.EventAction.java</a></li>
+    </ul>
+  </li>
+</ul>
+
+<p>その他の特徴は以下。</p>
+
+<ul>
+  <li>複数イベントを特定して一括取得するAPIはない</li>
+  <li>フィールド名がcamelCase形式</li>
+  <li>レスポンスはjson一択</li>
+  <li>検索パラメータも特殊かつ少数</li>
+  <li>検索APIで取得できるのはイベントの固定情報のみ
+    <ul>
+      <li>参加枠数はAPIから取得可能</li>
+      <li>変動するユーザー数は取得不可能</li>
+      <li>→Webページをスクレイピングするしかないという結論</li>
+    </ul>
+  </li>
+</ul>
+
+<p>上記をふまえ、atnd/zusaarはJSON形式でAPIからデータ取得。</p>
+
+<p>partake.inのみイベントのリストをAPIから取得して、ユーザー数はWebページのスクレイピングで対応しました。</p>
+
+<h3 id="section-3">6.開発メモ</h3>
+
+<h4 id="webherokuvps">web(heroku)からもクローラー(さくらのvps)からも離れた場所にある</h4>
+
+<p>開発PC上だと気にならなかったのですが、1件1件findしてinsertやupdateをしていると当然遅いです。なのである程度まとめて一気にinsertする方針に変更しました(ベンチ結果はありません ^^;)。
+更新はクローラーの１プロセスからのみ実行されるので、トランザクションとか意識しなくて良いです。なので比較的自由な構成がとれます。</p>
+
+<h4 id="scalajson-api">ScalaでJSON API</h4>
+
+<p>まずはUnfilteredでJSON APIを作成。けど、jsでjson取得〜チャート生成の実行時間が思いの外大きいので、jsonも１枚のHTMLに埋め込む方針に変更。</p>
+
+<h3 id="section-4">さいごに</h3>
+
+<p>ざっと書きだすとこんな感じです。まぁこんな構成もあるよ、ってくらいにしか言えませんが。</p>
+
+<p>webとクローラーを分けたことで、開発中のスキーマ変更が柔軟に行えたのは良かったのですが、スキーマ定義を共通で管理していないので、そのあたりうまく管理できると良いなと思ったり。
+当初はもう少しwebの機能も多かったのですが、効率化をしているうちにシンプルな形に落ち着きました。Scalaのコードもかなり小規模なものになっています。
+イベント管理者の方からのご意見ご要望などいただけると嬉しいです :)</p>
+
+<ul>
+  <li><a href="http://eventstats.restartr.com">EventStats - イベントの統計情報が見れます</a></li>
+</ul>
+]]></content>
+  </entry>
+  
+</feed>
