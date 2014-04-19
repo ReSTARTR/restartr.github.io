@@ -11,7 +11,9 @@
   <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="DotCloudにDuoStackが買収されて、DotCloudでもMongoDBが使えるようになりましたし、node.jsも使えるしで、ますますDotCloudが魅力的なものになってきました。 ただし、node.jsはサポートされても、 &hellip;">
+  <meta name="description" content="6/18(土)に開催されたVarnish勉強会 Tokyo.vcl : ATNDに行ってきました。
+初のクックパッドさんオフィス訪問です。 Varnish3のリリースパーティーも兼ねての開催だったようで、ステッカーもいただいてしまいました。
+インフラ屋じゃない上に、 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -122,7 +124,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/2011/05/28/access-from-scala-to-mongodb-on-dotcloud/">DotCloudのMongoDBをScalaから使ってみる</a></h1>
+      <h1 class="entry-title"><a href="/2011/06/21/go-to-varnish-study-tokyovc/">Varnish勉強会 #tokyovcl に行ってきた</a></h1>
     
     
       <p class="meta">
@@ -138,237 +140,272 @@
   
 
 
-<time datetime="2011-05-28T20:00:57+09:00" pubdate data-updated="true">2011-05-28 (Sat)</time>
+<time datetime="2011-06-21T23:56:40+09:00" pubdate data-updated="true">2011-06-21 (Tue)</time>
         
       </p>
+    
+    
+      <style type="text/css">
+  .sharing {
+     clear: both;
+  }
+  .sharing li{
+    display: inline;
+    list-style-type: none;
+    float: left;
+    height: 1em;
+    line-height: 1em;
+    padding: 0 10px 0 0 ;
+    margin: 10px 0;
+  }
+  .sharing ul {
+    margin: 1em 0;
+    padding: 1em 0;
+  }
+</style>
+<div class="sharing">
+  <ul>
+    <li><a href="http://blog.restartr.com/page/9/index.html" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加&#8221;><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+  
+  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/page/9/index.html" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/page/9/index.html" >Tweet</a></li>
+  
+  
+  <li><div class="fb-like" data-href="http://blog.restartr.com/page/9/index.html" data-layout="button_count" data-action="like" data-show-faces="false" data-share="true"></div><script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1&appId=368671089894710";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script></li>
+  
+  <li><a data-pocket-label="pocket" data-pocket-count="horizontal" class="pocket-btn" data-lang="en"></a><script type="text/javascript">!function(d,i){if(!d.getElementById(i)){var j=d.createElement("script");j.id=i;j.src="https://widgets.getpocket.com/v1/j/btn.js?v=1";var w=d.getElementById(i);d.body.appendChild(j);}}(document,"pocket-btn-js");</script></li>
+  
+  <li><div class="g-plusone" data-size="medium"></div></li>
+  
+  </ul>
+</div>
+
     
   </header>
 
 
-  <div class="entry-content"><p>DotCloudにDuoStackが<a href="http://gigaom.com/cloud/exclusive-paas-startups-unite-dotcloud-buys-duostack/">買収され</a>て、DotCloudでもMongoDBが使えるようになりましたし、node.jsも使えるしで、ますますDotCloudが魅力的なものになってきました。</p>
+  <div class="entry-content"><p><a href="http://www.flickr.com/photos/53244662@N04/5856931526/" title="IMAG0053 by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5029/5856931526_1119c53a87.jpg" width="500" height="299" alt="IMAG0053" /></a></p>
 
-<p>ただし、node.jsはサポートされても、WebSocketは正式サポートされていないと<a href="http://docs.dotcloud.com/components/nodejs/">公式マニュアル</a>にも書いてありますがWebSocketサポート済みのDuoStack買収によってどう流れるか気になるところです。</p>
+<p>6/18(土)に開催された<a href="http://atnd.org/events/16681">Varnish勉強会 Tokyo.vcl : ATND</a>に行ってきました。
+初のクックパッドさんオフィス訪問です。</p>
 
-<p>さて今回は、前回作ったものをベースにScalaからMongoDBへアクセスするサンプルをDotCloudで動かすまでを書いておきます。（まぁ、Scalaのコードはオマケみたいなものですけど…）</p>
+<p>Varnish3のリリースパーティーも兼ねての開催だったようで、ステッカーもいただいてしまいました。
+インフラ屋じゃない上に、Varnish触ったのは前日の晩という超初心者だったので結構不安でしたが、
+ビアバッシュを含め色々な話しが聞けた実りある良い勉強会でした。</p>
 
-<p>前回の記事はこちらです。</p>
+<p>主催の@hmskさんをはじめ登壇者の皆様、ならびにビアバッシュで交流してくださった皆様ありがとうございました。</p>
 
+<h3 id="section">雑感</h3>
 <ul>
-  <li><a href="http://blog.restartr.com/2011/05/09/sample-sbt-project-for-dotcloud/">ScalaをDotCloudにアップロードするためのsbtサンプル</a></li>
+  <li>Varnishは画像配信の事例が多い</li>
+  <li>HTTPサーバーの前だけじゃなくてSolrのような内部ネットワーク間の通信にも適用できる。</li>
+  <li>Varnish落ちたときにApacheの負荷を避けるためにSquidが使える。</li>
+  <li>拡張次第でHTTPサーバーにもKVSにも化ける（やりすぎ注意？）。</li>
+  <li>クラウドでの運用はフロンティア。</li>
+  <li>設定ファイルのvclはもはやプログラム</li>
+  <li>ESIの事例なかったけど使いにくいのかな？</li>
+  <li>とりあえず実戦投入して様子見ないとわからないことが多そう。</li>
+  <li>あ、どれだけ高速化したかについての言及がなかったような…</li>
 </ul>
 
-<p>ちなみにDotCloudは下記バージョンにて動作しているみたいです（2011.05.28現在)</p>
+<h2 id="section-1">各発表メモ</h2>
+<p>スライドと、その丸写しみたいな感じのメモをペタペタ。</p>
 
+<h3 id="varnishcache30vupxcir">VarnishCache3.0新機能とVUPの仕方(@xcir)</h3>
+
+<div style="width:425px" id="__ss_8344516"> <strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/xcir/tokyovclvarnishcache30vup" title="tokyo.vcl発表資料（VarnishCache3.0新機能とVUPの仕方）">tokyo.vcl発表資料（VarnishCache3.0新機能とVUPの仕方）</a></strong> <iframe src="http://www.slideshare.net/slideshow/embed_code/8344516" width="425" height="355" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
+<div style="padding:5px 0 12px"> View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/xcir">xcir</a> </div>
+
+</div>
 <ul>
-  <li>nginx 0.7.65</li>
-  <li>jetty 6.1</li>
-  <li>mongodb 1.8.1</li>
+  <li>ESIでのgzip
+    <ul>
+      <li>ブロックが圧縮されているとESIできなかった(~2）</li>
+      <li>defaultパラメータが改善された</li>
+    </ul>
+  </li>
+  <li>stream support
+    <ul>
+      <li>別のストリームは待機させられる（？</li>
+    </ul>
+  </li>
 </ul>
 
-<h3 id="section">作成したサンプルアプリ</h3>
+<h3 id="varnishphji">イカ娘も終わったしVarnishでも使うか(@phji)</h3>
 
-<p>事情により停止する場合があるかもしれませんがご了承を。</p>
+<div style="width:425px" id="__ss_8366215"> <strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/phji/varnishika" title="イカ娘も終わったしVarnishでも使うか">イカ娘も終わったしVarnishでも使うか</a></strong> <iframe src="http://www.slideshare.net/slideshow/embed_code/8366215" width="425" height="355" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
+<div style="padding:5px 0 12px"> View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/phji">Kazutoshi Fujimoto</a> </div>
 
+</div>
 <ul>
-  <li><a href="http://samplemongo.ramee.dotcloud.com/">http://samplemongo.ramee.dotcloud.com/</a></li>
+  <li>[RAM8G Xeon 4core SSD256GB ] x 20servers</li>
+  <li>pixiv
+    <ul>
+      <li>nginx -&gt; (consistent hash) -&gt; quid -&gt; nginx -&gt; apache</li>
+      <li>lookupとかかないとキャッシュされないｗ</li>
+    </ul>
+  </li>
 </ul>
 
-<h3 id="dotcloudmongodb">DotCloudにMongoDBサーバーを準備する</h3>
-
-<p>DotCloudのMongoDBマニュアルはこちら</p>
-
+<h3 id="twitteryatsvarnishpenguinana">twitter検索(yats)でvarnish使ってみた(@PENGUINANA_)</h3>
 <ul>
-  <li><a href="http://docs.dotcloud.com/components/mongodb/">MongoDB ? DotCloud documentation</a></li>
+  <li>API 7000M req/month</li>
+  <li>PV 150Mreq/month</li>
+  <li>varnish(vps) -&gt; nginx[ webAPI -&gt; varnish -&gt; Solr ]</li>
+  <li>service : cache + failover</li>
+  <li>Solr: slaveのキャッシュクリアーが重いので、その前面にVarnishをおいている(ラウンドロビンとFailover）</li>
+  <li>autocomplete
+    <ul>
+      <li>キャッシュと相性よさそう</li>
+    </ul>
+  </li>
 </ul>
 
-<p>上記マニュアルにしたがって作成すればMongoDBサーバーを準備できます。
-基本的には、追加したいサーバーを登録して、ユーザーを作成するだけです。</p>
+<h3 id="ec2varnishmirakui">EC2とvarnishで画像配信(@mirakui)</h3>
 
-<p>簡単。</p>
+<div style="width:425px" id="__ss_8352369"> <strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/mirakui/ec2varnish" title="EC2とVarnishで画像配信">EC2とVarnishで画像配信</a></strong> <iframe src="http://www.slideshare.net/slideshow/embed_code/8352369" width="425" height="355" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
+<div style="padding:5px 0 12px"> View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/mirakui">Issei Naruta</a> </div>
 
-<p>今回は”example.mongo”という名前で作成する例を記してありますので、
-それぞれ自分の作成したいアプリ名に読み替えて下さい。</p>
-
-<h4 id="section-1">サーバーを作成</h4>
-
-<p>事前に”dotcloud create example”は実行してあるものとします。
-詳しくはこちらの<a href="http://docs.dotcloud.com/tutorials/firststeps/#id2">マニュアル</a>を見てください。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>dotcloud deploy -t mongo example.mongo
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">&gt; Created <span class="s2">&quot;example.mongo&quot;</span>.
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h4 id="dbidpass">DB情報を確認（ID/PASS）</h4>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>dotcloud info example.mongo
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>deployコマンド実行してから実際に作成されるまで少し時間がかかります。
-すぐにinfoコマンドを実行すると下記エラーがでます。
-※正確に測ってませんが数十秒くらい？</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">&gt; Sat May 28 08:14:43 Error: couldn<span class="err">&#39;</span>t connect to server 127.0.0.1 shell/mongo.js:79
-</span><span class="line">&gt; exception: connect failed
-</span><span class="line">&gt; Connection to mongo.example.dotcloud.com closed.
-</span><span class="line">&gt; Abort.
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>作成完了していれば、下記情報が表示されますので、”mongodb_password: <strong>**</strong>“に記載されたパスワードをメモしておきます。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">cluster: wolverine
-</span><span class="line">config:
-</span><span class="line">    mongodb_password: ******
-</span><span class="line">created_at: 1306570413.6722209
-</span><span class="line">name: example.mongo
-</span><span class="line">namespace: example
-</span><span class="line">ports:
-</span><span class="line">-   name: ssh
-</span><span class="line">    url: ssh://mongodb@mongo.example.dotcloud.com:5906
-</span><span class="line">-   name: mongodb
-</span><span class="line">    url: mongodb://root:******@mongo.example.dotcloud.com:5907
-</span><span class="line">state: running
-</span><span class="line"><span class="nb">type</span>: mongodb
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h4 id="mongodb">MongoDBサーバーへログイン</h4>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>dotcloud run example.mongo mongo
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>infoコマンドで表示されたパスワードを使って、”sampledb”というdbにアプリユーザーを追加します。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">&gt; use sampledb
-</span><span class="line">switched to db sampledb
-</span><span class="line">&gt; db.getSisterDB<span class="o">(</span><span class="s2">&quot;admin&quot;</span><span class="o">)</span>.auth<span class="o">(</span><span class="s2">&quot;root&quot;</span>, <span class="s2">&quot;&lt;infoコマンドで表示されるパスワード&gt;&quot;</span><span class="o">)</span>;
-</span><span class="line">1
-</span><span class="line">&gt; db.addUser<span class="o">(</span><span class="s2">&quot;APPUSER_NAME&quot;</span>, <span class="s2">&quot;APPPUSER_PASS&quot;</span><span class="o">)</span>;
-</span><span class="line"><span class="o">{</span>
-</span><span class="line">     <span class="s2">&quot;user&quot;</span> : <span class="s2">&quot;APPUSER_NAME&quot;</span>,
-</span><span class="line">     <span class="s2">&quot;readOnly&quot;</span> : <span class="nb">false</span>,
-</span><span class="line">     <span class="s2">&quot;pwd&quot;</span> : <span class="s2">&quot;xxxxxxxxxxxxxxxxxxxxxxxxxxxxx&quot;</span>
-</span><span class="line"><span class="o">}</span>
-</span><span class="line">&gt; <span class="nb">exit</span>
-</span><span class="line">bye
-</span><span class="line">Connection to mongo.example.dotcloud.com closed.
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>※とりあえず一旦ログアウトしてますが、別に必須じゃないです。</p>
-
-<h4 id="section-2">再度ログインしてテスト操作してみる</h4>
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>dotcloud run example.mongo mongo
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>新規作成したユーザーでDB操作が可能か確認してみます。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="c"># mongo</span>
-</span><span class="line">Warning: Permanently added <span class="s1">&#39;[mongo.example.dotcloud.com]:5906,[174.129.17.131]:5906&#39;</span> <span class="o">(</span>RSA<span class="o">)</span> &gt; to the list of known hosts.
-</span><span class="line">MongoDB shell version: 1.8.1
-</span><span class="line">connecting to: <span class="nb">test</span>
-</span><span class="line">&gt; use sampledb;
-</span><span class="line">switched to db sampledb
-</span><span class="line">&gt; db.auth<span class="o">(</span><span class="s2">&quot;sampleuser&quot;</span>, <span class="s2">&quot;samplepass&quot;</span><span class="o">)</span>;
-</span><span class="line">1
-</span><span class="line">&gt; db.sampledb.save<span class="o">({</span>id:1,name:<span class="s2">&quot;foo&quot;</span><span class="o">})</span>;
-</span><span class="line">&gt; db.sampledb.find<span class="o">()</span>;
-</span><span class="line"><span class="o">{</span> <span class="s2">&quot;_id&quot;</span> : ObjectId<span class="o">(</span><span class="s2">&quot;4de0b033a1fd29eb0e1522fd&quot;</span><span class="o">)</span>, <span class="s2">&quot;id&quot;</span> : 1, <span class="s2">&quot;name&quot;</span> : <span class="s2">&quot;foo&quot;</span> <span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>問題なさそうなので、あとはアプリを”dotcloud push”して動かすだけです。</p>
-
-<h3 id="scala">scalaからアクセスするサンプル</h3>
-
-<p>サービス名を「example.samplemongo”として作成する例です。</p>
-
-<p>requirementsはイカのとおり。</p>
-
+</div>
 <ul>
-  <li>scala 2.9.0</li>
-  <li>sbt 0.7.7</li>
-  <li>jetty 7.3.1.v20110307</li>
-  <li>casbah 2.1.5.0</li>
+  <li>失敗談</li>
+  <li>TOFU
+    <ul>
+      <li>アップロード時ではなくオンデマンドでリサイズ</li>
+      <li>akamai（CDN)に7000RPSのうち、ELBには700RPSくる。60%受けるリクエストをキャッシュできればApache負荷軽減できるのでは？
+        <ul>
+          <li>という導入経緯（からの失敗</li>
+        </ul>
+      </li>
+      <li>1st challenge
+        <ul>
+          <li>EC2(M2.XLARGE[17.1GB RAM] + EBS[100GB for swap])</li>
+          <li>300rps</li>
+          <li>結果：オンメモリだけなら順調だけど、あふれてきてOSにSWAPさせたとたんLOADAVERAGEが爆発して死亡。</li>
+        </ul>
+      </li>
+      <li>2nd challenge
+        <ul>
+          <li>EC2(M2.XLARGE[17.1GB RAM] + EBS[100GB for ext3])</li>
+          <li>“file storage”を使っても結局メモリ容量が大量に必要</li>
+        </ul>
+      </li>
+      <li>ec2のxlargeインスタンスには、IO性能「標準」と「高」がある
+        <ul>
+          <li>今回は「標準」を利用して失敗</li>
+          <li>「高」ならうまくいくかも</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>varnish3
+    <ul>
+      <li>hash director
+        <ul>
+          <li>consistent hashingができるかも？</li>
+          <li>nginxいらずに複数varnish運用ができるかも？</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
 </ul>
 
-<p><code>sbt</code>
-で基本ディレクトリを作成したら、下記プロジェクト設定を{root}/project/build/MongoSampleProject.scala”として保存します。</p>
+<h3 id="puppetvarnishsquidar1">Puppetでvarnishもsquidも面倒みる(@ar1)</h3>
+<ul>
+  <li>ふつうはvarnishは落ちるのでLBつかって並列で運用</li>
+  <li>varnishおちるとWebサーバーが負荷かかってしまう
+    <ul>
+      <li>LB -&gt; varnish -&gt; squid -&gt; apache</li>
+      <li>squidどうしでキャッシュを共有できるので、１つSquidおちてもWebサーバーにききにいかずにすむ。</li>
+    </ul>
+  </li>
+  <li>puppet
+    <ul>
+      <li>設定をらくにする</li>
+      <li>cacheのExpire</li>
+      <li>サーバーのぬきさし</li>
+    </ul>
+  </li>
+</ul>
 
-<p>前回の設定クラスをコピーしてきたので、”sbt dot_create”と”sbt dot_push”も一応使えます。</p>
+<h3 id="varnishspchidren">楽天でvarnish(@spchidren)</h3>
+<ul>
+  <li>L7 balancingがやりたくてVarnish導入
+    <ul>
+      <li>URLによってWebサーバーのグループを切り替えたい</li>
+    </ul>
+  </li>
+  <li>akamai -&gt; LB -&gt; varnish(RAM24G[malloc18G/hitrate 75%] -&gt; apache(+mod_thumb)</li>
+  <li>LBからVarnishを切り離すのはどうやる？</li>
+  <li>CDNやVarnishのcache clearをどうやるか
+    <ul>
+      <li>画像登録されたときにMQに登録して、必要に応じて消す</li>
+      <li>CDNは常にExpireされない状態にしておける。</li>
+    </ul>
+  </li>
+  <li>ImageMagicおもい
+    <ul>
+      <li>varnishにサムネイルをつくるしくみを組み込んでみれば？（FreeImage)</li>
+      <li>cc_commandでインクルードさせて、C言語でサムネイルつくるしくみをくみこむ</li>
+    </ul>
+  </li>
+  <li>varnishのいくさき
+    <ul>
+      <li>nginxにも近いしredisにもちかづいてきてる</li>
+      <li>どこにいくんでしょ</li>
+    </ul>
+  </li>
+</ul>
 
-<p>※”example.mongo”の名称は適宜読み替えでお願いします。
-##### MongodbSampleProject.scala</p>
+<h3 id="tddvclhmsk">TDDでVCL書いてデプロイ(@hmsk)</h3>
+<ul>
+  <li>varnishtest
+    <ul>
+      <li>RSpecぽい書き方できる</li>
+      <li>xxx.vcltestファイルにケースを記述</li>
+    </ul>
+  </li>
+  <li>vmod
+    <ul>
+      <li>vclの設定をC言語っぽく描ける</li>
+      <li>パージや圧縮、エラーなどに使える</li>
+      <li>モバイル端末のリストのチェックにもVCLから外出しできる</li>
+    </ul>
+  </li>
+</ul>
 
-<script src="https://gist.github.com/996769.js?file=MongodbSampleProject.scala"></script>
-
-<p>配置できたら、</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">sbt reload update
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>でライブラリを読み込みます。</p>
-
-<p>あとは下記Servletの実装とweb.xmlを用意したらOK．</p>
-
-<h5 id="mongodbservletscala">MongodbServlet.scala</h5>
-
-<script src="https://gist.github.com/996769.js?file=MonbodbServlet.scala"></script>
-
-<h5 id="webxml">web.xml</h5>
-
-<script src="https://gist.github.com/996769.js?file=web.xml"></script>
-
-<p>できたら、”sbt dot_push”でdotcloudへアップロードされるはずです。</p>
-
-<p>最後に、”http:／／samplemongo.exapmle.dotcloud.com”にアクセスして、フォームからデータ登録ができれば成功です。</p>
-
-<p>RDBMSにくらべてデータ保存・取得までが圧倒的に簡単で、PaaSでもMongoDBはいい感じですね！</p>
+<h2 id="section-2">関連リンク</h2>
+<ul>
+  <li>ATND
+    <ul>
+      <li><a href="http://atnd.org/events/16681">Varnish勉強会 Tokyo.vcl : ATND</a></li>
+    </ul>
+  </li>
+  <li>Ustream
+    <ul>
+      <li><a href="http://www.ustream.tv/recorded/15453305">http://www.ustream.tv/recorded/15453305</a></li>
+      <li><a href="http://www.ustream.tv/recorded/15453834">http://www.ustream.tv/recorded/15453834</a></li>
+    </ul>
+  </li>
+  <li>Togetter
+    <ul>
+      <li><a href="http://togetter.com/li/151585">Togetter - 「第一回 Varnish勉強会 Tokyo.vcl」</a></li>
+    </ul>
+  </li>
+  <li>勉強会レポート
+    <ul>
+      <li><a href="http://d.hatena.ne.jp/hxmasaki/20110620/1308547067">Varnish勉強会 Tokyo.vclを行いました - ククラフト</a></li>
+      <li><a href="http://d.hatena.ne.jp/mirakui/20110619/1308497959">私がクックパッドの画像配信野郎です - 床のトルストイ、ゲイとするとのこと</a></li>
+      <li><a href="http://blog.xcir.net/?p=438">Tokyo.vclでVarnishCache3の新機能とVUPの仕方を話してきました « cat /dev/random &gt; /dev/null &amp;</a></li>
+      <li><a href="http://blog.udzura.jp/2011/06/20/summary-of-tokyo-varnish-study-on-20110618/">東京varnish勉強会(Tokyo.vcl)まとめ «  blog.udzura.jp</a></li>
+    </ul>
+  </li>
+</ul>
 
 </div>
   
@@ -382,7 +419,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/2011/05/09/sample-sbt-project-for-dotcloud/">ScalaをDotCloudにアップロードするためのsbtサンプル</a></h1>
+      <h1 class="entry-title"><a href="/2011/06/19/volunteer-at-shinchi-fukushima-pref/">東京から福島へ一泊二日でボランティアに行ってきた</a></h1>
     
     
       <p class="meta">
@@ -398,69 +435,183 @@
   
 
 
-<time datetime="2011-05-09T23:35:43+09:00" pubdate data-updated="true">2011-05-09 (Mon)</time>
+<time datetime="2011-06-19T12:03:20+09:00" pubdate data-updated="true">2011-06-19 (Sun)</time>
         
       </p>
+    
+    
+      <style type="text/css">
+  .sharing {
+     clear: both;
+  }
+  .sharing li{
+    display: inline;
+    list-style-type: none;
+    float: left;
+    height: 1em;
+    line-height: 1em;
+    padding: 0 10px 0 0 ;
+    margin: 10px 0;
+  }
+  .sharing ul {
+    margin: 1em 0;
+    padding: 1em 0;
+  }
+</style>
+<div class="sharing">
+  <ul>
+    <li><a href="http://blog.restartr.com/page/9/index.html" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加&#8221;><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+  
+  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/page/9/index.html" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/page/9/index.html" >Tweet</a></li>
+  
+  
+  <li><div class="fb-like" data-href="http://blog.restartr.com/page/9/index.html" data-layout="button_count" data-action="like" data-show-faces="false" data-share="true"></div><script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1&appId=368671089894710";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script></li>
+  
+  <li><a data-pocket-label="pocket" data-pocket-count="horizontal" class="pocket-btn" data-lang="en"></a><script type="text/javascript">!function(d,i){if(!d.getElementById(i)){var j=d.createElement("script");j.id=i;j.src="https://widgets.getpocket.com/v1/j/btn.js?v=1";var w=d.getElementById(i);d.body.appendChild(j);}}(document,"pocket-btn-js");</script></li>
+  
+  <li><div class="g-plusone" data-size="medium"></div></li>
+  
+  </ul>
+</div>
+
     
   </header>
 
 
-  <div class="entry-content"><p><a href="http://dotcloud.com/">dotcloud</a>を必要最低限操作するためのactionをsbtに追加してみました。</p>
+  <div class="entry-content"><p><a href="http://www.flickr.com/photos/53244662@N04/5847245836/" title="IMG_5100 by ReSTARTR_y, on Flickr"><img src="http://farm4.static.flickr.com/3538/5847245836_ca37b883fe_z.jpg" width="640" height="427" alt="IMG_5100" /></a></p>
 
-<p>sbtのアクション自体はじめてなので作法がよくわかってないので、間違っているかも知れませんが。</p>
+<p>6/11,12の土日を利用して、福島県相馬郡新地町にボランティア活動に行ってきました。</p>
 
-<h3 id="section">使い方</h3>
+<h2 id="section">活動の経緯</h2>
 
-<p>※scalaファイルは最後に掲載しています。
-とりあえず下記を作成するサービス名に置き換えればOKです。</p>
+<p>東日本大震災がおきてから、被災地に対して何かできることを、ということでこれまで募金と献血をやってきました。が、それだけでなく何かできることはないかと常々考えていました。
+仕事柄、ITを利用した貢献も考えたのですが、イマイチ現地の状況がわからない。情報を得ようとしても地域やソースによって様々かつ時間とともに大きく変化しているからです。
+また、社会人とはいうものの土日の時間やお金については結構余裕があるので、じゃあ現地でボランティアをすることで現状を知ることができるのではないか、と考えたのが今回の経緯です。
+その後、被災地の状況に詳しい元同僚に相談し、その子の母親と友人2名を加えた5名で活動をしてきました。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">  val <span class="nv">dotApplicationName</span> <span class="o">=</span> <span class="s2">&quot;APPNAME&quot;</span>
-</span><span class="line">  val <span class="nv">dotServiceName</span> <span class="o">=</span> dotApplicationName + <span class="s2">&quot;.SERVNAME&quot;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<h3 id="section-1">活動内容</h3>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5846683717/" title="IMG_5090 by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5109/5846683717_604f687639_m.jpg" width="240" height="160" alt="IMG_5090" /></a></p>
 
-<p>あとは、下記を順に実行すればOK(dot_prepareはdot_pushの前に必ず実行されるので省略可能)</p>
+<p>津波の被害をうけた民家の瓦礫撤去作業を行いました。
+とはいっても大きな物はあらかた自衛隊が撤去しているので、我々の役目は倒れた木の撤去や、瓦・ガラス等の破片の収集、側溝の泥かきなど、担当した民家の敷地内を綺麗にすること。
+計10名程度で、1日かけて行いましたが、天候が曇りだったこともあって順調に作業をすることができました。</p>
+
+<h2 id="section-2">現地に行ってみて</h2>
+
+<h4 id="section-3">ボランティアセンターすごい</h4>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5822614663/" title="現地到着。まだ受付前。 by ReSTARTR_y, on Flickr"><img src="http://farm3.static.flickr.com/2673/5822614663_ec084f0dfd_m.jpg" width="240" height="144" alt="現地到着。まだ受付前。" /></a></p>
+
+<p>被災地のボランティアセンターもずいぶん落ち着いてきているようです。
+活動に必要な道具（スコップやマスク）だけでなく、水や活動後のアイスコーヒーなどの提供もして頂きました。
+ボランティア活動自体初めてだったのですが、たとえ不慣れであっても、コーディネーターの方々や一緒に活動する方々の力を借りながら活動することは可能であると実感しました。
+現地でボランティアをしたいと考えているけど踏み出せなかった方は、真夏になる前に一度足を運んでみてはいかがでしょう。</p>
+
+<h4 id="section-4">電波悪い</h4>
+<p>SoftBankの黒SIMをDesireSに入れて利用しているのですが、ほぼ繋がりません。
+全然つながらない訳ではないですが、かなり不安定でたまにつながる程度。picplzで写真アップロードしようとしても100%失敗します。
+今回の震災でインターネットが活躍したという話は聞きますが、このような電波状況のままでは欲しい情報も手に入らないでしょう。震災後にこうなったのかもともと電波の弱い地域だったのかわかりませんが、これではインターネットの存在も無意味。</p>
+
+<p>利用した福島県伊達市（福島市の近く）の宿泊施設で、地震を体験したのですが、電波が皆無だったために震源や地震の規模などの情報が全く手に入りませんでした。</p>
+
+<p>これまで、インターネットでほしい情報をいつでもどこでもすぐに手に入れられると思っていただけに、手に入らない状況に出くわすとかなりの不安感を覚えます。
+こうなると、頼れるものはテレビやラジオ、町内放送やご近所ネットワークになってくるでしょう。
+もちろん有線でのインターネットもあるかもしれませんが、緊急時にわざわざPCを起動したりしないでしょう。</p>
+
+<p>そう考えると、インターネットの果たすべき役割はリアルタイムに必要な一次的情報ではなく、その後の情報配信とその整理に注力すべきだと実感しました。</p>
+
+<h4 id="section-5">活動内容と現地で聞いたこと</h4>
+
+<p>一日目は新地町でボランティアを行い、宿泊施設はりょうぜん里山がっこうを利用。
+二日目は里山がっこうの自然体験をさせてもらい、その後温泉街で足湯につかって帰宅。</p>
 
 <ul>
-  <li>“sbt dot_create” : サービスの作成</li>
-  <li>“sbt dot_prepare” : リリース用ディレクトリ作成とwarファイルのコピー</li>
-  <li>“sbt dot_push” : dotcloudへのwarファイルpush</li>
+  <li><a href="http://www.date-satoyama.com/">NPO法人りょうぜん里山がっこう</a></li>
 </ul>
 
-<h3 id="dotcloud">dotcloud用に注意すべきこと</h3>
-
-<p>“sbt package”を使用すると、”＜projectName＞-＜scala_ver＞-＜app_ver＞.war”の形式でwarファイルが作成されます。
-が、dotcloudのドキュメントにはこう書いてあるので、”root.war”で作成するのが望ましいです。</p>
-
-<blockquote>
-The java service will make your application available at http://frontend.myapp.dotcloud.com/ if your archive is named root.war or http://frontend.myapp.dotcloud.com/webapp/ if your archive is named webapp.war (../foobar/ if the archive was named foobar.war and so on). So, you can effectively serve multiple web applications with the same java service.
-
-</blockquote>
-<p><a href="http://docs.dotcloud.com/components/java/">Java — DotCloud documentation</a></p>
-
-<p>さらに、”dotcloud push”はwarファイルを含むディレクトリを指定することになり、それ以下がすべて同期されてしまいます。デフォルトだと、”./target/scala_2.8.1/”以下のすべてが。</p>
-
-<p>なので、warのみ格納する”release”ディレクトリを作り、 そこに”root.war”としてひとつだけ存在させておきました。
-順番に書くと、</p>
+<p>里山がっこうでは、震災後の放射能の影響とその取組みについて色々お話を伺いました。友人のブログにその詳細が書かれていますので、そちらを参照してもらうほうが良いと思います。</p>
 
 <ul>
-  <li>sbt packageでtarget/scala_2.8.1/＜projectName＞-＜scala_ver＞-＜app_ver＞.warを生成</li>
-  <li>そのwarファイルをtarget/release/root.warにコピー</li>
-  <li>“dotcloud push ＜dotcloud_appname＞ target/release/” でwarのみアップロード</li>
+  <li><a href="http://agreenqoostar.blog129.fc2.com/blog-entry-604.html">AGREEN　イナカとトカイの橋渡し　 伊達市りょうぜん里山がっこうの「除染」への取り組み</a></li>
 </ul>
 
-<p>という方法で対応しました。</p>
+<p>1日目の活動レポートもあります。</p>
 
-<p>以下、サンプルのプロジェクト設定です。</p>
-
-<script src="https://gist.github.com/962534.js?file=RameeProject.scala"></script>
-
-<h3 id="section-1">参考リンク</h3>
 <ul>
-  <li><a href="http://docs.dotcloud.com/cli/">DotCloud command line — DotCloud documentation</a></li>
-  <li><a href="http://code.google.com/p/simple-build-tool/wiki/Process">Process - simple-build-tool - A build tool for Scala - Google Project Hosting</a></li>
+  <li><a href="http://agreenqoostar.blog129.fc2.com/blog-entry-603.html">AGREEN　イナカとトカイの橋渡し　 新地町ボランティアレポート</a></li>
 </ul>
+
+<h2 id="section-6">ボランティア活動に必要な情報</h2>
+
+<h4 id="section-7">ボランティアバスツアー</h4>
+
+<p>被災地は基本的に交通が整備されていません。
+一人暮らしで車も所有していない自分としては、現地の交通手段がネックになります。
+幸い、「ボランティアバスツアー」というものがあったのでこれを利用することを考えました。</p>
+
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><a href="http://www.pref-f-svc.org/archives/1216">東日本大震災復興支援・新地町で活動する災害ボランティア募集</a></td>
+          <td>福島県災害ボランティアセンター&lt;/a&gt;</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ul>
+
+<p>これなら一人でも現地に向かうことも可能ですし、そこからはコーディネートしてもらえます。
+結局は、冒頭にも書いたとおり、田舎暮らしのマッチングの仕事の関係で被災地にも詳しい友人に相談した結果、彼女のご家族に福島駅から現地まで車をだして頂けることになり、東京ー福島間は夜行バスを利用して、友人4人とともに活動する結果となったのですが。</p>
+
+<h4 id="twitter">ボランティア情報のTwitterアカウント</h4>
+
+<p>定期的にボランディアバスツアーなどの情報は下記Twitterアカウントをフォローしておけば、チェックすることができます。(他にもあるかもしれませんが私はこちらでチェックしています。）</p>
+
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><a href="http://twitter.com/tominvc">@tominvc</a></td>
+          <td>被災地支援都民ボランティア</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><a href="http://tiwtter.com/tokyovolunteer">@tokyovolunteer</a></td>
+          <td>東京ボランティア・市民活動センター</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><a href="http://twitter.com/Tasukeaijp">@Tasukeaijp</a></td>
+          <td>助けあいジャパン</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ul>
+
+<p>あとは、健康な体と必要不可欠な装備があれば十分貢献できると思います。</p>
+
+<p>現地で少しばかり写真を撮ってきたのでFrickrにあげておきました。</p>
+
+<object type="text/html" data="http://www.flickr.com/slideShow/index.gne?user_id=53244662@N04&amp;set_id=72157626993269710" width="500" height="500"> </object>
 
 </div>
   
@@ -524,6 +675,14 @@ The java service will make your application available at http://frontend.myapp.d
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2014/04/07/mysql-character-set-utf8mb4/">MySQLでutf8mb4を扱う場合は必要なカラムと接続時だけ明示的に指定する</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2014/04/06/reload-varnish-vcl/">VarnishのVCLを再起動なしに再読み込みする</a>
+      </li>
+    
+      <li class="post">
         <a href="/2014/04/06/move-from-wordpress-to-octopress/">WordpressからOctopressに移行</a>
       </li>
     
@@ -535,20 +694,12 @@ The java service will make your application available at http://frontend.myapp.d
         <a href="/2013/04/17/bind-a-variable-to-closure-in-python/">pythonのクロージャに変数を束縛する方法</a>
       </li>
     
-      <li class="post">
-        <a href="/2013/04/05/my-first-pytest/">pythonのテストにpytestを使ってみた</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2013/04/02/retirement201303/">Kauli株式会社を退職しました</a>
-      </li>
-    
   </ul>
 </section>
 <section>
   <h1>Categories</h1>
   <ul id="categories">
-    <li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
+    <li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/mysql/'>mysql</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
   </ul>
 </section>
 <section>

@@ -1,0 +1,898 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>MySQLでutf8mb4を扱う場合は必要なカラムと接続時だけ明示的に指定する - I Will Survive</title>
+  <meta name="author" content="ReSTARTR">
+  <link rel="author" href="https://plus.google.com/103216164658230535238" />
+  <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
+
+  
+  <meta name="description" content="結論はタイトルの通り。 まとめ systemのエンコードがcharacter_set_systemに反映される. clientの接続時のデフォルトはシステムのエンコードが使用される（未検証） clientの接続時の指定が優先される。ただし、character_set_database, &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://blog.restartr.com/2014/04/07/mysql-character-set-utf8mb4/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+   <link href="/stylesheets/data-table.css" media="screen, projection" rel="stylesheet" type="text/css" />
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="I Will Survive" type="application/atom+xml">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+
+<!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href='http://fonts.googleapis.com/css?family=Lato:400,100,100italic,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:200,300,400,500,600,700,900' rel='stylesheet' type='text/css'>
+
+
+	<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$$','$$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-894530-10']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+  <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
+  <style>html{background: url("/images/background.png") no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;}</style>
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+</hgroup>
+
+</header>
+  <!-- <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:blog.restartr.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav> -->
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">MySQLでutf8mb4を扱う場合は必要なカラムと接続時だけ明示的に指定する</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-04-07T08:12:32+09:00" pubdate data-updated="true">2014-04-07 (Mon)</time>
+        
+      </p>
+    
+    
+      <style type="text/css">
+  .sharing {
+     clear: both;
+  }
+  .sharing li{
+    display: inline;
+    list-style-type: none;
+    float: left;
+    height: 1em;
+    line-height: 1em;
+    padding: 0 10px 0 0 ;
+    margin: 10px 0;
+  }
+  .sharing ul {
+    margin: 1em 0;
+    padding: 1em 0;
+  }
+</style>
+<div class="sharing">
+  <ul>
+    <li><a href="http://blog.restartr.com/2014/04/07/mysql-character-set-utf8mb4/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+  
+  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2014/04/07/mysql-character-set-utf8mb4/" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2014/04/07/mysql-character-set-utf8mb4/" >Tweet</a></li>
+  
+  
+  <li><div class="fb-like" data-href="http://blog.restartr.com/2014/04/07/mysql-character-set-utf8mb4/" data-layout="button_count" data-action="like" data-show-faces="false" data-share="true"></div><script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1&appId=368671089894710";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script></li>
+  
+  <li><a data-pocket-label="pocket" data-pocket-count="horizontal" class="pocket-btn" data-lang="en"></a><script type="text/javascript">!function(d,i){if(!d.getElementById(i)){var j=d.createElement("script");j.id=i;j.src="https://widgets.getpocket.com/v1/j/btn.js?v=1";var w=d.getElementById(i);d.body.appendChild(j);}}(document,"pocket-btn-js");</script></li>
+  
+  <li><div class="g-plusone" data-size="medium"></div></li>
+  
+  </ul>
+</div>
+
+    
+  </header>
+
+
+<div class="entry-content"><p>結論はタイトルの通り。</p>
+
+<h2 id="section">まとめ</h2>
+
+<ul>
+  <li>systemのエンコードが<code>character_set_system</code>に反映される. clientの接続時のデフォルトはシステムのエンコードが使用される（未検証）</li>
+  <li>clientの接続時の指定が優先される。ただし、<code>character_set_database</code>, <code>character_set_filesystem</code>, <code>character_set_server</code>については上書きされない。</li>
+  <li>my.cnfの<code>mysql.default-character-set</code>は意味ある？（未検証）</li>
+  <li>my.cnfの<code>mysqld.character-set-server</code>はfilesystemとsystem以外のデフォルトに影響する。clientの接続時に無指定の場合にもデフォルトとして利用される</li>
+</ul>
+
+<p>以下の理由によって、デフォルトはutf8で、必要なカラムとクライアント接続時にだけutf8mb4を適用することとした。</p>
+
+<ul>
+  <li>インデックスに使える文字数がutf8だと255文字までに対してutf8mb4だと191文字まで。
+    <ul>
+      <li>サーバー側の設定はデフォルトutf8.クライアントの設定はデフォルトutf8mb4.が良い</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="section-1">検証</h3>
+
+<p>server/clientともにremiのMySQL5.5を使用</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>mysql --version
+</span><span class="line">mysql  Ver 14.14 Distrib 5.5.37, <span class="k">for </span>Linux <span class="o">(</span>x86_64<span class="o">)</span> using readline 5.1
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>utf8なカラム<code>name1</code>と、utf8mb4なカラム<code>name2</code>を用意.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>mysql -uroot <span class="nb">test</span> -e <span class="s1">&#39;show create table user2\G&#39;</span>
+</span><span class="line">*************************** 1. row ***************************
+</span><span class="line">       Table: user2
+</span><span class="line">Create Table: CREATE TABLE <span class="sb">`</span>user2<span class="sb">`</span> <span class="o">(</span>
+</span><span class="line">  <span class="sb">`</span>id<span class="sb">`</span> int<span class="o">(</span>11<span class="o">)</span> NOT NULL AUTO_INCREMENT,
+</span><span class="line">  <span class="sb">`</span>name1<span class="sb">`</span> varchar<span class="o">(</span>255<span class="o">)</span> DEFAULT NULL,
+</span><span class="line">  <span class="sb">`</span>name2<span class="sb">`</span> varchar<span class="o">(</span>255<span class="o">)</span> CHARACTER SET utf8mb4 DEFAULT NULL,
+</span><span class="line">  PRIMARY KEY <span class="o">(</span><span class="sb">`</span>id<span class="sb">`</span><span class="o">)</span>
+</span><span class="line"><span class="o">)</span> <span class="nv">ENGINE</span><span class="o">=</span>InnoDB <span class="nv">AUTO_INCREMENT</span><span class="o">=</span>14 DEFAULT <span class="nv">CHARSET</span><span class="o">=</span>utf8
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>デフォルトの状態</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>mysql -uroot <span class="nb">test</span> -e <span class="s1">&#39;show global variables like &quot;character_set%&quot;; show variables like &quot;character_set%&quot;&#39;</span>
+</span><span class="line">+--------------------------+----------------------------+
+</span><span class="line">| Variable_name            | Value                      |
+</span><span class="line">+--------------------------+----------------------------+
+</span><span class="line">| character_set_client     | latin1                     |
+</span><span class="line">| character_set_connection | latin1                     |
+</span><span class="line">| character_set_database   | latin1                     |
+</span><span class="line">| character_set_filesystem | binary                     |
+</span><span class="line">| character_set_results    | latin1                     |
+</span><span class="line">| character_set_server     | latin1                     |
+</span><span class="line">| character_set_system     | utf8                       |
+</span><span class="line">| character_sets_dir       | /usr/share/mysql/charsets/ |
+</span><span class="line">+--------------------------+----------------------------+
+</span><span class="line">+--------------------------+----------------------------+
+</span><span class="line">| Variable_name            | Value                      |
+</span><span class="line">+--------------------------+----------------------------+
+</span><span class="line">| character_set_client     | utf8                       |
+</span><span class="line">| character_set_connection | utf8                       |
+</span><span class="line">| character_set_database   | latin1                     |
+</span><span class="line">| character_set_filesystem | binary                     |
+</span><span class="line">| character_set_results    | utf8                       |
+</span><span class="line">| character_set_server     | latin1                     |
+</span><span class="line">| character_set_system     | utf8                       |
+</span><span class="line">| character_sets_dir       | /usr/share/mysql/charsets/ |
+</span><span class="line">+--------------------------+----------------------------+
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>clientが<code>--default-character-set=utf8mb4</code>をつけて接続した場合</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>mysql --default-character-set<span class="o">=</span>utf8 -uroot <span class="nb">test</span> -e <span class="s1">&#39;show global variables like &quot;character_set%&quot;; show variables like &quot;character_set%&quot;&#39;</span>
+</span><span class="line">+--------------------------+----------------------------+
+</span><span class="line">| Variable_name            | Value                      |
+</span><span class="line">+--------------------------+----------------------------+
+</span><span class="line">| character_set_client     | latin1                     |
+</span><span class="line">| character_set_connection | latin1                     |
+</span><span class="line">| character_set_database   | latin1                     |
+</span><span class="line">| character_set_filesystem | binary                     |
+</span><span class="line">| character_set_results    | latin1                     |
+</span><span class="line">| character_set_server     | latin1                     |
+</span><span class="line">| character_set_system     | utf8                       |
+</span><span class="line">| character_sets_dir       | /usr/share/mysql/charsets/ |
+</span><span class="line">+--------------------------+----------------------------+
+</span><span class="line">+--------------------------+----------------------------+
+</span><span class="line">| Variable_name            | Value                      |
+</span><span class="line">+--------------------------+----------------------------+
+</span><span class="line">| character_set_client     | utf8                       |
+</span><span class="line">| character_set_connection | utf8                       |
+</span><span class="line">| character_set_database   | latin1                     |
+</span><span class="line">| character_set_filesystem | binary                     |
+</span><span class="line">| character_set_results    | utf8                       |
+</span><span class="line">| character_set_server     | latin1                     |
+</span><span class="line">| character_set_system     | utf8                       |
+</span><span class="line">| character_sets_dir       | /usr/share/mysql/charsets/ |
+</span><span class="line">+--------------------------+----------------------------+
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>my.cnfに<code>mysql.default-character-set</code>を指定した場合</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="ini"><span class="line"><span class="k">[mysql]</span>
+</span><span class="line"><span class="na">default-character-set</span><span class="o">=</span><span class="s">utf8</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>mysql -uroot <span class="nb">test</span> -e <span class="s1">&#39;show global variables like &quot;character_set%&quot;; show variables like &quot;character_set%&quot;&#39;</span>
+</span><span class="line">+--------------------------+----------------------------+
+</span><span class="line">| Variable_name            | Value                      |
+</span><span class="line">+--------------------------+----------------------------+
+</span><span class="line">| character_set_client     | latin1                     |
+</span><span class="line">| character_set_connection | latin1                     |
+</span><span class="line">| character_set_database   | latin1                     |
+</span><span class="line">| character_set_filesystem | binary                     |
+</span><span class="line">| character_set_results    | latin1                     |
+</span><span class="line">| character_set_server     | latin1                     |
+</span><span class="line">| character_set_system     | utf8                       |
+</span><span class="line">| character_sets_dir       | /usr/share/mysql/charsets/ |
+</span><span class="line">+--------------------------+----------------------------+
+</span><span class="line">+--------------------------+----------------------------+
+</span><span class="line">| Variable_name            | Value                      |
+</span><span class="line">+--------------------------+----------------------------+
+</span><span class="line">| character_set_client     | utf8                       |
+</span><span class="line">| character_set_connection | utf8                       |
+</span><span class="line">| character_set_database   | latin1                     |
+</span><span class="line">| character_set_filesystem | binary                     |
+</span><span class="line">| character_set_results    | utf8                       |
+</span><span class="line">| character_set_server     | latin1                     |
+</span><span class="line">| character_set_system     | utf8                       |
+</span><span class="line">| character_sets_dir       | /usr/share/mysql/charsets/ |
+</span><span class="line">+--------------------------+----------------------------+
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>my.cnfに<code>mysqd.character-set-server=utf8</code>を指定した場合</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="ini"><span class="line"><span class="k">[mysqld]</span>
+</span><span class="line"><span class="na">character-set-server</span><span class="o">=</span><span class="s">utf8</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>mysql -uroot <span class="nb">test</span> -e <span class="s1">&#39;show global variables like &quot;character_set%&quot;; show variables like &quot;character_set%&quot;&#39;</span>
+</span><span class="line">+--------------------------+----------------------------+
+</span><span class="line">| Variable_name            | Value                      |
+</span><span class="line">+--------------------------+----------------------------+
+</span><span class="line">| character_set_client     | utf8                       |
+</span><span class="line">| character_set_connection | utf8                       |
+</span><span class="line">| character_set_database   | utf8                       |
+</span><span class="line">| character_set_filesystem | binary                     |
+</span><span class="line">| character_set_results    | utf8                       |
+</span><span class="line">| character_set_server     | utf8                       |
+</span><span class="line">| character_set_system     | utf8                       |
+</span><span class="line">| character_sets_dir       | /usr/share/mysql/charsets/ |
+</span><span class="line">+--------------------------+----------------------------+
+</span><span class="line">+--------------------------+----------------------------+
+</span><span class="line">| Variable_name            | Value                      |
+</span><span class="line">+--------------------------+----------------------------+
+</span><span class="line">| character_set_client     | utf8                       |
+</span><span class="line">| character_set_connection | utf8                       |
+</span><span class="line">| character_set_database   | utf8                       |
+</span><span class="line">| character_set_filesystem | binary                     |
+</span><span class="line">| character_set_results    | utf8                       |
+</span><span class="line">| character_set_server     | utf8                       |
+</span><span class="line">| character_set_system     | utf8                       |
+</span><span class="line">| character_sets_dir       | /usr/share/mysql/charsets/ |
+</span><span class="line">+--------------------------+----------------------------+
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h2 id="railsactiverecord">Rails（ActiveRecord）から接続する場合　</h2>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="yaml"><span class="line"><span class="l-Scalar-Plain">db</span><span class="p-Indicator">:</span>
+</span><span class="line">  <span class="l-Scalar-Plain">encoding</span><span class="p-Indicator">:</span> <span class="s">&quot;utf8mb4&quot;</span> <span class="c1"># SET NAMES &quot;utf8mb4&quot;と等価</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>さらに、<code>SET NAMES utf8mb4</code>は以下全てを実行した場合と等価</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="sql"><span class="line"><span class="k">SET</span> <span class="n">character_set_client</span> <span class="o">=</span> <span class="n">utf8mb4</span><span class="p">;</span>
+</span><span class="line"><span class="k">SET</span> <span class="n">character_set_results</span> <span class="o">=</span> <span class="n">utf8mb4</span><span class="p">;</span>
+</span><span class="line"><span class="k">SET</span> <span class="n">character_set_connection</span> <span class="o">=</span> <span class="n">utf8mb4</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="utf8">utf8なカラムの文字列検索</h3>
+
+<ul>
+  <li>utf8mb4なカラムには、utf8mb4で接続してinsertすること</li>
+  <li>utf8なカラムには、utf8でもutf8mb4でもどちらでinsertしてもselectしても問題ない</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>mysql -uroot <span class="nb">test</span> -e <span class="s1">&#39;set names &quot;utf8mb4&quot;; select * from user2 where name2 like &quot;%だよ%&quot; limit 3&#39;</span>
+</span><span class="line">+----+----------------+------------------+
+</span><span class="line">| id | name1          | name2            |
+</span><span class="line">+----+----------------+------------------+
+</span><span class="line">|  1 | firstだよ♬     | firstだよ♬       |
+</span><span class="line">|  2 | secondだよ     | secondだよ????   |
+</span><span class="line">|  3 | secondだよ?    | secondだよ♨      |
+</span><span class="line">+----+----------------+------------------+
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>mysql -uroot <span class="nb">test</span> -e <span class="s1">&#39;set names &quot;utf8mb4&quot;; select * from user2 where name2 like &quot;%だよ♨&quot; limit 3&#39;</span>
+</span><span class="line">+----+--------------------+---------------------+
+</span><span class="line">| id | name1              | name2               |
+</span><span class="line">+----+--------------------+---------------------+
+</span><span class="line">|  3 | secondだよ?        | secondだよ♨          |
+</span><span class="line">|  8 | テストだよ♬        | テストだよ♨          |
+</span><span class="line">| 13 | テストだよ♬        | テストだよ♨          |
+</span><span class="line">+----+--------------------+---------------------+
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>ただし、utf8mb4なカラムに対して4バイト文字列を投げると、utf8で接続した時にエラーになる</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>mysql -uroot <span class="nb">test</span> -e <span class="s1">&#39;set names &quot;utf8&quot;; select * from user2 where name2 like &quot;%だよ♨&quot; limit 3&#39;</span>
+</span><span class="line">ERROR 1267 <span class="o">(</span>HY000<span class="o">)</span> at line 1: Illegal mix of collations <span class="o">(</span>utf8mb4_general_ci,IMPLICIT<span class="o">)</span> and <span class="o">(</span>utf8_general_ci,COERCIBLE<span class="o">)</span> <span class="k">for </span>operation <span class="s1">&#39;like&#39;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>なので、データとしてutf8mb4が格納される可能性があるDBに対しては、utf8mb4で必ず接続すること。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>mysql -uroot <span class="nb">test</span> -e <span class="s1">&#39;set names &quot;utf8mb4&quot;; select * from user2 where name2 like &quot;%だよ♨&quot; limit 3&#39;</span>
+</span><span class="line">+----+--------------------+---------------------+
+</span><span class="line">| id | name1              | name2               |
+</span><span class="line">+----+--------------------+---------------------+
+</span><span class="line">|  3 | secondだよ?        | secondだよ♨          |
+</span><span class="line">|  8 | テストだよ♬        | テストだよ♨          |
+</span><span class="line">| 13 | テストだよ♬        | テストだよ♨          |
+</span><span class="line">+----+--------------------+---------------------+
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="section-2">クライアントが5.1の場合</h3>
+
+<p>my.cnfやmysqlコマンドのオプションに<code>client.default_character_set=utf8mb4</code>は指定できない</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>mysql --default-character-set<span class="o">=</span>utf8mb4 -h 192.168.1.164 -uroot <span class="nb">test</span> -e <span class="s1">&#39;select * from user&#39;</span>
+</span><span class="line">mysql: Character <span class="nb">set</span> <span class="s1">&#39;utf8mb4&#39;</span> is not a compiled character <span class="nb">set </span>and is not specified in the <span class="s1">&#39;/usr/share/mysql/charsets/Index.xml&#39;</span> file
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>ただし、SQLでの<code>set names utf8mb4</code>の指定は有効。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>mysql -h 192.168.1.164 -uroot <span class="nb">test</span> -e <span class="s1">&#39;set names utf8mb4; select * from user&#39;</span>
+</span><span class="line">+----+------------+---------------+
+</span><span class="line">| id | name1      | name2         |
+</span><span class="line">+----+------------+---------------+
+</span><span class="line">| 14 | テスト  | テスト???? |
+</span><span class="line">| 15 | テスト? | テスト♨ |
+</span><span class="line">+----+------------+---------------+
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>ActiveRecord等でmysql2を使用している場合、encodingにutf8mb4を指定すると例外が起きる</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">Character <span class="nb">set</span> <span class="s1">&#39;utf8mb4&#39;</span> is not a compiled character <span class="nb">set </span>and is not specified in the <span class="s1">&#39;/usr/share/mysql/charsets/Index.xml&#39;</span> file
+</span><span class="line">/home/yoshida/iqon_api/vendor/bundle/ruby/2.0.0/gems/mysql2-0.3.13/lib/mysql2/client.rb:58:in <span class="sb">`</span>connect<span class="s1">&#39;: Can&#39;</span>t initialize character <span class="nb">set </span>utf8mb4 <span class="o">(</span>path: /usr/share/mysql/charsets/<span class="o">)</span> <span class="o">(</span>Mysql2::Error<span class="o">)</span>
+</span><span class="line">        from /home/yoshida/iqon_api/vendor/bundle/ruby/2.0.0/gems/mysql2-0.3.13/lib/mysql2/client.rb:58:in <span class="sb">`</span>initialize<span class="s1">&#39;</span>
+</span><span class="line"><span class="s1">        from test_mysql.rb:3:in `new&#39;</span>
+</span><span class="line">        from test_mysql.rb:3:in <span class="sb">`</span>&lt;main&gt;<span class="err">&#39;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>なので、接続時にset namesすれば良い</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">require <span class="s1">&#39;mysql2&#39;</span>
+</span><span class="line"><span class="nv">client</span> <span class="o">=</span> Mysql2::Client.new<span class="o">(</span>:host <span class="o">=</span>&gt; <span class="s2">&quot;localhost&quot;</span>, :username <span class="o">=</span>&gt; <span class="s2">&quot;root&quot;</span>, db: <span class="s1">&#39;test&#39;</span><span class="o">)</span>
+</span><span class="line">client.query<span class="o">(</span><span class="s1">&#39;SET NAMES utf8mb4&#39;</span><span class="o">)</span>
+</span><span class="line">puts client.query<span class="o">(</span><span class="s1">&#39;SELECT * FROM user&#39;</span><span class="o">)</span>.map <span class="o">{</span> |r| r<span class="o">[</span><span class="s1">&#39;name2&#39;</span><span class="o">]</span> <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>ruby test.rb
+</span><span class="line"><span class="o">[</span><span class="s2">&quot;テスト????&quot;</span>, <span class="s2">&quot;テスト🌸&quot;</span><span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h2 id="section-3">参考</h2>
+
+<ul>
+  <li><a href="https://dev.mysql.com/doc/refman/5.1/ja/charset-database.html">MySQL ::   MySQL 5.1 リファレンスマニュアル :: 9.3.2 データベースのキャラクタセットおよび照合順序</a></li>
+  <li><a href="http://d.hatena.ne.jp/maeyan/20090811/1250008156">MySQLでutf8を扱う場合。 - ×××Diary</a></li>
+  <li><a href="http://apps.timwhitlock.info/emoji/tables/unicode">Emoji unicode characters for use on the web</a></li>
+</ul>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">ReSTARTR</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-04-07T08:12:32+09:00" pubdate data-updated="true">2014-04-07 (Mon)</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/category/mysql/'>mysql</a>
+  
+</span>
+
+
+    </p>
+    
+      <style type="text/css">
+  .sharing {
+     clear: both;
+  }
+  .sharing li{
+    display: inline;
+    list-style-type: none;
+    float: left;
+    height: 1em;
+    line-height: 1em;
+    padding: 0 10px 0 0 ;
+    margin: 10px 0;
+  }
+  .sharing ul {
+    margin: 1em 0;
+    padding: 1em 0;
+  }
+</style>
+<div class="sharing">
+  <ul>
+    <li><a href="http://blog.restartr.com/2014/04/07/mysql-character-set-utf8mb4/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+  
+  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2014/04/07/mysql-character-set-utf8mb4/" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2014/04/07/mysql-character-set-utf8mb4/" >Tweet</a></li>
+  
+  
+  <li><div class="fb-like" data-href="http://blog.restartr.com/2014/04/07/mysql-character-set-utf8mb4/" data-layout="button_count" data-action="like" data-show-faces="false" data-share="true"></div><script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1&appId=368671089894710";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script></li>
+  
+  <li><a data-pocket-label="pocket" data-pocket-count="horizontal" class="pocket-btn" data-lang="en"></a><script type="text/javascript">!function(d,i){if(!d.getElementById(i)){var j=d.createElement("script");j.id=i;j.src="https://widgets.getpocket.com/v1/j/btn.js?v=1";var w=d.getElementById(i);d.body.appendChild(j);}}(document,"pocket-btn-js");</script></li>
+  
+  <li><div class="g-plusone" data-size="medium"></div></li>
+  
+  </ul>
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/2014/04/06/reload-varnish-vcl/" title="Previous Post: VarnishのVCLを再起動なしに再読み込みする">&laquo; VarnishのVCLを再起動なしに再読み込みする</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section id="titles">
+  <a href="http://blog.restartr.com" title="I Will Survive"><img id="logo" src="http://blog.restartr.com/images/portrait.jpg" /></a>
+  <h1 id="site_title"><a href="http://blog.restartr.com" title="I Will Survive">I Will Survive</a></h1>
+  <h3 id="site_subtitle">An application depelopper's blog.</h3>
+</section>
+
+<section id="menu">
+  <ul>
+    <li><i class="fa fa-home fa-lg"></i><a href="http://blog.restartr.com"> Home </a></li>
+    <li><i class="fa fa-calendar fa-lg"></i><a href="http://blog.restartr.com/blog/archives/"> Archives </a></li>
+    <li><i class="fa fa-user fa-lg"></i><a href="http://blog.restartr.com/about/"> About </a></li>
+    <li><i class="fa fa-rss fa-lg"></i><a href="http://blog.restartr.com/atom.xml"> Feed </a></li>
+  </ul>
+</section>
+
+<section id="social">
+  
+
+  
+
+  
+    <a href="" title="g+#103216164658230535238"><i class="fa fa-google-plus fa-2x"></i></a>
+  
+
+  
+    <a href="https://github.com/ReSTARTR" title="ReSTARTR"><i class="fa fa-github fa-2x"></i></a>
+  
+
+  
+
+  
+    <a href="https://twitter.com/ReSTARTR" title="ReSTARTR"><i class="fa fa-twitter fa-2x"></i></a>
+  
+
+  
+</section>
+
+
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/2014/04/07/mysql-character-set-utf8mb4/">MySQLでutf8mb4を扱う場合は必要なカラムと接続時だけ明示的に指定する</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2014/04/06/reload-varnish-vcl/">VarnishのVCLを再起動なしに再読み込みする</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2014/04/06/move-from-wordpress-to-octopress/">WordpressからOctopressに移行</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2013/04/26/connect-go-and-python-with-zeromq/">GoとPythonをZeroMQで繋ぐ</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2013/04/17/bind-a-variable-to-closure-in-python/">pythonのクロージャに変数を束縛する方法</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+  <h1>Categories</h1>
+  <ul id="categories">
+    <li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/mysql/'>mysql</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
+  </ul>
+</section>
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/ReSTARTR">@ReSTARTR</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'ReSTARTR',
+            count: 4,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+<section class="googleplus">
+  <h1>
+    <a href="https://plus.google.com/103216164658230535238?rel=author">
+      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
+      Google+
+    </a>
+  </h1>
+</section>
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - ReSTARTR -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ReSTARTR';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://blog.restartr.com/2014/04/07/mysql-character-set-utf8mb4/';
+        var disqus_url = 'http://blog.restartr.com/2014/04/07/mysql-character-set-utf8mb4/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

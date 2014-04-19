@@ -11,7 +11,7 @@
   <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="About 2014-01-25 (Sat) 2014-01-25 (Sat) Tweet Comments Please enable JavaScript to view the comments powered by Disqus. I Will Survive An &hellip;">
+  <meta name="description" content="About 2014-01-25 (Sat) 2014-01-25 (Sat) .sharing { clear: both; } .sharing li{ display: inline; list-style-type: none; float: left; height: 1em; &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -155,17 +155,44 @@
         
       </p>
       
-        <div class="sharing">
-  <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only@2x.png" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
+        <style type="text/css">
+  .sharing {
+     clear: both;
+  }
+  .sharing li{
+    display: inline;
+    list-style-type: none;
+    float: left;
+    height: 1em;
+    line-height: 1em;
+    padding: 0 10px 0 0 ;
+    margin: 10px 0;
+  }
+  .sharing ul {
+    margin: 1em 0;
+    padding: 1em 0;
+  }
+</style>
+<div class="sharing">
+  <ul>
+    <li><a href="http://blog.restartr.com/about/index.markdown.bk" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
   
-  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/about/index.markdown.bk" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/about/index.markdown.bk" >Tweet</a>
+  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/about/index.markdown.bk" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/about/index.markdown.bk" >Tweet</a></li>
   
   
-  <div class="g-plusone" data-size="medium"></div>
+  <li><div class="fb-like" data-href="http://blog.restartr.com/about/index.markdown.bk" data-layout="button_count" data-action="like" data-show-faces="false" data-share="true"></div><script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1&appId=368671089894710";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script></li>
   
+  <li><a data-pocket-label="pocket" data-pocket-count="horizontal" class="pocket-btn" data-lang="en"></a><script type="text/javascript">!function(d,i){if(!d.getElementById(i)){var j=d.createElement("script");j.id=i;j.src="https://widgets.getpocket.com/v1/j/btn.js?v=1";var w=d.getElementById(i);d.body.appendChild(j);}}(document,"pocket-btn-js");</script></li>
   
-    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  <li><div class="g-plusone" data-size="medium"></div></li>
   
+  </ul>
 </div>
 
       
@@ -226,6 +253,14 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2014/04/07/mysql-character-set-utf8mb4/">MySQLでutf8mb4を扱う場合は必要なカラムと接続時だけ明示的に指定する</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2014/04/06/reload-varnish-vcl/">VarnishのVCLを再起動なしに再読み込みする</a>
+      </li>
+    
+      <li class="post">
         <a href="/2014/04/06/move-from-wordpress-to-octopress/">WordpressからOctopressに移行</a>
       </li>
     
@@ -237,20 +272,12 @@
         <a href="/2013/04/17/bind-a-variable-to-closure-in-python/">pythonのクロージャに変数を束縛する方法</a>
       </li>
     
-      <li class="post">
-        <a href="/2013/04/05/my-first-pytest/">pythonのテストにpytestを使ってみた</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2013/04/02/retirement201303/">Kauli株式会社を退職しました</a>
-      </li>
-    
   </ul>
 </section>
 <section>
   <h1>Categories</h1>
   <ul id="categories">
-    <li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
+    <li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/mysql/'>mysql</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
   </ul>
 </section>
 <section>

@@ -11,7 +11,20 @@
   <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="※2013/04/04 更新:会社名を公開しました 3月末付でKauli株式会社を退職しました。 4月1日だと嘘っぽくなるかなと思い、1日ずらしてのご報告です。 2012年01月入社なので、1年3ヶ月という短い間でしたが、これまでで最も充実した1年だったように思います。 &hellip;">
+  <meta name="description" content="ハマったので。 1
+2
+3
+4
+5
+6
+7
+a = 2
+double = lambda x: x*a
+double(4) # 8 (=4*2)
+double(10) # 20 (=10*3)
+a = 3
+double(4) # 12 # WTF?
+double(10) # 30 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -122,7 +135,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/2013/04/02/retirement201303/">Kauli株式会社を退職しました</a></h1>
+      <h1 class="entry-title"><a href="/2013/04/17/bind-a-variable-to-closure-in-python/">Pythonのクロージャに変数を束縛する方法</a></h1>
     
     
       <p class="meta">
@@ -138,59 +151,213 @@
   
 
 
-<time datetime="2013-04-02T22:45:29+09:00" pubdate data-updated="true">2013-04-02 (Tue)</time>
+<time datetime="2013-04-17T22:19:14+09:00" pubdate data-updated="true">2013-04-17 (Wed)</time>
         
       </p>
+    
+    
+      <style type="text/css">
+  .sharing {
+     clear: both;
+  }
+  .sharing li{
+    display: inline;
+    list-style-type: none;
+    float: left;
+    height: 1em;
+    line-height: 1em;
+    padding: 0 10px 0 0 ;
+    margin: 10px 0;
+  }
+  .sharing ul {
+    margin: 1em 0;
+    padding: 1em 0;
+  }
+</style>
+<div class="sharing">
+  <ul>
+    <li><a href="http://blog.restartr.com/page/3/index.html" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加&#8221;><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+  
+  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/page/3/index.html" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/page/3/index.html" >Tweet</a></li>
+  
+  
+  <li><div class="fb-like" data-href="http://blog.restartr.com/page/3/index.html" data-layout="button_count" data-action="like" data-show-faces="false" data-share="true"></div><script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1&appId=368671089894710";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script></li>
+  
+  <li><a data-pocket-label="pocket" data-pocket-count="horizontal" class="pocket-btn" data-lang="en"></a><script type="text/javascript">!function(d,i){if(!d.getElementById(i)){var j=d.createElement("script");j.id=i;j.src="https://widgets.getpocket.com/v1/j/btn.js?v=1";var w=d.getElementById(i);d.body.appendChild(j);}}(document,"pocket-btn-js");</script></li>
+  
+  <li><div class="g-plusone" data-size="medium"></div></li>
+  
+  </ul>
+</div>
+
     
   </header>
 
 
-  <div class="entry-content"><p><a href="http://www.flickr.com/photos/53244662@N04/8599680561/" title="Cleanup my keyboard by ReSTARTR_y, on Flickr"><img src="http://farm9.staticflickr.com/8106/8599680561_da30653690.jpg" width="500" height="333" alt="Cleanup my keyboard" /></a></p>
+  <div class="entry-content"><p>ハマったので。</p>
 
-<p><em>※2013/04/04 更新:会社名を公開しました</em></p>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="n">a</span> <span class="o">=</span> <span class="mi">2</span>
+</span><span class="line"><span class="n">double</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">*</span><span class="n">a</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>  <span class="c"># 8 (=4*2)</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="c"># 20 (=10*3)</span>
+</span><span class="line"><span class="n">a</span> <span class="o">=</span> <span class="mi">3</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>  <span class="c"># 12 # WTF?</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="c"># 30</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>3月末付で<a href="http://kau.li">Kauli株式会社</a>を退職しました。</p>
+<p>doubleというクロージャ内の変数aを、クロージャ宣言時のaで束縛したいのです。</p>
 
-<p>4月1日だと嘘っぽくなるかなと思い、1日ずらしてのご報告です。</p>
+<p>対応は２つ。</p>
 
-<p>2012年01月入社なので、1年3ヶ月という短い間でしたが、これまでで最も充実した1年だったように思います。</p>
+<ol>
+  <li>lambdaのデフォルト引数で束縛する</li>
+  <li>functools.partialで束縛する</li>
+</ol>
 
-<p>大規模な広告配信という技術的に非常に挑戦しがいのある分野で、非常に技術力の高いエンジニアと共にPythonプログラマーとして充実した日々を過ごさせてもらいました。</p>
+<h3 id="lambda">1. lambdaのデフォルト引数で束縛する</h3>
 
-<p>「大規模なトラフィックを直に感じながらアプリケーション開発に取り組みたい」という希望を胸に入った会社で、</p>
+<p>参考：<a href="http://stackoverflow.com/questions/10452770/python-lambdas-binding-to-local-values">closures - Python lambda’s binding to local values - Stack Overflow</a></p>
 
-<ul>
-  <li>データストアの検証(結果的にRedisを採用)</li>
-  <li>合計数十台自作サーバーの組立(参考：<a href="https://gist.github.com/nekoya/3749146" title="Kauli自作サーバ組み立てマニュアル" target="_blank">Kauli自作サーバ組み立てマニュアル</a>)</li>
-  <li>開発部総出でデータセンターでサーバーラッキング</li>
-  <li>某社SOAP APIに難儀</li>
-  <li>開発のベースをgithubに移行</li>
-  <li>nginx + Python(werkzeug+uWSGI) + Redisによる広告配信システムの開発</li>
-  <li>アプリケーションのパフォーマンスチューニング</li>
-</ul>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="n">a</span> <span class="o">=</span> <span class="mi">2</span>
+</span><span class="line"><span class="n">double</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">a</span><span class="p">:</span> <span class="n">x</span><span class="o">*</span><span class="n">y</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>  <span class="c"># 8 (=4*2)</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="c"># 20 (=10*3)</span>
+</span><span class="line"><span class="n">a</span> <span class="o">=</span> <span class="mi">3</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>  <span class="c"># 12 (=4*2)</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="c"># 30 (=10*2)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>等々、これまでにない経験を1年ちょっとという短い期間に経験できました。</p>
+<h3 id="functoolspartial">2. functools.partialで束縛する</h3>
 
-<p>正直離れるのが勿体無いとも思うのですが、キャリアの見直しをしたかったとか諸々の理由により、退職することを決意しました。</p>
+<p>やってることは1と同じなのですが、一応動くよねということで。</p>
 
-<p>同僚の方々には大変お世話になりました。どうもありがとうございました。</p>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+</span><span class="line"><span class="n">a</span> <span class="o">=</span> <span class="mi">2</span>
+</span><span class="line"><span class="n">double</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="bp">None</span><span class="p">:</span> <span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">a</span><span class="p">)</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="c"># 8 (=8*2)</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="c"># 30 (=10*2)</span>
+</span><span class="line"><span class="n">a</span> <span class="o">=</span> <span class="mi">3</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>  <span class="c"># 12 (=4*2)</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="c"># 30 (=10*2)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>転職先はまだ決まっていないので、転職活動を進めつつ、じっくり勉強しておきたかったことに１つずつ取り組んでいこうかという感じです。</p>
+<h3 id="section">そもそも変数上書きしなければ良いんじゃない？</h3>
 
-<p>良い会社があればぜひ<a href="https://twitter.com/restartr">@ReSTARTR</a>にご紹介ください＞＜</p>
+<p>普段は変数の上書きは基本的にやりません。なので変数の束縛とかあまり意識してませんでした。</p>
 
-<p>…</p>
+<p>今回、プロジェクトオイラーを解くにあたって、素数ジェネレータをつくろうとした結果、ハマったのでした。</p>
 
-<p>なお、Kauli株式会社は継続してエンジニアを募集中のようですので、</p>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">ifilter</span><span class="p">,</span> <span class="n">count</span>
+</span><span class="line"><span class="k">def</span> <span class="nf">gen_primes</span><span class="p">():</span>
+</span><span class="line">    <span class="n">it</span> <span class="o">=</span> <span class="n">count</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>  <span class="c"># [2, 3, 4, ...]</span>
+</span><span class="line">    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+</span><span class="line">        <span class="n">v</span> <span class="o">=</span> <span class="n">it</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+</span><span class="line">        <span class="k">yield</span> <span class="n">v</span>
+</span><span class="line">        <span class="n">it</span> <span class="o">=</span> <span class="n">ifilter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">v</span><span class="p">:</span> <span class="n">x</span> <span class="o">%</span> <span class="n">y</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">it</span><span class="p">)</span>
+</span><span class="line">        <span class="c"># 当初は以下のようにしていた</span>
+</span><span class="line">        <span class="c"># これだと次のループ時のifilter内でvの値が変わってしまう</span>
+</span><span class="line">        <span class="c"># it = ifilter(lambda x: x % v &gt; 0, it)</span>
+</span><span class="line"><span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">gen_primes</span><span class="p">():</span>
+</span><span class="line">    <span class="k">print</span> <span class="n">v</span>
+</span><span class="line">    <span class="k">if</span> <span class="n">v</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">:</span>
+</span><span class="line">        <span class="k">break</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>大規模広告配信システムをPythonで開発したい方々は下記からぜひぜひご応募を。</p>
+<h3 id="functoolspartial-1">余談1: functools.partialの使いどころ</h3>
+<p>ちょくちょく<a href="http://docs.python.jp/2.7/library/functools.html#functools.partial">functools.partial</a>使ってましたが、そんなの使わなくてもlambdaで事足りますね。今更気づきました…</p>
 
-<ul>
-  <li><b><a href="http://kau.li/jp/pages/recruit">Kauli - 採用情報</a></b></li>
-</ul>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="n">mul</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span>
+</span><span class="line"><span class="n">mul</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>  <span class="c"># 6</span>
+</span><span class="line"><span class="c"># lambda</span>
+</span><span class="line"><span class="n">double</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">:</span> <span class="n">mul</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>  <span class="c"># 6</span>
+</span><span class="line"><span class="c"># functools.partial</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">functools</span>
+</span><span class="line"><span class="n">double</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">mul</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>  <span class="c"># 6</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>それでは。</p>
+<p>こうなると、functools.partialの使いどころが難しいですね。
+戻り値がpartialオブジェクトなので、あとで引数とかが参照できることくらいでしょうか…</p>
 
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">f</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">:</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">f</span>
+</span><span class="line"><span class="o">&lt;</span><span class="n">functools</span><span class="o">.</span><span class="n">partial</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x1092b2ec0</span><span class="o">&gt;</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">f</span><span class="o">.</span><span class="n">args</span>
+</span><span class="line"><span class="p">()</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">f</span><span class="o">.</span><span class="n">keywords</span>
+</span><span class="line"><span class="p">{</span><span class="s">&#39;b&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">f</span><span class="o">.</span><span class="n">func</span>
+</span><span class="line"><span class="o">&lt;</span><span class="n">function</span> <span class="o">&lt;</span><span class="k">lambda</span><span class="o">&gt;</span> <span class="n">at</span> <span class="mh">0x1092eab18</span><span class="o">&gt;</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">f</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,)</span>  <span class="c"># 引数を後から上書きはできない</span>
+</span><span class="line"><span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
+</span><span class="line">  <span class="n">File</span> <span class="s">&quot;&lt;stdin&gt;&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">1</span><span class="p">,</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+</span><span class="line"><span class="ne">TypeError</span><span class="p">:</span> <span class="n">readonly</span> <span class="n">attribute</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 </div>
   
   
@@ -203,7 +370,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/2013/04/01/uml-for-programmer/">プログラマーにとっての『UMLっぽい何か』</a></h1>
+      <h1 class="entry-title"><a href="/2013/04/05/my-first-pytest/">Pythonのテストにpytestを使ってみた</a></h1>
     
     
       <p class="meta">
@@ -219,62 +386,222 @@
   
 
 
-<time datetime="2013-04-01T20:12:54+09:00" pubdate data-updated="true">2013-04-01 (Mon)</time>
+<time datetime="2013-04-05T21:00:24+09:00" pubdate data-updated="true">2013-04-05 (Fri)</time>
         
       </p>
+    
+    
+      <style type="text/css">
+  .sharing {
+     clear: both;
+  }
+  .sharing li{
+    display: inline;
+    list-style-type: none;
+    float: left;
+    height: 1em;
+    line-height: 1em;
+    padding: 0 10px 0 0 ;
+    margin: 10px 0;
+  }
+  .sharing ul {
+    margin: 1em 0;
+    padding: 1em 0;
+  }
+</style>
+<div class="sharing">
+  <ul>
+    <li><a href="http://blog.restartr.com/page/3/index.html" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加&#8221;><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+  
+  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/page/3/index.html" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/page/3/index.html" >Tweet</a></li>
+  
+  
+  <li><div class="fb-like" data-href="http://blog.restartr.com/page/3/index.html" data-layout="button_count" data-action="like" data-show-faces="false" data-share="true"></div><script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1&appId=368671089894710";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script></li>
+  
+  <li><a data-pocket-label="pocket" data-pocket-count="horizontal" class="pocket-btn" data-lang="en"></a><script type="text/javascript">!function(d,i){if(!d.getElementById(i)){var j=d.createElement("script");j.id=i;j.src="https://widgets.getpocket.com/v1/j/btn.js?v=1";var w=d.getElementById(i);d.body.appendChild(j);}}(document,"pocket-btn-js");</script></li>
+  
+  <li><div class="g-plusone" data-size="medium"></div></li>
+  
+  </ul>
+</div>
+
     
   </header>
 
 
-  <div class="entry-content"><p>わりと普遍的な話題だったので便乗です。</p>
+  <div class="entry-content"><p>pytestを使い始めました。</p>
 
-<p><a href="http://nekoya.github.com/blog/2013/04/01/useful-uml/"> UMLも捨てたもんじゃない - nekoya press </a></p>
-
-<blockquote>
 <ul>
-<li>UMLは設計の技法ではない</li>
-<li>頭の中を整理するため、あるいは人と共有する際の表現技法である</li>
+  <li><a href="http://pytest.org/latest/">pytest: helps you write better programs</a></li>
 </ul>
-</blockquote>
-<p>とか、</p>
 
-<blockquote>UMLの厳密な書式ルールには全くこだわりはなく、大まかなイメージだけ伝われば、細かい部分は口頭でフォローすれば十分だと考えていています。そういう意味ではUMLを正しく使っているとは言えないのかも知れませんが、それはそれでいいんじゃないのと。
+<p>まだまだ機能は把握しきれていませんが、良いと思ったことは3つ。</p>
 
-</blockquote>
+<ol>
+  <li>テストがコケた箇所のコードがレポート内容に表示される</li>
+  <li>テスト対象を初期化したものの受け渡し方をスマートにできる</li>
+  <li>pytest.vimがなかなか使える</li>
+</ol>
 
-<p>は、まったくもって同意見で、「UML」という”なんだか面倒くさそうなイメージ”を捨てて、コードを整理もしくは伝達する補足的なものとして扱うことが大事だと思います。UMLを本を読んできっちり勉強する必要もなくて、英会話が完璧な文法に則る必要がないのと基本的に同じだと思います。</p>
+<h3 id="section">1.テストがコケた箇所のコードがレポート内容に表示される</h3>
 
-<p>所謂SEが用いるUMLではなくプログラマーにとってのUMLは、もっとくだけたもので良いのです。</p>
+<p>これが巷でよく聞く一番のメリットかとは思いますが、コケたときの情報が全然違います。
+pytestはかなり詳細に表示してくれるので、レポートの内容だけでどこをどう直せば良いか把握できます。</p>
 
-<h4 id="section">いつやるか</h4>
-<p>どのフェーズでこの図の作成にとりかかるかが問題になると思いますが、自分の場合は以下の場合に作成を試みることが多いです。</p>
+<h4 id="unittest-v">unittestの実行結果(-vオプション付き)</h4>
 
-<p>（主にクラス図作成の場合を想定しています。）</p>
+<p><a href="http://www.flickr.com/photos/53244662@N04/8621946368/" title="unittest by ReSTARTR_y, on Flickr"><img src="http://farm9.staticflickr.com/8523/8621946368_d7bc9a450d_z.jpg" width="640" height="220" alt="unittest" /></a></p>
 
-<p><strong>1. プロトタイプ的に作り始めたコードが、ある程度育ってきて全体が見えづらいと感じた時</strong></p>
+<h4 id="pytest-v">pytestの実行結果(-vオプション付き)</h4>
 
-<p>これは自分のために作成するもの。なのでUMLのルールに準拠する必要はありませんので、どちらかといえば書き捨て型といえます。</p>
+<p><a href="http://www.flickr.com/photos/53244662@N04/8620844529/" title="pytest by ReSTARTR_y, on Flickr"><img src="http://farm9.staticflickr.com/8244/8620844529_ce66ff7f9c_z.jpg" width="640" height="401" alt="pytest" /></a></p>
 
-<p>（※ドキュメントの無いコードを読む場合も書き捨て型で作成します。）</p>
+<p>文字列比較の場合は差分表示してくれたりするので便利です。</p>
 
-<p>そして、この図をもとに設計を見なおしたりします。</p>
+<h3 id="section-1">2. テスト対象を初期化したものの受け渡し方をスマートにできる</h3>
 
-<p><strong>2. 自分が作ったコードを他の誰かが読む時</strong></p>
+<p>これが結構良い感じだと思いました。</p>
 
-<p>これは他人のために作成するもの。すでに設計が固まった段階のコードを追いかける上での補足情報になります。</p>
+<p>かなり単純なクラスを対象にして例を書きます。</p>
 
-<p>完全にUML準拠する必要はないでしょうが、ある程度は従ったほうが余計な誤解もなくなるかもしれません。1である程度整理ができているのでこの段階での作成は非常にそれ程苦ではないはずです。</p>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="c"># -*- coding: utf-8 -*-</span>
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">Hoge</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">v</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">v</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>どちらの場合もコードありきで、後追いでの図形作成になります。注意すべきなのは、図にすべての情報を詰め込むわけではなく、必要最低限の情報に留めることで図をシンプルに保つことは必要です。</p>
+<h4 id="pythonunittest">python同梱のunittestで書く</h4>
 
-<p>とまぁ、これくらいシンプルなルールであれば、普段の開発フローに取り入れることはさほど大きなコストではないと考えます。多くの人はこれくらいのことはやっているんじゃないかとは思いますが、先のブログでも書かれている通り表立って議論されることはあまりないように感じます。</p>
+<p>こんな感じで、self.hogeを使ってテスト対象を受け渡します。</p>
 
-<h4 id="section-1">図を描くためのツール</h4>
-<p>図形作成のためにいちいち<a href="http://astah.change-vision.com/ja/index.html">astah*</a>やExcel()のようなアプリケーションを立ち上げるのは面倒ですよね。</p>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="c"># -*- coding: utf-8 -*-</span>
+</span><span class="line"><span class="kn">from</span> <span class="nn">hoge</span> <span class="kn">import</span> <span class="n">Hoge</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">unittest</span>
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">TestHoge1</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">hoge</span> <span class="o">=</span> <span class="n">Hoge</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">test_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">assertIsInstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hoge</span><span class="p">,</span> <span class="n">Hoge</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">test_val</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hoge</span><span class="o">.</span><span class="n">val</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">hoge</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s">&#39;hoge&#39;</span><span class="p">)</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hoge</span><span class="o">.</span><span class="n">val</span><span class="p">,</span> <span class="s">&#39;hige&#39;</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+</span><span class="line">    <span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p><a href="https://drive.google.com">Google Drive</a>の「図形描画」や「プレゼンテーション」がオススメです。きっちりUML準拠の図を作成するわけではないので、クラス図(もどき)ならこれで十分ですし、共有も簡単です。シーケンス図はちょっと書きづらいかもしれませんが、そんな時はノートやホワイトボードに書いたものを写真に撮って適当な場所で共有すればOKでしょう。</p>
+<p>pytestで書くとこんな感じになります。</p>
 
-<p>ところで、オブジェクト指向の場合ではなく、（純粋）関数型の場合はどうなのでしょうかね。数式？</p>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="c"># -*- coding: utf-8 -*-</span>
+</span><span class="line"><span class="kn">from</span> <span class="nn">hoge</span> <span class="kn">import</span> <span class="n">Hoge</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">pytest</span>
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">TestHoge1</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">pytest_funcarg__hoge</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+</span><span class="line">        <span class="k">return</span> <span class="n">Hoge</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">test_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hoge</span><span class="p">):</span>
+</span><span class="line">        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">hoge</span><span class="p">,</span> <span class="n">Hoge</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">test_val</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hoge</span><span class="p">):</span>
+</span><span class="line">        <span class="k">assert</span> <span class="n">hoge</span><span class="o">.</span><span class="n">val</span> <span class="o">==</span> <span class="mi">1</span>
+</span><span class="line">
+</span><span class="line">        <span class="n">hoge</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s">&#39;hoge&#39;</span><span class="p">)</span>
+</span><span class="line">        <span class="k">assert</span> <span class="n">hoge</span><span class="o">.</span><span class="n">val</span> <span class="o">==</span> <span class="s">&#39;hige&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+</span><span class="line">    <span class="n">pytest</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>何が良いかっていうと、各テストメソッドで必要な初期化済みHogeインスタンスを、pytest_funcarg__hoge()で作って渡してやることができます。pytest_funcarg__NAMEを定義すれば、各テストメソッドでNAMEとして引数にとることができるわけです。(<a href="http://pytest.org/latest-ja/funcargs.html">テスト関数 (funcargs) にオブジェクトを注入</a>)</p>
+
+<p>unittest.TestCaseのsetUpを使う場合、self.hogeに一旦入れてやらないといけないし、各テストメソッドではself.hogeでアクセスする必要も出てきます。</p>
+
+<p>見た目が簡潔になるのはとても良いことです。</p>
+
+<h3 id="pytestvim">3. pytest.vimがなかなか使える</h3>
+
+<p>vimのプラグインにpytest.vimっていうのがありました。
+これもなかなか使い勝手が良いです。</p>
+
+<p>詳しくは下記動画を御覧ください。</p>
+
+<ul>
+  <li><a href="http://vimeo.com/19774046"> pytest.vim 0.0.5 on Vimeo </a></li>
+</ul>
+
+<p>pytestの概要は以下スライドにて。</p>
+
+<iframe src="http://www.slideshare.net/slideshow/embed_code/14006990" width="427" height="356" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC;border-width:1px 1px 0;margin-bottom:5px" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen=""> </iframe>
+<div style="margin-bottom:5px"> <strong> <a href="http://www.slideshare.net/pfctdayelise/funcargs-other-fun-with-pytest" title="Funcargs &amp; other fun with pytest" target="_blank">Funcargs &amp; other fun with pytest</a> </strong> from <strong><a href="http://www.slideshare.net/pfctdayelise" target="_blank">Brianna Laugher</a></strong> </div>
+<p>他の機能は触りながらおいおい掴んでいければなと。</p>
 
 </div>
   
@@ -338,6 +665,14 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2014/04/07/mysql-character-set-utf8mb4/">MySQLでutf8mb4を扱う場合は必要なカラムと接続時だけ明示的に指定する</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2014/04/06/reload-varnish-vcl/">VarnishのVCLを再起動なしに再読み込みする</a>
+      </li>
+    
+      <li class="post">
         <a href="/2014/04/06/move-from-wordpress-to-octopress/">WordpressからOctopressに移行</a>
       </li>
     
@@ -349,20 +684,12 @@
         <a href="/2013/04/17/bind-a-variable-to-closure-in-python/">pythonのクロージャに変数を束縛する方法</a>
       </li>
     
-      <li class="post">
-        <a href="/2013/04/05/my-first-pytest/">pythonのテストにpytestを使ってみた</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2013/04/02/retirement201303/">Kauli株式会社を退職しました</a>
-      </li>
-    
   </ul>
 </section>
 <section>
   <h1>Categories</h1>
   <ul id="categories">
-    <li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
+    <li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/mysql/'>mysql</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
   </ul>
 </section>
 <section>

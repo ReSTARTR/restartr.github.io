@@ -11,9 +11,8 @@
   <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="6/18(土)に開催されたVarnish勉強会 Tokyo.vcl : ATNDに行ってきました。
-初のクックパッドさんオフィス訪問です。 Varnish3のリリースパーティーも兼ねての開催だったようで、ステッカーもいただいてしまいました。
-インフラ屋じゃない上に、 &hellip;">
+  <meta name="description" content="2011.08.31 kmizushimaさんから頂いたコメントを元に、下記の記述を修正＆追記しました。 Twitterのutil-evalの一時ファイル生成について AkkaのConfigファイルのパース手法について
+&lt;/em&gt; TwitterのOAuthの鍵やDB接続情報など、 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -124,7 +123,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/2011/06/21/go-to-varnish-study-tokyovc/">Varnish勉強会 #tokyovcl に行ってきた</a></h1>
+      <h1 class="entry-title"><a href="/2011/08/30/config-libraries-in-scala/">Scalaで設定ファイルを使いたい時どうしたらいいの？</a></h1>
     
     
       <p class="meta">
@@ -140,230 +139,268 @@
   
 
 
-<time datetime="2011-06-21T23:56:40+09:00" pubdate data-updated="true">2011-06-21 (Tue)</time>
+<time datetime="2011-08-30T00:02:15+09:00" pubdate data-updated="true">2011-08-30 (Tue)</time>
         
       </p>
+    
+    
+      <style type="text/css">
+  .sharing {
+     clear: both;
+  }
+  .sharing li{
+    display: inline;
+    list-style-type: none;
+    float: left;
+    height: 1em;
+    line-height: 1em;
+    padding: 0 10px 0 0 ;
+    margin: 10px 0;
+  }
+  .sharing ul {
+    margin: 1em 0;
+    padding: 1em 0;
+  }
+</style>
+<div class="sharing">
+  <ul>
+    <li><a href="http://blog.restartr.com/page/8/index.html" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加&#8221;><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+  
+  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/page/8/index.html" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/page/8/index.html" >Tweet</a></li>
+  
+  
+  <li><div class="fb-like" data-href="http://blog.restartr.com/page/8/index.html" data-layout="button_count" data-action="like" data-show-faces="false" data-share="true"></div><script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1&appId=368671089894710";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script></li>
+  
+  <li><a data-pocket-label="pocket" data-pocket-count="horizontal" class="pocket-btn" data-lang="en"></a><script type="text/javascript">!function(d,i){if(!d.getElementById(i)){var j=d.createElement("script");j.id=i;j.src="https://widgets.getpocket.com/v1/j/btn.js?v=1";var w=d.getElementById(i);d.body.appendChild(j);}}(document,"pocket-btn-js");</script></li>
+  
+  <li><div class="g-plusone" data-size="medium"></div></li>
+  
+  </ul>
+</div>
+
     
   </header>
 
 
-  <div class="entry-content"><p><a href="http://www.flickr.com/photos/53244662@N04/5856931526/" title="IMAG0053 by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5029/5856931526_1119c53a87.jpg" width="500" height="299" alt="IMAG0053" /></a></p>
+  <div class="entry-content"><p><em style="color:red">2011.08.31 kmizushimaさんから頂いた<a href="http://blog.restartr.com/2011/08/30/config-libraries-in-scala/?preview=true&amp;preview_id=1049&amp;preview_nonce=ad0bbeeef6#comment-108">コメント</a>を元に、下記の記述を修正＆追記しました。</em></p>
 
-<p>6/18(土)に開催された<a href="http://atnd.org/events/16681">Varnish勉強会 Tokyo.vcl : ATND</a>に行ってきました。
-初のクックパッドさんオフィス訪問です。</p>
-
-<p>Varnish3のリリースパーティーも兼ねての開催だったようで、ステッカーもいただいてしまいました。
-インフラ屋じゃない上に、Varnish触ったのは前日の晩という超初心者だったので結構不安でしたが、
-ビアバッシュを含め色々な話しが聞けた実りある良い勉強会でした。</p>
-
-<p>主催の@hmskさんをはじめ登壇者の皆様、ならびにビアバッシュで交流してくださった皆様ありがとうございました。</p>
-
-<h3 id="section">雑感</h3>
 <ul>
-  <li>Varnishは画像配信の事例が多い</li>
-  <li>HTTPサーバーの前だけじゃなくてSolrのような内部ネットワーク間の通信にも適用できる。</li>
-  <li>Varnish落ちたときにApacheの負荷を避けるためにSquidが使える。</li>
-  <li>拡張次第でHTTPサーバーにもKVSにも化ける（やりすぎ注意？）。</li>
-  <li>クラウドでの運用はフロンティア。</li>
-  <li>設定ファイルのvclはもはやプログラム</li>
-  <li>ESIの事例なかったけど使いにくいのかな？</li>
-  <li>とりあえず実戦投入して様子見ないとわからないことが多そう。</li>
-  <li>あ、どれだけ高速化したかについての言及がなかったような…</li>
+  <li>Twitterのutil-evalの一時ファイル生成について</li>
+  <li>AkkaのConfigファイルのパース手法について
+&lt;/em&gt;</li>
 </ul>
 
-<h2 id="section-1">各発表メモ</h2>
-<p>スライドと、その丸写しみたいな感じのメモをペタペタ。</p>
+<p>TwitterのOAuthの鍵やDB接続情報など、アプリを書く上で環境によって切り替える設定が大抵の場合あると思います。普段使っているPHPの場合、設定を外部ファイルに書きだす場合、ini,yaml,xml,phpのいずれかを使うことが多いのですが、Scalaの場合、設定ファイルってどうするのか気になりました。</p>
 
-<h3 id="varnishcache30vupxcir">VarnishCache3.0新機能とVUPの仕方(@xcir)</h3>
+<p>ということで、適当に思いついたライブラリやフレームワークがどのように対応しているのか調査。</p>
 
-<div style="width:425px" id="__ss_8344516"> <strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/xcir/tokyovclvarnishcache30vup" title="tokyo.vcl発表資料（VarnishCache3.0新機能とVUPの仕方）">tokyo.vcl発表資料（VarnishCache3.0新機能とVUPの仕方）</a></strong> <iframe src="http://www.slideshare.net/slideshow/embed_code/8344516" width="425" height="355" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
-<div style="padding:5px 0 12px"> View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/xcir">xcir</a> </div>
+<h2 id="section">ライブラリ</h2>
 
-</div>
+<h3 id="properties">propertiesファイル</h3>
+
 <ul>
-  <li>ESIでのgzip
-    <ul>
-      <li>ブロックが圧縮されているとESIできなかった(~2）</li>
-      <li>defaultパラメータが改善された</li>
-    </ul>
-  </li>
-  <li>stream support
-    <ul>
-      <li>別のストリームは待機させられる（？</li>
-    </ul>
-  </li>
+  <li>javaの古くから使われている</li>
+  <li>キーと値のみ設定可能</li>
+  <li>依存関係がないので手軽。</li>
+  <li>すべてが文字列</li>
+  <li>例えばこんな感じ</li>
 </ul>
 
-<h3 id="varnishphji">イカ娘も終わったしVarnishでも使うか(@phji)</h3>
+<p>path/to/conf.properties</p>
 
-<div style="width:425px" id="__ss_8366215"> <strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/phji/varnishika" title="イカ娘も終わったしVarnishでも使うか">イカ娘も終わったしVarnishでも使うか</a></strong> <iframe src="http://www.slideshare.net/slideshow/embed_code/8366215" width="425" height="355" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
-<div style="padding:5px 0 12px"> View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/phji">Kazutoshi Fujimoto</a> </div>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="n">hoge</span> <span class="k">=</span> <span class="s">&quot;moge&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-</div>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">val</span> <span class="n">p</span> <span class="k">=</span> <span class="k">new</span> <span class="n">java</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="nc">Properties</span><span class="o">()</span>
+</span><span class="line"><span class="k">val</span> <span class="n">config</span> <span class="k">=</span> <span class="n">p</span><span class="o">.</span><span class="n">load</span><span class="o">(</span><span class="k">new</span> <span class="n">java</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="nc">FileInputStream</span><span class="o">(</span><span class="s">&quot;path/to/conf.properties&quot;</span><span class="o">);</span>
+</span><span class="line"><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="s">&quot;hoge&quot;</span><span class="o">)</span> <span class="c1">// &quot;moge&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="twitterconfiggy">twitterのconfiggy</h3>
+
 <ul>
-  <li>[RAM8G Xeon 4core SSD256GB ] x 20servers</li>
-  <li>pixiv
-    <ul>
-      <li>nginx -&gt; (consistent hash) -&gt; quid -&gt; nginx -&gt; apache</li>
-      <li>lookupとかかないとキャッシュされないｗ</li>
-    </ul>
-  </li>
+  <li><a href="https://github.com/robey/configgy">https://github.com/robey/configgy</a></li>
+  <li>独自フォーマット</li>
+  <li>オワコン</li>
 </ul>
 
-<h3 id="twitteryatsvarnishpenguinana">twitter検索(yats)でvarnish使ってみた(@PENGUINANA_)</h3>
+<h3 id="twitterutil-eval">twitterのutil-eval</h3>
+
 <ul>
-  <li>API 7000M req/month</li>
-  <li>PV 150Mreq/month</li>
-  <li>varnish(vps) -&gt; nginx[ webAPI -&gt; varnish -&gt; Solr ]</li>
-  <li>service : cache + failover</li>
-  <li>Solr: slaveのキャッシュクリアーが重いので、その前面にVarnishをおいている(ラウンドロビンとFailover）</li>
-  <li>autocomplete
+  <li><a href="http://twitter.github.com/util/">http://twitter.github.com/util/</a></li>
+  <li>Evalした値をそのまま利用</li>
+  <li>Scalaのコンパイラに任せられる。つまりScalaコードがそのまま設定ファイルに。</li>
+  <li>型安全</li>
+  <li>詳しいことはこちらを参照
     <ul>
-      <li>キャッシュと相性よさそう</li>
+      <li><a href="http://d.hatena.ne.jp/xuwei/20110805/1312551980">twitter が Scala 大好きすぎて (?) 設定ファイルまで Scala のソースコードな件 - scalaとか・・・</a></li>
+      <li><a href="http://blog.youhei.jp/scala-util-eval">Scala アプリケーションのコンフィグレーションに Twitter 製の util-eval を使ってみた - blog.youhei.jp</a></li>
     </ul>
   </li>
+  <li>下記処理にて設定クラスインスタンスをapply経由で取り出せる
+    <ul>
+      <li><a href="https://github.com/twitter/util/blob/master/util-eval/src/main/scala/com/twitter/util/Eval.scala#L247">com.twitter.util.Eval#L247</a></li>
+    </ul>
+  </li>
+  <li><del>一時的にjarファイルを生成するので環境に制約あるとダメ（たぶん）</del>
+    <ul>
+      <li>一時ファイルを生成するのは、ローカルにcloneした古いままのバージョン（1.2.5）で動作確認していたためでした。</li>
+      <li>古いコード: <a href="https://github.com/twitter/util/blob/7c81842286f30aee4b2176bceb8c79ded710c88e/src/main/scala/com/twitter/util/Evaluator.scala">com.twitter.util.Evaluator</a>のコメントに<a href="https://github.com/twitter/util/blob/7c81842286f30aee4b2176bceb8c79ded710c88e/src/main/scala/com/twitter/util/Evaluator.scala#L57">All generated .scala and .class files are stored, by default, in System.getProperty(“java.io.tmpdir”)</a>と書いてあったので、「一時ファイルが生成される」と認識し、実際の動作確認でもその一時ファイルが確認できていました。</li>
+      <li>しかし、新しいコード: <a href="https://github.com/twitter/util/blob/master/util-eval/src/main/scala/com/twitter/util/Eval.scala">com.twitter.util.Eval</a>のコメントには<a href="https://github.com/twitter/util/blob/master/util-eval/src/main/scala/com/twitter/util/Eval.scala#L50">If target is None, the results are compiled to memory (and are therefore ephemeral)</a>とある通り、パス指定がない場合はメモリ上の仮想ディレクトリに対して操作を行う模様です。</li>
+    </ul>
+  </li>
+  <li>使い方</li>
 </ul>
 
-<h3 id="ec2varnishmirakui">EC2とvarnishで画像配信(@mirakui)</h3>
+<p>設定のtraitを定義</p>
 
-<div style="width:425px" id="__ss_8352369"> <strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/mirakui/ec2varnish" title="EC2とVarnishで画像配信">EC2とVarnishで画像配信</a></strong> <iframe src="http://www.slideshare.net/slideshow/embed_code/8352369" width="425" height="355" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
-<div style="padding:5px 0 12px"> View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/mirakui">Issei Naruta</a> </div>
+<p>src/main/scala/com/restartr/utilSample/MyConfig.scala</p>
 
-</div>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">package</span> <span class="nn">com.restartr.utilSample</span>
+</span><span class="line">
+</span><span class="line"><span class="k">trait</span> <span class="nc">MyConfig</span> <span class="o">{</span>
+</span><span class="line">  <span class="k">val</span> <span class="n">num</span><span class="k">:</span> <span class="kt">Int</span>
+</span><span class="line">  <span class="k">val</span> <span class="n">str</span><span class="k">:</span> <span class="kt">String</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>実際の設定ファイルでは、設定のTraitを継承してインスタンス生成</p>
+
+<p>※クラスインスタンスでなくても文字列やリストでもOK。</p>
+
+<p>path/to/config/MyConfig.scala</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">import</span> <span class="nn">com.restartr.utilSample.MyConfig</span>
+</span><span class="line"><span class="k">new</span> <span class="nc">MyConfig</span> <span class="o">{</span>
+</span><span class="line">  <span class="k">val</span> <span class="n">num</span> <span class="k">=</span> <span class="mi">1</span>
+</span><span class="line">  <span class="k">val</span> <span class="n">str</span> <span class="k">=</span> <span class="s">&quot;san&quot;</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>使いたい場所でEval。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">val</span> <span class="n">conf</span> <span class="k">=</span> <span class="nc">Eval</span><span class="o">[</span><span class="kt">MyConfig</span><span class="o">](</span><span class="k">new</span> <span class="n">java</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="nc">File</span><span class="o">(</span><span class="s">&quot;path/to/config/MyConfig.scala&quot;</span><span class="o">))</span>
+</span><span class="line"><span class="n">conf</span><span class="o">.</span><span class="n">num</span> <span class="c1">// 1</span>
+</span><span class="line"><span class="n">conf</span><span class="o">.</span><span class="n">str</span> <span class="c1">// &quot;san&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="configrity">configrity</h3>
+
 <ul>
-  <li>失敗談</li>
-  <li>TOFU
+  <li><a href="https://github.com/paradigmatic/Configrity">https://github.com/paradigmatic/Configrity</a></li>
+  <li>akkaのフォーマットと同等
     <ul>
-      <li>アップロード時ではなくオンデマンドでリサイズ</li>
-      <li>akamai（CDN)に7000RPSのうち、ELBには700RPSくる。60%受けるリクエストをキャッシュできればApache負荷軽減できるのでは？
+      <li><a href="https://github.com/paradigmatic/Configrity/wiki/Formats">設定のフォーマット</a></li>
+      <li>Scala 2.9以上対象。</li>
+      <li>configファイルの<strong>読み書き</strong>ができる
         <ul>
-          <li>という導入経緯（からの失敗</li>
+          <li>immutable, thread safe, allow functional design pattern</li>
         </ul>
       </li>
-      <li>1st challenge
-        <ul>
-          <li>EC2(M2.XLARGE[17.1GB RAM] + EBS[100GB for swap])</li>
-          <li>300rps</li>
-          <li>結果：オンメモリだけなら順調だけど、あふれてきてOSにSWAPさせたとたんLOADAVERAGEが爆発して死亡。</li>
-        </ul>
-      </li>
-      <li>2nd challenge
-        <ul>
-          <li>EC2(M2.XLARGE[17.1GB RAM] + EBS[100GB for ext3])</li>
-          <li>“file storage”を使っても結局メモリ容量が大量に必要</li>
-        </ul>
-      </li>
-      <li>ec2のxlargeインスタンスには、IO性能「標準」と「高」がある
-        <ul>
-          <li>今回は「標準」を利用して失敗</li>
-          <li>「高」ならうまくいくかも</li>
-        </ul>
-      </li>
     </ul>
   </li>
-  <li>varnish3
+</ul>
+
+<h2 id="section-1">各種フレームワーク</h2>
+
+<p>以下のフレームワークはすべて独自実装でした。Propertiesじゃ役不足だし、かといってデファクトな設定用ライブラリがないからなのでしょうか。</p>
+
+<h3 id="akkaconfig">akkaのconfig</h3>
+
+<ul>
+  <li>akka.confとかがそれ。</li>
+  <li>独自パーサーを使用
     <ul>
-      <li>hash director
+      <li>70行程度のシンプルなパーサー</li>
+      <li><a href="https://github.com/jboner/akka/blob/master/akka-actor/src/main/scala/akka/config/ConfigParser.scala">akka.config.ConfigParser</a></li>
+      <li><del>正規表現で定義されてる</del>Scalaのパーザコンビネータ(RegexParsersを継承)で定義されている</li>
+      <li>”{“と”}”で階層構造を表現</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="n">akka</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">cluster</span><span class="o">{</span>
+</span><span class="line">    <span class="n">name</span> <span class="k">=</span> <span class="s">&quot;test-cluster&quot;</span>
+</span><span class="line">  <span class="o">}</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<ul>
+  <li>使える型</li>
+  <li>数値</li>
+  <li>文字列</li>
+  <li>真偽値（on/off , true/false)</li>
+  <li>リスト [1,2,3] / [“hoge”,”moge”]</li>
+</ul>
+
+<h3 id="playframeworkconfig">play!frameworkのconfig</h3>
+
+<ul>
+  <li>独自パーサー
+    <ul>
+      <li><a href="https://github.com/playframework/play/blob/master/framework/src/play/utils/OrderSafeProperties.java">play.utils.OrderSafeProperties</a></li>
+    </ul>
+  </li>
+  <li>java.util.propertiesを継承したもの。</li>
+  <li>環境ごとにIDを割り当てられる
+    <ul>
+      <li>http://playdocja.appspot.com/documentation/1.2.1/production</li>
+      <li>http://playdocja.appspot.com/documentation/1.2.1/guide11</li>
+      <li>IDごとに%{ID}を頭につければ切り替えてくれるみたい</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="lift">Lift</h3>
+
+<ul>
+  <li>LiftRulesが設定をもつ
+    <ul>
+      <li><a href="http://simply.liftweb.net/index-3.1.html#toc-Subsection-3.1.2">http://simply.liftweb.net/index-3.1.html#toc-Subsection-3.1.2</a></li>
+      <li>実装はここ
+*<a href="https://github.com/lift/framework/blob/master/web/webkit/src/main/scala/net/liftweb/http/LiftRules.scala">net.liftweb.http.LiftRules</a></li>
+      <li>たぶんこのへん
         <ul>
-          <li>consistent hashingができるかも？</li>
-          <li>nginxいらずに複数varnish運用ができるかも？</li>
+          <li><a href="https://github.com/lift/framework/blob/master/core/util/src/main/scala/net/liftweb/util/Props.scala">net.liftweb.util.Props</a></li>
         </ul>
       </li>
     </ul>
   </li>
 </ul>
 
-<h3 id="puppetvarnishsquidar1">Puppetでvarnishもsquidも面倒みる(@ar1)</h3>
-<ul>
-  <li>ふつうはvarnishは落ちるのでLBつかって並列で運用</li>
-  <li>varnishおちるとWebサーバーが負荷かかってしまう
-    <ul>
-      <li>LB -&gt; varnish -&gt; squid -&gt; apache</li>
-      <li>squidどうしでキャッシュを共有できるので、１つSquidおちてもWebサーバーにききにいかずにすむ。</li>
-    </ul>
-  </li>
-  <li>puppet
-    <ul>
-      <li>設定をらくにする</li>
-      <li>cacheのExpire</li>
-      <li>サーバーのぬきさし</li>
-    </ul>
-  </li>
-</ul>
+<p>ざっと調べて使ってみたところ、手軽にやるならProperties、フレームワークを使うならそれに則り、厳密にやるならTwitterのEvalや、設定ファイルを読み書きできる独特なConfigrityなんかがよさそうです。</p>
 
-<h3 id="varnishspchidren">楽天でvarnish(@spchidren)</h3>
-<ul>
-  <li>L7 balancingがやりたくてVarnish導入
-    <ul>
-      <li>URLによってWebサーバーのグループを切り替えたい</li>
-    </ul>
-  </li>
-  <li>akamai -&gt; LB -&gt; varnish(RAM24G[malloc18G/hitrate 75%] -&gt; apache(+mod_thumb)</li>
-  <li>LBからVarnishを切り離すのはどうやる？</li>
-  <li>CDNやVarnishのcache clearをどうやるか
-    <ul>
-      <li>画像登録されたときにMQに登録して、必要に応じて消す</li>
-      <li>CDNは常にExpireされない状態にしておける。</li>
-    </ul>
-  </li>
-  <li>ImageMagicおもい
-    <ul>
-      <li>varnishにサムネイルをつくるしくみを組み込んでみれば？（FreeImage)</li>
-      <li>cc_commandでインクルードさせて、C言語でサムネイルつくるしくみをくみこむ</li>
-    </ul>
-  </li>
-  <li>varnishのいくさき
-    <ul>
-      <li>nginxにも近いしredisにもちかづいてきてる</li>
-      <li>どこにいくんでしょ</li>
-    </ul>
-  </li>
-</ul>
-
-<h3 id="tddvclhmsk">TDDでVCL書いてデプロイ(@hmsk)</h3>
-<ul>
-  <li>varnishtest
-    <ul>
-      <li>RSpecぽい書き方できる</li>
-      <li>xxx.vcltestファイルにケースを記述</li>
-    </ul>
-  </li>
-  <li>vmod
-    <ul>
-      <li>vclの設定をC言語っぽく描ける</li>
-      <li>パージや圧縮、エラーなどに使える</li>
-      <li>モバイル端末のリストのチェックにもVCLから外出しできる</li>
-    </ul>
-  </li>
-</ul>
-
-<h2 id="section-2">関連リンク</h2>
-<ul>
-  <li>ATND
-    <ul>
-      <li><a href="http://atnd.org/events/16681">Varnish勉強会 Tokyo.vcl : ATND</a></li>
-    </ul>
-  </li>
-  <li>Ustream
-    <ul>
-      <li><a href="http://www.ustream.tv/recorded/15453305">http://www.ustream.tv/recorded/15453305</a></li>
-      <li><a href="http://www.ustream.tv/recorded/15453834">http://www.ustream.tv/recorded/15453834</a></li>
-    </ul>
-  </li>
-  <li>Togetter
-    <ul>
-      <li><a href="http://togetter.com/li/151585">Togetter - 「第一回 Varnish勉強会 Tokyo.vcl」</a></li>
-    </ul>
-  </li>
-  <li>勉強会レポート
-    <ul>
-      <li><a href="http://d.hatena.ne.jp/hxmasaki/20110620/1308547067">Varnish勉強会 Tokyo.vclを行いました - ククラフト</a></li>
-      <li><a href="http://d.hatena.ne.jp/mirakui/20110619/1308497959">私がクックパッドの画像配信野郎です - 床のトルストイ、ゲイとするとのこと</a></li>
-      <li><a href="http://blog.xcir.net/?p=438">Tokyo.vclでVarnishCache3の新機能とVUPの仕方を話してきました « cat /dev/random &gt; /dev/null &amp;</a></li>
-      <li><a href="http://blog.udzura.jp/2011/06/20/summary-of-tokyo-varnish-study-on-20110618/">東京varnish勉強会(Tokyo.vcl)まとめ «  blog.udzura.jp</a></li>
-    </ul>
-  </li>
-</ul>
+<p>XMLは…まぁないでしょうね。</p>
 
 </div>
   
@@ -377,7 +414,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/2011/06/19/volunteer-at-shinchi-fukushima-pref/">東京から福島へ一泊二日でボランティアに行ってきた</a></h1>
+      <h1 class="entry-title"><a href="/2011/08/16/3-things-that-i-was-in-trouble-using-squeryl/">ScalaのORMapperのSquerylを試してみてハマった３つのこと</a></h1>
     
     
       <p class="meta">
@@ -393,141 +430,202 @@
   
 
 
-<time datetime="2011-06-19T12:03:20+09:00" pubdate data-updated="true">2011-06-19 (Sun)</time>
+<time datetime="2011-08-16T08:00:15+09:00" pubdate data-updated="true">2011-08-16 (Tue)</time>
         
       </p>
+    
+    
+      <style type="text/css">
+  .sharing {
+     clear: both;
+  }
+  .sharing li{
+    display: inline;
+    list-style-type: none;
+    float: left;
+    height: 1em;
+    line-height: 1em;
+    padding: 0 10px 0 0 ;
+    margin: 10px 0;
+  }
+  .sharing ul {
+    margin: 1em 0;
+    padding: 1em 0;
+  }
+</style>
+<div class="sharing">
+  <ul>
+    <li><a href="http://blog.restartr.com/page/8/index.html" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加&#8221;><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+  
+  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/page/8/index.html" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/page/8/index.html" >Tweet</a></li>
+  
+  
+  <li><div class="fb-like" data-href="http://blog.restartr.com/page/8/index.html" data-layout="button_count" data-action="like" data-show-faces="false" data-share="true"></div><script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1&appId=368671089894710";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script></li>
+  
+  <li><a data-pocket-label="pocket" data-pocket-count="horizontal" class="pocket-btn" data-lang="en"></a><script type="text/javascript">!function(d,i){if(!d.getElementById(i)){var j=d.createElement("script");j.id=i;j.src="https://widgets.getpocket.com/v1/j/btn.js?v=1";var w=d.getElementById(i);d.body.appendChild(j);}}(document,"pocket-btn-js");</script></li>
+  
+  <li><div class="g-plusone" data-size="medium"></div></li>
+  
+  </ul>
+</div>
+
     
   </header>
 
 
-  <div class="entry-content"><p><a href="http://www.flickr.com/photos/53244662@N04/5847245836/" title="IMG_5100 by ReSTARTR_y, on Flickr"><img src="http://farm4.static.flickr.com/3538/5847245836_ca37b883fe_z.jpg" width="640" height="427" alt="IMG_5100" /></a></p>
-
-<p>6/11,12の土日を利用して、福島県相馬郡新地町にボランティア活動に行ってきました。</p>
-
-<h2 id="section">活動の経緯</h2>
-
-<p>東日本大震災がおきてから、被災地に対して何かできることを、ということでこれまで募金と献血をやってきました。が、それだけでなく何かできることはないかと常々考えていました。
-仕事柄、ITを利用した貢献も考えたのですが、イマイチ現地の状況がわからない。情報を得ようとしても地域やソースによって様々かつ時間とともに大きく変化しているからです。
-また、社会人とはいうものの土日の時間やお金については結構余裕があるので、じゃあ現地でボランティアをすることで現状を知ることができるのではないか、と考えたのが今回の経緯です。
-その後、被災地の状況に詳しい元同僚に相談し、その子の母親と友人2名を加えた5名で活動をしてきました。</p>
-
-<h3 id="section-1">活動内容</h3>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5846683717/" title="IMG_5090 by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5109/5846683717_604f687639_m.jpg" width="240" height="160" alt="IMG_5090" /></a></p>
-
-<p>津波の被害をうけた民家の瓦礫撤去作業を行いました。
-とはいっても大きな物はあらかた自衛隊が撤去しているので、我々の役目は倒れた木の撤去や、瓦・ガラス等の破片の収集、側溝の泥かきなど、担当した民家の敷地内を綺麗にすること。
-計10名程度で、1日かけて行いましたが、天候が曇りだったこともあって順調に作業をすることができました。</p>
-
-<h2 id="section-2">現地に行ってみて</h2>
-
-<h4 id="section-3">ボランティアセンターすごい</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5822614663/" title="現地到着。まだ受付前。 by ReSTARTR_y, on Flickr"><img src="http://farm3.static.flickr.com/2673/5822614663_ec084f0dfd_m.jpg" width="240" height="144" alt="現地到着。まだ受付前。" /></a></p>
-
-<p>被災地のボランティアセンターもずいぶん落ち着いてきているようです。
-活動に必要な道具（スコップやマスク）だけでなく、水や活動後のアイスコーヒーなどの提供もして頂きました。
-ボランティア活動自体初めてだったのですが、たとえ不慣れであっても、コーディネーターの方々や一緒に活動する方々の力を借りながら活動することは可能であると実感しました。
-現地でボランティアをしたいと考えているけど踏み出せなかった方は、真夏になる前に一度足を運んでみてはいかがでしょう。</p>
-
-<h4 id="section-4">電波悪い</h4>
-<p>SoftBankの黒SIMをDesireSに入れて利用しているのですが、ほぼ繋がりません。
-全然つながらない訳ではないですが、かなり不安定でたまにつながる程度。picplzで写真アップロードしようとしても100%失敗します。
-今回の震災でインターネットが活躍したという話は聞きますが、このような電波状況のままでは欲しい情報も手に入らないでしょう。震災後にこうなったのかもともと電波の弱い地域だったのかわかりませんが、これではインターネットの存在も無意味。</p>
-
-<p>利用した福島県伊達市（福島市の近く）の宿泊施設で、地震を体験したのですが、電波が皆無だったために震源や地震の規模などの情報が全く手に入りませんでした。</p>
-
-<p>これまで、インターネットでほしい情報をいつでもどこでもすぐに手に入れられると思っていただけに、手に入らない状況に出くわすとかなりの不安感を覚えます。
-こうなると、頼れるものはテレビやラジオ、町内放送やご近所ネットワークになってくるでしょう。
-もちろん有線でのインターネットもあるかもしれませんが、緊急時にわざわざPCを起動したりしないでしょう。</p>
-
-<p>そう考えると、インターネットの果たすべき役割はリアルタイムに必要な一次的情報ではなく、その後の情報配信とその整理に注力すべきだと実感しました。</p>
-
-<h4 id="section-5">活動内容と現地で聞いたこと</h4>
-
-<p>一日目は新地町でボランティアを行い、宿泊施設はりょうぜん里山がっこうを利用。
-二日目は里山がっこうの自然体験をさせてもらい、その後温泉街で足湯につかって帰宅。</p>
+  <div class="entry-content"><p>ScalaのORMとしてSquerylってのがあります。</p>
 
 <ul>
-  <li><a href="http://www.date-satoyama.com/">NPO法人りょうぜん里山がっこう</a></li>
+<li><a href="http://squeryl.org/index.html">Squeryl - A Scala ORM for SQL Databases</a></li>
 </ul>
+<p>使い方は上記リンク先を見ればだいたいわかります。</p>
 
-<p>里山がっこうでは、震災後の放射能の影響とその取組みについて色々お話を伺いました。友人のブログにその詳細が書かれていますので、そちらを参照してもらうほうが良いと思います。</p>
+<p>あと、<a href="http://twitter.com/jugyo">@jugyo</a>さんのブログに導入あたりはまとまっていますし、つまづいたらGoogleGroupで検索すれば何か見つかるかもしれません。</p>
 
 <ul>
-  <li><a href="http://agreenqoostar.blog129.fc2.com/blog-entry-604.html">AGREEN　イナカとトカイの橋渡し　 伊達市りょうぜん里山がっこうの「除染」への取り組み</a></li>
+<li><a href="http://blog.twiwt.org/e/f34763"> Twiwt:Blog / jugyo : squeryl を試す </a></li>
+<li><a href="http://blog.twiwt.org/e/7e40ce">Twiwt:Blog / jugyo : Squeryl の使い方 - セットアップ, モデルの定義, テーブル作成</a></li>
+<li><a href="https://groups.google.com/group/squeryl/about"> Squeryl | Google Groups </a></li>
 </ul>
+<p>さて、今回はTwitterっぽいものを想定して機能を試してみたのですが、３つほどハマったところを記しておきます。</p>
 
-<p>1日目の活動レポートもあります。</p>
+<p>環境はScala2.9.0.1、Sbt0.7.7、MySQL5.5、Squeryl0.9.4です。</p>
+
+<p>ソースはgistに登録。それを本文末尾にも掲載しておきました。</p>
+
+<h3>１．プライマリーキーの指定での嵌りどころ</h3>
+<p>1つのカラムがPKとなるテーブルスキーマの場合、org.squeryl.KeyedEntity[T]を継承して使います。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">class</span> <span class="nc">Users</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">text</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">KeyedEntity</span><span class="o">[</span><span class="kt">Long</span><span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>KeyedEntityにはidというフィールドが用意されていて、継承時に型を指定することで、PKの型に適用させることができます。今回の場合であればLong型のPK「id」ということになります。</p>
+
+<p>ただし、この場合、PKはautoincrementedになってしまいます。</p>
+
+<p>コード的には下記のようにKeyedEntity[T]を使わずSchema継承時に定義するのと同等になるわけです。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">class</span> <span class="nc">Users</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">text</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span>
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">Db</span> <span class="k">extends</span> <span class="nc">Schema</span> <span class="o">{</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">val</span> <span class="n">users</span> <span class="k">=</span> <span class="n">table</span><span class="o">[</span><span class="kt">User</span><span class="o">](</span><span class="s">&quot;users&quot;</span><span class="o">)</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">on</span><span class="o">(</span><span class="n">users</span><span class="o">)(</span><span class="n">u</span> <span class="k">=&gt;</span> <span class="n">declare</span><span class="o">(</span>
+</span><span class="line">
+</span><span class="line">    <span class="n">u</span><span class="o">.</span><span class="n">id</span> <span class="n">is</span> <span class="o">(</span><span class="n">primaryKey</span><span class="o">,</span> <span class="n">autoincremented</span><span class="o">))</span>
+</span><span class="line">
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>これは結構困ります。そんな場合はSchemaを継承するときに定義を上書きすればOK。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">class</span> <span class="nc">Users</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">text</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">KeyedEntity</span><span class="o">[</span><span class="kt">Long</span><span class="o">]</span>
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">Db</span> <span class="k">extends</span> <span class="nc">Schema</span> <span class="o">{</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">val</span> <span class="n">users</span> <span class="k">=</span> <span class="n">table</span><span class="o">[</span><span class="kt">User</span><span class="o">](</span><span class="s">&quot;users&quot;</span><span class="o">)</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">on</span><span class="o">(</span><span class="n">users</span><span class="o">)(</span><span class="n">u</span> <span class="k">=&gt;</span> <span class="n">declare</span><span class="o">(</span>
+</span><span class="line">
+</span><span class="line">    <span class="n">u</span><span class="o">.</span><span class="n">id</span> <span class="n">is</span> <span class="o">(</span><span class="n">primaryKey</span><span class="o">))</span>
+</span><span class="line">
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>これはSquerylのGoogleGroupに書いてました。</p>
 
 <ul>
-  <li><a href="http://agreenqoostar.blog129.fc2.com/blog-entry-603.html">AGREEN　イナカとトカイの橋渡し　 新地町ボランティアレポート</a></li>
+<li><a href="https://groups.google.com/forum/#!topic/squeryl/BTrKBwikMqs">how to cancel &#8220;autoincremented&#8221; from KeyedEntity[T]</a></li>
 </ul>
+<h3>２．DDLのカラムの順番の嵌りどころ</h3>
+<p>Db.printDdlを実行した時にカラムの順番が予測できません。</p>
 
-<h2 id="section-6">ボランティア活動に必要な情報</h2>
-
-<h4 id="section-7">ボランティアバスツアー</h4>
-
-<p>被災地は基本的に交通が整備されていません。
-一人暮らしで車も所有していない自分としては、現地の交通手段がネックになります。
-幸い、「ボランティアバスツアー」というものがあったのでこれを利用することを考えました。</p>
+<p>PKが最初にくるのかと思えばそうでもないみたい。ここは細かく追ってないですが、これもGoogleGroupに答えがありました。</p>
 
 <ul>
-  <li>
-    <table>
-      <tbody>
-        <tr>
-          <td><a href="http://www.pref-f-svc.org/archives/1216">東日本大震災復興支援・新地町で活動する災害ボランティア募集</a></td>
-          <td>福島県災害ボランティアセンター&lt;/a&gt;</td>
-        </tr>
-      </tbody>
-    </table>
-  </li>
+<li><a href="https://groups.google.com/forum/#!topic/squeryl/ZwiDf5Q-IUI">CREATE TABLE columns in order of constructor arguments</a></li>
 </ul>
+<p>答えとしては、org.squeryl.internals.DatabaseAdapter:: writeCreateTableあたりをorverrideしてなんとかしてくれとのこと。</p>
 
-<p>これなら一人でも現地に向かうことも可能ですし、そこからはコーディネートしてもらえます。
-結局は、冒頭にも書いたとおり、田舎暮らしのマッチングの仕事の関係で被災地にも詳しい友人に相談した結果、彼女のご家族に福島駅から現地まで車をだして頂けることになり、東京ー福島間は夜行バスを利用して、友人4人とともに活動する結果となったのですが。</p>
+<p><a href="https://github.com/max-l/Squeryl/blob/master/src/main/scala/org/squeryl/internals/DatabaseAdapter.scala#L255">https://github.com/max-l/Squeryl/blob/master/src/main/scala/org/squeryl/internals/DatabaseAdapter.scala#L255</a></p>
 
-<h4 id="twitter">ボランティア情報のTwitterアカウント</h4>
+<p>なんか良い方法はないの…</p>
 
-<p>定期的にボランディアバスツアーなどの情報は下記Twitterアカウントをフォローしておけば、チェックすることができます。(他にもあるかもしれませんが私はこちらでチェックしています。）</p>
+<p>とりあえず、printDdlした結果をコピーして、順番だけ書き換えて、手動で直接DBにクエリ発行すればなんとかなるでしょう。</p>
 
-<ul>
-  <li>
-    <table>
-      <tbody>
-        <tr>
-          <td><a href="http://twitter.com/tominvc">@tominvc</a></td>
-          <td>被災地支援都民ボランティア</td>
-        </tr>
-      </tbody>
-    </table>
-  </li>
-  <li>
-    <table>
-      <tbody>
-        <tr>
-          <td><a href="http://tiwtter.com/tokyovolunteer">@tokyovolunteer</a></td>
-          <td>東京ボランティア・市民活動センター</td>
-        </tr>
-      </tbody>
-    </table>
-  </li>
-  <li>
-    <table>
-      <tbody>
-        <tr>
-          <td><a href="http://twitter.com/Tasukeaijp">@Tasukeaijp</a></td>
-          <td>助けあいジャパン</td>
-        </tr>
-      </tbody>
-    </table>
-  </li>
-</ul>
+<h3>３．外部キーの利用でのはまりどころ</h3>
+<p>２つのテーブルにRelationを設定してからDb.createした際、外部キーが設定されない問題がありました。</p>
 
-<p>あとは、健康な体と必要不可欠な装備があれば十分貢献できると思います。</p>
+<p>MySQLは5.5を使っているので外部キーに対応していない訳でもないです。</p>
 
-<p>現地で少しばかり写真を撮ってきたのでFrickrにあげておきました。</p>
+<p>問題はAdapterの選定にありました。</p>
 
-<object type="text/html" data="http://www.flickr.com/slideShow/index.gne?user_id=53244662@N04&amp;set_id=72157626993269710" width="500" height="500"> </object>
+<p>org.squeryl.adapter.MySQLAdapter</p>
+
+<p>をつかっていたのですが、</p>
+
+<p>org.squeryl.adapter.MySQLInnoDBAdapter</p>
+
+<p>を使えばOKでした。</p>
+
+<p>根本の原因は、org.squeryl.adapter.MySQLAdapterに</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">override</span> <span class="k">def</span> <span class="n">supportsForeignKeyConstraints</span> <span class="k">=</span> <span class="kc">false</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>と定義してあり、一方のorg.squeryl.adapter.MySQLInnoDBAdapterには</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">override</span> <span class="k">def</span> <span class="n">supportsForeignKeyConstraints</span> <span class="k">=</span> <span class="kc">true</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>と定義してあります。</p>
+
+<p>この値がtrueになっていないとForeignKeyの制約がDDLに含まれなくなってしまうので注意です。</p>
+
+<p><a href="https://github.com/max-l/Squeryl/blob/master/src/main/scala/org/squeryl/adapters/MySQLAdapter.scala#L75">Docコメントにも書いてある</a>ので注意です。</p>
+
+<p>以上、Squerylを弄ってみて嵌ったことをまとめてみました。</p>
+
+<h3>Squerylの使用感</h3>
+<p>ちょっと前にTwitterのStreamAPIのデータをMySQLに格納するためにSquerylを使ったのと今回少し弄ってみただけなのでまだまだ知らないことだらけです。他にも機能的はたくさん用意されていると思いますし、APIも割となじみやすいので複雑すぎないテーブル定義の場合には積極的にSquerylを使っていこうと思います。</p>
+
+<p><em>※ドキュメントや本体のソースを追いかけたりしながら使い方を学ぶのは非常に楽しいです:)</em></p>
+
+<p>で、ソースは以下です。</p>
+
+<script src="https://gist.github.com/1146854.js"> </script>
 
 </div>
   
@@ -591,6 +689,14 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2014/04/07/mysql-character-set-utf8mb4/">MySQLでutf8mb4を扱う場合は必要なカラムと接続時だけ明示的に指定する</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2014/04/06/reload-varnish-vcl/">VarnishのVCLを再起動なしに再読み込みする</a>
+      </li>
+    
+      <li class="post">
         <a href="/2014/04/06/move-from-wordpress-to-octopress/">WordpressからOctopressに移行</a>
       </li>
     
@@ -602,20 +708,12 @@
         <a href="/2013/04/17/bind-a-variable-to-closure-in-python/">pythonのクロージャに変数を束縛する方法</a>
       </li>
     
-      <li class="post">
-        <a href="/2013/04/05/my-first-pytest/">pythonのテストにpytestを使ってみた</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2013/04/02/retirement201303/">Kauli株式会社を退職しました</a>
-      </li>
-    
   </ul>
 </section>
 <section>
   <h1>Categories</h1>
   <ul id="categories">
-    <li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
+    <li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/mysql/'>mysql</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
   </ul>
 </section>
 <section>

@@ -4,7 +4,7 @@
   <title><![CDATA[I Will Survive]]></title>
   <link href="http://blog.restartr.com/atom.xml" rel="self"/>
   <link href="http://blog.restartr.com/"/>
-  <updated>2014-04-07T00:13:23+09:00</updated>
+  <updated>2014-04-19T12:16:31+09:00</updated>
   <id>http://blog.restartr.com/</id>
   <author>
     <name><![CDATA[ReSTARTR]]></name>
@@ -12,6 +12,534 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[MySQLでutf8mb4を扱う場合は必要なカラムと接続時だけ明示的に指定する]]></title>
+    <link href="http://blog.restartr.com/2014/04/07/mysql-character-set-utf8mb4/"/>
+    <updated>2014-04-07T08:12:32+09:00</updated>
+    <id>http://blog.restartr.com/2014/04/07/mysql-character-set-utf8mb4</id>
+    <content type="html"><![CDATA[<p>結論はタイトルの通り。</p>
+
+<h2 id="section">まとめ</h2>
+
+<ul>
+  <li>systemのエンコードが<code>character_set_system</code>に反映される. clientの接続時のデフォルトはシステムのエンコードが使用される（未検証）</li>
+  <li>clientの接続時の指定が優先される。ただし、<code>character_set_database</code>, <code>character_set_filesystem</code>, <code>character_set_server</code>については上書きされない。</li>
+  <li>my.cnfの<code>mysql.default-character-set</code>は意味ある？（未検証）</li>
+  <li>my.cnfの<code>mysqld.character-set-server</code>はfilesystemとsystem以外のデフォルトに影響する。clientの接続時に無指定の場合にもデフォルトとして利用される</li>
+</ul>
+
+<p>以下の理由によって、デフォルトはutf8で、必要なカラムとクライアント接続時にだけutf8mb4を適用することとした。</p>
+
+<ul>
+  <li>インデックスに使える文字数がutf8だと255文字までに対してutf8mb4だと191文字まで。
+    <ul>
+      <li>サーバー側の設定はデフォルトutf8.クライアントの設定はデフォルトutf8mb4.が良い</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="section-1">検証</h3>
+
+<p>server/clientともにremiのMySQL5.5を使用</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>mysql --version
+</span><span class="line">mysql  Ver 14.14 Distrib 5.5.37, <span class="k">for </span>Linux <span class="o">(</span>x86_64<span class="o">)</span> using readline 5.1
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>utf8なカラム<code>name1</code>と、utf8mb4なカラム<code>name2</code>を用意.</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>mysql -uroot <span class="nb">test</span> -e <span class="s1">&#39;show create table user2\G&#39;</span>
+</span><span class="line">*************************** 1. row ***************************
+</span><span class="line">       Table: user2
+</span><span class="line">Create Table: CREATE TABLE <span class="sb">`</span>user2<span class="sb">`</span> <span class="o">(</span>
+</span><span class="line">  <span class="sb">`</span>id<span class="sb">`</span> int<span class="o">(</span>11<span class="o">)</span> NOT NULL AUTO_INCREMENT,
+</span><span class="line">  <span class="sb">`</span>name1<span class="sb">`</span> varchar<span class="o">(</span>255<span class="o">)</span> DEFAULT NULL,
+</span><span class="line">  <span class="sb">`</span>name2<span class="sb">`</span> varchar<span class="o">(</span>255<span class="o">)</span> CHARACTER SET utf8mb4 DEFAULT NULL,
+</span><span class="line">  PRIMARY KEY <span class="o">(</span><span class="sb">`</span>id<span class="sb">`</span><span class="o">)</span>
+</span><span class="line"><span class="o">)</span> <span class="nv">ENGINE</span><span class="o">=</span>InnoDB <span class="nv">AUTO_INCREMENT</span><span class="o">=</span>14 DEFAULT <span class="nv">CHARSET</span><span class="o">=</span>utf8
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>デフォルトの状態</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>mysql -uroot <span class="nb">test</span> -e <span class="s1">&#39;show global variables like &quot;character_set%&quot;; show variables like &quot;character_set%&quot;&#39;</span>
+</span><span class="line">+--------------------------+----------------------------+
+</span><span class="line">| Variable_name            | Value                      |
+</span><span class="line">+--------------------------+----------------------------+
+</span><span class="line">| character_set_client     | latin1                     |
+</span><span class="line">| character_set_connection | latin1                     |
+</span><span class="line">| character_set_database   | latin1                     |
+</span><span class="line">| character_set_filesystem | binary                     |
+</span><span class="line">| character_set_results    | latin1                     |
+</span><span class="line">| character_set_server     | latin1                     |
+</span><span class="line">| character_set_system     | utf8                       |
+</span><span class="line">| character_sets_dir       | /usr/share/mysql/charsets/ |
+</span><span class="line">+--------------------------+----------------------------+
+</span><span class="line">+--------------------------+----------------------------+
+</span><span class="line">| Variable_name            | Value                      |
+</span><span class="line">+--------------------------+----------------------------+
+</span><span class="line">| character_set_client     | utf8                       |
+</span><span class="line">| character_set_connection | utf8                       |
+</span><span class="line">| character_set_database   | latin1                     |
+</span><span class="line">| character_set_filesystem | binary                     |
+</span><span class="line">| character_set_results    | utf8                       |
+</span><span class="line">| character_set_server     | latin1                     |
+</span><span class="line">| character_set_system     | utf8                       |
+</span><span class="line">| character_sets_dir       | /usr/share/mysql/charsets/ |
+</span><span class="line">+--------------------------+----------------------------+
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>clientが<code>--default-character-set=utf8mb4</code>をつけて接続した場合</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>mysql --default-character-set<span class="o">=</span>utf8 -uroot <span class="nb">test</span> -e <span class="s1">&#39;show global variables like &quot;character_set%&quot;; show variables like &quot;character_set%&quot;&#39;</span>
+</span><span class="line">+--------------------------+----------------------------+
+</span><span class="line">| Variable_name            | Value                      |
+</span><span class="line">+--------------------------+----------------------------+
+</span><span class="line">| character_set_client     | latin1                     |
+</span><span class="line">| character_set_connection | latin1                     |
+</span><span class="line">| character_set_database   | latin1                     |
+</span><span class="line">| character_set_filesystem | binary                     |
+</span><span class="line">| character_set_results    | latin1                     |
+</span><span class="line">| character_set_server     | latin1                     |
+</span><span class="line">| character_set_system     | utf8                       |
+</span><span class="line">| character_sets_dir       | /usr/share/mysql/charsets/ |
+</span><span class="line">+--------------------------+----------------------------+
+</span><span class="line">+--------------------------+----------------------------+
+</span><span class="line">| Variable_name            | Value                      |
+</span><span class="line">+--------------------------+----------------------------+
+</span><span class="line">| character_set_client     | utf8                       |
+</span><span class="line">| character_set_connection | utf8                       |
+</span><span class="line">| character_set_database   | latin1                     |
+</span><span class="line">| character_set_filesystem | binary                     |
+</span><span class="line">| character_set_results    | utf8                       |
+</span><span class="line">| character_set_server     | latin1                     |
+</span><span class="line">| character_set_system     | utf8                       |
+</span><span class="line">| character_sets_dir       | /usr/share/mysql/charsets/ |
+</span><span class="line">+--------------------------+----------------------------+
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>my.cnfに<code>mysql.default-character-set</code>を指定した場合</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="ini"><span class="line"><span class="k">[mysql]</span>
+</span><span class="line"><span class="na">default-character-set</span><span class="o">=</span><span class="s">utf8</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>mysql -uroot <span class="nb">test</span> -e <span class="s1">&#39;show global variables like &quot;character_set%&quot;; show variables like &quot;character_set%&quot;&#39;</span>
+</span><span class="line">+--------------------------+----------------------------+
+</span><span class="line">| Variable_name            | Value                      |
+</span><span class="line">+--------------------------+----------------------------+
+</span><span class="line">| character_set_client     | latin1                     |
+</span><span class="line">| character_set_connection | latin1                     |
+</span><span class="line">| character_set_database   | latin1                     |
+</span><span class="line">| character_set_filesystem | binary                     |
+</span><span class="line">| character_set_results    | latin1                     |
+</span><span class="line">| character_set_server     | latin1                     |
+</span><span class="line">| character_set_system     | utf8                       |
+</span><span class="line">| character_sets_dir       | /usr/share/mysql/charsets/ |
+</span><span class="line">+--------------------------+----------------------------+
+</span><span class="line">+--------------------------+----------------------------+
+</span><span class="line">| Variable_name            | Value                      |
+</span><span class="line">+--------------------------+----------------------------+
+</span><span class="line">| character_set_client     | utf8                       |
+</span><span class="line">| character_set_connection | utf8                       |
+</span><span class="line">| character_set_database   | latin1                     |
+</span><span class="line">| character_set_filesystem | binary                     |
+</span><span class="line">| character_set_results    | utf8                       |
+</span><span class="line">| character_set_server     | latin1                     |
+</span><span class="line">| character_set_system     | utf8                       |
+</span><span class="line">| character_sets_dir       | /usr/share/mysql/charsets/ |
+</span><span class="line">+--------------------------+----------------------------+
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>my.cnfに<code>mysqd.character-set-server=utf8</code>を指定した場合</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="ini"><span class="line"><span class="k">[mysqld]</span>
+</span><span class="line"><span class="na">character-set-server</span><span class="o">=</span><span class="s">utf8</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>mysql -uroot <span class="nb">test</span> -e <span class="s1">&#39;show global variables like &quot;character_set%&quot;; show variables like &quot;character_set%&quot;&#39;</span>
+</span><span class="line">+--------------------------+----------------------------+
+</span><span class="line">| Variable_name            | Value                      |
+</span><span class="line">+--------------------------+----------------------------+
+</span><span class="line">| character_set_client     | utf8                       |
+</span><span class="line">| character_set_connection | utf8                       |
+</span><span class="line">| character_set_database   | utf8                       |
+</span><span class="line">| character_set_filesystem | binary                     |
+</span><span class="line">| character_set_results    | utf8                       |
+</span><span class="line">| character_set_server     | utf8                       |
+</span><span class="line">| character_set_system     | utf8                       |
+</span><span class="line">| character_sets_dir       | /usr/share/mysql/charsets/ |
+</span><span class="line">+--------------------------+----------------------------+
+</span><span class="line">+--------------------------+----------------------------+
+</span><span class="line">| Variable_name            | Value                      |
+</span><span class="line">+--------------------------+----------------------------+
+</span><span class="line">| character_set_client     | utf8                       |
+</span><span class="line">| character_set_connection | utf8                       |
+</span><span class="line">| character_set_database   | utf8                       |
+</span><span class="line">| character_set_filesystem | binary                     |
+</span><span class="line">| character_set_results    | utf8                       |
+</span><span class="line">| character_set_server     | utf8                       |
+</span><span class="line">| character_set_system     | utf8                       |
+</span><span class="line">| character_sets_dir       | /usr/share/mysql/charsets/ |
+</span><span class="line">+--------------------------+----------------------------+
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h2 id="railsactiverecord">Rails（ActiveRecord）から接続する場合　</h2>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="yaml"><span class="line"><span class="l-Scalar-Plain">db</span><span class="p-Indicator">:</span>
+</span><span class="line">  <span class="l-Scalar-Plain">encoding</span><span class="p-Indicator">:</span> <span class="s">&quot;utf8mb4&quot;</span> <span class="c1"># SET NAMES &quot;utf8mb4&quot;と等価</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>さらに、<code>SET NAMES utf8mb4</code>は以下全てを実行した場合と等価</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="sql"><span class="line"><span class="k">SET</span> <span class="n">character_set_client</span> <span class="o">=</span> <span class="n">utf8mb4</span><span class="p">;</span>
+</span><span class="line"><span class="k">SET</span> <span class="n">character_set_results</span> <span class="o">=</span> <span class="n">utf8mb4</span><span class="p">;</span>
+</span><span class="line"><span class="k">SET</span> <span class="n">character_set_connection</span> <span class="o">=</span> <span class="n">utf8mb4</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="utf8">utf8なカラムの文字列検索</h3>
+
+<ul>
+  <li>utf8mb4なカラムには、utf8mb4で接続してinsertすること</li>
+  <li>utf8なカラムには、utf8でもutf8mb4でもどちらでinsertしてもselectしても問題ない</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>mysql -uroot <span class="nb">test</span> -e <span class="s1">&#39;set names &quot;utf8mb4&quot;; select * from user2 where name2 like &quot;%だよ%&quot; limit 3&#39;</span>
+</span><span class="line">+----+----------------+------------------+
+</span><span class="line">| id | name1          | name2            |
+</span><span class="line">+----+----------------+------------------+
+</span><span class="line">|  1 | firstだよ♬     | firstだよ♬       |
+</span><span class="line">|  2 | secondだよ     | secondだよ????   |
+</span><span class="line">|  3 | secondだよ?    | secondだよ♨      |
+</span><span class="line">+----+----------------+------------------+
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>mysql -uroot <span class="nb">test</span> -e <span class="s1">&#39;set names &quot;utf8mb4&quot;; select * from user2 where name2 like &quot;%だよ♨&quot; limit 3&#39;</span>
+</span><span class="line">+----+--------------------+---------------------+
+</span><span class="line">| id | name1              | name2               |
+</span><span class="line">+----+--------------------+---------------------+
+</span><span class="line">|  3 | secondだよ?        | secondだよ♨          |
+</span><span class="line">|  8 | テストだよ♬        | テストだよ♨          |
+</span><span class="line">| 13 | テストだよ♬        | テストだよ♨          |
+</span><span class="line">+----+--------------------+---------------------+
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>ただし、utf8mb4なカラムに対して4バイト文字列を投げると、utf8で接続した時にエラーになる</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>mysql -uroot <span class="nb">test</span> -e <span class="s1">&#39;set names &quot;utf8&quot;; select * from user2 where name2 like &quot;%だよ♨&quot; limit 3&#39;</span>
+</span><span class="line">ERROR 1267 <span class="o">(</span>HY000<span class="o">)</span> at line 1: Illegal mix of collations <span class="o">(</span>utf8mb4_general_ci,IMPLICIT<span class="o">)</span> and <span class="o">(</span>utf8_general_ci,COERCIBLE<span class="o">)</span> <span class="k">for </span>operation <span class="s1">&#39;like&#39;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>なので、データとしてutf8mb4が格納される可能性があるDBに対しては、utf8mb4で必ず接続すること。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>mysql -uroot <span class="nb">test</span> -e <span class="s1">&#39;set names &quot;utf8mb4&quot;; select * from user2 where name2 like &quot;%だよ♨&quot; limit 3&#39;</span>
+</span><span class="line">+----+--------------------+---------------------+
+</span><span class="line">| id | name1              | name2               |
+</span><span class="line">+----+--------------------+---------------------+
+</span><span class="line">|  3 | secondだよ?        | secondだよ♨          |
+</span><span class="line">|  8 | テストだよ♬        | テストだよ♨          |
+</span><span class="line">| 13 | テストだよ♬        | テストだよ♨          |
+</span><span class="line">+----+--------------------+---------------------+
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="section-2">クライアントが5.1の場合</h3>
+
+<p>my.cnfやmysqlコマンドのオプションに<code>client.default_character_set=utf8mb4</code>は指定できない</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>mysql --default-character-set<span class="o">=</span>utf8mb4 -h 192.168.1.164 -uroot <span class="nb">test</span> -e <span class="s1">&#39;select * from user&#39;</span>
+</span><span class="line">mysql: Character <span class="nb">set</span> <span class="s1">&#39;utf8mb4&#39;</span> is not a compiled character <span class="nb">set </span>and is not specified in the <span class="s1">&#39;/usr/share/mysql/charsets/Index.xml&#39;</span> file
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>ただし、SQLでの<code>set names utf8mb4</code>の指定は有効。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>mysql -h 192.168.1.164 -uroot <span class="nb">test</span> -e <span class="s1">&#39;set names utf8mb4; select * from user&#39;</span>
+</span><span class="line">+----+------------+---------------+
+</span><span class="line">| id | name1      | name2         |
+</span><span class="line">+----+------------+---------------+
+</span><span class="line">| 14 | テスト  | テスト???? |
+</span><span class="line">| 15 | テスト? | テスト♨ |
+</span><span class="line">+----+------------+---------------+
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>ActiveRecord等でmysql2を使用している場合、encodingにutf8mb4を指定すると例外が起きる</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">Character <span class="nb">set</span> <span class="s1">&#39;utf8mb4&#39;</span> is not a compiled character <span class="nb">set </span>and is not specified in the <span class="s1">&#39;/usr/share/mysql/charsets/Index.xml&#39;</span> file
+</span><span class="line">/home/yoshida/iqon_api/vendor/bundle/ruby/2.0.0/gems/mysql2-0.3.13/lib/mysql2/client.rb:58:in <span class="sb">`</span>connect<span class="s1">&#39;: Can&#39;</span>t initialize character <span class="nb">set </span>utf8mb4 <span class="o">(</span>path: /usr/share/mysql/charsets/<span class="o">)</span> <span class="o">(</span>Mysql2::Error<span class="o">)</span>
+</span><span class="line">        from /home/yoshida/iqon_api/vendor/bundle/ruby/2.0.0/gems/mysql2-0.3.13/lib/mysql2/client.rb:58:in <span class="sb">`</span>initialize<span class="s1">&#39;</span>
+</span><span class="line"><span class="s1">        from test_mysql.rb:3:in `new&#39;</span>
+</span><span class="line">        from test_mysql.rb:3:in <span class="sb">`</span>&lt;main&gt;<span class="err">&#39;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>なので、接続時にset namesすれば良い</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">require <span class="s1">&#39;mysql2&#39;</span>
+</span><span class="line"><span class="nv">client</span> <span class="o">=</span> Mysql2::Client.new<span class="o">(</span>:host <span class="o">=</span>&gt; <span class="s2">&quot;localhost&quot;</span>, :username <span class="o">=</span>&gt; <span class="s2">&quot;root&quot;</span>, db: <span class="s1">&#39;test&#39;</span><span class="o">)</span>
+</span><span class="line">client.query<span class="o">(</span><span class="s1">&#39;SET NAMES utf8mb4&#39;</span><span class="o">)</span>
+</span><span class="line">puts client.query<span class="o">(</span><span class="s1">&#39;SELECT * FROM user&#39;</span><span class="o">)</span>.map <span class="o">{</span> |r| r<span class="o">[</span><span class="s1">&#39;name2&#39;</span><span class="o">]</span> <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>ruby test.rb
+</span><span class="line"><span class="o">[</span><span class="s2">&quot;テスト????&quot;</span>, <span class="s2">&quot;テスト🌸&quot;</span><span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h2 id="section-3">参考</h2>
+
+<ul>
+  <li><a href="https://dev.mysql.com/doc/refman/5.1/ja/charset-database.html">MySQL ::   MySQL 5.1 リファレンスマニュアル :: 9.3.2 データベースのキャラクタセットおよび照合順序</a></li>
+  <li><a href="http://d.hatena.ne.jp/maeyan/20090811/1250008156">MySQLでutf8を扱う場合。 - ×××Diary</a></li>
+  <li><a href="http://apps.timwhitlock.info/emoji/tables/unicode">Emoji unicode characters for use on the web</a></li>
+</ul>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[VarnishのVCLを再起動なしに再読み込みする]]></title>
+    <link href="http://blog.restartr.com/2014/04/06/reload-varnish-vcl/"/>
+    <updated>2014-04-06T15:38:08+09:00</updated>
+    <id>http://blog.restartr.com/2014/04/06/reload-varnish-vcl</id>
+    <content type="html"><![CDATA[<p>/etc/varnish/default.vclを書き換えた時、</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">/etc/init.d/varnishd restart
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>ってやってたけど、reloadできることを今更知った。</p>
+
+<h3 id="vcllist-vcl">vcl.list: 現在の読み込んでるVCLの一覧を見る</h3>
+
+<p>CentOSのyumで入れたvarnishはデフォルトでこんなふうになってる</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>varnishadm -T localhost:6082 vcl.list
+</span><span class="line">active        579 boot
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="vclload-vcl">vcl.load: 新規にVCLをロードする</h3>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>varnishadm -T localhost:6082 vcl.load boot-<span class="sb">`</span>date+%Y%m%d%H%M%S<span class="sb">`</span> /etc/varnish/iqon_api.vcl
+</span><span class="line">VCL compiled.
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>この時点では利用可能な状態であって、まだ変更は反映されていない</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>varnishadm -T localhost:6082 vcl.list
+</span><span class="line">active        579 boot
+</span><span class="line">available       0 boot-20140406153127
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="vcluse-vcl">vcl.use: ロードしたVCLに切り替える</h3>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>varnishadm -T localhost:6082 vcl.use boot-20140406153127
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>何も表示されないけどちゃんと切り替わっている</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>varnishadm -T localhost:6082 vcl.list
+</span><span class="line">available     526 boot
+</span><span class="line">active         53 boot-20140406153127
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>ちなみに、真ん中の数値はactiveの場合は経過秒数で、availableになると数値が減っていく。
+でも、0になっても居座り続ける。この数値の変化のルールはよくわかってない。</p>
+
+<p>ということで不要な過去のvclは定期的に消さないとずっと残り続けてしまうので注意。</p>
+
+<h3 id="vcldiscard-vcl">vcl.discard: ロード済みvclの破棄</h3>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>varnishadm -T localhost:6082 vcl.discard boot
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>ここでも結果が表示されないけどちゃんと消えている。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>varnishadm -T localhost:6082 vcl.list
+</span><span class="line">available       11 boot-20140406155155
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>本当はinitスクリプト化すると便利なんだろうけど、手動でも良いかなと。</p>
+
+<ul>
+  <li><a href="http://blog.xcir.net/?p=124">Varnishで再起動無しで設定ファイルを適用する方法(reload) » cat /dev/random &gt; /dev/null &amp;</a></li>
+</ul>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[WordpressからOctopressに移行]]></title>
@@ -2186,291 +2714,6 @@ The java service will make your application available at http://frontend.myapp.d
   <li><a href="http://docs.dotcloud.com/cli/">DotCloud command line — DotCloud documentation</a></li>
   <li><a href="http://code.google.com/p/simple-build-tool/wiki/Process">Process - simple-build-tool - A build tool for Scala - Google Project Hosting</a></li>
 </ul>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[SIMフリーのandroid端末でSoftBankのMMSを受信する方法]]></title>
-    <link href="http://blog.restartr.com/2011/05/01/how-to-send-and-receive-softbank-mms-on-sim-free-android/"/>
-    <updated>2011-05-01T22:18:15+09:00</updated>
-    <id>http://blog.restartr.com/2011/05/01/how-to-send-and-receive-softbank-mms-on-sim-free-android</id>
-    <content type="html"><![CDATA[<p>Desire SでS!メールを受信しようと、apnの設定をしてみたのですが、全く送受信が成功しませんでした。
-いろいろ調査していたところ、SoftBankメールのアプリのバージョンが原因だと判明しました。
-古いバージョンをインストールすれば問題ないようです。</p>
-
-<p>SoftBankメールを送受信するための手順を下記に記しておきます。</p>
-
-<h3 id="apn">1.apn設定</h3>
-
-<table>
-  <thead>
-    <tr>
-      <th style="text-align: left">項目名</th>
-      <th style="text-align: left">設定値</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="text-align: left">名前</td>
-      <td style="text-align: left">＜任意＞</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">APN</td>
-      <td style="text-align: left">smile.world</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">プロキシ</td>
-      <td style="text-align: left">＜未設定＞</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">ポート</td>
-      <td style="text-align: left">＜未設定＞</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">ユーザー名</td>
-      <td style="text-align: left">dna1trop</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">パスワード</td>
-      <td style="text-align: left">so2t3k3m2a</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">MMSC</td>
-      <td style="text-align: left">http://mms/</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">MMSプロキシ</td>
-      <td style="text-align: left">smilemms.softbank.ne.jp</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">MMSポート</td>
-      <td style="text-align: left">8080</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">MCC</td>
-      <td style="text-align: left">440</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">MNC</td>
-      <td style="text-align: left">20</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">認証タイプ</td>
-      <td style="text-align: left">＜未設定&gt;</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">APNタイプ</td>
-      <td style="text-align: left">＜未設定＞</td>
-    </tr>
-  </tbody>
-</table>
-
-<p>※こちらを参考にしました。</p>
-
-<ul>
-  <li>
-    <table>
-      <tbody>
-        <tr>
-          <td><a href="http://blog.yukinishijima.net/android/android-dev-phone-1-%E3%81%A7mms%E3%82%92%E4%BD%BF%E3%81%88%E3%82%8B%E3%82%88%E3%81%86%E3%81%AB%E3%81%99%E3%82%8B%E3%81%BE%E3%81%A7%E3%81%AE%E9%81%93%E3%81%AE%E3%82%8A">Android Dev Phone 1 でMMSを使えるようにするまでの道のり </a></td>
-          <td> Yuki Nishijima Blog&lt;/a&gt;</td>
-        </tr>
-      </tbody>
-    </table>
-  </li>
-</ul>
-
-<h3 id="softbank">2.SoftBankメールをインストール</h3>
-
-<p>最新版(2011.05.01時点でv2.1)の<a href="https://market.android.com/details?id=jp.softbank.mb.mail">SoftBankメール</a>では送受信に失敗します。</p>
-
-<p>なので、下記ブログ記事よりv1.6の古いバージョンをダウンロード＆インストールします。
-※既にAndroidマーケットから最新版をダウンロードしている場合は、そちらを先にアンインストールしておく必要があります。</p>
-
-<ul>
-  <li><a href="http://gadgetordiary.wordpress.com/2011/04/13/softbank%E3%83%A1%E3%83%BC%E3%83%AB%E3%82%A2%E3%83%97%E3%83%AA1-6%E3%82%92%E5%86%8D%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB/">Softbankメールアプリ1.6を再インストール « デジタルガジェッター日記</a></li>
-</ul>
-
-<p>端末のブラウザからダウンロードしてインストールするか、android-sdkの入っているPCから
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="bash"><span class="line">adb install jp.softbank.mb.mail-1.6.apk
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
-でインストールできます。</p>
-
-<p>あとは、アプリを起動すればメールの閲覧や送信が自由にできます。</p>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Desire SをiPhone3GSと比較してみた ? カメラ編 ]]></title>
-    <link href="http://blog.restartr.com/2011/04/28/compare-iphone3gs-to-desire-s-%25e2%2580%2593camera/"/>
-    <updated>2011-04-28T09:00:42+09:00</updated>
-    <id>http://blog.restartr.com/2011/04/28/compare-iphone3gs-to-desire-s-%e2%80%93camera</id>
-    <content type="html"><![CDATA[<p>今回は、Desire Sのカメラ性能がどの程度なのか、iPhone3GSとデジカメを比較しながらみていきます。</p>
-
-<p>iPhoneもDesire Sどちらもデフォルトのカメラアプリをデフォルトの設定で使用しました。
-あと、Degital Cameraは具体的なモデル名は言及しませんが2年くらい前の所謂”普通のデジカメ”です。</p>
-
-<h2 id="desire-s">Desire Sで撮影してみての感想</h2>
-
-<p>最近の携帯のカメラってこんなもんなんですかね。あまり携帯カメラ事情に詳しくないのもあって、正直想像以上に綺麗で驚きました。とくに順光の性能が良いです。Desire Sは多少青味が強くでますが、あとから少し補正する前提なら満足度が高いと思いました。</p>
-
-<p>ただ、夕暮れ以降になるととたんに脆くなり、フォーカスが迷いまくります。iPhone3GSの方が合焦速度は早いくらいです。かつ、合焦したはずが実際はピンぼけってことも。ISOはAUTO/100/200/400/800まであるのですが、日中〜明るめの屋内までがカバー範囲でしょうか。</p>
-
-<p>もちろん、ビンテージカメラ風に加工してくれるアプリを用いた楽しみ方(instagramやpicplzなど)もあると思います。が、私の場合、手軽に撮れるスナップ機として必要最低限の機能を求めており、基本性能を重要視していました。
-使ってみるとiPhone3GSではストレスフルだった起動速度が非常に満足のいくもので、起動?撮影?確認みたいなフローがストレスなく行えます。（あくまでiPhone3GSとの比較であり、最近のスマートフォンなら大体こんな感じなのかもしれません。)</p>
-
-<h2 id="desire-siphone3gs">Desire SとiPhone3GSとの比較撮影サンプル</h2>
-
-<p>Desire Sのフォーマットは5:3と4:3に切り替え可能ですが、今回は5:3のワイドで撮影しました。
-（※というか撮影後に切り替え可能なことに気づいた…orz)</p>
-
-<p>コメントはDesire S中心に書きました。</p>
-
-<h3 id="section">風景その１</h3>
-<p>太陽を背にした順光での比較です。</p>
-
-<h4 id="iphone-3gs">iPhone 3GS</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653782282/" title="001_IP by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5303/5653782282_b4d5cf3d97_z.jpg" width="500" height="375" alt="001_IP" /></a></p>
-
-<h4 id="desire-s-1">Desire S</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653778670/" title="001_DS by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5265/5653778670_5886531d9c_z.jpg" width="500" height="333" alt="001_DS" /></a></p>
-
-<h4 id="degital-camera">Degital Camera</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653775032/" title="001_DC by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5067/5653775032_76f7ac9abf_z.jpg" width="500" height="300" alt="001_DC" /></a></p>
-
-<h3 id="section-1">風景その２</h3>
-<p>左前方に太陽があります。</p>
-
-<h4 id="iphone-3gs-1">iPhone 3GS</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653211387/" title="002_IP by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5262/5653211387_0076831cc3_z.jpg" width="500" height="375" alt="002_IP" /></a></p>
-
-<h4 id="desire-s-2">Desire S</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653208715/" title="002_DS by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5187/5653208715_6d4e0d0523_z.jpg" width="500" height="333" alt="002_DS" /></a></p>
-
-<h4 id="degital-camera-1">Degital Camera</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653204723/" title="002_DC by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5305/5653204723_3c3e7052f2_z.jpg" width="500" height="300" alt="002_DC" /></a></p>
-
-<h3 id="section-2">逆光性能</h3>
-<p>フォーカスはクレーン本体にあわせています。
-Desire Sのカメラのレンズ前面をプラスチックが覆っているせいかフレアが目立ちます。あえて狙うこともできると思いますが。
-暗い部分もディティールも割と残っています。</p>
-
-<h4 id="iphone-3gs-2">iPhone 3GS</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653782540/" title="003_IP by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5226/5653782540_7f2971459f_z.jpg" width="500" height="375" alt="003_IP" /></a></p>
-
-<h4 id="desire-s-3">Desire S</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653778984/" title="003_DS by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5146/5653778984_62109ea1c3_z.jpg" width="500" height="333" alt="003_DS" /></a></p>
-
-<h4 id="degital-camera-2">Degital Camera</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653204925/" title="003_DC by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5062/5653204925_cd2962bae4_z.jpg" width="500" height="300" alt="003_DC" /></a></p>
-
-<h3 id="section-3">ダイナミックレンジ</h3>
-<p>明るい部分から暗い部分までちゃんとつぶれず残っています。</p>
-
-<h4 id="iphone-3gs-3">iPhone 3GS</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653782852/" title="004_IP by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5022/5653782852_0236fd9b22_z.jpg" width="500" height="375" alt="004_IP" /></a></p>
-
-<h4 id="desire-s-4">Desire S</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653209073/" title="004_DS by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5146/5653209073_9c4225cd50_z.jpg" width="500" height="333" alt="004_DS" /></a></p>
-
-<h4 id="degital-camera-3">Degital Camera</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653775946/" title="004_DC by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5188/5653775946_73fa06e8fd_z.jpg" width="500" height="300" alt="004_DC" /></a></p>
-
-<h3 id="section-4">夕日を逆光で撮る</h3>
-<p>これは私が割とよく好んで撮るシーンですが、ちゃんと暗い部分まで残っています。</p>
-
-<h4 id="iphone-3gs-4">iPhone 3GS</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653212703/" title="005_IP by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5066/5653212703_b5c493e234_z.jpg" width="500" height="375" alt="005_IP" /></a></p>
-
-<h4 id="desire-s-5">Desire S</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653209315/" title="005_DS by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5103/5653209315_4d578dc3f6_z.jpg" width="500" height="333" alt="005_DS" /></a></p>
-
-<h4 id="degital-camera-4">Degital Camera</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653776184/" title="005_DC by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5070/5653776184_cf12b0a47a_z.jpg" width="500" height="300" alt="005_DC" /></a></p>
-
-<h3 id="section-5">トワイライト</h3>
-<p>このあたりの時間からDesire Sの挙動が怪しくなります。とくに暗所にノイズが目立つようになりました。</p>
-
-<h4 id="iphone-3gs-5">iPhone 3GS</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653212949/" title="006_IP by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5308/5653212949_bcd0001834_z.jpg" width="500" height="375" alt="006_IP" /></a></p>
-
-<h4 id="desire-s-6">Desire S</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653209585/" title="006_DS by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5068/5653209585_fafbf35f56_z.jpg" width="500" height="333" alt="006_DS" /></a></p>
-
-<h4 id="degital-camera-5">Degital Camera</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653776478/" title="006_DC by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5267/5653776478_d209130e42_z.jpg" width="500" height="300" alt="006_DC" /></a></p>
-
-<h3 id="section-6">ライトアップされた建造物</h3>
-<p>Desire Sの写真、フォーカスあってません…</p>
-
-<h4 id="iphone-3gs-6">iPhone 3GS</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653213723/" title="007_IP by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5223/5653213723_355085e054_z.jpg" width="375" height="500" alt="007_IP" /></a></p>
-
-<h4 id="desire-s-7">Desire S</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653210185/" title="007_DS by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5029/5653210185_1862065604_z.jpg" width="333" height="500" alt="007_DS" /></a></p>
-
-<h4 id="degital-camera-6">Degital Camera</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653206365/" title="007_DC by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5223/5653206365_7aed7efdd2_z.jpg" width="300" height="500" alt="007_DC" /></a></p>
-
-<h3 id="section-7">街灯のある暗がり</h3>
-<p>こちらも、Desire Sの写真はフォーカスあってないです。</p>
-
-<h4 id="iphone-3gs-7">iPhone 3GS</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653214051/" title="008_IP by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5061/5653214051_ec8f359063_z.jpg" width="500" height="375" alt="008_IP" /></a></p>
-
-<h4 id="desire-s-8">Desire S</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653780952/" title="008_DS by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5061/5653780952_74bb8d6c3e_z.jpg" width="500" height="333" alt="008_DS" /></a></p>
-
-<h4 id="degital-camera-7">Degital Camera</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653777348/" title="008_DC by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5263/5653777348_a4328aa334_z.jpg" width="500" height="300" alt="008_DC" /></a></p>
-
-<h3 id="section-8">夜の寺院</h3>
-<p>iPhone3GSよりはDesire Sが色味など幾分かマシ。</p>
-
-<h4 id="iphone-3gs-8">iPhone 3GS</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653213413/" title="011_IP by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5108/5653213413_7d06759434_z.jpg" width="500" height="375" alt="011_IP" /></a></p>
-
-<h4 id="desire-s-9">Desire S</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653209905/" title="011_DS by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5110/5653209905_010d44e046_z.jpg" width="500" height="333" alt="011_DS" /></a></p>
-
-<h4 id="degital-camera-8">Degital Camera</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653207079/" title="011_DC by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5270/5653207079_20d043dc28_z.jpg" width="500" height="300" alt="011_DC" /></a></p>
-
-<h3 id="section-9">街の夜景</h3>
-<p>ここまで暗いと、手前の暗い部分にノイズがのりまくります。</p>
-
-<h4 id="iphone-3gs-9">iPhone 3GS</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653214545/" title="009_IP by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5265/5653214545_67f3c03688_z.jpg" width="500" height="375" alt="009_IP" /></a></p>
-
-<h4 id="desire-s-10">Desire S</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653781294/" title="009_DS by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5270/5653781294_42844e1e51_z.jpg" width="500" height="333" alt="009_DS" /></a></p>
-
-<h4 id="degital-camera-9">Degital Camera</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653777944/" title="009_DC by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5023/5653777944_dc9478b928_z.jpg" width="500" height="300" alt="009_DC" /></a></p>
-
-<h3 id="section-10">ほぼ暗闇の河川沿い</h3>
-<p>肉眼だと”Degital Camera”の写真くらいの明るさなのですが、Desire SもiPhone3GSも街灯以外ほぼまっ暗。ここまでくると携帯カメラには不利すぎるシチュエーションですかね。</p>
-
-<h4 id="iphone-3gs-10">iPhone 3GS</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653214277/" title="010_IP by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5306/5653214277_9cd4145e14_z.jpg" width="500" height="375" alt="010_IP" /></a></p>
-
-<h4 id="desire-s-11">Desire S</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653781498/" title="010_DS by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5143/5653781498_4ededbb142_z.jpg" width="500" height="333" alt="010_DS" /></a></p>
-
-<h4 id="degital-camera-10">Degital Camera</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653207725/" title="010_DC by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5187/5653207725_8f2e979f83_z.jpg" width="500" height="300" alt="010_DC" /></a></p>
-
-<h2 id="section-11">参考リンク</h2>
-<ul>
-  <li><a href="http://pocketnow.com/android/htc-desire-s-review">HTC Desire S Review</a>(簡単なレビューとカメラ・ビデオのサンプルがあります。)</li>
-</ul>
-
-<p>Desire Sのインプレは多分これで終了です。</p>
-
-<p>今後はiOSと比較しながらandroid端末の良さについていろいろ考えてみようと思います。</p>
 
 ]]></content>
   </entry>

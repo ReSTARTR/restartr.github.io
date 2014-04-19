@@ -11,8 +11,7 @@
   <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="今月頭にブログ書きましたが、EventStatsという勉強会の参加者の推移が見れるサービスを公開しました。 EventStats - イベントの統計情報が見れます まぁ自分が欲しかっただけなんですけど、使ってみて頂ければ幸いです。
-今回はそのサービスの構成とかについて書いてみます。 アジェンダ &hellip;">
+  <meta name="description" content="ふと思い立って、イベントの登録者数の推移が見れるEventStatsをConnpassにも対応させました。 EventStats - イベントの統計情報が見れます ConnpassのAPIはイベントの参加者リストまでは取得できませんが、イベント検索はほぼatnd準拠。 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -123,7 +122,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps/">EventStatsはherokuとMongoLabとさくらVPSで動いている</a></h1>
+      <h1 class="entry-title"><a href="/2012/12/22/eventstats-support-connpass/">EventStatsをConnpassに対応させました</a></h1>
     
     
       <p class="meta">
@@ -139,228 +138,69 @@
   
 
 
-<time datetime="2011-12-28T21:27:52+09:00" pubdate data-updated="true">2011-12-28 (Wed)</time>
+<time datetime="2012-12-22T22:54:54+09:00" pubdate data-updated="true">2012-12-22 (Sat)</time>
         
       </p>
+    
+    
+      <style type="text/css">
+  .sharing {
+     clear: both;
+  }
+  .sharing li{
+    display: inline;
+    list-style-type: none;
+    float: left;
+    height: 1em;
+    line-height: 1em;
+    padding: 0 10px 0 0 ;
+    margin: 10px 0;
+  }
+  .sharing ul {
+    margin: 1em 0;
+    padding: 1em 0;
+  }
+</style>
+<div class="sharing">
+  <ul>
+    <li><a href="http://blog.restartr.com/page/5/index.html" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加&#8221;><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+  
+  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/page/5/index.html" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/page/5/index.html" >Tweet</a></li>
+  
+  
+  <li><div class="fb-like" data-href="http://blog.restartr.com/page/5/index.html" data-layout="button_count" data-action="like" data-show-faces="false" data-share="true"></div><script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1&appId=368671089894710";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script></li>
+  
+  <li><a data-pocket-label="pocket" data-pocket-count="horizontal" class="pocket-btn" data-lang="en"></a><script type="text/javascript">!function(d,i){if(!d.getElementById(i)){var j=d.createElement("script");j.id=i;j.src="https://widgets.getpocket.com/v1/j/btn.js?v=1";var w=d.getElementById(i);d.body.appendChild(j);}}(document,"pocket-btn-js");</script></li>
+  
+  <li><div class="g-plusone" data-size="medium"></div></li>
+  
+  </ul>
+</div>
+
     
   </header>
 
 
-  <div class="entry-content"><p>今月頭に<a href="/2011/12/10/eventststs">ブログ書きました</a>が、EventStatsという勉強会の参加者の推移が見れるサービスを公開しました。</p>
+  <div class="entry-content"><p>ふと思い立って、イベントの登録者数の推移が見れるEventStatsをConnpassにも対応させました。</p>
 
 <ul>
   <li><a href="http://eventstats.restartr.com">EventStats - イベントの統計情報が見れます</a></li>
 </ul>
 
-<p>まぁ自分が欲しかっただけなんですけど、使ってみて頂ければ幸いです。
-今回はそのサービスの構成とかについて書いてみます。</p>
+<p><a href="http://connpass.com/about/api/">ConnpassのAPI</a>はイベントの参加者リストまでは取得できませんが、イベント検索はほぼatnd準拠。なので追加したコード量はわずかでした。</p>
 
-<h3 id="section">アジェンダ</h3>
+<p>作った当初は何かいろいろやってたくさんの人に使ってもらえるWebサービスにしたかったれけど、結局は参加者数の推移を見る以外に何の取り柄もないままです。</p>
 
-<ol>
-  <li>全体像</li>
-  <li>システム構成</li>
-  <li>Gitリポジトリ</li>
-  <li>MongoDBのPaaS</li>
-  <li>各イベント管理サービスAPIの違い</li>
-  <li>開発メモ</li>
-</ol>
+<h5 id="section">余談</h5>
 
-<h3 id="section-1">1.全体像</h3>
+<p>このWebサービス、クローラーはPython、WebサイトはScalaで書いていて、一年近く前に書いたコードなのでちょっとだけ時間かかりました。仕事で使っているpythonに比べて、シンタックスを見るのも数ヶ月ぶりなScalaは何をやっているか思い出すのにもひと苦労です。もっとScalaにも取り組みたいのですが…</p>
 
-<p>開発環境も含めて全体像を図にしてみました。(初Cacooですが超べんりですね！)</p>
-
-<p>赤い線がGit操作で、黒い点線がMongoDBへのアクセスです。</p>
-
-<p><a href="https://cacoo.com/diagrams/Cp2yo6tQNlxCm5av"><img border="1" alt="全体像" src="https://cacoo.com/diagrams/Cp2yo6tQNlxCm5av-2260A.png" /></a></p>
-
-<h3 id="section-2">2.システム構成</h3>
-
-<p>大きく分けてwebとクローラーの２つです。
-webはherokuに、クローラーはさくらのVPSに配置。</p>
-
-<p>まずは優先してデータ蓄積を…ということでクローラーをpythonとmongodbで作成しました。
-(サービス的にはやいとこデータためないと意味ないので。)</p>
-
-<p>クローラーは５分おきに起動するのでScalaよりPythonを選択しました。起動コスト重視です。
-(Scalaでサクサク開発できる程のスキルではないというのもありますが… )</p>
-
-<p>実行場所はherokuのworkerも考えたましたが、最終的に既に利用していたさくらVPSでcronジョブとして運用することに。</p>
-
-<p>ということでScalaのWebはデータ参照のみで、データの更新はしません。</p>
-
-<h3 id="git">3.Gitリポジトリ</h3>
-
-<p>webとクローラーは分けてGitで管理。リモートリポジトリはどちらもさくらのVPS上においています。
-ただし、本番リリースは開発PCからherokuに別途pushします。</p>
-
-<p>※webもさくらVPSにリモートリポジトリを持って、本番データを参照するステージング環境として利用しています。</p>
-
-<h4 id="eventstats-web">eventstats-web</h4>
-
-<ul>
-  <li>host: <a href="http://www.heroku.com/">heroku</a> (Chedar)</li>
-  <li>scala
-    <ul>
-      <li>フレームワーク: <a href="https://github.com/unfiltered/unfiltered">unfiltered</a> 0.5.1</li>
-      <li>mongodb接続: <a href="http://api.mongodb.org/scala/casbah/2.1.5.0/">casbah</a> 2.1.5-1</li>
-      <li>テンプレートエンジン: <a href="https://github.com/unfiltered/unfiltered/tree/master/scalate">unfiltered-scalate</a> (ssp)</li>
-      <li>テスティングライブラリ: <a href="https://github.com/unfiltered/unfiltered/tree/master/spec">unfiltered-specs</a></li>
-    </ul>
-  </li>
-  <li>チャートのレンダリング: <a href="http://code.google.com/apis/chart/index.html">Google Chart Tools</a></li>
-</ul>
-
-<h4 id="eventstats-crawler">eventstats-crawler</h4>
-
-<ul>
-  <li>host: さくらのvps</li>
-  <li>python 2.6
-    <ul>
-      <li>フレームワーク: なし</li>
-      <li>mongodb接続: <a href="http://api.mongodb.org/python/1.11/">pymongo</a> 1.11</li>
-      <li>テスティングライブラリ: <a href="http://readthedocs.org/docs/nose/en/latest/">nose</a></li>
-      <li>その他: <a href="http://www.crummy.com/software/BeautifulSoup/">BeautifulSoup</a> (<em>partake.inのwebスクレイピングに利用</em>)</li>
-    </ul>
-  </li>
-</ul>
-
-<h3 id="mongodbpaas">4.MongoDBのPaas</h3>
-
-<p>herokuプラグインとして<a href="https://addons.heroku.com/mongolab">MongoLab</a>と<a href="https://addons.heroku.com/mongohq">MongoHQ</a>の２つが提供されています。どちらも無料枠があるのですが、MongoLabの方が無料で利用できる容量が大きいのでこちらを選択。</p>
-
-<p>月額の利用料金は以下です。（括弧内は1MBあたりの金額の目安です）
-<em>これ以上の容量も利用可能ですが個人で払う範囲ではないと思い除外してます。</em></p>
-
-<h4 id="mongolab">MongoLab</h4>
-<ul>
-  <li>$ 0.00/240MB</li>
-  <li>$10.00/0.5GB  ($0.020/MB)</li>
-  <li>$20.00/2.0GB  ($0.009/MB)</li>
-</ul>
-
-<h4 id="mongohq">MongoHQ</h4>
-
-<ul>
-  <li>$ 0.00/ 16MB</li>
-  <li>$ 5.00/256MB  ($0.019/MB)</li>
-  <li>$15.00/2.0GB  ($0.007/MB)</li>
-</ul>
-
-<h3 id="api">5.各イベント管理サービスAPIの違い</h3>
-
-<p>まずは<strong>atnd, zusaar, partake.inの３サービスに対応</strong>。</p>
-
-<p>それぞれ検索APIを提供してくれているのですが、当然ながら規格とかもないのでリクエストもレスポンスも違いがあります。</p>
-
-<p>データ蓄積する際にそのAPIの差異を吸収して、webアプリから参照する際は気にしなくていい戦略をとりました。
-APIの違い検索のみに特化して違いをまとめると以下の通りです。</p>
-
-<h4 id="atnd">atnd</h4>
-
-<p>イベント数も多いので、このAPIをスタンダードに設定。
-* API仕様
- * <a href="http://api.atnd.org/">http://api.atnd.org/</a>
-* リクエストパス
- * <a href="http://api.atnd.org/events/">/events/</a>
-   * イベントの検索
- * <a href="http://api.atnd.org/events/users/">/events/users/</a>
-   * イベントに参加しているユーザーの検索</p>
-
-<h4 id="zusaar">zusaar</h4>
-
-<p>基本的にはatnd準拠っぽい感じだけど細かい違いがあります。
- * API仕様
-   * <a href="http://www.zusaar.com/doc/api.html">http://www.zusaar.com/doc/api.html</a>
- * リクエストパス
-   * <a href="http://www.zusaar.com/api/event/">/api/event/</a>
-     * イベントの検索
-   * <a href="http://www.zusaar.com/api/event/user/">/api/event/user/</a>
-     * イベントに参加しているユーザーの検索
-atndとの違い
- * エントリポイントやデータのキー名が単数形
-   * events→event
-   * users→user
- * 明確なフィールドとしてのtwitter_idが無い
-    * 管理者も参加ユーザーも
- * ハッシュタグがない
- * レスポンスはjson一択</p>
-
-<h4 id="partakein">partake.in</h4>
-
-<p>全然違うAPI。APIリストにあっても未実装がほとんどなので、利用する際はソースを確認したほうが良いです。
-今回必要になりそうなAPIは２つくらいでした。</p>
-
-<ul>
-  <li>API仕様
-    <ul>
-      <li><a href="http://code.google.com/p/partakein/wiki/PublicWebAPI">http://code.google.com/p/partakein/wiki/PublicWebAPI</a></li>
-    </ul>
-  </li>
-  <li>リクエストパス
-    <ul>
-      <li><a href="http://partake.in/api/event/search/">/api/event/search</a>
-        <ul>
-          <li>イベントの検索</li>
-        </ul>
-      </li>
-      <li><a href="http://partake.in/api/event/get/">/api/event/get</a>
-        <ul>
-          <li>イベントの詳細データ取得</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li>APIのソース(抜粋)
-    <ul>
-      <li><a href="http://code.google.com/p/partakein/source/browse/trunk/Partake/src/main/java/in/partake/controller/api/event/SearchAction.java">in.partake.controller.api.event.SearchAction.java</a></li>
-      <li><a href="http://code.google.com/p/partakein/source/browse/trunk/Partake/src/main/java/in/partake/controller/api/event/EventAction.java">in.partake.controller.api.event.EventAction.java</a></li>
-    </ul>
-  </li>
-</ul>
-
-<p>その他の特徴は以下。</p>
-
-<ul>
-  <li>複数イベントを特定して一括取得するAPIはない</li>
-  <li>フィールド名がcamelCase形式</li>
-  <li>レスポンスはjson一択</li>
-  <li>検索パラメータも特殊かつ少数</li>
-  <li>検索APIで取得できるのはイベントの固定情報のみ
-    <ul>
-      <li>参加枠数はAPIから取得可能</li>
-      <li>変動するユーザー数は取得不可能</li>
-      <li>→Webページをスクレイピングするしかないという結論</li>
-    </ul>
-  </li>
-</ul>
-
-<p>上記をふまえ、atnd/zusaarはJSON形式でAPIからデータ取得。</p>
-
-<p>partake.inのみイベントのリストをAPIから取得して、ユーザー数はWebページのスクレイピングで対応しました。</p>
-
-<h3 id="section-3">6.開発メモ</h3>
-
-<h4 id="webherokuvps">web(heroku)からもクローラー(さくらのvps)からも離れた場所にある</h4>
-
-<p>開発PC上だと気にならなかったのですが、1件1件findしてinsertやupdateをしていると当然遅いです。なのである程度まとめて一気にinsertする方針に変更しました(ベンチ結果はありません ^^;)。
-更新はクローラーの１プロセスからのみ実行されるので、トランザクションとか意識しなくて良いです。なので比較的自由な構成がとれます。</p>
-
-<h4 id="scalajson-api">ScalaでJSON API</h4>
-
-<p>まずはUnfilteredでJSON APIを作成。けど、jsでjson取得〜チャート生成の実行時間が思いの外大きいので、jsonも１枚のHTMLに埋め込む方針に変更。</p>
-
-<h3 id="section-4">さいごに</h3>
-
-<p>ざっと書きだすとこんな感じです。まぁこんな構成もあるよ、ってくらいにしか言えませんが。</p>
-
-<p>webとクローラーを分けたことで、開発中のスキーマ変更が柔軟に行えたのは良かったのですが、スキーマ定義を共通で管理していないので、そのあたりうまく管理できると良いなと思ったり。
-当初はもう少しwebの機能も多かったのですが、効率化をしているうちにシンプルな形に落ち着きました。Scalaのコードもかなり小規模なものになっています。
-イベント管理者の方からのご意見ご要望などいただけると嬉しいです :)</p>
-
-<ul>
-  <li><a href="http://eventstats.restartr.com">EventStats - イベントの統計情報が見れます</a></li>
-</ul>
 </div>
   
   
@@ -373,7 +213,7 @@ atndとの違い
       
   <header>
     
-      <h1 class="entry-title"><a href="/2011/12/10/eventstats/">イベントの参加人数の遷移が見れるサービス『EventStats』を作りました。 #atnd #zusaar #partake</a></h1>
+      <h1 class="entry-title"><a href="/2012/03/25/python-script-for-moving-from-movabletype-to-tumblr/">はてなダイアリーからTumblrへデータ移行するpythonスクリプト</a></h1>
     
     
       <p class="meta">
@@ -389,53 +229,146 @@ atndとの違い
   
 
 
-<time datetime="2011-12-10T18:58:51+09:00" pubdate data-updated="true">2011-12-10 (Sat)</time>
+<time datetime="2012-03-25T02:30:19+09:00" pubdate data-updated="true">2012-03-25 (Sun)</time>
         
       </p>
+    
+    
+      <style type="text/css">
+  .sharing {
+     clear: both;
+  }
+  .sharing li{
+    display: inline;
+    list-style-type: none;
+    float: left;
+    height: 1em;
+    line-height: 1em;
+    padding: 0 10px 0 0 ;
+    margin: 10px 0;
+  }
+  .sharing ul {
+    margin: 1em 0;
+    padding: 1em 0;
+  }
+</style>
+<div class="sharing">
+  <ul>
+    <li><a href="http://blog.restartr.com/page/5/index.html" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加&#8221;><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+  
+  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/page/5/index.html" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/page/5/index.html" >Tweet</a></li>
+  
+  
+  <li><div class="fb-like" data-href="http://blog.restartr.com/page/5/index.html" data-layout="button_count" data-action="like" data-show-faces="false" data-share="true"></div><script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1&appId=368671089894710";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script></li>
+  
+  <li><a data-pocket-label="pocket" data-pocket-count="horizontal" class="pocket-btn" data-lang="en"></a><script type="text/javascript">!function(d,i){if(!d.getElementById(i)){var j=d.createElement("script");j.id=i;j.src="https://widgets.getpocket.com/v1/j/btn.js?v=1";var w=d.getElementById(i);d.body.appendChild(j);}}(document,"pocket-btn-js");</script></li>
+  
+  <li><div class="g-plusone" data-size="medium"></div></li>
+  
+  </ul>
+</div>
+
     
   </header>
 
 
-  <div class="entry-content"><h3>イベント管理サービスについて</h3>
-<p>勉強会などでよく利用されるのが、イベント管理サービス。
+  <div class="entry-content"><p>どうも。もうすぐ入社３ヶ月が経って試用期間が終わろうとしている状況な僕です。</p>
 
-ATNDやZusaar,Partakeなど、様々なサービスがあり、現在も新しいものが生まれている状況。</p>
-<p>今や勉強会を開催する上で必須のサービスとなっていますよね。</p>
-<p>ですが、主催者や参加者にとってそれらのサービスで閲覧できるのは『今どのような状況か』ということだけです。それまでどのように参加者が増えてきたのか、その後も参加者が増えそうか、ということまでは見ることができません。</p>
-<p>「今」ではなく「過去」を知りたい。(by @ReSTARTR)</p>
-<p>ということで作りました。</p>
-<h3>イベントごとに登録数、補欠数、枠数を記録するサービス「EventStats｣</h3>
+<p>すっかり停滞気味のブログですが保守も兼ねて投稿を。</p>
+
+<h3 id="deldeltumblr">はてダから<del>はてブロ</del>Tumblrへ</h3>
+
+<p>とあるブログをはてなダイアリーで書いていたのですが、Tumblrへブログのデータを移行したいという要求が出てきました。ということでpythonで移行スクリプトを書いてみました。</p>
+
+<h3 id="section">ソースコード</h3>
+
+<p>例によってGitHubにて公開しておきます。</p>
+
 <ul>
-<li><a href="http://eventstats.restartr.com">EventStats - イベントの統計情報が見れます</a></li>
+  <li><a href="https://github.com/ReSTARTR/mt2tumblr">https://github.com/ReSTARTR/mt2tumblr</a></li>
 </ul>
-<p>簡単にいうと<a href="http://klout.com">Klout</a>の勉強会バージョン（のとっかかり）です。
 
-このサービスを使えば、登録数と枠数の推移を時系列のチャートで確認することができます。
+<p>python2.6以外はテストしてません( ｰ`дｰ´)ｷﾘｯ</p>
 
-5分おきに各イベント管理サービスの情報を取得して蓄積し、情報を表示しているだけのシンプルなサービスです。
+<h3 id="section-1">使い方</h3>
 
-<em>(※ SVGベースのチャートのため、androidでは2.4/3.0以降でないと見れません)</em></p>
-<p>あと、2011年11月頭くらいからデータ蓄積開始したのでそれ以前のイベントの履歴は見れない場合があるのと、Partakeの枠数が0人なのも蓄積ミスです。</p>
-<h3>使い方</h3>
+<p>oauth2に依存しているので、実行前にインストールしておいてください。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="n">pip</span> <span class="n">install</span> <span class="n">oauth2</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>使い方はREADMEどおりです。いつもどおりのテキトー英文です。</p>
+
 <ol>
-<li><a href="javascript:(function(){s=window.location.href.split('/');type='';if(s[2]=='atnd.org'&amp;&amp;s[3]=='events')type='atnd';else if(s[2]=='www.zusaar.com'&amp;&amp;s[3]=='event')type='zusaar';else if(s[2]=='partake.in'&amp;&amp;s[3]=='events')type='partake';else return false; window.location.href=['http://eventstats.restartr.com/events/'+type,s[4]].join('/');})();">ブックマークレット</a>をブラウザに登録する</li>
-<li>履歴を知りたいイベント管理サービスの詳細ページに移動する</li>
-<li>ブックマークレットを実行する</li>
+  <li>はてなダイアリーの管理画面から”管理 &gt; インポート/エクスポート”でMovableType形式のファイルをダウンロード</li>
+  <li>ダウンロードしたファイルをresourcesディレクトリに配置</li>
+  <li>tumblrにアプリケーションを登録( <a href="http://www.tumblr.com/oauth/apps">http://www.tumblr.com/oauth/apps</a> )</li>
+  <li>consumer_keyとconsumer_secretを入手</li>
+  <li>config.pyを編集する</li>
 </ol>
-<h3>技術的なこと</h3>
-<p>とりあえずHeroku上でScalaのUnfilteredを使って動かしています。
 
-技術的な話しは追々。</p>
-<h3>今後どう料理するか</h3>
-<p>実はMA7の締切りぎりぎりに公開してました。（証拠↓）</p>
-<p><a href="https://ma7.mashupaward.jp/works/478?locale=ja">https://ma7.mashupaward.jp/works/478?locale=ja</a></p>
-<p>が、リソースが足りてないさくらのVPSで動かしていたので、公開したことはとくにアナウンスとかしてませんでした。（MA7には当然のごとく選考漏れでしたが。）で、それからHerokuへの移行を進めつつ機能の修正などをやってたという訳です。</p>
-<p>今後は蓄積したデータをもとに、勉強会運営や勉強会への参加の助けとなる数値を加えていければいいなと。
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="n">CONSUMER_KEY</span> <span class="o">=</span> <span class="s">&#39;&lt;consumer_key&gt;&#39;</span>
+</span><span class="line"><span class="n">CONSUMER_SECRET</span> <span class="o">=</span> <span class="s">&#39;&lt;consumer_secret&gt;&#39;</span>
+</span><span class="line"><span class="n">BASE_HOSTNAME</span> <span class="o">=</span> <span class="s">&#39;&lt;your_tumblr_url&gt;&#39;</span> <span class="c"># &#39;&lt;your-id&gt;.tumblr.com&#39;のように&quot;http://&quot;は抜きで。</span>
+</span><span class="line"><span class="n">PARSE_FILE_PATH</span> <span class="o">=</span> <span class="s">&#39;path/to/movable_type_data.txt&#39;</span>
+</span><span class="line"><span class="n">POST_STATE</span> <span class="o">=</span> <span class="s">&#39;publish&#39;</span> <span class="c"># 動作テストしたいなら&#39;draft&#39;にすると良いです。</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-実はテストとか負荷試験とかあんまりできてないのであまりイジメないでください^^;</p>
+<p>実行する</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">python run.py
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 <ul>
-<li><a href="http://eventstats.restartr.com">EventStats - イベントの統計情報が見れます</a></li>
+  <li>まずはファイルの内容を読み込んで、日時、カテゴリ、タイトルが表示されるので問題ないか確認</li>
 </ul>
+
+<p>OAuth認証する。</p>
+
+<ul>
+  <li>下記のようにURLが表示されるのでブラウザでアクセス。</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="nb">open</span> <span class="ow">in</span> <span class="n">browser</span><span class="p">:</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">tumblr</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">oauth</span><span class="o">/</span><span class="n">authorize</span><span class="err">?</span><span class="n">oauth_token</span><span class="o">=</span><span class="p">{</span><span class="n">OAUTH_TOKEN</span><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="n">oauth_verifier</span><span class="p">:</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<ul>
+  <li>リダイレクト先のURLに含まれる”oauth_verifier”の値をコピーしてターミナルにペースト。
+    <ul>
+      <li>リダイレクト先は404になりますが、oauth_verifierが欲しいだけなのでそれで問題なしです。</li>
+    </ul>
+  </li>
+</ul>
+
+<p>これで、Tumblerへのインポートが始まります。</p>
+
+<p>(ﾟдﾟ)ｳﾏｰ</p>
+
+<h3 id="section-2">注意事項</h3>
+
+<ul>
+  <li>APIの呼び出し回数の制限に引っかかるかもしれませんがそのへんのエラー制御はできていません。</li>
+  <li>MovableType形式のデータをTumblrに移行するスクリプトとしてつくっていますが、実際にははてなダイアリーからMovableType形式でエクスポートしたデータでしかテストしていません。それ以外で動くかは保証できません…</li>
+  <li>投稿時間はJSTからGMTに変換してます。不要なら適当に編集してください。</li>
+</ul>
+
 </div>
   
   
@@ -498,6 +431,14 @@ ATNDやZusaar,Partakeなど、様々なサービスがあり、現在も新し�
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2014/04/07/mysql-character-set-utf8mb4/">MySQLでutf8mb4を扱う場合は必要なカラムと接続時だけ明示的に指定する</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2014/04/06/reload-varnish-vcl/">VarnishのVCLを再起動なしに再読み込みする</a>
+      </li>
+    
+      <li class="post">
         <a href="/2014/04/06/move-from-wordpress-to-octopress/">WordpressからOctopressに移行</a>
       </li>
     
@@ -509,20 +450,12 @@ ATNDやZusaar,Partakeなど、様々なサービスがあり、現在も新し�
         <a href="/2013/04/17/bind-a-variable-to-closure-in-python/">pythonのクロージャに変数を束縛する方法</a>
       </li>
     
-      <li class="post">
-        <a href="/2013/04/05/my-first-pytest/">pythonのテストにpytestを使ってみた</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2013/04/02/retirement201303/">Kauli株式会社を退職しました</a>
-      </li>
-    
   </ul>
 </section>
 <section>
   <h1>Categories</h1>
   <ul id="categories">
-    <li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
+    <li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/mysql/'>mysql</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
   </ul>
 </section>
 <section>
