@@ -4,7 +4,7 @@
   <title><![CDATA[Category: varnish | I Will Survive]]></title>
   <link href="http://blog.restartr.com/category/varnish/atom.xml" rel="self"/>
   <link href="http://blog.restartr.com/"/>
-  <updated>2014-04-19T12:16:31+09:00</updated>
+  <updated>2014-04-19T13:11:27+09:00</updated>
   <id>http://blog.restartr.com/</id>
   <author>
     <name><![CDATA[ReSTARTR]]></name>
@@ -38,7 +38,7 @@ active        579 boot
 <h3 id="vclload-vcl">vcl.load: 新規にVCLをロードする</h3>
 
 <p><code>bash
-$ varnishadm -T localhost:6082 vcl.load boot-`date+%Y%m%d%H%M%S` /etc/varnish/iqon_api.vcl
+$ varnishadm -T localhost:6082 vcl.load boot-`date+%Y%m%d%H%M%S` /etc/varnish/default.vcl
 VCL compiled.
 </code></p>
 

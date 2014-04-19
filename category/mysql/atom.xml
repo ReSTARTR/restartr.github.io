@@ -4,7 +4,7 @@
   <title><![CDATA[Category: mysql | I Will Survive]]></title>
   <link href="http://blog.restartr.com/category/mysql/atom.xml" rel="self"/>
   <link href="http://blog.restartr.com/"/>
-  <updated>2014-04-19T12:16:31+09:00</updated>
+  <updated>2014-04-19T13:11:27+09:00</updated>
   <id>http://blog.restartr.com/</id>
   <author>
     <name><![CDATA[ReSTARTR]]></name>
@@ -281,8 +281,8 @@ $ mysql -h 192.168.1.164 -uroot test -e 'set names utf8mb4; select * from user'
 
 <p><code>bash
 Character set 'utf8mb4' is not a compiled character set and is not specified in the '/usr/share/mysql/charsets/Index.xml' file
-/home/yoshida/iqon_api/vendor/bundle/ruby/2.0.0/gems/mysql2-0.3.13/lib/mysql2/client.rb:58:in `connect': Can't initialize character set utf8mb4 (path: /usr/share/mysql/charsets/) (Mysql2::Error)
-        from /home/yoshida/iqon_api/vendor/bundle/ruby/2.0.0/gems/mysql2-0.3.13/lib/mysql2/client.rb:58:in `initialize'
+/home/yoshida/hoge/vendor/bundle/ruby/2.0.0/gems/mysql2-0.3.13/lib/mysql2/client.rb:58:in `connect': Can't initialize character set utf8mb4 (path: /usr/share/mysql/charsets/) (Mysql2::Error)
+        from /home/yoshida/hoge/vendor/bundle/ruby/2.0.0/gems/mysql2-0.3.13/lib/mysql2/client.rb:58:in `initialize'
         from test_mysql.rb:3:in `new'
         from test_mysql.rb:3:in `&lt;main&gt;'
 </code></p>
