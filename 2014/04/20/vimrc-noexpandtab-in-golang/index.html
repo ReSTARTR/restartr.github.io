@@ -175,6 +175,12 @@ set shiftwidth=2 けれど、Goの場合はインデントはハードタブが�
 
 <p><code>%:t</code>はカレントバッファのファイル名（ディレクトリ含まない）。</p>
 
+<p>autocmd使うほうが良いかも。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="vim"><span class="line"><span class="k">au</span> <span class="nb">BufNewFile</span><span class="p">,</span><span class="nb">BufRead</span> *.<span class="k">go</span> <span class="k">set</span> <span class="nb">noexpandtab</span> <span class="nb">tabstop</span><span class="p">=</span><span class="m">4</span> <span class="nb">shiftwidth</span><span class="p">=</span><span class="m">4</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
 <p>ちなみに、<code>set expandtab</code>してる状態でタブを入力する場合は<code>Ctrl-v + &lt;tab&gt;</code>でハードタブが入力できます。</p>
 </div>
 
