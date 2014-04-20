@@ -11,10 +11,7 @@
   <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="Scalaプログラミング入門をざっと読んでから少し間が空いてしまいました。
-第１回Scala座を見たりして刺激もらったのでちょっとScala弄りなど。
-※Scala座については非公式にトゥギャらせてもらっています。：第１回Scala座非公式勝手まとめ
-ちょっと雰囲気を振り返るため、 &hellip;">
+  <meta name="description" content="SCALAプログラミング入門 [単行本] お盆前にScalaプログラミング入門を購入して、少しづつScalaについて学んでいます。 通称「コップ本」と読み比べた上で、とっつきやすく実践寄りな「Scalaプログラミング入門」を選択しました。 Scalaスケーラブルプログラミング[コンセプト&amp &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -125,119 +122,6 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/2010/09/05/processing-the-file-formatted-tsv/">TSVファイルを処理する</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2010-09-05T18:22:53+09:00" pubdate data-updated="true">2010-09-05 (Sun)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Scalaプログラミング入門をざっと読んでから少し間が空いてしまいました。<br />
-第１回Scala座を見たりして刺激もらったのでちょっとScala弄りなど。<br />
-※Scala座については非公式にトゥギャらせてもらっています。：<a href="http://togetter.com/li/47287">第１回Scala座非公式勝手まとめ</a></p>
-<p>ちょっと雰囲気を振り返るため、普段PHPでよくやるTSVファイルの読み込みでテスト。</p>
-<p>foo.tsvの中身はこんな感じ。</p>
-<pre class="brush:c">
-u01,Tokyo
-u02,Osaka
-u03,Nagoya
-u04,Tokyo
-u05,Fukuoka
-u06,Nagoya
-u07,Nagoya
-u08,Shiga
-u09,Hokkaido
-u10,Osaka
-</pre>
-<p>これの転置インデックスを作成したい。</p>
-<p>で、<a href="http://rainyday.blog.so-net.ne.jp/2007-12-01">こちらのブログ記事</a>とかを参考にしたりして、何回か試行錯誤してできたのがこちらのソース。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-<span class="line-number">21</span>
-<span class="line-number">22</span>
-<span class="line-number">23</span>
-</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">import</span> <span class="nn">scala.collection.mutable.HashMap</span>
-</span><span class="line"><span class="k">import</span> <span class="nn">scala.io.Source</span>
-</span><span class="line"><span class="k">import</span> <span class="nn">scala.io.BufferedSource</span>
-</span><span class="line"><span class="k">object</span> <span class="nc">ReadTsv</span>
-</span><span class="line"><span class="o">{</span>
-</span><span class="line">  <span class="k">def</span> <span class="n">main</span><span class="o">(</span> <span class="n">args</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="o">)</span>
-</span><span class="line">  <span class="o">{</span>
-</span><span class="line">    <span class="k">val</span> <span class="n">source</span> <span class="k">=</span> <span class="nc">Source</span><span class="o">.</span><span class="n">fromFile</span><span class="o">(</span> <span class="s">&quot;foo.txt&quot;</span> <span class="o">)</span>
-</span><span class="line">    <span class="k">try</span> <span class="o">{</span>
-</span><span class="line">      <span class="k">var</span> <span class="n">m</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">[</span><span class="kt">String</span>,<span class="kt">List</span><span class="o">[</span><span class="kt">String</span><span class="o">]]</span>
-</span><span class="line">      <span class="k">for</span><span class="o">(</span> <span class="n">line</span> <span class="k">&lt;-</span> <span class="n">source</span><span class="o">.</span><span class="n">getLines</span> <span class="o">)</span> <span class="o">{</span>
-</span><span class="line">        <span class="k">val</span> <span class="n">x</span><span class="k">:</span><span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="n">line</span><span class="o">.</span><span class="n">stripLineEnd</span><span class="o">.</span><span class="n">split</span><span class="o">(</span><span class="s">&quot;,&quot;</span><span class="o">)</span>
-</span><span class="line">        <span class="n">m</span><span class="o">.</span><span class="n">update</span><span class="o">(</span><span class="n">x</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span> <span class="o">,</span> <span class="n">m</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="n">x</span><span class="o">(</span><span class="mi">1</span><span class="o">))</span> <span class="k">match</span> <span class="o">{</span>
-</span><span class="line">          <span class="k">case</span> <span class="nc">Some</span><span class="o">(</span><span class="n">s</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">x</span><span class="o">(</span><span class="mi">0</span><span class="o">)</span> <span class="o">::</span> <span class="n">s</span>
-</span><span class="line">          <span class="k">case</span> <span class="nc">None</span>    <span class="k">=&gt;</span> <span class="nc">List</span><span class="o">(</span> <span class="n">x</span><span class="o">(</span><span class="mi">0</span><span class="o">)</span> <span class="o">)</span>
-</span><span class="line">        <span class="o">})</span>
-</span><span class="line">      <span class="o">}</span>
-</span><span class="line">      <span class="n">println</span><span class="o">(</span> <span class="n">m</span> <span class="o">)</span>
-</span><span class="line">    <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
-</span><span class="line">      <span class="n">source</span><span class="o">.</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">BufferedSource</span><span class="o">].</span><span class="n">close</span>
-</span><span class="line">    <span class="o">}</span>
-</span><span class="line">  <span class="o">}</span>
-</span><span class="line"><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>実行</p>
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>scalac ReadTsv.scala
-</span><span class="line"><span class="nv">$ </span>scala ReadTsv
-</span><span class="line">Map<span class="o">(</span>Shiga -&gt; List<span class="o">(</span>u08<span class="o">)</span>, Nagoya -&gt; List<span class="o">(</span>u07, u06, u03<span class="o">)</span>, Tokyo -&gt; List<span class="o">(</span>u04, u01<span class="o">)</span>, Osaka -&gt; List<span class="o">(</span>u10, u02<span class="o">)</span>, Fukuoka -&gt; List<span class="o">(</span>u05<span class="o">)</span>, Hokkaido -&gt; List<span class="o">(</span>u09<span class="o">))</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>手続き型な感じが色濃い気がするけど、もっと関数型的になるのでしょうか。。<br />
-とりあえずコレクションとパターンマッチの練習にはなりました。</p>
-<p>他人のプログラムを拝見するなどして、もっとScalaの理解を深める必要がありそうです。</p>
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
       <h1 class="entry-title"><a href="/2010/08/23/beginning-scala/">Scalaプログラミング入門(とその他Scala本)</a></h1>
     
     
@@ -301,6 +185,72 @@ u10,Osaka
 
     </article>
   
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2010/08/22/change-my-iphone3gs-display/">バックライトがつかないiPhone3GSの液晶を交換してみた</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-08-22T21:45:17+09:00" pubdate data-updated="true">2010-08-22 (Sun)</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><a title="IMG_2217 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/4914863453/"><img src="http://farm5.static.flickr.com/4119/4914863453_161bbe155f.jpg" alt="IMG_2217" width="333" height="500" /></a><br />
+タイトルそのまんまですが、iPhone3GSの液晶を交換しました。<br />
+<em>※参考にしていただいければ幸いですが、自己責任でお願いしますm(_ _)m</em></p>
+<p><strong><a id="more"></a><a id="more-284"></a>経緯</strong><br />
+FUJIROCK2010に行って、前夜祭で雨にやられてiPhone3GSのバックライトがつかなくなってしまいました。<br />
+ただし、液晶が見にくいだけで一応の一通りの機能に問題はありません。SoftBankショップに相談しにいったら修理するくらいならiPhone3GS/iPhone4に交換したほうが良いとのこと。でも今更iPhone4はスルーの予定だったし、iPhone3GSに変えるのもなんだかプライドが許さないわけです。<br />
+ということで、ひとまず3G回線をもともとつかっていた端末(SoftBank 911T)に機種変更してしのいでいました。</p>
+<p>が、iPhoneなしの生活がしんどくなってきたため、液晶交換に踏み切りました。ここまできたら保証もなにも気になりません。自己責任どんとこいです。</p>
+<p><a href="http://ilab.cc/lcd.html">交換作業を依頼することもできます</a>が、コスト削減のためにも自分でやります。必要なものは<a href="http://ilab.shop-pro.jp/?pid=15252505">iPhone3GS 液晶パネル</a>(<del>\7,800</del> \4,800(※2011/04/11現在))のみ。<a href="http://ilab.shop-pro.jp/?pid=14642995">専用の工具</a>(\800)も売っていますが、普通の精密ドライバーがあればなんとかなります。</p>
+<p><strong>交換の過程</strong><br />
+詳しい過程は<a href="http://mutodanoshi.com/blog/2009/08/iphne-3gs-lcd-replacement-01.html">こちら</a>を参照したほうが良いでしょうｗ（いちいち写真とるのめんどくさくて…）</p>
+<p><a title="IMG_2210 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/4914863441/"><img src="http://farm5.static.flickr.com/4122/4914863441_8cc97bce61.jpg" alt="IMG_2210" width="500" height="333" /></a><br />
+こんな感じのパッケージがダンボールに入れられて送られてきます。</p>
+<p>まずiPhoneの分解から。<br />
+本体を開けるとこんな感じで、本体右上あたりに「１」と「２」のシールが貼られたパーツで液晶とパネルが接続されています。それを引き抜けばOK。<br />
+<a title="IMG_2214 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/4914863445/"><img src="http://farm5.static.flickr.com/4118/4914863445_4e52429956.jpg" alt="IMG_2214" width="500" height="333" /></a></p>
+<p>次は液晶を全面のパネルからはずします。<br />
+液晶は金属フレームとくっついてるのですが、ただ粘着シートでくっついてるだけ（下写真）なです。<br />
+<a title="IMG_2219 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/4914863455/"><img src="http://farm5.static.flickr.com/4097/4914863455_f35d34792a.jpg" alt="IMG_2219" width="500" height="333" /></a></p>
+<p>そーっと液晶をひっペがすと鏡面が現れます（下写真右側がそれ）。で、新しい液晶の裏面のシートをはがして金属フレームとくっつけます。<br />
+<a title="IMG_2223 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/4914863461/"><img src="http://farm5.static.flickr.com/4138/4914863461_638b4d6a87.jpg" alt="IMG_2223" width="500" height="333" /></a></p>
+<p>ちなみにもともとくみこまれていたものにはQRコードのシールが貼ってますが、新しいものにはついてません。<br />
+（接続部分の「２」のシールもありません）<br />
+<a title="IMG_2222 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/4914863457/"><img src="http://farm5.static.flickr.com/4073/4914863457_6356258b66.jpg" alt="IMG_2222" width="500" height="333" /></a></p>
+<p>ちゃんと動作するか、バックライトが点くか確認してみます。<br />
+<a title="IMG_2232 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/4914890785/"><img src="http://farm5.static.flickr.com/4134/4914890785_2c2a32d671.jpg" alt="IMG_2232" width="500" height="333" /></a></p>
+<p>あとは元通りにするだけ。最後に本体下部のネジを締めて完了です。<br />
+<a title="IMG_2234 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/4914890885/"><img src="http://farm5.static.flickr.com/4137/4914890885_41b1e93b6d.jpg" alt="IMG_2234" width="500" height="333" /></a></p>
+<p>あ、前面パネルが緑色なのはこのシート使ってるからです。ヨドバシとかハンズとかに売ってます。印象がポップになるので気に入ってます。<br />
+<a title="IMG_2235 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/4914890933/"><img src="http://farm5.static.flickr.com/4115/4914890933_250318d01a.jpg" alt="IMG_2235" width="500" height="333" /></a></p>
+<p>機種変更は9月の締め日(9/11)まで待ち、それまではipod touchとして使います。</p>
+</div>
+  
+  
+
+
+    </article>
+  
   <div class="pagination">
     
       <a class="prev" href="/page/25/">&larr; Older</a>
@@ -356,11 +306,7 @@ u10,Osaka
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/2014/04/07/mysql-character-set-utf8mb4/">MySQLでutf8mb4を扱う場合は必要なカラムと接続時だけ明示的に指定する</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2014/04/06/reload-varnish-vcl/">VarnishのVCLを再起動なしに再読み込みする</a>
+        <a href="/2014/04/20/vimrc-noexpandtab-in-golang/">vimで特定のファイルタイプだけタブインデントにする方法</a>
       </li>
     
       <li class="post">
@@ -375,12 +321,16 @@ u10,Osaka
         <a href="/2013/04/17/bind-a-variable-to-closure-in-python/">pythonのクロージャに変数を束縛する方法</a>
       </li>
     
+      <li class="post">
+        <a href="/2013/04/05/my-first-pytest/">pythonのテストにpytestを使ってみた</a>
+      </li>
+    
   </ul>
 </section>
 <section>
   <h1>Categories</h1>
   <ul id="categories">
-    <li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/mysql/'>mysql</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
+    <li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
   </ul>
 </section>
 <section>
