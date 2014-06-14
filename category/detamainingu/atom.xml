@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: データマイニング | I Will Survive]]></title>
+  <link href="http://blog.restartr.com/category/detamainingu/atom.xml" rel="self"/>
+  <link href="http://blog.restartr.com/"/>
+  <updated>2014-06-14T15:31:30+09:00</updated>
+  <id>http://blog.restartr.com/</id>
+  <author>
+    <name><![CDATA[ReSTARTR]]></name>
+    <email><![CDATA[yoshida.masaki+restartr@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[第一回 にこにこテキストマイニングに参加してきた #nicoTextMining]]></title>
+    <link href="http://blog.restartr.com/2011/02/20/attended-nicotextmining-1st/"/>
+    <updated>2011-02-20T09:30:52+09:00</updated>
+    <id>http://blog.restartr.com/2011/02/20/attended-nicotextmining-1st</id>
+    <content type="html"><![CDATA[<p>第一回 にこにこテキストマイニングに参加してきました。</p>
+
+<ul>
+  <li><a href="http://atnd.org/events/12264">第1回 にこにこテキストマイニング勉強会</a></li>
+</ul>
+
+<p>主催は@NLP_PRMさんと@toilet_luhchさん。会場はオラクル青山センターさん。
+懇親会と二次会にも参加させていただき、皆様の豊富な知識に圧倒されて参りました。精進しようと思います。いろいろな話しをありがとうございました。</p>
+
+<p>当日の内容はTogetterにまとめられています。</p>
+
+<ul>
+  <li><a href="http://togetter.com/li/102922">Togetter - 「第１回 にこにこテキストマイニング勉強会 #nicoTextMining #1</a></li>
+</ul>
+
+<p>以下、勉強会の資料と私的メモです。</p>
+
+<p><a id="more"></a><a id="more-667"></a></p>
+
+<h3 id="antibayesianhttptwittercomantibayesian--"><a href="http://twitter.com/#!/AntiBayesian">@AntiBayesian</a> : 「テキストマイニングの歩き方」</h3>
+<p>発表資料：<a href="http://www24.atpages.jp/antibayesian/up/src/up0006.pdf">テキストマイニングの歩き方</a></p>
+
+<p>「技術云々ではなく、どのようにテキストマイニングを活かすか」、という今回の勉強会の趣旨に沿った発表内容。ナレッジの自動蓄積のために、Wikiとかを使うのではなく日報メールを解析するというのは面白いですね。情報共有ツールの導入ってほとんどが失敗に終わる気がします。それよりは慣れたフォーマットを活かす方向に考えてみる、と。</p>
+
+<ul>
+  <li>アンケート</li>
+  <li>封書解答で20%の回答率</li>
+  <li>個人情報を求めると10%の回答率</li>
+  <li>言語処理における様々な解析
+    <ul>
+      <li>押さえるべきところ</li>
+      <li>形態素解析</li>
+      <li>構文解析</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="toiletlunchhttptwittercomtoiletlunch--"><a href="http://twitter.com/#!/toilet_lunch">@toilet_lunch</a> : 「ゆるふわテキストマイニングをしてみよう」</h3>
+<p>発表資料：
+<a href="http://toilet-lunch.sakura.ne.jp/nicoTextMining01.pdf">ゆるふわテキストマイニングをしてみよう</a></p>
+
+<p>「ゆるふわ」というよりはけっこうガチな内容。私はNLPを少しかじったことがあったので、なんとかひと通りの用語は理解できました。現在の自然言語処理では何ができて、何が問題になるのか、というのがよくわかりました。</p>
+
+<ul>
+  <li>評判分析ツール
+    <ul>
+      <li><a href="http://toilet-lunch.shisobu.in/search.cgi">http://toilet-lunch.shisobu.in/search.cgi</a></li>
+      <li>一日でつくった</li>
+      <li>評価表現（ポジティブ、ネガティブの二種）</li>
+      <li>形態素解析
+        <ul>
+          <li>辞書とマッチさせる</li>
+          <li>活用語幹を用いる</li>
+          <li>単語感情極性対応表</li>
+        </ul>
+      </li>
+      <li>精度問題
+        <ul>
+          <li>ジャンルごとにネガポジが反転する場合も（「薄い」とか）</li>
+        </ul>
+      </li>
+      <li>クリーニング</li>
+      <li>言語の困難さ
+        <ul>
+          <li>否定表現
+            <ul>
+              <li>「わからない訳でもなくない？」</li>
+            </ul>
+          </li>
+          <li>未知語
+            <ul>
+              <li>ヤバい、素で</li>
+            </ul>
+          </li>
+          <li>助詞の省略</li>
+          <li>複合表現</li>
+          <li>表記ゆれ</li>
+          <li>複数評価の混在
+            <ul>
+              <li>一文に含まれる結論が読みにくい</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>「テキストマイニング」の定義があいまい
+        <ul>
+          <li>目的によって手法が異なる
+            <ul>
+              <li>目的を決め手手法を選ぶこと。</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>QA
+        <ul>
+          <li>名詞より形容詞のほうが未知語になりにくい</li>
+          <li>皮肉とか大変。</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="langstathttptwittercomlangstat--"><a href="http://twitter.com/#!/langstat">@langstat</a> ： 「コピー＆ペーストのみで始めるテキストマイニング超入門」</h3>
+
+<div style="width:425px" id="__ss_6973454"><strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/langstat/nicoteki1" title="Nicoteki_1">Nicoteki_1</a></strong><object id="__sse6973454" width="425" height="355"><param name="movie" value="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=nicoteki1-110218081836-phpapp02&amp;stripped_title=nicoteki1&amp;userName=langstat" /><param name="allowFullScreen" value="true" /><param name="allowScriptAccess" value="always" /><embed name="__sse6973454" src="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=nicoteki1-110218081836-phpapp02&amp;stripped_title=nicoteki1&amp;userName=langstat" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="355" /></object>
+<div style="padding:5px 0 12px">View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/langstat">Yuichiro Kobayashi</a>.</div>
+</div>
+<p>自然言語処理における一連の解析を、無料のWebサービスを使ってコピペでやってみよう、というもの。
+これらのツールがひと通り用意されていることに驚き。ただし、すべて統合したものはないようなので、ぜひ欲しいなと思います。（※APIとかあれば良いのですが…)</p>
+
+<ul>
+  <li>無料の解析用テキスト
+    <ul>
+      <li>青空文庫</li>
+      <li>首相のスピーチテキストとかパブリックドメインのもの</li>
+    </ul>
+  </li>
+  <li>用例検索</li>
+  <li>日本語形態素解析
+    <ul>
+      <li>形態素解析
+        <ul>
+          <li><a href="http://cgi.geocities.jp/ydevnet/sample/jlp/sample2/ma_sample.php">日本語形態素解析</a></li>
+          <li><a href="http://www.langrid.org/playground/morphological-analyzer.html">Morphological Analyzer - Language Grid Playground</a>
+            <ul>
+              <li>Mecab/ChaSenとかで試せる</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>構文解析
+        <ul>
+          <li><a href="http://www.langrid.org/playground/dependency-parser.html">Dependency Parser - Language Grid Playground</a></li>
+          <li>構文解析器
+            <ul>
+              <li><a href="http://chasen.org/~taku/software/cabocha/">CaboCha</a></li>
+              <li><a href="http://www-lab25.kuee.kyoto-u.ac.jp/nl-resource/knp.html">KNP</a>：格文法
+                <ul>
+                  <li>どちらがよいかは好みの問題</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li><a href="http://hp.vector.co.jp/authors/VA035840/vba/vbafreq.htm">日本語文章の頻度分析</a>
+        <ul>
+          <li>VBAツール</li>
+          <li>Webサービスではない。</li>
+        </ul>
+      </li>
+      <li><a href="http://aoki2.si.gunma-u.ac.jp/calculator/">多機能 WEB 計算機</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="gepurohttptwittercomgepuro--nltk"><a href="http://twitter.com/#!/gepuro">@gepuro</a> ： 「初めてのnltk」</h3>
+
+<div style="width:425px" id="__ss_6979340"><strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/gepuro/nltk-for-biginer-6979340" title="Nltk for biginer">Nltk for biginer</a></strong><object id="__sse6979340" width="425" height="355"><param name="movie" value="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=nltkforbiginer-110218204954-phpapp01&amp;stripped_title=nltk-for-biginer-6979340&amp;userName=gepuro" /><param name="allowFullScreen" value="true" /><param name="allowScriptAccess" value="always" /><embed name="__sse6979340" src="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=nltkforbiginer-110218204954-phpapp01&amp;stripped_title=nltk-for-biginer-6979340&amp;userName=gepuro" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="355" /></object>
+<div style="padding:5px 0 12px">View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/gepuro">gepuro</a>.</div>
+</div>
+<p>学部二年生の発表。
+nltkとpython-twitterをつかったテキストマイニング。つまづきにもめげず、テキストマイニングをしてみたようです。Tweetもしたんですけど、挫折も含めて発表するのは、これからはじめてみたい方にとって有益な情報だと思いました。同じつまづきをしないためにも。</p>
+
+<h3 id="bob3bob3httptwittercombob3bob3--"><a href="http://twitter.com/#!/bob3bob3">@bob3bob3</a> ： 「アンケート自由回答のテキストマイニング事例」</h3>
+<p>発表資料：
+  * <a href="http://www.ikic.co.jp/service/pdf/marketing_6.pdf">「楽しい食事」ってどんな食事？
+? Text Mining Studio を用いた自由回答の分析事例 ?</a></p>
+
+<p>テキストマイニングをどう活用して何を達成するのか、というとても具体的な活用事例でした。私の場合、仕事がWebサービスなのでそっちに興味が偏りがちですが、こういう実生活における分析にも興味を頂きました。アンケートという自由回答形式だからこそ得られるものもあるんですね。</p>
+
+<ul>
+  <li>商用テキストマイニングツール
+    * 一番安いワードマイナーでも３０万する。
+    * 野村総研のツールが６割のシェア。
+    * 単語出現頻度分析
+    <ul>
+      <li>表記の違いは辞書つくる
+        <ul>
+          <li>ゴールデンウィークとGWなど</li>
+        </ul>
+      </li>
+      <li>名詞、形容詞、動詞に絞る</li>
+    </ul>
+  </li>
+  <li>特徴語分析
+    <ul>
+      <li>補完類似度</li>
+    </ul>
+  </li>
+  <li>コレスポンデンス分析</li>
+  <li>QA1
+    <ul>
+      <li>コレスポンデンス分析のグルーピングが困難な場合はグルーピングしない</li>
+      <li>今回はうまくいった</li>
+    </ul>
+  </li>
+  <li>QA2
+    <ul>
+      <li>あとで「状況」をグループ化しにくい
+        <ul>
+          <li>アンケートなら質問を工夫する「〜な時はどうですか？」</li>
+          <li>ブログとかあとから集めて分析する場合は難しい。</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>QA3
+    <ul>
+      <li>女性より男性のほうがアンケートに含まれる単語数が多い傾向
+        <ul>
+          <li>グラフで見ると女性のほうが全体的に上回る（単語出現頻度の分析において）</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>QA4
+    <ul>
+      <li>ツールのよしあし
+        <ul>
+          <li>TRUE TELLERは完成されているが、機能は限定されている。</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="section">関連エントリ</h3>
+<ul>
+  <li><a href="http://d.hatena.ne.jp/hamadakoichi/20110219/p1">第１回 にこにこテキストマイニング勉強会 ( #nicoTextMining #1) に参加してきた - hamadakoichi blog</a></li>
+  <li><a href="http://d.hatena.ne.jp/nokuno/20110220/1298102734">第1回にこにこテキストマイニング勉強会に参加しました #nicotextmining - nokunoの日記</a></li>
+  <li><a href="http://d.hatena.ne.jp/yokkuns/20110219/1298102645">第1回 にこにこテキストマイニング勉強会（#nicoTextMining）に参加してきた - yokkunsの日記</a></li>
+  <li><a href="http://d.hatena.ne.jp/langstat/20110219/p1">にこテキ #1 - コーパスいぢり ?langstatの研究日誌?</a></li>
+</ul>
+
+<p>みなさん日記を書くの早すぎです…勉強会が終わった、と思ったらもうエントリされていましたｗ
+そのスピード感、見習いたいです。</p>
+
+<h3 id="section-1">余談</h3>
+<p>今回からTwitter名刺を用意していきました。Twitterアイコンがプリントされているので、初めてお会いする方もアイコンは見たことあると言って頂けたのが良かったです。勉強会には、会社の名詞よりTwitter名刺が重要ですね。</p>
+
+]]></content>
+  </entry>
+  
+</feed>

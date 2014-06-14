@@ -1,0 +1,564 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>I Will Survive</title>
+  <meta name="author" content="ReSTARTR">
+
+  
+  <meta name="description" content="最近、PHPのテンプレートエンジンTwigの紹介記事をちらほら見かけるようになってきました。 ウノウラボ Unoh Labs: PHPテンプレートエンジンTwigをいじってみました
+テンプレートエンジンを素のPHPからTwigに乗り換えた理由 - id:anatooのブログ
+[Twig] &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://blog.restartr.com/page/28/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+   <link href="/stylesheets/data-table.css" media="screen, projection" rel="stylesheet" type="text/css" />
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="I Will Survive" type="application/atom+xml">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+
+<!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href='http://fonts.googleapis.com/css?family=Lato:400,100,100italic,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:200,300,400,500,600,700,900' rel='stylesheet' type='text/css'>
+
+
+	<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$$','$$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-894530-10']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+  <style>html{background: url("/images/background.png") no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;}</style>
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+</hgroup>
+
+</header>
+  <!-- <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:blog.restartr.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav> -->
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2009/12/31/twig-is-the-template-engine-written-in-php/">Phpのテンプレートエンジンtwigとは</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-12-31T02:10:55+09:00" pubdate data-updated="true">2009-12-31 (Thu)</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><div>最近、PHPのテンプレートエンジン<a href="http://www.twig-project.org/" target="_blank">Twig</a>の紹介記事をちらほら見かけるようになってきました。</div>
+<div>
+<ul>
+<li><span style="font-family: Consolas, Monaco, 'Courier New', Courier, monospace; line-height: 18px; font-size: 12px; white-space: pre;"><a href="http://labs.unoh.net/2009/12/phptwig.html" target="_blank">ウノウラボ Unoh Labs: PHPテンプレートエンジンTwigをいじってみました</a></span></li>
+<li><span style="font-family: Consolas, Monaco, 'Courier New', Courier, monospace; line-height: 18px; font-size: 12px; white-space: pre;"><a href="http://d.hatena.ne.jp/anatoo/20091225/1261749843" target="_blank">テンプレートエンジンを素のPHPからTwigに乗り換えた理由 - id:anatooのブログ</a></span></li>
+<li><a href="http://blog.nully.org/archives/154">[Twig]なにやら話題のテンプレートエンジンTwigを使ってみた | Nullyのぶろぐ</a></li>
+</ul>
+</div>
+<div>自分自身も気になってはいたのですが、試してみるきっかけがなく今に至ってしまいました。現在のプロジェクトではviewは関わらないのですが、それまではSmarty2を使っていました。Smarty3や他テンプレートエンジンも気になるところですが、次はTwigがくるだろうと勝手に予測しています。</div>
+<div>とりあえず今回はTwigの特徴と他テンプレートエンジンとの比較をまとめてみます。</div>
+<div><a id="more"></a><a id="more-3"></a></div>
+<h2>Twigの特徴</h2>
+<p>公式サイトから英訳（適当に）してみました。</p>
+<div>
+<ul>
+<li>簡潔に書ける</li>
+<li>テンプレート指向文法である</li>
+<li>自動エスケープなど必要なものをすべてサポートしている</li>
+<li>文法を簡単に学習できる（※他テンプレートエンジンはPHP4ベースで作られていたりして、web開発においてベストプラクティスとして採用できない。）</li>
+<li>高い拡張性で独自DSLも作れる</li>
+<li>ユニットテストされているのでライブラリは堅牢で、大きなプロジェクトにもすぐに使える。</li>
+<li>ちゃんとドキュメント化されている：</li>
+<li>セキュリティでは自動出力エスケープやsandboxモードによって安全性を確保</li>
+<li>詳細なエラーメッセージでデバッグもカンタン</li>
+<li>テンプレートを素のPHPコードにコンパイルするので、普通のPHPコードに比べてオーバーヘッドを最小限に抑えることができる。</li>
+</ul>
+</div>
+<h2>開発者について</h2>
+<div>Symfony開発者でもある<a href="http://fabien.potencier.org/article/34/templating-engines-in-php" target="_blank">Fabienのブログ記事</a>（と<a href="http://fabien.potencier.org/article/35/templating-engines-in-php-follow-up" target="_blank">そのフォロー記事</a>）を見れば、開発の経緯や他テンプレートエンジンとの比較、それからPHP自体テンプレートエンジンじゃないかという点について言及しています。</div>
+<div>素のPHPをViewとして使いたい人はSymfonyTemplateComponentがスタンドアロンで動作するのでそれを使うと良いと。ViewでPHP的な文法を用いることに疑問を持っていたようです。</div>
+<div>
+<h2>既存テンプレートエンジンとの比較</h2>
+</div>
+<div>
+<div>もともと彼は以下機能を求めてテンプレートエンジンを探していたので、この観点でそれぞれのテンプレートエンジンを評価しています。(なのでこれがそのままTwigの特徴になっています。）</div>
+<div>
+<div>
+<ul>
+<li>Concision (記述が簡潔)</li>
+<li>Template oriented syntax (テンプレート指向な文法)</li>
+<li>Reusability (再利用性)</li>
+<li>Security (安全性)</li>
+<li>Sandbox mode (砂場モード)</li>
+</ul>
+</div>
+</div>
+</div>
+<div>
+<div><strong><a href="http://www.smarty.net/" target="_blank">Smarty</a></strong><strong>:<span style="font-weight: normal;">Smarty3で機能要求を満たしているものの、パフォーマンスが悪い。<br />
+<strong><a href="http://phptal.org/" target="_blank">PHPTAL</a></strong><strong>:<span style="font-weight: normal;">よく設計されていて、機能もあるが、webデザイナにはとっつきにくく、テンプレートの継承的なことは特にそう。</span></strong></span></strong></div>
+<div><strong><span style="font-weight: normal;"><strong><a href="http://www.ezcomponents.org/docs/tutorials/Template" target="_blank">ezComponents Template</a></strong><strong>:<span style="font-weight: normal;">よく設計されていて、多くの機能を持つが、継承をサポートしていないのと、パフォーマンスが他よりかなり劣る。<br />
+<strong><a href="http://dwoo.org/" target="_blank">Dowoo</a></strong><strong>:<span style="font-weight: normal;">Smartyの代替プロジェクトとしてSmartyを真似てつくられていて、継承などの新機能も追加されている。パフォーマンスもSmartyより良いけど、sandboxがないのと、コアシステムの拡張性が十分でない。<br />
+<strong><a href="http://www.beberlei.de/calypso/" target="_blank">Calyps</a></strong><strong><a href="http://www.beberlei.de/calypso/" target="_blank">o</a></strong><strong>:</strong>DjangoのPHPクローンだけど諸問題により開発停止している。</span></strong></span></strong></span></strong></div>
+</div>
+<h3>ベンチマーク</h3>
+<p>既存のテンプレートエンジンに関するベンチマーク結果です。</p>
+<h4>ベンチマーク方法</h4>
+<div>
+<div id="_mcePaste">
+<ul>
+<li>３つのアイテムをループさせ、シンプルな装飾のレイアウト出力の比較。</li>
+<li>10000回表示するテストを１０回実行した平均値。</li>
+<li>継承はヘッダとフィッタを代わりに使用。</li>
+<li>自動出力エスケープができないものは手動でエスケープ処理。</li>
+<li>コマンドラインでPHPAcceleratorなどを使用しない環境で実行</li>
+</ul>
+</div>
+<h4>処理時間とメモリ消費</h4>
+</div>
+<div>
+<table border="1">
+<tbody>
+<tr>
+<th>Library</th>
+<th>Time (sec)</th>
+<th>Memory (Ko)</th>
+<th>Templates rendered per second</th>
+</tr>
+<tr>
+<th>Twig</th>
+<td>3</td>
+<td>1,190</td>
+<td>3,333</td>
+</tr>
+<tr>
+<th>PHPTAL</th>
+<td>3.8</td>
+<td>2,100</td>
+<td>2,632</td>
+</tr>
+<tr>
+<th>Dwoo</th>
+<td>6.9</td>
+<td>1,870</td>
+<td>1,449</td>
+</tr>
+<tr>
+<th>Smarty 2</th>
+<td>12.9</td>
+<td>2,350</td>
+<td>775</td>
+</tr>
+<tr>
+<th>Smarty 3</th>
+<td>14.9</td>
+<td>3,230</td>
+<td>671</td>
+</tr>
+<tr>
+<th>Calypso</th>
+<td>34.3</td>
+<td>620</td>
+<td>292</td>
+</tr>
+<tr>
+<th>eZ Templates</th>
+<td>53</td>
+<td>5,850</td>
+<td>189</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h4>コンパイル後のメモリ消費</h4>
+<p>※フォロー記事の方がSmartyの数値が妥当らしいのでそっちを引用しています。</p>
+<table border="1">
+<tbody>
+<tr>
+<th>Library</th>
+<td>Time(sec)</td>
+<td>Memory without compilation (Ko)</td>
+</tr>
+<tr>
+<th>Plain PHP</th>
+<td>2.4</td>
+<td>114</td>
+</tr>
+<tr>
+<th>Twig</th>
+<td>3</td>
+<td>383</td>
+</tr>
+<tr>
+<th>PHPTAL</th>
+<td>3.8</td>
+<td>598</td>
+</tr>
+<tr>
+<th>Dwoo</th>
+<td>6.9</td>
+<td>1,645</td>
+</tr>
+<tr>
+<th>Smarty 2</th>
+<td>12.9</td>
+<td>610</td>
+</tr>
+<tr>
+<th>Smarty 3</th>
+<td>14.9</td>
+<td>799</td>
+</tr>
+<tr>
+<th>Calypso</th>
+<td>34.3</td>
+<td>614</td>
+</tr>
+<tr>
+<th>eZ Templates</th>
+<td>53</td>
+<td>2,783</td>
+</tr>
+</tbody>
+</table>
+<h2>まとめ</h2>
+<div>機能性だけでなく速さも兼ね備えたテンプレートエンジンTwig。</div>
+<div>便利なテンプレートエンジンはSmartyがデファクトでしたが、Twigはそれを追い抜くかもしれませんね。</div>
+<div>Symfony2.0でオプションのViewとして用意するかも、とFabienは個人的見解として言っているので、そうなると日本語圏でも利用が加速するかもしれません。ただ、Symfony2.0はPHP5.3以上必須なのでPHP5.3への移行に依存しますかね。Smarty3が正式リリースまでにどこまでパフォーマンス改善してくるかも楽しみなところです。</div>
+<div>
+<p>Smartyから乗り換える場合はプログラマよりデザイナの移行コストが高いと思われるのですが、それがクリアできるならぜひ移行してみたいですね。素のPHPよりは断然読みやすく理解しやすですし。</p>
+</div>
+<p>次は機能的なところをまとめたいと思います。</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2009/12/31/hello-word-press/">はじめまして、WP。</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2009-12-31T00:25:03+09:00" pubdate data-updated="true">2009-12-31 (Thu)</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>２００９年も残すところ２４時間を切りました。</p>
+<p>新規ブログを立ち上げてみます。</p>
+<p>新しいブログを立ち上げるのはもう何度目かわかりませんw</p>
+<p><a id="more"></a><a id="more-20"></a>まずは</p>
+<p><strong>１年間継続して記事を書く</strong></p>
+<p>を目標に続けていきたいと思っています。</p>
+<p>気ままに、気の赴くままに…</p>
+<p>Twitterでは<a title="msk_y" href="http://twitter.com/msk_y" target="_blank">msk_y</a>という名前でやってます。<br />
+お気軽にフォローどうぞ。</p>
+<p>※ReSTARTERではなくmsk_yという名前でやってます。</p>
+<p>msk_yはあまり気に入ってないのですが今更変えられず…</p>
+<p>あ、SUPERCARの曲名からパクりましたw</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+      <a class="prev" href="/page/29/">&larr; Older</a>
+    
+    <a href="/blog/archives/"> Archives </a>
+    
+    <a class="next" href="/page/27/">Newer &rarr;</a>
+    
+  </div>
+</div>
+<aside class="sidebar">
+  
+    <section id="titles">
+  <a href="http://blog.restartr.com" title="I Will Survive"><img id="logo" src="http://blog.restartr.com/images/portrait.jpg" /></a>
+  <h1 id="site_title"><a href="http://blog.restartr.com" title="I Will Survive">I Will Survive</a></h1>
+  <h3 id="site_subtitle">An application depelopper&#8217;s blog.</h3>
+</section>
+
+<section id="menu">
+  <ul>
+    <li><i class="fa fa-home fa-lg"></i><a href="http://blog.restartr.com"> Home </a></li>
+    <li><i class="fa fa-calendar fa-lg"></i><a href="http://blog.restartr.com/blog/archives/"> Archives </a></li>
+    <li><i class="fa fa-user fa-lg"></i><a href="http://blog.restartr.com/about/"> About </a></li>
+    <li><i class="fa fa-rss fa-lg"></i><a href="http://blog.restartr.com/atom.xml"> Feed </a></li>
+  </ul>
+</section>
+
+<section id="social">
+  
+
+  
+
+  
+    <a href="" title="g+#103216164658230535238"><i class="fa fa-google-plus fa-2x"></i></a>
+  
+
+  
+    <a href="https://github.com/ReSTARTR" title="ReSTARTR"><i class="fa fa-github fa-2x"></i></a>
+  
+
+  
+
+  
+    <a href="https://twitter.com/ReSTARTR" title="ReSTARTR"><i class="fa fa-twitter fa-2x"></i></a>
+  
+</section>
+
+
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/2014/05/11/build-rpm-on-docker-container/">Dockerを使って任意のrubyバージョンのrpmを作成する</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2014/04/20/vimrc-noexpandtab-in-golang/">vimで特定のファイルタイプだけタブインデントにする方法</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2014/04/06/move-from-wordpress-to-octopress/">WordpressからOctopressに移行</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2013/04/26/connect-go-and-python-with-zeromq/">GoとPythonをZeroMQで繋ぐ</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2013/04/17/bind-a-variable-to-closure-in-python/">pythonのクロージャに変数を束縛する方法</a>
+      </li>
+    
+  </ul>
+</section>
+Included file &#8216;asides/category_list.html&#8217; not found in _includes directory
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating&#8230;</li>
+  </ul>
+  
+  <a href="https://github.com/ReSTARTR">@ReSTARTR</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'ReSTARTR',
+            count: 4,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+<section class="googleplus">
+  <h1>
+    <a href="https://plus.google.com/103216164658230535238?rel=author">
+      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
+      Google+
+    </a>
+  </h1>
+</section>
+
+
+
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - ReSTARTR -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ReSTARTR';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

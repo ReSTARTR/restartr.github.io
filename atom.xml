@@ -1,0 +1,2497 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[I Will Survive]]></title>
+  <link href="http://blog.restartr.com/atom.xml" rel="self"/>
+  <link href="http://blog.restartr.com/"/>
+  <updated>2014-06-14T15:31:30+09:00</updated>
+  <id>http://blog.restartr.com/</id>
+  <author>
+    <name><![CDATA[ReSTARTR]]></name>
+    <email><![CDATA[yoshida.masaki+restartr@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Dockerを使って任意のrubyバージョンのrpmを作成する]]></title>
+    <link href="http://blog.restartr.com/2014/05/11/build-rpm-on-docker-container/"/>
+    <updated>2014-05-11T00:00:00+09:00</updated>
+    <id>http://blog.restartr.com/2014/05/11/build-rpm-on-docker-container</id>
+    <content type="html"><![CDATA[<p>CentOSを使ってて不便なのがruby2系のインストール。</p>
+
+<p>rbenvやruby-buildを使うかソースからインストールするのですが、この場合、環境を構築するたびにビルドすることになり時間もかかるし大変面倒です。</p>
+
+<p>なのでDockerを使ってクリーンな環境でRubyの最新rpmをビルドしてみました。</p>
+
+<p>Dockerを使えばビルド環境がすぐに立ち上げられるので、rpmビルドに必要なパッケージを確認したりするのに最適です。</p>
+
+<p>今回のソースはgithubにpushしてあります。</p>
+
+<ul>
+  <li><a href="https://github.com/ReSTARTR/ruby-rpmbuild-container">ReSTARTR/ruby-rpmbuild-container</a></li>
+</ul>
+
+<h2 id="section">環境</h2>
+
+<ul>
+  <li>ゲストOS：Vagrantで起動したUbuntu-14.04</li>
+  <li>コンテナ：centos:6.4</li>
+</ul>
+
+<h2 id="section-1">ファイルの配置</h2>
+
+<p>以下ファイルを同一ディレクトリに入れておきます。</p>
+
+<ul>
+  <li>Vagrantfile</li>
+  <li>provision.sh</li>
+  <li>Dockerfile</li>
+  <li>rubybuild.sh</li>
+  <li>ruby-2.0.0-p481.spec</li>
+</ul>
+
+<h2 id="section-2">手順</h2>
+
+<ol>
+  <li>ゲストOSの起動(Vagrant)</li>
+  <li>ゲストOSにsshログイン</li>
+  <li>Dockerコンテナのビルド</li>
+  <li>Dockerコンテナ内でrpmビルド</li>
+</ol>
+
+<h2 id="os">1. ゲストOSの起動</h2>
+
+<p>Vagrantfile</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1"># -*- mode: ruby -*-</span>
+</span><span class="line"><span class="c1"># vi: set ft=ruby :</span>
+</span><span class="line"><span class="no">VAGRANTFILE_API_VERSION</span> <span class="o">=</span> <span class="s2">&quot;2&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="no">Vagrant</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="no">VAGRANTFILE_API_VERSION</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box</span> <span class="o">=</span> <span class="s2">&quot;ubuntu/trusty64&quot;</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">synced_folder</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;/vagrant&quot;</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">provision</span> <span class="s2">&quot;shell&quot;</span><span class="p">,</span> <span class="ss">path</span><span class="p">:</span> <span class="s1">&#39;provision.sh&#39;</span>
+</span><span class="line">
+</span><span class="line">  <span class="c1"># お好みで</span>
+</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">provider</span> <span class="ss">:virtualbox</span> <span class="k">do</span> <span class="o">|</span><span class="n">vb</span><span class="o">|</span>
+</span><span class="line">    <span class="n">vb</span><span class="o">.</span><span class="n">customize</span> <span class="o">[</span><span class="s2">&quot;modifyvm&quot;</span><span class="p">,</span> <span class="ss">:id</span><span class="p">,</span> <span class="s2">&quot;--memory&quot;</span><span class="p">,</span> <span class="s2">&quot;2048&quot;</span><span class="p">,</span> <span class="s2">&quot;--cpus&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;--ioapic&quot;</span><span class="p">,</span> <span class="s2">&quot;on&quot;</span><span class="o">]</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>provision.sh</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">sudo apt-get update
+</span><span class="line">sudo apt-get install -y language-pack-ja
+</span><span class="line">
+</span><span class="line"><span class="c"># Docker</span>
+</span><span class="line">sudo apt-get install -y docker.io
+</span><span class="line">sudo ln -sf /usr/bin/docker.io /usr/local/bin/docker
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h2 id="osssh">2. ゲストOSにsshログイン</h2>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>vagrant up
+</span><span class="line"><span class="nv">$ </span>vagrant ssh
+</span><span class="line"><span class="nv">$ </span><span class="nb">cd</span> /vagrant
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h2 id="docker">3. Dockerコンテナのビルド</h2>
+
+<p>ビルド用specファイルを用意して、シェルスクリプトでビルドします。</p>
+
+<p>すると、コンテナにマウントしたボリュームにビルド済みのrpmファイルがコピーされます。</p>
+
+<h3 id="spec">ビルド用specシェルスクリプト</h3>
+
+<p>環境変数RUBY_VERSIONに”2.0.0-p481”や”2.0.0-p451”を設定すれば任意のバージョンをビルドします。</p>
+
+<p><em>※デフォルトの2.0.0-p481以外はそれ用のspecファイルが必要になります。</em></p>
+
+<p>rubybuild.sh</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="c">#!/bin/env bash</span>
+</span><span class="line"><span class="nv">WORKDIR</span><span class="o">=</span>/opt/rpmbuild
+</span><span class="line">
+</span><span class="line"><span class="nv">RUBY_VER</span><span class="o">=</span><span class="k">${</span><span class="nv">RUBY_VER</span><span class="k">:-</span><span class="s2">&quot;2.0.0-p481&quot;</span><span class="k">}</span>
+</span><span class="line"><span class="nv">RUBY_MAJOUR_VER</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span> <span class="nv">$RUBY_VER</span>|cut -d<span class="s2">&quot;-&quot;</span> -f1<span class="k">)</span>
+</span><span class="line"><span class="nv">RUBY_MINOR_VER</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span> <span class="nv">$RUBY_VER</span>|cut -d<span class="s2">&quot;-&quot;</span> -f2<span class="k">)</span>
+</span><span class="line"><span class="k">if</span> <span class="o">[</span> -z <span class="s2">&quot;$RUBY_MINOR_VER&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+</span><span class="line"><span class="k">  </span><span class="nv">RUBY_TARBALL</span><span class="o">=</span><span class="s2">&quot;ruby-$RUBY_MAJOUR_VER.tar.gz&quot;</span>
+</span><span class="line"><span class="k">else</span>
+</span><span class="line"><span class="k">  </span><span class="nv">RUBY_TARBALL</span><span class="o">=</span><span class="s2">&quot;ruby-$RUBY_MAJOUR_VER-$RUBY_MINOR_VER.tar.gz&quot;</span>
+</span><span class="line"><span class="k">fi</span>
+</span><span class="line"><span class="nv">RUBY_REMOTE_FILE</span><span class="o">=</span><span class="s2">&quot;http://cache.ruby-lang.org/pub/ruby/${RUBY_MAJOUR_VER:0:3}/$RUBY_TARBALL&quot;</span>
+</span><span class="line">
+</span><span class="line">mkdir -p <span class="nv">$WORKDIR</span>/rpm/<span class="o">{</span>BUILD,SRPMS,SPECS,SOURCES,RPMS<span class="o">}</span>
+</span><span class="line"><span class="nb">echo</span> <span class="s2">&quot;%_topdir $WORKDIR/rpm&quot;</span> &gt; <span class="nv">$WORKDIR</span>/.rpmmacros
+</span><span class="line"><span class="k">if</span> <span class="o">[</span> ! -f <span class="nv">$WORKDIR</span>/rpm/SOURCES/<span class="nv">$RUBY_TARBALL</span> <span class="o">]</span>; <span class="k">then</span>
+</span><span class="line"><span class="k">  </span>wget <span class="nv">$RUBY_REMOTE_FILE</span> -O <span class="nv">$WORKDIR</span>/rpm/SOURCES/<span class="nv">$RUBY_TARBALL</span>
+</span><span class="line"><span class="k">fi</span>
+</span><span class="line">cp <span class="nv">$WORKDIR</span>/ruby-<span class="k">${</span><span class="nv">RUBY_VER</span><span class="k">}</span>.spec <span class="nv">$WORKDIR</span>/rpm/SPECS/ruby.spec
+</span><span class="line">rpmbuild -bb <span class="nv">$WORKDIR</span>/rpm/SPECS/ruby.spec
+</span><span class="line">
+</span><span class="line">cp <span class="nv">$WORKDIR</span>/rpm/RPMS/x86_64/* /shared/
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h2 id="dockerrpm">4. Dockerコンテナ内でrpmビルド</h2>
+
+<p>Dockerfile</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">FROM centos:6.4
+</span><span class="line">
+</span><span class="line"><span class="c"># setup</span>
+</span><span class="line">RUN yum update -y
+</span><span class="line">RUN yum install -y rpm-build gcc
+</span><span class="line">
+</span><span class="line"><span class="c"># epel</span>
+</span><span class="line">RUN rpm --import http://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-6
+</span><span class="line">RUN rpm -ihv http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+</span><span class="line">
+</span><span class="line"><span class="c"># ruby-depends</span>
+</span><span class="line">RUN yum install —enablerepo<span class="o">=</span>epel -y libyaml-devel
+</span><span class="line">RUN yum install -y byacc readline-devel ncourses-devel tcl-devel openssl-devel gdbm-devel db4-devel
+</span><span class="line">
+</span><span class="line"><span class="c"># build rpm</span>
+</span><span class="line">WORKDIR /opt/rpmbuild
+</span><span class="line">ADD rubybuild.sh /opt/rpmbuild/rubybuild.sh
+</span><span class="line">ADD ruby-2.0.0-p481.spec /opt/rpmbuild/ruby-2.0.0-p481.spec
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h2 id="rpm">コンテナ起動してrpmをビルド</h2>
+
+<p>コンテナを起動する際に、カレントディレクトリをマウントしておきます。</p>
+
+<p><em>※<code>--rm</code>オプションでrpm作成完了したらコンテナは破棄します</em></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo docker build -t &lt;USERNAME&gt;/rpmbuild .
+</span><span class="line"><span class="nv">$ </span>sudo docker run --rm -v <span class="nv">$PWD</span>:/shared:rw -it &lt;CONTAINER_ID&gt; /bin/sh ./rubybuild.sh
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>成功すれば、ゲストOSのカレントディレクトリにrpmができてます。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>ls *.rpm
+</span><span class="line">ruby-2.0.0p481-2.el6.x86_64.rpm
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>これで、rpmコマンド一発で最新のrubyをインストールできます。</p>
+
+<p>rubyインストール済みコンテナを作るなら、Dockerfileに以下のように書けばruby実行環境のできあがりです。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">FROM centos:6.4
+</span><span class="line">
+</span><span class="line"><span class="c"># EPEL</span>
+</span><span class="line">RUN rpm --import http://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-6
+</span><span class="line">RUN rpm -ihv http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+</span><span class="line">
+</span><span class="line"><span class="c"># Install ruby rpm</span>
+</span><span class="line">ADD ruby-2.0.0p481-2.el6.x86_64.rpm ruby-2.0.0p481-2.el6.x86_64.rpm
+</span><span class="line">RUN yum install -y --enablerepo<span class="o">=</span>epel libyaml-devel
+</span><span class="line">RUN rpm -ihv ruby-2.0.0p481-2.el6.x86_64.rpm
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[vimで特定のファイルタイプだけタブインデントにする方法]]></title>
+    <link href="http://blog.restartr.com/2014/04/20/vimrc-noexpandtab-in-golang/"/>
+    <updated>2014-04-20T16:15:21+09:00</updated>
+    <id>http://blog.restartr.com/2014/04/20/vimrc-noexpandtab-in-golang</id>
+    <content type="html"><![CDATA[<p>rubyやpythonなど通常のプログラムを書く場合は、基本的にソフトタブ(2spaces)でインデントされるようにvimを設定しています。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="vim"><span class="line"><span class="k">set</span> <span class="nb">noexpandtab</span>
+</span><span class="line"><span class="k">set</span> <span class="nb">tabstop</span><span class="p">=</span><span class="m">2</span>
+</span><span class="line"><span class="k">set</span> <span class="nb">shiftwidth</span><span class="p">=</span><span class="m">2</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>けれど、Goの場合はインデントはハードタブが通例。</p>
+
+<p>なので拡張子が”.go”の場合だけハードタブでインデントするための設定を.vimrcに書いておきます。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="vim"><span class="line"><span class="k">if</span> expand<span class="p">(</span><span class="s2">&quot;%:t&quot;</span><span class="p">)</span> <span class="p">=~</span> <span class="s2">&quot;.*\.go&quot;</span>
+</span><span class="line">  <span class="k">set</span> <span class="nb">noexpandtab</span>
+</span><span class="line">  <span class="k">set</span> <span class="nb">tabstop</span><span class="p">=</span><span class="m">4</span>
+</span><span class="line">  <span class="k">set</span> <span class="nb">shiftwidth</span><span class="p">=</span><span class="m">4</span>
+</span><span class="line"><span class="k">endif</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p><code>%:t</code>はディレクトリ含まないファイル名。</p>
+
+<p>autocmd使うほうが良いかも。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="vim"><span class="line"><span class="k">au</span> <span class="nb">BufNewFile</span><span class="p">,</span><span class="nb">BufRead</span> *.<span class="k">go</span> <span class="k">set</span> <span class="nb">noexpandtab</span> <span class="nb">tabstop</span><span class="p">=</span><span class="m">4</span> <span class="nb">shiftwidth</span><span class="p">=</span><span class="m">4</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>ちなみに、<code>set expandtab</code>してる状態でタブを入力する場合は<code>Ctrl-v + &lt;tab&gt;</code>でハードタブが入力できます。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[WordpressからOctopressに移行]]></title>
+    <link href="http://blog.restartr.com/2014/04/06/move-from-wordpress-to-octopress/"/>
+    <updated>2014-04-06T13:00:00+09:00</updated>
+    <id>http://blog.restartr.com/2014/04/06/move-from-wordpress-to-octopress</id>
+    <content type="html"><![CDATA[<p>もともとさくらのレンサバ上でWordpressで構築していたブログを<a href="http://octopress.org/">Octopress</a>に移行してGithub Pagesでホスティングするように切り替え。
+最初は<a href="http://jekyllrb.com/">Jekyll</a>だけでやろうとしてたけど、ブロクとしての機能を見るとOctopressのほうが良さそうだったので途中で方針転換。</p>
+
+<h4 id="section">手順</h4>
+
+<p>詳細な手順は面倒なので割愛するとして、だいたいこんな感じの流れで移行。</p>
+
+<ol>
+  <li>作業用環境にjekyll, jekyll-import, mysql2, sequelをgem install</li>
+  <li>さくらのレンサバ上のMySQLのデータをmysqldumpしてscp</li>
+  <li>dumpデータを作業用環境のMySQLにリストア</li>
+  <li>リストアしたデータから<a href="http://import.jekyllrb.com/docs/wordpress/">jekyll-import</a>を使って記事のmarkdownファイルを吐き出す</li>
+  <li>octopressをcloneして、<code>rake install</code></li>
+  <li>jekyll-importで吐き出されたファイルをoctopressのsource/_posts以下に移動</li>
+  <li><code>rake preview</code>で表示を確認しながら、source/_posts以下のmarkdownファイルをひたすら修正</li>
+  <li>テーマを調整&amp;元記事のURLパスと同一になるように<code>_config.yml</code>に設定</li>
+  <li>githubにpushしてgithub pagesとして公開</li>
+  <li>CNAMEを設定してgithub.ioから元のドメイン(blog.restartr.com)に移行</li>
+</ol>
+
+<p>さくらのレンサバ内からしかWordpressのDBに接続できないのと、レンサバ内でrubyを使うのはなんか面倒事が多そうだったので、環境整備済みなvpsで移行作業。</p>
+
+<p><em>※wordpressのエクスポート機能で吐き出したxmlからmigrateする方法もあるけど今回は不採用</em></p>
+
+<h4 id="wordpress">Wordpressの時のドメイン、パスを同一にするための設定</h4>
+
+<p>wordpressでは<code>/year/month/day/title</code>というpermalinkを設定していたのでそれと同一にするための作業。</p>
+
+<ul>
+  <li>ドメインはgithub pagesのカスタムドメインとCNAME設定で解決</li>
+  <li>パスは<code>_config.yml</code>のpermalinkを<code>/:year/:month/:day/:title</code>にして解決</li>
+</ul>
+
+<h4 id="section-1">さくらのレンサバ側の独自ドメイン設定</h4>
+
+<p>これでハマりました。さくらのドメインの設定で”blog.restartr.com”のCNAMEを設定したのに、DNSへの問い合わせ結果が常にAレコードしか帰ってこなくてかなり悩んでた。
+結論は、さくらのレンサバの設定画面で独自ドメインとして”blog.restartr.com”を登録していて、そっちの設定が邪魔をしていた。</p>
+
+<p>さくらのレンサバの独自ドメイン設定をはずして、さくらのドメインのCNAME設定を追加したら無事に解決。</p>
+
+<p><em>さくらのレンサバの独自ドメインの解除から、2時間以上反映に時間かかるらしい</em></p>
+
+<h4 id="post">postデータの修正</h4>
+
+<p>jekyll-importを使ってmarkdownを吐き出すところまではすんなりいけたけど、なにより面倒だったのが吐き出したmarkdownを修正する作業。</p>
+
+<ul>
+  <li>シンタックスハイライトするために<code>[ccW_python]...[/ccW_python]</code>とか<code>&lt;pre class="brush:pyton"&gt;...&lt;/pre&gt;</code>とか独自タグがある</li>
+  <li>amazonのリンク生成用タグ<code>[tmkm-amazon]123456[/tmkm-amazon]</code>というタグがある</li>
+  <li><code>&lt;p&gt;</code>タグと<code>&lt;br /&gt;</code>タグの嵐</li>
+</ul>
+
+<p>これらの対応のためにいちいち置換するのが非常に大変。<code>[ccW]</code>と<code>[tmkm-amazon]</code>タグは置換できたけど、<code>&lt;pre class="brush:..."&gt;</code>についてはハイライトされないだけで表示上問題なさそうなので無視。
+あとはmarkdownにhtmlが混じってるのが気持ち悪いので<code>&lt;p&gt;</code>と<code>&lt;br /&gt;</code>を置換して行間を調整。</p>
+
+<p>ドラフト記事をリモートにpushしてなくて別のPCから記事の途中からかけなくて困った…とならないように基本的にVPS上にcloneすることにした。
+これで記事編集のための苦痛を感じる事無く純粋なmarkdownで記事がかけるようになる。</p>
+
+<ul>
+  <li>参考にした記事</li>
+  <li><a href="http://hadihariri.com/2013/12/24/migrating-from-wordpress-to-jekyll/">Migrating from WordPress.com to Jekyll – Hadi Hariri</a></li>
+  <li><a href="http://blog.glidenote.com/blog/2011/12/20/how-to-use-custom-domain-on-github-pages/">GitHub PagesでCustom Domainを利用する - Glide Note - グライドノート</a></li>
+  <li>ベースにしたテーマ</li>
+  <li><a href="https://github.com/bijumon/oct2">bijumon/oct2</a></li>
+</ul>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[GoとPythonをZeroMQで繋ぐ]]></title>
+    <link href="http://blog.restartr.com/2013/04/26/connect-go-and-python-with-zeromq/"/>
+    <updated>2013-04-26T23:34:48+09:00</updated>
+    <id>http://blog.restartr.com/2013/04/26/connect-go-and-python-with-zeromq</id>
+    <content type="html"><![CDATA[<p>最近Rubyでプロジェクトオイラーを解きながらRubyに慣れようとしてるのですが、ちょっと飽きてきたので息抜きにGoを書いたりしています。</p>
+
+<p>ついでにZeroMQも試してみたかったので、GoとPythonをZeroMQで繋いでみました。</p>
+
+<p>構成はこんな感じで、Python(かGo)clientを起動し、Goで動くmonitorq経由でGoのserverにつながります。PUB/SUBでmonitorからモニタリングできるのがミソです。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line">              <span class="o">+----------------------------------------+</span>
+</span><span class="line">              <span class="o">|</span>                                        <span class="o">|</span>
+</span><span class="line">  <span class="o">+------+</span>        <span class="o">|--------------------------+</span>     <span class="o">+-----+</span> <span class="o">|</span>
+</span><span class="line">  <span class="o">|</span><span class="n">client</span><span class="o">|--------|</span><span class="mi">9001</span>     <span class="n">monitorq</span>     <span class="mi">9002</span><span class="o">|-----|</span><span class="n">serv</span> <span class="o">|</span> <span class="o">|</span>
+</span><span class="line">  <span class="o">|</span><span class="p">(</span><span class="no">REQ</span><span class="p">)</span> <span class="o">|</span>        <span class="o">|</span><span class="p">(</span><span class="no">ROUTER</span><span class="p">)</span>   <span class="mi">9003</span>   <span class="p">(</span><span class="no">DEALER</span><span class="p">)</span><span class="o">|</span>     <span class="o">|</span><span class="p">(</span><span class="no">REP</span><span class="p">)</span><span class="o">|</span> <span class="o">|</span>
+</span><span class="line">  <span class="o">+------+</span>        <span class="o">|--------------------------+</span>     <span class="o">+-----+</span> <span class="o">|</span>
+</span><span class="line">              <span class="o">|</span>          <span class="o">|</span><span class="p">(</span><span class="no">PUB</span><span class="p">)</span>                        <span class="o">|</span>
+</span><span class="line">              <span class="o">|</span>          <span class="o">|</span>                             <span class="o">|</span>
+</span><span class="line">              <span class="o">|</span>          <span class="o">|</span>                             <span class="o">|</span>
+</span><span class="line">              <span class="o">|</span>          <span class="o">|</span><span class="p">(</span><span class="no">SUB</span><span class="p">)</span>                        <span class="o">|</span>
+</span><span class="line">              <span class="o">|</span>      <span class="o">+-------+</span>                         <span class="o">|</span>
+</span><span class="line">              <span class="o">|</span>      <span class="o">|</span><span class="n">monitor</span><span class="o">|</span>                         <span class="o">|</span>
+</span><span class="line">              <span class="o">|</span>      <span class="o">+-------+</span>                         <span class="o">|</span>
+</span><span class="line">              <span class="o">+----------------------------------------+</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p><em>※client/server/monitorは複数たちあげるとよしなに振り分けてくれます。</em></p>
+
+<ul>
+  <li>monitorqでfan-in/outする</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>go run queue.go monitorq
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<ul>
+  <li>clientから”PING”を投げる(と、”PONG#<pid>&#8220;が帰る)</pid></li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>python run queue.py client
+</span><span class="line">PONG#&lt;28870&gt;
+</span><span class="line">PONG#&lt;28870&gt;
+</span><span class="line"> :
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<ul>
+  <li>serverから”PONG”を返す(clientからのPINGを表示)</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>go run queue.go serv
+</span><span class="line">Recv: PING#&lt;73835&gt;
+</span><span class="line">Recv: PING#&lt;73835&gt;
+</span><span class="line"> :
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<ul>
+  <li>monitorでリクエスト総数をモニタリング</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>go run queue.go monitor
+</span><span class="line">MONITOR: IN: 2082, OUT 2082
+</span><span class="line">MONITOR: IN: 2083, OUT 2083
+</span><span class="line"> :
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>コードはgistにあげてます。</p>
+
+<ul>
+  <li><a href="https://gist.github.com/ReSTARTR/5467656">gist</a></li>
+</ul>
+
+<p>ZeroMQなら他にもいろんな構成がとれるので、使いどころは結構あるのではないかと。</p>
+
+<p>今回、不慣れなGoで書いてみましたが、これくらいであればもわりと素直にかけるなぁという印象です。</p>
+
+<p>Goで書かれたZeroMQのサンプルは以下githubリポジトリにたくさんあるので、覗いてみると色々勉強になります。</p>
+
+<ul>
+  <li><a href="https://github.com/imatix/zguide/tree/master/examples/Go">zguide/examples/Go at master ? imatix/zguide</a></li>
+</ul>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[pythonのクロージャに変数を束縛する方法]]></title>
+    <link href="http://blog.restartr.com/2013/04/17/bind-a-variable-to-closure-in-python/"/>
+    <updated>2013-04-17T22:19:14+09:00</updated>
+    <id>http://blog.restartr.com/2013/04/17/bind-a-variable-to-closure-in-python</id>
+    <content type="html"><![CDATA[<p>ハマったので。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="n">a</span> <span class="o">=</span> <span class="mi">2</span>
+</span><span class="line"><span class="n">double</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">*</span><span class="n">a</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>  <span class="c"># 8 (=4*2)</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="c"># 20 (=10*3)</span>
+</span><span class="line"><span class="n">a</span> <span class="o">=</span> <span class="mi">3</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>  <span class="c"># 12 # WTF?</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="c"># 30</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>doubleというクロージャ内の変数aを、クロージャ宣言時のaで束縛したいのです。</p>
+
+<p>対応は２つ。</p>
+
+<ol>
+  <li>lambdaのデフォルト引数で束縛する</li>
+  <li>functools.partialで束縛する</li>
+</ol>
+
+<h3 id="lambda">1. lambdaのデフォルト引数で束縛する</h3>
+
+<p>参考：<a href="http://stackoverflow.com/questions/10452770/python-lambdas-binding-to-local-values">closures - Python lambda’s binding to local values - Stack Overflow</a></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="n">a</span> <span class="o">=</span> <span class="mi">2</span>
+</span><span class="line"><span class="n">double</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">a</span><span class="p">:</span> <span class="n">x</span><span class="o">*</span><span class="n">y</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>  <span class="c"># 8 (=4*2)</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="c"># 20 (=10*3)</span>
+</span><span class="line"><span class="n">a</span> <span class="o">=</span> <span class="mi">3</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>  <span class="c"># 12 (=4*2)</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="c"># 30 (=10*2)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="functoolspartial">2. functools.partialで束縛する</h3>
+
+<p>やってることは1と同じなのですが、一応動くよねということで。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+</span><span class="line"><span class="n">a</span> <span class="o">=</span> <span class="mi">2</span>
+</span><span class="line"><span class="n">double</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="bp">None</span><span class="p">:</span> <span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">a</span><span class="p">)</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="c"># 8 (=8*2)</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="c"># 30 (=10*2)</span>
+</span><span class="line"><span class="n">a</span> <span class="o">=</span> <span class="mi">3</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>  <span class="c"># 12 (=4*2)</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="c"># 30 (=10*2)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="section">そもそも変数上書きしなければ良いんじゃない？</h3>
+
+<p>普段は変数の上書きは基本的にやりません。なので変数の束縛とかあまり意識してませんでした。</p>
+
+<p>今回、プロジェクトオイラーを解くにあたって、素数ジェネレータをつくろうとした結果、ハマったのでした。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">ifilter</span><span class="p">,</span> <span class="n">count</span>
+</span><span class="line"><span class="k">def</span> <span class="nf">gen_primes</span><span class="p">():</span>
+</span><span class="line">    <span class="n">it</span> <span class="o">=</span> <span class="n">count</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>  <span class="c"># [2, 3, 4, ...]</span>
+</span><span class="line">    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+</span><span class="line">        <span class="n">v</span> <span class="o">=</span> <span class="n">it</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+</span><span class="line">        <span class="k">yield</span> <span class="n">v</span>
+</span><span class="line">        <span class="n">it</span> <span class="o">=</span> <span class="n">ifilter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">v</span><span class="p">:</span> <span class="n">x</span> <span class="o">%</span> <span class="n">y</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">it</span><span class="p">)</span>
+</span><span class="line">        <span class="c"># 当初は以下のようにしていた</span>
+</span><span class="line">        <span class="c"># これだと次のループ時のifilter内でvの値が変わってしまう</span>
+</span><span class="line">        <span class="c"># it = ifilter(lambda x: x % v &gt; 0, it)</span>
+</span><span class="line"><span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">gen_primes</span><span class="p">():</span>
+</span><span class="line">    <span class="k">print</span> <span class="n">v</span>
+</span><span class="line">    <span class="k">if</span> <span class="n">v</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">:</span>
+</span><span class="line">        <span class="k">break</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="functoolspartial-1">余談1: functools.partialの使いどころ</h3>
+<p>ちょくちょく<a href="http://docs.python.jp/2.7/library/functools.html#functools.partial">functools.partial</a>使ってましたが、そんなの使わなくてもlambdaで事足りますね。今更気づきました…</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="n">mul</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span>
+</span><span class="line"><span class="n">mul</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>  <span class="c"># 6</span>
+</span><span class="line"><span class="c"># lambda</span>
+</span><span class="line"><span class="n">double</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">:</span> <span class="n">mul</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>  <span class="c"># 6</span>
+</span><span class="line"><span class="c"># functools.partial</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">functools</span>
+</span><span class="line"><span class="n">double</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">mul</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>  <span class="c"># 6</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>こうなると、functools.partialの使いどころが難しいですね。
+戻り値がpartialオブジェクトなので、あとで引数とかが参照できることくらいでしょうか…</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">f</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">:</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">f</span>
+</span><span class="line"><span class="o">&lt;</span><span class="n">functools</span><span class="o">.</span><span class="n">partial</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x1092b2ec0</span><span class="o">&gt;</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">f</span><span class="o">.</span><span class="n">args</span>
+</span><span class="line"><span class="p">()</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">f</span><span class="o">.</span><span class="n">keywords</span>
+</span><span class="line"><span class="p">{</span><span class="s">&#39;b&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">f</span><span class="o">.</span><span class="n">func</span>
+</span><span class="line"><span class="o">&lt;</span><span class="n">function</span> <span class="o">&lt;</span><span class="k">lambda</span><span class="o">&gt;</span> <span class="n">at</span> <span class="mh">0x1092eab18</span><span class="o">&gt;</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">f</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,)</span>  <span class="c"># 引数を後から上書きはできない</span>
+</span><span class="line"><span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
+</span><span class="line">  <span class="n">File</span> <span class="s">&quot;&lt;stdin&gt;&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">1</span><span class="p">,</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+</span><span class="line"><span class="ne">TypeError</span><span class="p">:</span> <span class="n">readonly</span> <span class="n">attribute</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[pythonのテストにpytestを使ってみた]]></title>
+    <link href="http://blog.restartr.com/2013/04/05/my-first-pytest/"/>
+    <updated>2013-04-05T21:00:24+09:00</updated>
+    <id>http://blog.restartr.com/2013/04/05/my-first-pytest</id>
+    <content type="html"><![CDATA[<p>pytestを使い始めました。</p>
+
+<ul>
+  <li><a href="http://pytest.org/latest/">pytest: helps you write better programs</a></li>
+</ul>
+
+<p>まだまだ機能は把握しきれていませんが、良いと思ったことは3つ。</p>
+
+<ol>
+  <li>テストがコケた箇所のコードがレポート内容に表示される</li>
+  <li>テスト対象を初期化したものの受け渡し方をスマートにできる</li>
+  <li>pytest.vimがなかなか使える</li>
+</ol>
+
+<h3 id="section">1.テストがコケた箇所のコードがレポート内容に表示される</h3>
+
+<p>これが巷でよく聞く一番のメリットかとは思いますが、コケたときの情報が全然違います。
+pytestはかなり詳細に表示してくれるので、レポートの内容だけでどこをどう直せば良いか把握できます。</p>
+
+<h4 id="unittest-v">unittestの実行結果(-vオプション付き)</h4>
+
+<p><a href="http://www.flickr.com/photos/53244662@N04/8621946368/" title="unittest by ReSTARTR_y, on Flickr"><img src="http://farm9.staticflickr.com/8523/8621946368_d7bc9a450d_z.jpg" width="640" height="220" alt="unittest" /></a></p>
+
+<h4 id="pytest-v">pytestの実行結果(-vオプション付き)</h4>
+
+<p><a href="http://www.flickr.com/photos/53244662@N04/8620844529/" title="pytest by ReSTARTR_y, on Flickr"><img src="http://farm9.staticflickr.com/8244/8620844529_ce66ff7f9c_z.jpg" width="640" height="401" alt="pytest" /></a></p>
+
+<p>文字列比較の場合は差分表示してくれたりするので便利です。</p>
+
+<h3 id="section-1">2. テスト対象を初期化したものの受け渡し方をスマートにできる</h3>
+
+<p>これが結構良い感じだと思いました。</p>
+
+<p>かなり単純なクラスを対象にして例を書きます。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="c"># -*- coding: utf-8 -*-</span>
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">Hoge</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">v</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">v</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h4 id="pythonunittest">python同梱のunittestで書く</h4>
+
+<p>こんな感じで、self.hogeを使ってテスト対象を受け渡します。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="c"># -*- coding: utf-8 -*-</span>
+</span><span class="line"><span class="kn">from</span> <span class="nn">hoge</span> <span class="kn">import</span> <span class="n">Hoge</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">unittest</span>
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">TestHoge1</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">hoge</span> <span class="o">=</span> <span class="n">Hoge</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">test_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">assertIsInstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hoge</span><span class="p">,</span> <span class="n">Hoge</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">test_val</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hoge</span><span class="o">.</span><span class="n">val</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">hoge</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s">&#39;hoge&#39;</span><span class="p">)</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hoge</span><span class="o">.</span><span class="n">val</span><span class="p">,</span> <span class="s">&#39;hige&#39;</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+</span><span class="line">    <span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>pytestで書くとこんな感じになります。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="c"># -*- coding: utf-8 -*-</span>
+</span><span class="line"><span class="kn">from</span> <span class="nn">hoge</span> <span class="kn">import</span> <span class="n">Hoge</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">pytest</span>
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">TestHoge1</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">pytest_funcarg__hoge</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+</span><span class="line">        <span class="k">return</span> <span class="n">Hoge</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">test_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hoge</span><span class="p">):</span>
+</span><span class="line">        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">hoge</span><span class="p">,</span> <span class="n">Hoge</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">test_val</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hoge</span><span class="p">):</span>
+</span><span class="line">        <span class="k">assert</span> <span class="n">hoge</span><span class="o">.</span><span class="n">val</span> <span class="o">==</span> <span class="mi">1</span>
+</span><span class="line">
+</span><span class="line">        <span class="n">hoge</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s">&#39;hoge&#39;</span><span class="p">)</span>
+</span><span class="line">        <span class="k">assert</span> <span class="n">hoge</span><span class="o">.</span><span class="n">val</span> <span class="o">==</span> <span class="s">&#39;hige&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+</span><span class="line">    <span class="n">pytest</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>何が良いかっていうと、各テストメソッドで必要な初期化済みHogeインスタンスを、pytest_funcarg__hoge()で作って渡してやることができます。pytest_funcarg__NAMEを定義すれば、各テストメソッドでNAMEとして引数にとることができるわけです。(<a href="http://pytest.org/latest-ja/funcargs.html">テスト関数 (funcargs) にオブジェクトを注入</a>)</p>
+
+<p>unittest.TestCaseのsetUpを使う場合、self.hogeに一旦入れてやらないといけないし、各テストメソッドではself.hogeでアクセスする必要も出てきます。</p>
+
+<p>見た目が簡潔になるのはとても良いことです。</p>
+
+<h3 id="pytestvim">3. pytest.vimがなかなか使える</h3>
+
+<p>vimのプラグインにpytest.vimっていうのがありました。
+これもなかなか使い勝手が良いです。</p>
+
+<p>詳しくは下記動画を御覧ください。</p>
+
+<ul>
+  <li><a href="http://vimeo.com/19774046"> pytest.vim 0.0.5 on Vimeo </a></li>
+</ul>
+
+<p>pytestの概要は以下スライドにて。</p>
+
+<iframe src="http://www.slideshare.net/slideshow/embed_code/14006990" width="427" height="356" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC;border-width:1px 1px 0;margin-bottom:5px" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen=""> </iframe>
+<div style="margin-bottom:5px"> <strong> <a href="http://www.slideshare.net/pfctdayelise/funcargs-other-fun-with-pytest" title="Funcargs &amp; other fun with pytest" target="_blank">Funcargs &amp; other fun with pytest</a> </strong> from <strong><a href="http://www.slideshare.net/pfctdayelise" target="_blank">Brianna Laugher</a></strong> </div>
+<p>他の機能は触りながらおいおい掴んでいければなと。</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Kauli株式会社を退職しました]]></title>
+    <link href="http://blog.restartr.com/2013/04/02/retirement201303/"/>
+    <updated>2013-04-02T22:45:29+09:00</updated>
+    <id>http://blog.restartr.com/2013/04/02/retirement201303</id>
+    <content type="html"><![CDATA[<p><a href="http://www.flickr.com/photos/53244662@N04/8599680561/" title="Cleanup my keyboard by ReSTARTR_y, on Flickr"><img src="http://farm9.staticflickr.com/8106/8599680561_da30653690.jpg" width="500" height="333" alt="Cleanup my keyboard" /></a></p>
+
+<p><em>※2013/04/04 更新:会社名を公開しました</em></p>
+
+<p>3月末付で<a href="http://kau.li">Kauli株式会社</a>を退職しました。</p>
+
+<p>4月1日だと嘘っぽくなるかなと思い、1日ずらしてのご報告です。</p>
+
+<p>2012年01月入社なので、1年3ヶ月という短い間でしたが、これまでで最も充実した1年だったように思います。</p>
+
+<p>大規模な広告配信という技術的に非常に挑戦しがいのある分野で、非常に技術力の高いエンジニアと共にPythonプログラマーとして充実した日々を過ごさせてもらいました。</p>
+
+<p>「大規模なトラフィックを直に感じながらアプリケーション開発に取り組みたい」という希望を胸に入った会社で、</p>
+
+<ul>
+  <li>データストアの検証(結果的にRedisを採用)</li>
+  <li>合計数十台自作サーバーの組立(参考：<a href="https://gist.github.com/nekoya/3749146" title="Kauli自作サーバ組み立てマニュアル" target="_blank">Kauli自作サーバ組み立てマニュアル</a>)</li>
+  <li>開発部総出でデータセンターでサーバーラッキング</li>
+  <li>某社SOAP APIに難儀</li>
+  <li>開発のベースをgithubに移行</li>
+  <li>nginx + Python(werkzeug+uWSGI) + Redisによる広告配信システムの開発</li>
+  <li>アプリケーションのパフォーマンスチューニング</li>
+</ul>
+
+<p>等々、これまでにない経験を1年ちょっとという短い期間に経験できました。</p>
+
+<p>正直離れるのが勿体無いとも思うのですが、キャリアの見直しをしたかったとか諸々の理由により、退職することを決意しました。</p>
+
+<p>同僚の方々には大変お世話になりました。どうもありがとうございました。</p>
+
+<p>転職先はまだ決まっていないので、転職活動を進めつつ、じっくり勉強しておきたかったことに１つずつ取り組んでいこうかという感じです。</p>
+
+<p>良い会社があればぜひ<a href="https://twitter.com/restartr">@ReSTARTR</a>にご紹介ください＞＜</p>
+
+<p>…</p>
+
+<p>なお、Kauli株式会社は継続してエンジニアを募集中のようですので、</p>
+
+<p>大規模広告配信システムをPythonで開発したい方々は下記からぜひぜひご応募を。</p>
+
+<ul>
+  <li><b><a href="http://kau.li/jp/pages/recruit">Kauli - 採用情報</a></b></li>
+</ul>
+
+<p>それでは。</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[プログラマーにとっての『UMLっぽい何か』]]></title>
+    <link href="http://blog.restartr.com/2013/04/01/uml-for-programmer/"/>
+    <updated>2013-04-01T20:12:54+09:00</updated>
+    <id>http://blog.restartr.com/2013/04/01/uml-for-programmer</id>
+    <content type="html"><![CDATA[<p>わりと普遍的な話題だったので便乗です。</p>
+
+<p><a href="http://nekoya.github.com/blog/2013/04/01/useful-uml/"> UMLも捨てたもんじゃない - nekoya press </a></p>
+
+<blockquote>
+<ul>
+<li>UMLは設計の技法ではない</li>
+<li>頭の中を整理するため、あるいは人と共有する際の表現技法である</li>
+</ul>
+</blockquote>
+<p>とか、</p>
+
+<blockquote>UMLの厳密な書式ルールには全くこだわりはなく、大まかなイメージだけ伝われば、細かい部分は口頭でフォローすれば十分だと考えていています。そういう意味ではUMLを正しく使っているとは言えないのかも知れませんが、それはそれでいいんじゃないのと。
+
+</blockquote>
+
+<p>は、まったくもって同意見で、「UML」という”なんだか面倒くさそうなイメージ”を捨てて、コードを整理もしくは伝達する補足的なものとして扱うことが大事だと思います。UMLを本を読んできっちり勉強する必要もなくて、英会話が完璧な文法に則る必要がないのと基本的に同じだと思います。</p>
+
+<p>所謂SEが用いるUMLではなくプログラマーにとってのUMLは、もっとくだけたもので良いのです。</p>
+
+<h4 id="section">いつやるか</h4>
+<p>どのフェーズでこの図の作成にとりかかるかが問題になると思いますが、自分の場合は以下の場合に作成を試みることが多いです。</p>
+
+<p>（主にクラス図作成の場合を想定しています。）</p>
+
+<p><strong>1. プロトタイプ的に作り始めたコードが、ある程度育ってきて全体が見えづらいと感じた時</strong></p>
+
+<p>これは自分のために作成するもの。なのでUMLのルールに準拠する必要はありませんので、どちらかといえば書き捨て型といえます。</p>
+
+<p>（※ドキュメントの無いコードを読む場合も書き捨て型で作成します。）</p>
+
+<p>そして、この図をもとに設計を見なおしたりします。</p>
+
+<p><strong>2. 自分が作ったコードを他の誰かが読む時</strong></p>
+
+<p>これは他人のために作成するもの。すでに設計が固まった段階のコードを追いかける上での補足情報になります。</p>
+
+<p>完全にUML準拠する必要はないでしょうが、ある程度は従ったほうが余計な誤解もなくなるかもしれません。1である程度整理ができているのでこの段階での作成は非常にそれ程苦ではないはずです。</p>
+
+<p>どちらの場合もコードありきで、後追いでの図形作成になります。注意すべきなのは、図にすべての情報を詰め込むわけではなく、必要最低限の情報に留めることで図をシンプルに保つことは必要です。</p>
+
+<p>とまぁ、これくらいシンプルなルールであれば、普段の開発フローに取り入れることはさほど大きなコストではないと考えます。多くの人はこれくらいのことはやっているんじゃないかとは思いますが、先のブログでも書かれている通り表立って議論されることはあまりないように感じます。</p>
+
+<h4 id="section-1">図を描くためのツール</h4>
+<p>図形作成のためにいちいち<a href="http://astah.change-vision.com/ja/index.html">astah*</a>やExcel()のようなアプリケーションを立ち上げるのは面倒ですよね。</p>
+
+<p><a href="https://drive.google.com">Google Drive</a>の「図形描画」や「プレゼンテーション」がオススメです。きっちりUML準拠の図を作成するわけではないので、クラス図(もどき)ならこれで十分ですし、共有も簡単です。シーケンス図はちょっと書きづらいかもしれませんが、そんな時はノートやホワイトボードに書いたものを写真に撮って適当な場所で共有すればOKでしょう。</p>
+
+<p>ところで、オブジェクト指向の場合ではなく、（純粋）関数型の場合はどうなのでしょうかね。数式？</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[EventStatsをConnpassに対応させました]]></title>
+    <link href="http://blog.restartr.com/2012/12/22/eventstats-support-connpass/"/>
+    <updated>2012-12-22T22:54:54+09:00</updated>
+    <id>http://blog.restartr.com/2012/12/22/eventstats-support-connpass</id>
+    <content type="html"><![CDATA[<p>ふと思い立って、イベントの登録者数の推移が見れるEventStatsをConnpassにも対応させました。</p>
+
+<ul>
+  <li><a href="http://eventstats.restartr.com">EventStats - イベントの統計情報が見れます</a></li>
+</ul>
+
+<p><a href="http://connpass.com/about/api/">ConnpassのAPI</a>はイベントの参加者リストまでは取得できませんが、イベント検索はほぼatnd準拠。なので追加したコード量はわずかでした。</p>
+
+<p>作った当初は何かいろいろやってたくさんの人に使ってもらえるWebサービスにしたかったれけど、結局は参加者数の推移を見る以外に何の取り柄もないままです。</p>
+
+<h5 id="section">余談</h5>
+
+<p>このWebサービス、クローラーはPython、WebサイトはScalaで書いていて、一年近く前に書いたコードなのでちょっとだけ時間かかりました。仕事で使っているpythonに比べて、シンタックスを見るのも数ヶ月ぶりなScalaは何をやっているか思い出すのにもひと苦労です。もっとScalaにも取り組みたいのですが…</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[はてなダイアリーからTumblrへデータ移行するpythonスクリプト]]></title>
+    <link href="http://blog.restartr.com/2012/03/25/python-script-for-moving-from-movabletype-to-tumblr/"/>
+    <updated>2012-03-25T02:30:19+09:00</updated>
+    <id>http://blog.restartr.com/2012/03/25/python-script-for-moving-from-movabletype-to-tumblr</id>
+    <content type="html"><![CDATA[<p>どうも。もうすぐ入社３ヶ月が経って試用期間が終わろうとしている状況な僕です。</p>
+
+<p>すっかり停滞気味のブログですが保守も兼ねて投稿を。</p>
+
+<h3 id="deldeltumblr">はてダから<del>はてブロ</del>Tumblrへ</h3>
+
+<p>とあるブログをはてなダイアリーで書いていたのですが、Tumblrへブログのデータを移行したいという要求が出てきました。ということでpythonで移行スクリプトを書いてみました。</p>
+
+<h3 id="section">ソースコード</h3>
+
+<p>例によってGitHubにて公開しておきます。</p>
+
+<ul>
+  <li><a href="https://github.com/ReSTARTR/mt2tumblr">https://github.com/ReSTARTR/mt2tumblr</a></li>
+</ul>
+
+<p>python2.6以外はテストしてません( ｰ`дｰ´)ｷﾘｯ</p>
+
+<h3 id="section-1">使い方</h3>
+
+<p>oauth2に依存しているので、実行前にインストールしておいてください。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="n">pip</span> <span class="n">install</span> <span class="n">oauth2</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>使い方はREADMEどおりです。いつもどおりのテキトー英文です。</p>
+
+<ol>
+  <li>はてなダイアリーの管理画面から”管理 &gt; インポート/エクスポート”でMovableType形式のファイルをダウンロード</li>
+  <li>ダウンロードしたファイルをresourcesディレクトリに配置</li>
+  <li>tumblrにアプリケーションを登録( <a href="http://www.tumblr.com/oauth/apps">http://www.tumblr.com/oauth/apps</a> )</li>
+  <li>consumer_keyとconsumer_secretを入手</li>
+  <li>config.pyを編集する</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="n">CONSUMER_KEY</span> <span class="o">=</span> <span class="s">&#39;&lt;consumer_key&gt;&#39;</span>
+</span><span class="line"><span class="n">CONSUMER_SECRET</span> <span class="o">=</span> <span class="s">&#39;&lt;consumer_secret&gt;&#39;</span>
+</span><span class="line"><span class="n">BASE_HOSTNAME</span> <span class="o">=</span> <span class="s">&#39;&lt;your_tumblr_url&gt;&#39;</span> <span class="c"># &#39;&lt;your-id&gt;.tumblr.com&#39;のように&quot;http://&quot;は抜きで。</span>
+</span><span class="line"><span class="n">PARSE_FILE_PATH</span> <span class="o">=</span> <span class="s">&#39;path/to/movable_type_data.txt&#39;</span>
+</span><span class="line"><span class="n">POST_STATE</span> <span class="o">=</span> <span class="s">&#39;publish&#39;</span> <span class="c"># 動作テストしたいなら&#39;draft&#39;にすると良いです。</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>実行する</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">python run.py
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<ul>
+  <li>まずはファイルの内容を読み込んで、日時、カテゴリ、タイトルが表示されるので問題ないか確認</li>
+</ul>
+
+<p>OAuth認証する。</p>
+
+<ul>
+  <li>下記のようにURLが表示されるのでブラウザでアクセス。</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="nb">open</span> <span class="ow">in</span> <span class="n">browser</span><span class="p">:</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">tumblr</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">oauth</span><span class="o">/</span><span class="n">authorize</span><span class="err">?</span><span class="n">oauth_token</span><span class="o">=</span><span class="p">{</span><span class="n">OAUTH_TOKEN</span><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="n">oauth_verifier</span><span class="p">:</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<ul>
+  <li>リダイレクト先のURLに含まれる”oauth_verifier”の値をコピーしてターミナルにペースト。
+    <ul>
+      <li>リダイレクト先は404になりますが、oauth_verifierが欲しいだけなのでそれで問題なしです。</li>
+    </ul>
+  </li>
+</ul>
+
+<p>これで、Tumblerへのインポートが始まります。</p>
+
+<p>(ﾟдﾟ)ｳﾏｰ</p>
+
+<h3 id="section-2">注意事項</h3>
+
+<ul>
+  <li>APIの呼び出し回数の制限に引っかかるかもしれませんがそのへんのエラー制御はできていません。</li>
+  <li>MovableType形式のデータをTumblrに移行するスクリプトとしてつくっていますが、実際にははてなダイアリーからMovableType形式でエクスポートしたデータでしかテストしていません。それ以外で動くかは保証できません…</li>
+  <li>投稿時間はJSTからGMTに変換してます。不要なら適当に編集してください。</li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[EventStatsはherokuとMongoLabとさくらVPSで動いている]]></title>
+    <link href="http://blog.restartr.com/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps/"/>
+    <updated>2011-12-28T21:27:52+09:00</updated>
+    <id>http://blog.restartr.com/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps</id>
+    <content type="html"><![CDATA[<p>今月頭に<a href="http://blog.restartr.com/2011/12/10/eventststs">ブログ書きました</a>が、EventStatsという勉強会の参加者の推移が見れるサービスを公開しました。</p>
+
+<ul>
+  <li><a href="http://eventstats.restartr.com">EventStats - イベントの統計情報が見れます</a></li>
+</ul>
+
+<p>まぁ自分が欲しかっただけなんですけど、使ってみて頂ければ幸いです。
+今回はそのサービスの構成とかについて書いてみます。</p>
+
+<h3 id="section">アジェンダ</h3>
+
+<ol>
+  <li>全体像</li>
+  <li>システム構成</li>
+  <li>Gitリポジトリ</li>
+  <li>MongoDBのPaaS</li>
+  <li>各イベント管理サービスAPIの違い</li>
+  <li>開発メモ</li>
+</ol>
+
+<h3 id="section-1">1.全体像</h3>
+
+<p>開発環境も含めて全体像を図にしてみました。(初Cacooですが超べんりですね！)</p>
+
+<p>赤い線がGit操作で、黒い点線がMongoDBへのアクセスです。</p>
+
+<p><a href="https://cacoo.com/diagrams/Cp2yo6tQNlxCm5av"><img border="1" alt="全体像" src="https://cacoo.com/diagrams/Cp2yo6tQNlxCm5av-2260A.png" /></a></p>
+
+<h3 id="section-2">2.システム構成</h3>
+
+<p>大きく分けてwebとクローラーの２つです。
+webはherokuに、クローラーはさくらのVPSに配置。</p>
+
+<p>まずは優先してデータ蓄積を…ということでクローラーをpythonとmongodbで作成しました。
+(サービス的にはやいとこデータためないと意味ないので。)</p>
+
+<p>クローラーは５分おきに起動するのでScalaよりPythonを選択しました。起動コスト重視です。
+(Scalaでサクサク開発できる程のスキルではないというのもありますが… )</p>
+
+<p>実行場所はherokuのworkerも考えたましたが、最終的に既に利用していたさくらVPSでcronジョブとして運用することに。</p>
+
+<p>ということでScalaのWebはデータ参照のみで、データの更新はしません。</p>
+
+<h3 id="git">3.Gitリポジトリ</h3>
+
+<p>webとクローラーは分けてGitで管理。リモートリポジトリはどちらもさくらのVPS上においています。
+ただし、本番リリースは開発PCからherokuに別途pushします。</p>
+
+<p>※webもさくらVPSにリモートリポジトリを持って、本番データを参照するステージング環境として利用しています。</p>
+
+<h4 id="eventstats-web">eventstats-web</h4>
+
+<ul>
+  <li>host: <a href="http://www.heroku.com/">heroku</a> (Chedar)</li>
+  <li>scala
+    <ul>
+      <li>フレームワーク: <a href="https://github.com/unfiltered/unfiltered">unfiltered</a> 0.5.1</li>
+      <li>mongodb接続: <a href="http://api.mongodb.org/scala/casbah/2.1.5.0/">casbah</a> 2.1.5-1</li>
+      <li>テンプレートエンジン: <a href="https://github.com/unfiltered/unfiltered/tree/master/scalate">unfiltered-scalate</a> (ssp)</li>
+      <li>テスティングライブラリ: <a href="https://github.com/unfiltered/unfiltered/tree/master/spec">unfiltered-specs</a></li>
+    </ul>
+  </li>
+  <li>チャートのレンダリング: <a href="http://code.google.com/apis/chart/index.html">Google Chart Tools</a></li>
+</ul>
+
+<h4 id="eventstats-crawler">eventstats-crawler</h4>
+
+<ul>
+  <li>host: さくらのvps</li>
+  <li>python 2.6
+    <ul>
+      <li>フレームワーク: なし</li>
+      <li>mongodb接続: <a href="http://api.mongodb.org/python/1.11/">pymongo</a> 1.11</li>
+      <li>テスティングライブラリ: <a href="http://readthedocs.org/docs/nose/en/latest/">nose</a></li>
+      <li>その他: <a href="http://www.crummy.com/software/BeautifulSoup/">BeautifulSoup</a> (<em>partake.inのwebスクレイピングに利用</em>)</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="mongodbpaas">4.MongoDBのPaas</h3>
+
+<p>herokuプラグインとして<a href="https://addons.heroku.com/mongolab">MongoLab</a>と<a href="https://addons.heroku.com/mongohq">MongoHQ</a>の２つが提供されています。どちらも無料枠があるのですが、MongoLabの方が無料で利用できる容量が大きいのでこちらを選択。</p>
+
+<p>月額の利用料金は以下です。（括弧内は1MBあたりの金額の目安です）
+<em>これ以上の容量も利用可能ですが個人で払う範囲ではないと思い除外してます。</em></p>
+
+<h4 id="mongolab">MongoLab</h4>
+<ul>
+  <li>$ 0.00/240MB</li>
+  <li>$10.00/0.5GB  ($0.020/MB)</li>
+  <li>$20.00/2.0GB  ($0.009/MB)</li>
+</ul>
+
+<h4 id="mongohq">MongoHQ</h4>
+
+<ul>
+  <li>$ 0.00/ 16MB</li>
+  <li>$ 5.00/256MB  ($0.019/MB)</li>
+  <li>$15.00/2.0GB  ($0.007/MB)</li>
+</ul>
+
+<h3 id="api">5.各イベント管理サービスAPIの違い</h3>
+
+<p>まずは<strong>atnd, zusaar, partake.inの３サービスに対応</strong>。</p>
+
+<p>それぞれ検索APIを提供してくれているのですが、当然ながら規格とかもないのでリクエストもレスポンスも違いがあります。</p>
+
+<p>データ蓄積する際にそのAPIの差異を吸収して、webアプリから参照する際は気にしなくていい戦略をとりました。
+APIの違い検索のみに特化して違いをまとめると以下の通りです。</p>
+
+<h4 id="atnd">atnd</h4>
+
+<p>イベント数も多いので、このAPIをスタンダードに設定。
+* API仕様
+ * <a href="http://api.atnd.org/">http://api.atnd.org/</a>
+* リクエストパス
+ * <a href="http://api.atnd.org/events/">/events/</a>
+   * イベントの検索
+ * <a href="http://api.atnd.org/events/users/">/events/users/</a>
+   * イベントに参加しているユーザーの検索</p>
+
+<h4 id="zusaar">zusaar</h4>
+
+<p>基本的にはatnd準拠っぽい感じだけど細かい違いがあります。
+ * API仕様
+   * <a href="http://www.zusaar.com/doc/api.html">http://www.zusaar.com/doc/api.html</a>
+ * リクエストパス
+   * <a href="http://www.zusaar.com/api/event/">/api/event/</a>
+     * イベントの検索
+   * <a href="http://www.zusaar.com/api/event/user/">/api/event/user/</a>
+     * イベントに参加しているユーザーの検索
+atndとの違い
+ * エントリポイントやデータのキー名が単数形
+   * events→event
+   * users→user
+ * 明確なフィールドとしてのtwitter_idが無い
+    * 管理者も参加ユーザーも
+ * ハッシュタグがない
+ * レスポンスはjson一択</p>
+
+<h4 id="partakein">partake.in</h4>
+
+<p>全然違うAPI。APIリストにあっても未実装がほとんどなので、利用する際はソースを確認したほうが良いです。
+今回必要になりそうなAPIは２つくらいでした。</p>
+
+<ul>
+  <li>API仕様
+    <ul>
+      <li><a href="http://code.google.com/p/partakein/wiki/PublicWebAPI">http://code.google.com/p/partakein/wiki/PublicWebAPI</a></li>
+    </ul>
+  </li>
+  <li>リクエストパス
+    <ul>
+      <li><a href="http://partake.in/api/event/search/">/api/event/search</a>
+        <ul>
+          <li>イベントの検索</li>
+        </ul>
+      </li>
+      <li><a href="http://partake.in/api/event/get/">/api/event/get</a>
+        <ul>
+          <li>イベントの詳細データ取得</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>APIのソース(抜粋)
+    <ul>
+      <li><a href="http://code.google.com/p/partakein/source/browse/trunk/Partake/src/main/java/in/partake/controller/api/event/SearchAction.java">in.partake.controller.api.event.SearchAction.java</a></li>
+      <li><a href="http://code.google.com/p/partakein/source/browse/trunk/Partake/src/main/java/in/partake/controller/api/event/EventAction.java">in.partake.controller.api.event.EventAction.java</a></li>
+    </ul>
+  </li>
+</ul>
+
+<p>その他の特徴は以下。</p>
+
+<ul>
+  <li>複数イベントを特定して一括取得するAPIはない</li>
+  <li>フィールド名がcamelCase形式</li>
+  <li>レスポンスはjson一択</li>
+  <li>検索パラメータも特殊かつ少数</li>
+  <li>検索APIで取得できるのはイベントの固定情報のみ
+    <ul>
+      <li>参加枠数はAPIから取得可能</li>
+      <li>変動するユーザー数は取得不可能</li>
+      <li>→Webページをスクレイピングするしかないという結論</li>
+    </ul>
+  </li>
+</ul>
+
+<p>上記をふまえ、atnd/zusaarはJSON形式でAPIからデータ取得。</p>
+
+<p>partake.inのみイベントのリストをAPIから取得して、ユーザー数はWebページのスクレイピングで対応しました。</p>
+
+<h3 id="section-3">6.開発メモ</h3>
+
+<h4 id="webherokuvps">web(heroku)からもクローラー(さくらのvps)からも離れた場所にある</h4>
+
+<p>開発PC上だと気にならなかったのですが、1件1件findしてinsertやupdateをしていると当然遅いです。なのである程度まとめて一気にinsertする方針に変更しました(ベンチ結果はありません ^^;)。
+更新はクローラーの１プロセスからのみ実行されるので、トランザクションとか意識しなくて良いです。なので比較的自由な構成がとれます。</p>
+
+<h4 id="scalajson-api">ScalaでJSON API</h4>
+
+<p>まずはUnfilteredでJSON APIを作成。けど、jsでjson取得〜チャート生成の実行時間が思いの外大きいので、jsonも１枚のHTMLに埋め込む方針に変更。</p>
+
+<h3 id="section-4">さいごに</h3>
+
+<p>ざっと書きだすとこんな感じです。まぁこんな構成もあるよ、ってくらいにしか言えませんが。</p>
+
+<p>webとクローラーを分けたことで、開発中のスキーマ変更が柔軟に行えたのは良かったのですが、スキーマ定義を共通で管理していないので、そのあたりうまく管理できると良いなと思ったり。
+当初はもう少しwebの機能も多かったのですが、効率化をしているうちにシンプルな形に落ち着きました。Scalaのコードもかなり小規模なものになっています。
+イベント管理者の方からのご意見ご要望などいただけると嬉しいです :)</p>
+
+<ul>
+  <li><a href="http://eventstats.restartr.com">EventStats - イベントの統計情報が見れます</a></li>
+</ul>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[イベントの参加人数の遷移が見れるサービス『EventStats』を作りました。 #atnd #zusaar #partake]]></title>
+    <link href="http://blog.restartr.com/2011/12/10/eventstats/"/>
+    <updated>2011-12-10T18:58:51+09:00</updated>
+    <id>http://blog.restartr.com/2011/12/10/eventstats</id>
+    <content type="html"><![CDATA[<h3>イベント管理サービスについて</h3>
+<p>勉強会などでよく利用されるのが、イベント管理サービス。
+
+ATNDやZusaar,Partakeなど、様々なサービスがあり、現在も新しいものが生まれている状況。</p>
+<p>今や勉強会を開催する上で必須のサービスとなっていますよね。</p>
+<p>ですが、主催者や参加者にとってそれらのサービスで閲覧できるのは『今どのような状況か』ということだけです。それまでどのように参加者が増えてきたのか、その後も参加者が増えそうか、ということまでは見ることができません。</p>
+<p>「今」ではなく「過去」を知りたい。(by @ReSTARTR)</p>
+<p>ということで作りました。</p>
+<h3>イベントごとに登録数、補欠数、枠数を記録するサービス「EventStats｣</h3>
+<ul>
+<li><a href="http://eventstats.restartr.com">EventStats - イベントの統計情報が見れます</a></li>
+</ul>
+<p>簡単にいうと<a href="http://klout.com">Klout</a>の勉強会バージョン（のとっかかり）です。
+
+このサービスを使えば、登録数と枠数の推移を時系列のチャートで確認することができます。
+
+5分おきに各イベント管理サービスの情報を取得して蓄積し、情報を表示しているだけのシンプルなサービスです。
+
+<em>(※ SVGベースのチャートのため、androidでは2.4/3.0以降でないと見れません)</em></p>
+<p>あと、2011年11月頭くらいからデータ蓄積開始したのでそれ以前のイベントの履歴は見れない場合があるのと、Partakeの枠数が0人なのも蓄積ミスです。</p>
+<h3>使い方</h3>
+<ol>
+<li><a href="javascript:(function(){s=window.location.href.split('/');type='';if(s[2]=='atnd.org'&amp;&amp;s[3]=='events')type='atnd';else if(s[2]=='www.zusaar.com'&amp;&amp;s[3]=='event')type='zusaar';else if(s[2]=='partake.in'&amp;&amp;s[3]=='events')type='partake';else return false; window.location.href=['http://eventstats.restartr.com/events/'+type,s[4]].join('/');})();">ブックマークレット</a>をブラウザに登録する</li>
+<li>履歴を知りたいイベント管理サービスの詳細ページに移動する</li>
+<li>ブックマークレットを実行する</li>
+</ol>
+<h3>技術的なこと</h3>
+<p>とりあえずHeroku上でScalaのUnfilteredを使って動かしています。
+
+技術的な話しは追々。</p>
+<h3>今後どう料理するか</h3>
+<p>実はMA7の締切りぎりぎりに公開してました。（証拠↓）</p>
+<p><a href="https://ma7.mashupaward.jp/works/478?locale=ja">https://ma7.mashupaward.jp/works/478?locale=ja</a></p>
+<p>が、リソースが足りてないさくらのVPSで動かしていたので、公開したことはとくにアナウンスとかしてませんでした。（MA7には当然のごとく選考漏れでしたが。）で、それからHerokuへの移行を進めつつ機能の修正などをやってたという訳です。</p>
+<p>今後は蓄積したデータをもとに、勉強会運営や勉強会への参加の助けとなる数値を加えていければいいなと。
+
+実はテストとか負荷試験とかあんまりできてないのであまりイジメないでください^^;</p>
+<ul>
+<li><a href="http://eventstats.restartr.com">EventStats - イベントの統計情報が見れます</a></li>
+</ul>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[（もうすぐ）退職します。]]></title>
+    <link href="http://blog.restartr.com/2011/12/02/dropped-out/"/>
+    <updated>2011-12-02T21:27:57+09:00</updated>
+    <id>http://blog.restartr.com/2011/12/02/dropped-out</id>
+    <content type="html"><![CDATA[<p>私事ですが現職の会社を退職することになり、本日無事に最終出社を終えてきました。</p>
+
+<p>退職日は年明けですが、これから有給消化期間に入ります。</p>
+
+<p>ということで記念碑的に退職エントリを書いておこうと思います。</p>
+
+<p>有益な退職エントリをご希望の方は下記まとめに移動することをオススメします。</p>
+
+<ul>
+  <li><a href="http://matome.naver.jp/odai/2128832350940033301">「退職しました」ブログエントリのまとめ - NAVER まとめ</a></li>
+  <li><a href="http://matome.naver.jp/odai/2132023611765736801">「退職しました。」系エントリーに学びが多い件 - NAVER まとめ</a></li>
+</ul>
+
+<h3 id="section">現職のはなし</h3>
+
+<p>現職では、2006年に新卒入社してから約5年半、某ポータルサイトの開発全般を担当してました。</p>
+
+<p>1年に1回部署異動が発生するくらい頻繁に体制変更があったおかげで様々な経験をさせてもらい、「自分がやりたいこと」を見つけるにはとても良い環境だったと思います。</p>
+
+<p>入社してすぐ営業研修で外回りとか経験した後、データ入稿まわりを担当。その後1年間で二度のサイトリニューアルプロジェクトを経験。1年間のサイト運用期間を経て、今担当しているログシステムの開発をやりました。</p>
+
+<p>入社から数年はPHP+RDBMSを中心としたWebアプリ開発に従事してましたが、ここ1年くらいはログシステムをHadoop/Hiveにリプレースする担当をやってました。年を経るごとにインフラに近づいていってる感じです。</p>
+
+<h3 id="section-1">技術的知見が広がるシロモノ</h3>
+
+<p>Hadoopって技術的には上から下まで幅広い知識とか素養が必要なんですよね。</p>
+
+<p>実際のクラスタ構築はインフラチームの担当でしたが、それに至るまでの導入実験とかは自分でもひと通り経験していて、それにを肌で実感していくうちにもっとシステム全般に関わりたいと思うようになりました。現職ではアプリケーションとそれを載せるインフラの担当が明確に分かれていました。そのおかげで我々はアプリケーションの開発に専念できるのですが、一方でインフラにはどうしても疎くなりがちでした。(現在社内ではその垣根を改善する動きが出てきているので今後はもっと良い体制に変わっていくと思います)</p>
+
+<p>そういう意味でHadoopは「技術の交差点」なんだと思います。非常に低いレイヤーからアルゴリズムまでがごっちゃごちゃに混ざったおもちゃ箱のような。それまでPHPのステートレスなシングルスレッド内であれこれするだけしたが、そこでは得られなかったものに興味関心が広がっていきました。Hadoopで実際何を実現するかはさておき、それをひと通り経験することで技術者として一歩前にすすむことができるし、その中でさらに深堀りしたいものを見つけることのできるシロモノだったと思います。</p>
+
+<h3 id="section-2">オープンソースコミュニティ</h3>
+
+<p>ここ1年ほどは社外のカンファレンスや勉強会へも平日休日問わずよく参加してたのですが、上司にもそれついてよく理解して頂き、本当自分の動きたいようにさせてもらえたことは有難い限りです。</p>
+
+<p>外の世界は自分が想像している以上でした。勉強会で発表を聴いたり懇親会で話しをさせていただいたりすることで、自分の足りないところが嫌でも見えてきました。現職に限らず今後どのように成長したいのか、について改めて考えるきっかけにもなりました。</p>
+
+<p>今はちょっとメンタル的な問題もあって勉強会参加は自粛していますが、年明け以降にまた少しづつ参加させていただこうと思ってます。</p>
+
+<h3 id="section-3">さいごに</h3>
+
+<p>年明けまでは旅行とか帰省とかしてゆっくり静養しつつ、技術的な取り組みも継続していこうと思います。暇を見つけて開発しているものもあるのですが、それも近々公開できると思います。あと、次の会社も決まっているのですが今後の話しはまたあらためて別の機会に。</p>
+
+<p>（このブログの読者に現職の方がどれくらいいるのかわかりませんが）とにかく現職で関わった皆様には本当に大変お世話になりました。改めて御礼もうしあげます。</p>
+
+<p>約5年半、どうもありがとうございました。</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[第二回 #Playframework 勉強会 in Tokyo #play_ja に行ってきた]]></title>
+    <link href="http://blog.restartr.com/2011/10/10/play-framework-study-in-tokyo/"/>
+    <updated>2011-10-10T15:59:13+09:00</updated>
+    <id>http://blog.restartr.com/2011/10/10/play-framework-study-in-tokyo</id>
+    <content type="html"><![CDATA[<ul>
+  <li><a href="http://atnd.org/events/19107">第二回 #Playframework 勉強会 in Tokyo #play_ja</a></li>
+</ul>
+
+<p><a href="http://atnd.org/events/17724">第一回</a>は大阪開催だったのとそもそも開催を知らなくて参加できませんでしたが、第二回は有難いことに休日に東京で開催されたので行ってきました。運営の皆様、参加者の皆様、懇親会でお話させて頂いた皆様、どうも有難うございました。</p>
+
+<h3 id="section">勉強会のまとめ記事</h3>
+
+<p>下記ブログにありますのでそちらをどうぞ。</p>
+
+<ul>
+  <li><a href="http://d.hatena.ne.jp/ikeike443/20111009/p1">第二回 Playframework 勉強会 in Tokyo やりました #play_ja - 複雑系スパゲティソース(はてな版)</a></li>
+  <li>まとめ記事へのリンクが最後にあります。</li>
+  <li><a href="http://ponta027.blogspot.com/2011/10/playframework.html">Playframework勉強会#2まとめ（スライド）</a></li>
+  <li>発表資料をまとめてあります。</li>
+</ul>
+
+<p>なのでここでは、全体的な話しではなく関心の強いところに関してのみ書こうと思います。</p>
+
+<p>ただの感想文です。</p>
+
+<h3 id="play">Play!の今とこれから</h3>
+
+<p>Play!がどのような分野で使われ、どのように変化していくのかが今の大きな関心事であり、今回の参加理由でした。</p>
+
+<p>今回の発表を聞いていると、Java界隈の救世主（候補）的な位置づけとして期待されているという段階なのでしょう。</p>
+
+<p>主催者の@<a href="https://twitter.com/ikeike443">ikeike443</a>さんの会社のシャノンさんでは実際業務でPlay!を使われていたり、@<a href="https://twitter.com/genki_">genki_</a>さんは今まさに<a href="http://harp.ruru.ne.jp/sol/play/play2.pdf">SI案件で業務アプリケーションにPlay!を導入しようとしている</a>ところだそうで。</p>
+
+<h3 id="play2x">Play!2.x系による変化</h3>
+
+<p>ただ、Play!が今後2.x系でScalaベースでの開発に切り替わるので、それによって今の勢いがどう変わっていくのでしょうか。JavaベースのPlay!1.xにScalaユーザーを引き込むのと、ScalaベースのPlay!2.xにJavaユーザーを引きこむのでは、大きく状況が変わってくると思います。自分はScalaユーザーなのでこの動きは非常に嬉しいですが、もしかしたら勢いが減速してしまうのではとちょっと不安になったり。</p>
+
+<p>（プラグインのサポートがどちらか一方の言語に限定されていて、結局導入を見送るなんてこともあると思います。）</p>
+
+<h3 id="play-1">Play!の外部環境</h3>
+
+<p>とはいえ、外部環境としてはPlay!のサポートPassSがちょくちょく出てきているので当分は勢いが衰えることはないと思います。単体でサーバーとして動作させることが可能なだけでなく、war化も可能なのでTomcatやJettyに載っけることができる環境なら動かせてしまいます。とくに@<a href="http://twitter.com/hagikuratakeshi">hagikuratakeshi</a>さんや@<a href="https://twitter.com/mitsuhiro">mitsuhiro</a>さんが取り上げていたようにHerokuのPlay!サポートによって趣味プログラミングとして手を出しやすくなってますし。</p>
+
+<h3 id="scalaplay">ScalaのフレームワークとしてのPlay!</h3>
+
+<p>Scala界隈ではUnfilteredやBlueEyesのような積極的にScalaの機能を利用したFWが注目されています。（少なくとも私のTwitterのTL上では…)ただし、日本語ベースのScalaのフレームワークのリファレンスや関連記事はまだまだ少ないのが現状です。</p>
+
+<p>Play!の場合は翻訳も積極的に行われていますし、勉強会に100人近く参加するような日本のPlay!コミュニティの存在は正直無視できないと思います。今後のPlay!界隈の動向に注目です。</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Scalaで設定ファイルを使いたい時どうしたらいいの？]]></title>
+    <link href="http://blog.restartr.com/2011/08/30/config-libraries-in-scala/"/>
+    <updated>2011-08-30T00:02:15+09:00</updated>
+    <id>http://blog.restartr.com/2011/08/30/config-libraries-in-scala</id>
+    <content type="html"><![CDATA[<p><em style="color:red">2011.08.31 kmizushimaさんから頂いた<a href="http://blog.restartr.com/2011/08/30/config-libraries-in-scala/?preview=true&amp;preview_id=1049&amp;preview_nonce=ad0bbeeef6#comment-108">コメント</a>を元に、下記の記述を修正＆追記しました。</em></p>
+
+<ul>
+  <li>Twitterのutil-evalの一時ファイル生成について</li>
+  <li>AkkaのConfigファイルのパース手法について
+&lt;/em&gt;</li>
+</ul>
+
+<p>TwitterのOAuthの鍵やDB接続情報など、アプリを書く上で環境によって切り替える設定が大抵の場合あると思います。普段使っているPHPの場合、設定を外部ファイルに書きだす場合、ini,yaml,xml,phpのいずれかを使うことが多いのですが、Scalaの場合、設定ファイルってどうするのか気になりました。</p>
+
+<p>ということで、適当に思いついたライブラリやフレームワークがどのように対応しているのか調査。</p>
+
+<h2 id="section">ライブラリ</h2>
+
+<h3 id="properties">propertiesファイル</h3>
+
+<ul>
+  <li>javaの古くから使われている</li>
+  <li>キーと値のみ設定可能</li>
+  <li>依存関係がないので手軽。</li>
+  <li>すべてが文字列</li>
+  <li>例えばこんな感じ</li>
+</ul>
+
+<p>path/to/conf.properties</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="n">hoge</span> <span class="k">=</span> <span class="s">&quot;moge&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">val</span> <span class="n">p</span> <span class="k">=</span> <span class="k">new</span> <span class="n">java</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="nc">Properties</span><span class="o">()</span>
+</span><span class="line"><span class="k">val</span> <span class="n">config</span> <span class="k">=</span> <span class="n">p</span><span class="o">.</span><span class="n">load</span><span class="o">(</span><span class="k">new</span> <span class="n">java</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="nc">FileInputStream</span><span class="o">(</span><span class="s">&quot;path/to/conf.properties&quot;</span><span class="o">);</span>
+</span><span class="line"><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="s">&quot;hoge&quot;</span><span class="o">)</span> <span class="c1">// &quot;moge&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="twitterconfiggy">twitterのconfiggy</h3>
+
+<ul>
+  <li><a href="https://github.com/robey/configgy">https://github.com/robey/configgy</a></li>
+  <li>独自フォーマット</li>
+  <li>オワコン</li>
+</ul>
+
+<h3 id="twitterutil-eval">twitterのutil-eval</h3>
+
+<ul>
+  <li><a href="http://twitter.github.com/util/">http://twitter.github.com/util/</a></li>
+  <li>Evalした値をそのまま利用</li>
+  <li>Scalaのコンパイラに任せられる。つまりScalaコードがそのまま設定ファイルに。</li>
+  <li>型安全</li>
+  <li>詳しいことはこちらを参照
+    <ul>
+      <li><a href="http://d.hatena.ne.jp/xuwei/20110805/1312551980">twitter が Scala 大好きすぎて (?) 設定ファイルまで Scala のソースコードな件 - scalaとか・・・</a></li>
+      <li><a href="http://blog.youhei.jp/scala-util-eval">Scala アプリケーションのコンフィグレーションに Twitter 製の util-eval を使ってみた - blog.youhei.jp</a></li>
+    </ul>
+  </li>
+  <li>下記処理にて設定クラスインスタンスをapply経由で取り出せる
+    <ul>
+      <li><a href="https://github.com/twitter/util/blob/master/util-eval/src/main/scala/com/twitter/util/Eval.scala#L247">com.twitter.util.Eval#L247</a></li>
+    </ul>
+  </li>
+  <li><del>一時的にjarファイルを生成するので環境に制約あるとダメ（たぶん）</del>
+    <ul>
+      <li>一時ファイルを生成するのは、ローカルにcloneした古いままのバージョン（1.2.5）で動作確認していたためでした。</li>
+      <li>古いコード: <a href="https://github.com/twitter/util/blob/7c81842286f30aee4b2176bceb8c79ded710c88e/src/main/scala/com/twitter/util/Evaluator.scala">com.twitter.util.Evaluator</a>のコメントに<a href="https://github.com/twitter/util/blob/7c81842286f30aee4b2176bceb8c79ded710c88e/src/main/scala/com/twitter/util/Evaluator.scala#L57">All generated .scala and .class files are stored, by default, in System.getProperty(“java.io.tmpdir”)</a>と書いてあったので、「一時ファイルが生成される」と認識し、実際の動作確認でもその一時ファイルが確認できていました。</li>
+      <li>しかし、新しいコード: <a href="https://github.com/twitter/util/blob/master/util-eval/src/main/scala/com/twitter/util/Eval.scala">com.twitter.util.Eval</a>のコメントには<a href="https://github.com/twitter/util/blob/master/util-eval/src/main/scala/com/twitter/util/Eval.scala#L50">If target is None, the results are compiled to memory (and are therefore ephemeral)</a>とある通り、パス指定がない場合はメモリ上の仮想ディレクトリに対して操作を行う模様です。</li>
+    </ul>
+  </li>
+  <li>使い方</li>
+</ul>
+
+<p>設定のtraitを定義</p>
+
+<p>src/main/scala/com/restartr/utilSample/MyConfig.scala</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">package</span> <span class="nn">com.restartr.utilSample</span>
+</span><span class="line">
+</span><span class="line"><span class="k">trait</span> <span class="nc">MyConfig</span> <span class="o">{</span>
+</span><span class="line">  <span class="k">val</span> <span class="n">num</span><span class="k">:</span> <span class="kt">Int</span>
+</span><span class="line">  <span class="k">val</span> <span class="n">str</span><span class="k">:</span> <span class="kt">String</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>実際の設定ファイルでは、設定のTraitを継承してインスタンス生成</p>
+
+<p>※クラスインスタンスでなくても文字列やリストでもOK。</p>
+
+<p>path/to/config/MyConfig.scala</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">import</span> <span class="nn">com.restartr.utilSample.MyConfig</span>
+</span><span class="line"><span class="k">new</span> <span class="nc">MyConfig</span> <span class="o">{</span>
+</span><span class="line">  <span class="k">val</span> <span class="n">num</span> <span class="k">=</span> <span class="mi">1</span>
+</span><span class="line">  <span class="k">val</span> <span class="n">str</span> <span class="k">=</span> <span class="s">&quot;san&quot;</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>使いたい場所でEval。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">val</span> <span class="n">conf</span> <span class="k">=</span> <span class="nc">Eval</span><span class="o">[</span><span class="kt">MyConfig</span><span class="o">](</span><span class="k">new</span> <span class="n">java</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="nc">File</span><span class="o">(</span><span class="s">&quot;path/to/config/MyConfig.scala&quot;</span><span class="o">))</span>
+</span><span class="line"><span class="n">conf</span><span class="o">.</span><span class="n">num</span> <span class="c1">// 1</span>
+</span><span class="line"><span class="n">conf</span><span class="o">.</span><span class="n">str</span> <span class="c1">// &quot;san&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="configrity">configrity</h3>
+
+<ul>
+  <li><a href="https://github.com/paradigmatic/Configrity">https://github.com/paradigmatic/Configrity</a></li>
+  <li>akkaのフォーマットと同等
+    <ul>
+      <li><a href="https://github.com/paradigmatic/Configrity/wiki/Formats">設定のフォーマット</a></li>
+      <li>Scala 2.9以上対象。</li>
+      <li>configファイルの<strong>読み書き</strong>ができる
+        <ul>
+          <li>immutable, thread safe, allow functional design pattern</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="section-1">各種フレームワーク</h2>
+
+<p>以下のフレームワークはすべて独自実装でした。Propertiesじゃ役不足だし、かといってデファクトな設定用ライブラリがないからなのでしょうか。</p>
+
+<h3 id="akkaconfig">akkaのconfig</h3>
+
+<ul>
+  <li>akka.confとかがそれ。</li>
+  <li>独自パーサーを使用
+    <ul>
+      <li>70行程度のシンプルなパーサー</li>
+      <li><a href="https://github.com/jboner/akka/blob/master/akka-actor/src/main/scala/akka/config/ConfigParser.scala">akka.config.ConfigParser</a></li>
+      <li><del>正規表現で定義されてる</del>Scalaのパーザコンビネータ(RegexParsersを継承)で定義されている</li>
+      <li>”{“と”}”で階層構造を表現</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="n">akka</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">cluster</span><span class="o">{</span>
+</span><span class="line">    <span class="n">name</span> <span class="k">=</span> <span class="s">&quot;test-cluster&quot;</span>
+</span><span class="line">  <span class="o">}</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<ul>
+  <li>使える型</li>
+  <li>数値</li>
+  <li>文字列</li>
+  <li>真偽値（on/off , true/false)</li>
+  <li>リスト [1,2,3] / [“hoge”,”moge”]</li>
+</ul>
+
+<h3 id="playframeworkconfig">play!frameworkのconfig</h3>
+
+<ul>
+  <li>独自パーサー
+    <ul>
+      <li><a href="https://github.com/playframework/play/blob/master/framework/src/play/utils/OrderSafeProperties.java">play.utils.OrderSafeProperties</a></li>
+    </ul>
+  </li>
+  <li>java.util.propertiesを継承したもの。</li>
+  <li>環境ごとにIDを割り当てられる
+    <ul>
+      <li>http://playdocja.appspot.com/documentation/1.2.1/production</li>
+      <li>http://playdocja.appspot.com/documentation/1.2.1/guide11</li>
+      <li>IDごとに%{ID}を頭につければ切り替えてくれるみたい</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="lift">Lift</h3>
+
+<ul>
+  <li>LiftRulesが設定をもつ
+    <ul>
+      <li><a href="http://simply.liftweb.net/index-3.1.html#toc-Subsection-3.1.2">http://simply.liftweb.net/index-3.1.html#toc-Subsection-3.1.2</a></li>
+      <li>実装はここ
+*<a href="https://github.com/lift/framework/blob/master/web/webkit/src/main/scala/net/liftweb/http/LiftRules.scala">net.liftweb.http.LiftRules</a></li>
+      <li>たぶんこのへん
+        <ul>
+          <li><a href="https://github.com/lift/framework/blob/master/core/util/src/main/scala/net/liftweb/util/Props.scala">net.liftweb.util.Props</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<p>ざっと調べて使ってみたところ、手軽にやるならProperties、フレームワークを使うならそれに則り、厳密にやるならTwitterのEvalや、設定ファイルを読み書きできる独特なConfigrityなんかがよさそうです。</p>
+
+<p>XMLは…まぁないでしょうね。</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[ScalaのORMapperのSquerylを試してみてハマった３つのこと]]></title>
+    <link href="http://blog.restartr.com/2011/08/16/3-things-that-i-was-in-trouble-using-squeryl/"/>
+    <updated>2011-08-16T08:00:15+09:00</updated>
+    <id>http://blog.restartr.com/2011/08/16/3-things-that-i-was-in-trouble-using-squeryl</id>
+    <content type="html"><![CDATA[<p>ScalaのORMとしてSquerylってのがあります。</p>
+
+<ul>
+<li><a href="http://squeryl.org/index.html">Squeryl - A Scala ORM for SQL Databases</a></li>
+</ul>
+<p>使い方は上記リンク先を見ればだいたいわかります。</p>
+
+<p>あと、<a href="http://twitter.com/jugyo">@jugyo</a>さんのブログに導入あたりはまとまっていますし、つまづいたらGoogleGroupで検索すれば何か見つかるかもしれません。</p>
+
+<ul>
+<li><a href="http://blog.twiwt.org/e/f34763"> Twiwt:Blog / jugyo : squeryl を試す </a></li>
+<li><a href="http://blog.twiwt.org/e/7e40ce">Twiwt:Blog / jugyo : Squeryl の使い方 - セットアップ, モデルの定義, テーブル作成</a></li>
+<li><a href="https://groups.google.com/group/squeryl/about"> Squeryl | Google Groups </a></li>
+</ul>
+<p>さて、今回はTwitterっぽいものを想定して機能を試してみたのですが、３つほどハマったところを記しておきます。</p>
+
+<p>環境はScala2.9.0.1、Sbt0.7.7、MySQL5.5、Squeryl0.9.4です。</p>
+
+<p>ソースはgistに登録。それを本文末尾にも掲載しておきました。</p>
+
+<h3>１．プライマリーキーの指定での嵌りどころ</h3>
+<p>1つのカラムがPKとなるテーブルスキーマの場合、org.squeryl.KeyedEntity[T]を継承して使います。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">class</span> <span class="nc">Users</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">text</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">KeyedEntity</span><span class="o">[</span><span class="kt">Long</span><span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>KeyedEntityにはidというフィールドが用意されていて、継承時に型を指定することで、PKの型に適用させることができます。今回の場合であればLong型のPK「id」ということになります。</p>
+
+<p>ただし、この場合、PKはautoincrementedになってしまいます。</p>
+
+<p>コード的には下記のようにKeyedEntity[T]を使わずSchema継承時に定義するのと同等になるわけです。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">class</span> <span class="nc">Users</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">text</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span>
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">Db</span> <span class="k">extends</span> <span class="nc">Schema</span> <span class="o">{</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">val</span> <span class="n">users</span> <span class="k">=</span> <span class="n">table</span><span class="o">[</span><span class="kt">User</span><span class="o">](</span><span class="s">&quot;users&quot;</span><span class="o">)</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">on</span><span class="o">(</span><span class="n">users</span><span class="o">)(</span><span class="n">u</span> <span class="k">=&gt;</span> <span class="n">declare</span><span class="o">(</span>
+</span><span class="line">
+</span><span class="line">    <span class="n">u</span><span class="o">.</span><span class="n">id</span> <span class="n">is</span> <span class="o">(</span><span class="n">primaryKey</span><span class="o">,</span> <span class="n">autoincremented</span><span class="o">))</span>
+</span><span class="line">
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>これは結構困ります。そんな場合はSchemaを継承するときに定義を上書きすればOK。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">class</span> <span class="nc">Users</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">text</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">KeyedEntity</span><span class="o">[</span><span class="kt">Long</span><span class="o">]</span>
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">Db</span> <span class="k">extends</span> <span class="nc">Schema</span> <span class="o">{</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">val</span> <span class="n">users</span> <span class="k">=</span> <span class="n">table</span><span class="o">[</span><span class="kt">User</span><span class="o">](</span><span class="s">&quot;users&quot;</span><span class="o">)</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">on</span><span class="o">(</span><span class="n">users</span><span class="o">)(</span><span class="n">u</span> <span class="k">=&gt;</span> <span class="n">declare</span><span class="o">(</span>
+</span><span class="line">
+</span><span class="line">    <span class="n">u</span><span class="o">.</span><span class="n">id</span> <span class="n">is</span> <span class="o">(</span><span class="n">primaryKey</span><span class="o">))</span>
+</span><span class="line">
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>これはSquerylのGoogleGroupに書いてました。</p>
+
+<ul>
+<li><a href="https://groups.google.com/forum/#!topic/squeryl/BTrKBwikMqs">how to cancel &#8220;autoincremented&#8221; from KeyedEntity[T]</a></li>
+</ul>
+<h3>２．DDLのカラムの順番の嵌りどころ</h3>
+<p>Db.printDdlを実行した時にカラムの順番が予測できません。</p>
+
+<p>PKが最初にくるのかと思えばそうでもないみたい。ここは細かく追ってないですが、これもGoogleGroupに答えがありました。</p>
+
+<ul>
+<li><a href="https://groups.google.com/forum/#!topic/squeryl/ZwiDf5Q-IUI">CREATE TABLE columns in order of constructor arguments</a></li>
+</ul>
+<p>答えとしては、org.squeryl.internals.DatabaseAdapter:: writeCreateTableあたりをorverrideしてなんとかしてくれとのこと。</p>
+
+<p><a href="https://github.com/max-l/Squeryl/blob/master/src/main/scala/org/squeryl/internals/DatabaseAdapter.scala#L255">https://github.com/max-l/Squeryl/blob/master/src/main/scala/org/squeryl/internals/DatabaseAdapter.scala#L255</a></p>
+
+<p>なんか良い方法はないの…</p>
+
+<p>とりあえず、printDdlした結果をコピーして、順番だけ書き換えて、手動で直接DBにクエリ発行すればなんとかなるでしょう。</p>
+
+<h3>３．外部キーの利用でのはまりどころ</h3>
+<p>２つのテーブルにRelationを設定してからDb.createした際、外部キーが設定されない問題がありました。</p>
+
+<p>MySQLは5.5を使っているので外部キーに対応していない訳でもないです。</p>
+
+<p>問題はAdapterの選定にありました。</p>
+
+<p>org.squeryl.adapter.MySQLAdapter</p>
+
+<p>をつかっていたのですが、</p>
+
+<p>org.squeryl.adapter.MySQLInnoDBAdapter</p>
+
+<p>を使えばOKでした。</p>
+
+<p>根本の原因は、org.squeryl.adapter.MySQLAdapterに</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">override</span> <span class="k">def</span> <span class="n">supportsForeignKeyConstraints</span> <span class="k">=</span> <span class="kc">false</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>と定義してあり、一方のorg.squeryl.adapter.MySQLInnoDBAdapterには</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">override</span> <span class="k">def</span> <span class="n">supportsForeignKeyConstraints</span> <span class="k">=</span> <span class="kc">true</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>と定義してあります。</p>
+
+<p>この値がtrueになっていないとForeignKeyの制約がDDLに含まれなくなってしまうので注意です。</p>
+
+<p><a href="https://github.com/max-l/Squeryl/blob/master/src/main/scala/org/squeryl/adapters/MySQLAdapter.scala#L75">Docコメントにも書いてある</a>ので注意です。</p>
+
+<p>以上、Squerylを弄ってみて嵌ったことをまとめてみました。</p>
+
+<h3>Squerylの使用感</h3>
+<p>ちょっと前にTwitterのStreamAPIのデータをMySQLに格納するためにSquerylを使ったのと今回少し弄ってみただけなのでまだまだ知らないことだらけです。他にも機能的はたくさん用意されていると思いますし、APIも割となじみやすいので複雑すぎないテーブル定義の場合には積極的にSquerylを使っていこうと思います。</p>
+
+<p><em>※ドキュメントや本体のソースを追いかけたりしながら使い方を学ぶのは非常に楽しいです:)</em></p>
+
+<p>で、ソースは以下です。</p>
+
+<script src="https://gist.github.com/1146854.js"> </script>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Varnish勉強会 #tokyovcl に行ってきた]]></title>
+    <link href="http://blog.restartr.com/2011/06/21/go-to-varnish-study-tokyovc/"/>
+    <updated>2011-06-21T23:56:40+09:00</updated>
+    <id>http://blog.restartr.com/2011/06/21/go-to-varnish-study-tokyovc</id>
+    <content type="html"><![CDATA[<p><a href="http://www.flickr.com/photos/53244662@N04/5856931526/" title="IMAG0053 by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5029/5856931526_1119c53a87.jpg" width="500" height="299" alt="IMAG0053" /></a></p>
+
+<p>6/18(土)に開催された<a href="http://atnd.org/events/16681">Varnish勉強会 Tokyo.vcl : ATND</a>に行ってきました。
+初のクックパッドさんオフィス訪問です。</p>
+
+<p>Varnish3のリリースパーティーも兼ねての開催だったようで、ステッカーもいただいてしまいました。
+インフラ屋じゃない上に、Varnish触ったのは前日の晩という超初心者だったので結構不安でしたが、
+ビアバッシュを含め色々な話しが聞けた実りある良い勉強会でした。</p>
+
+<p>主催の@hmskさんをはじめ登壇者の皆様、ならびにビアバッシュで交流してくださった皆様ありがとうございました。</p>
+
+<h3 id="section">雑感</h3>
+<ul>
+  <li>Varnishは画像配信の事例が多い</li>
+  <li>HTTPサーバーの前だけじゃなくてSolrのような内部ネットワーク間の通信にも適用できる。</li>
+  <li>Varnish落ちたときにApacheの負荷を避けるためにSquidが使える。</li>
+  <li>拡張次第でHTTPサーバーにもKVSにも化ける（やりすぎ注意？）。</li>
+  <li>クラウドでの運用はフロンティア。</li>
+  <li>設定ファイルのvclはもはやプログラム</li>
+  <li>ESIの事例なかったけど使いにくいのかな？</li>
+  <li>とりあえず実戦投入して様子見ないとわからないことが多そう。</li>
+  <li>あ、どれだけ高速化したかについての言及がなかったような…</li>
+</ul>
+
+<h2 id="section-1">各発表メモ</h2>
+<p>スライドと、その丸写しみたいな感じのメモをペタペタ。</p>
+
+<h3 id="varnishcache30vupxcir">VarnishCache3.0新機能とVUPの仕方(@xcir)</h3>
+
+<div style="width:425px" id="__ss_8344516"> <strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/xcir/tokyovclvarnishcache30vup" title="tokyo.vcl発表資料（VarnishCache3.0新機能とVUPの仕方）">tokyo.vcl発表資料（VarnishCache3.0新機能とVUPの仕方）</a></strong> <iframe src="http://www.slideshare.net/slideshow/embed_code/8344516" width="425" height="355" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
+<div style="padding:5px 0 12px"> View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/xcir">xcir</a> </div>
+
+</div>
+<ul>
+  <li>ESIでのgzip
+    <ul>
+      <li>ブロックが圧縮されているとESIできなかった(~2）</li>
+      <li>defaultパラメータが改善された</li>
+    </ul>
+  </li>
+  <li>stream support
+    <ul>
+      <li>別のストリームは待機させられる（？</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="varnishphji">イカ娘も終わったしVarnishでも使うか(@phji)</h3>
+
+<div style="width:425px" id="__ss_8366215"> <strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/phji/varnishika" title="イカ娘も終わったしVarnishでも使うか">イカ娘も終わったしVarnishでも使うか</a></strong> <iframe src="http://www.slideshare.net/slideshow/embed_code/8366215" width="425" height="355" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
+<div style="padding:5px 0 12px"> View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/phji">Kazutoshi Fujimoto</a> </div>
+
+</div>
+<ul>
+  <li>[RAM8G Xeon 4core SSD256GB ] x 20servers</li>
+  <li>pixiv
+    <ul>
+      <li>nginx -&gt; (consistent hash) -&gt; quid -&gt; nginx -&gt; apache</li>
+      <li>lookupとかかないとキャッシュされないｗ</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="twitteryatsvarnishpenguinana">twitter検索(yats)でvarnish使ってみた(@PENGUINANA_)</h3>
+<ul>
+  <li>API 7000M req/month</li>
+  <li>PV 150Mreq/month</li>
+  <li>varnish(vps) -&gt; nginx[ webAPI -&gt; varnish -&gt; Solr ]</li>
+  <li>service : cache + failover</li>
+  <li>Solr: slaveのキャッシュクリアーが重いので、その前面にVarnishをおいている(ラウンドロビンとFailover）</li>
+  <li>autocomplete
+    <ul>
+      <li>キャッシュと相性よさそう</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="ec2varnishmirakui">EC2とvarnishで画像配信(@mirakui)</h3>
+
+<div style="width:425px" id="__ss_8352369"> <strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/mirakui/ec2varnish" title="EC2とVarnishで画像配信">EC2とVarnishで画像配信</a></strong> <iframe src="http://www.slideshare.net/slideshow/embed_code/8352369" width="425" height="355" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
+<div style="padding:5px 0 12px"> View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/mirakui">Issei Naruta</a> </div>
+
+</div>
+<ul>
+  <li>失敗談</li>
+  <li>TOFU
+    <ul>
+      <li>アップロード時ではなくオンデマンドでリサイズ</li>
+      <li>akamai（CDN)に7000RPSのうち、ELBには700RPSくる。60%受けるリクエストをキャッシュできればApache負荷軽減できるのでは？
+        <ul>
+          <li>という導入経緯（からの失敗</li>
+        </ul>
+      </li>
+      <li>1st challenge
+        <ul>
+          <li>EC2(M2.XLARGE[17.1GB RAM] + EBS[100GB for swap])</li>
+          <li>300rps</li>
+          <li>結果：オンメモリだけなら順調だけど、あふれてきてOSにSWAPさせたとたんLOADAVERAGEが爆発して死亡。</li>
+        </ul>
+      </li>
+      <li>2nd challenge
+        <ul>
+          <li>EC2(M2.XLARGE[17.1GB RAM] + EBS[100GB for ext3])</li>
+          <li>“file storage”を使っても結局メモリ容量が大量に必要</li>
+        </ul>
+      </li>
+      <li>ec2のxlargeインスタンスには、IO性能「標準」と「高」がある
+        <ul>
+          <li>今回は「標準」を利用して失敗</li>
+          <li>「高」ならうまくいくかも</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>varnish3
+    <ul>
+      <li>hash director
+        <ul>
+          <li>consistent hashingができるかも？</li>
+          <li>nginxいらずに複数varnish運用ができるかも？</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="puppetvarnishsquidar1">Puppetでvarnishもsquidも面倒みる(@ar1)</h3>
+<ul>
+  <li>ふつうはvarnishは落ちるのでLBつかって並列で運用</li>
+  <li>varnishおちるとWebサーバーが負荷かかってしまう
+    <ul>
+      <li>LB -&gt; varnish -&gt; squid -&gt; apache</li>
+      <li>squidどうしでキャッシュを共有できるので、１つSquidおちてもWebサーバーにききにいかずにすむ。</li>
+    </ul>
+  </li>
+  <li>puppet
+    <ul>
+      <li>設定をらくにする</li>
+      <li>cacheのExpire</li>
+      <li>サーバーのぬきさし</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="varnishspchidren">楽天でvarnish(@spchidren)</h3>
+<ul>
+  <li>L7 balancingがやりたくてVarnish導入
+    <ul>
+      <li>URLによってWebサーバーのグループを切り替えたい</li>
+    </ul>
+  </li>
+  <li>akamai -&gt; LB -&gt; varnish(RAM24G[malloc18G/hitrate 75%] -&gt; apache(+mod_thumb)</li>
+  <li>LBからVarnishを切り離すのはどうやる？</li>
+  <li>CDNやVarnishのcache clearをどうやるか
+    <ul>
+      <li>画像登録されたときにMQに登録して、必要に応じて消す</li>
+      <li>CDNは常にExpireされない状態にしておける。</li>
+    </ul>
+  </li>
+  <li>ImageMagicおもい
+    <ul>
+      <li>varnishにサムネイルをつくるしくみを組み込んでみれば？（FreeImage)</li>
+      <li>cc_commandでインクルードさせて、C言語でサムネイルつくるしくみをくみこむ</li>
+    </ul>
+  </li>
+  <li>varnishのいくさき
+    <ul>
+      <li>nginxにも近いしredisにもちかづいてきてる</li>
+      <li>どこにいくんでしょ</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="tddvclhmsk">TDDでVCL書いてデプロイ(@hmsk)</h3>
+<ul>
+  <li>varnishtest
+    <ul>
+      <li>RSpecぽい書き方できる</li>
+      <li>xxx.vcltestファイルにケースを記述</li>
+    </ul>
+  </li>
+  <li>vmod
+    <ul>
+      <li>vclの設定をC言語っぽく描ける</li>
+      <li>パージや圧縮、エラーなどに使える</li>
+      <li>モバイル端末のリストのチェックにもVCLから外出しできる</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="section-2">関連リンク</h2>
+<ul>
+  <li>ATND
+    <ul>
+      <li><a href="http://atnd.org/events/16681">Varnish勉強会 Tokyo.vcl : ATND</a></li>
+    </ul>
+  </li>
+  <li>Ustream
+    <ul>
+      <li><a href="http://www.ustream.tv/recorded/15453305">http://www.ustream.tv/recorded/15453305</a></li>
+      <li><a href="http://www.ustream.tv/recorded/15453834">http://www.ustream.tv/recorded/15453834</a></li>
+    </ul>
+  </li>
+  <li>Togetter
+    <ul>
+      <li><a href="http://togetter.com/li/151585">Togetter - 「第一回 Varnish勉強会 Tokyo.vcl」</a></li>
+    </ul>
+  </li>
+  <li>勉強会レポート
+    <ul>
+      <li><a href="http://d.hatena.ne.jp/hxmasaki/20110620/1308547067">Varnish勉強会 Tokyo.vclを行いました - ククラフト</a></li>
+      <li><a href="http://d.hatena.ne.jp/mirakui/20110619/1308497959">私がクックパッドの画像配信野郎です - 床のトルストイ、ゲイとするとのこと</a></li>
+      <li><a href="http://blog.xcir.net/?p=438">Tokyo.vclでVarnishCache3の新機能とVUPの仕方を話してきました « cat /dev/random &gt; /dev/null &amp;</a></li>
+      <li><a href="http://blog.udzura.jp/2011/06/20/summary-of-tokyo-varnish-study-on-20110618/">東京varnish勉強会(Tokyo.vcl)まとめ «  blog.udzura.jp</a></li>
+    </ul>
+  </li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[東京から福島へ一泊二日でボランティアに行ってきた]]></title>
+    <link href="http://blog.restartr.com/2011/06/19/volunteer-at-shinchi-fukushima-pref/"/>
+    <updated>2011-06-19T12:03:20+09:00</updated>
+    <id>http://blog.restartr.com/2011/06/19/volunteer-at-shinchi-fukushima-pref</id>
+    <content type="html"><![CDATA[<p><a href="http://www.flickr.com/photos/53244662@N04/5847245836/" title="IMG_5100 by ReSTARTR_y, on Flickr"><img src="http://farm4.static.flickr.com/3538/5847245836_ca37b883fe_z.jpg" width="640" height="427" alt="IMG_5100" /></a></p>
+
+<p>6/11,12の土日を利用して、福島県相馬郡新地町にボランティア活動に行ってきました。</p>
+
+<h2 id="section">活動の経緯</h2>
+
+<p>東日本大震災がおきてから、被災地に対して何かできることを、ということでこれまで募金と献血をやってきました。が、それだけでなく何かできることはないかと常々考えていました。
+仕事柄、ITを利用した貢献も考えたのですが、イマイチ現地の状況がわからない。情報を得ようとしても地域やソースによって様々かつ時間とともに大きく変化しているからです。
+また、社会人とはいうものの土日の時間やお金については結構余裕があるので、じゃあ現地でボランティアをすることで現状を知ることができるのではないか、と考えたのが今回の経緯です。
+その後、被災地の状況に詳しい元同僚に相談し、その子の母親と友人2名を加えた5名で活動をしてきました。</p>
+
+<h3 id="section-1">活動内容</h3>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5846683717/" title="IMG_5090 by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5109/5846683717_604f687639_m.jpg" width="240" height="160" alt="IMG_5090" /></a></p>
+
+<p>津波の被害をうけた民家の瓦礫撤去作業を行いました。
+とはいっても大きな物はあらかた自衛隊が撤去しているので、我々の役目は倒れた木の撤去や、瓦・ガラス等の破片の収集、側溝の泥かきなど、担当した民家の敷地内を綺麗にすること。
+計10名程度で、1日かけて行いましたが、天候が曇りだったこともあって順調に作業をすることができました。</p>
+
+<h2 id="section-2">現地に行ってみて</h2>
+
+<h4 id="section-3">ボランティアセンターすごい</h4>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5822614663/" title="現地到着。まだ受付前。 by ReSTARTR_y, on Flickr"><img src="http://farm3.static.flickr.com/2673/5822614663_ec084f0dfd_m.jpg" width="240" height="144" alt="現地到着。まだ受付前。" /></a></p>
+
+<p>被災地のボランティアセンターもずいぶん落ち着いてきているようです。
+活動に必要な道具（スコップやマスク）だけでなく、水や活動後のアイスコーヒーなどの提供もして頂きました。
+ボランティア活動自体初めてだったのですが、たとえ不慣れであっても、コーディネーターの方々や一緒に活動する方々の力を借りながら活動することは可能であると実感しました。
+現地でボランティアをしたいと考えているけど踏み出せなかった方は、真夏になる前に一度足を運んでみてはいかがでしょう。</p>
+
+<h4 id="section-4">電波悪い</h4>
+<p>SoftBankの黒SIMをDesireSに入れて利用しているのですが、ほぼ繋がりません。
+全然つながらない訳ではないですが、かなり不安定でたまにつながる程度。picplzで写真アップロードしようとしても100%失敗します。
+今回の震災でインターネットが活躍したという話は聞きますが、このような電波状況のままでは欲しい情報も手に入らないでしょう。震災後にこうなったのかもともと電波の弱い地域だったのかわかりませんが、これではインターネットの存在も無意味。</p>
+
+<p>利用した福島県伊達市（福島市の近く）の宿泊施設で、地震を体験したのですが、電波が皆無だったために震源や地震の規模などの情報が全く手に入りませんでした。</p>
+
+<p>これまで、インターネットでほしい情報をいつでもどこでもすぐに手に入れられると思っていただけに、手に入らない状況に出くわすとかなりの不安感を覚えます。
+こうなると、頼れるものはテレビやラジオ、町内放送やご近所ネットワークになってくるでしょう。
+もちろん有線でのインターネットもあるかもしれませんが、緊急時にわざわざPCを起動したりしないでしょう。</p>
+
+<p>そう考えると、インターネットの果たすべき役割はリアルタイムに必要な一次的情報ではなく、その後の情報配信とその整理に注力すべきだと実感しました。</p>
+
+<h4 id="section-5">活動内容と現地で聞いたこと</h4>
+
+<p>一日目は新地町でボランティアを行い、宿泊施設はりょうぜん里山がっこうを利用。
+二日目は里山がっこうの自然体験をさせてもらい、その後温泉街で足湯につかって帰宅。</p>
+
+<ul>
+  <li><a href="http://www.date-satoyama.com/">NPO法人りょうぜん里山がっこう</a></li>
+</ul>
+
+<p>里山がっこうでは、震災後の放射能の影響とその取組みについて色々お話を伺いました。友人のブログにその詳細が書かれていますので、そちらを参照してもらうほうが良いと思います。</p>
+
+<ul>
+  <li><a href="http://agreenqoostar.blog129.fc2.com/blog-entry-604.html">AGREEN　イナカとトカイの橋渡し　 伊達市りょうぜん里山がっこうの「除染」への取り組み</a></li>
+</ul>
+
+<p>1日目の活動レポートもあります。</p>
+
+<ul>
+  <li><a href="http://agreenqoostar.blog129.fc2.com/blog-entry-603.html">AGREEN　イナカとトカイの橋渡し　 新地町ボランティアレポート</a></li>
+</ul>
+
+<h2 id="section-6">ボランティア活動に必要な情報</h2>
+
+<h4 id="section-7">ボランティアバスツアー</h4>
+
+<p>被災地は基本的に交通が整備されていません。
+一人暮らしで車も所有していない自分としては、現地の交通手段がネックになります。
+幸い、「ボランティアバスツアー」というものがあったのでこれを利用することを考えました。</p>
+
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><a href="http://www.pref-f-svc.org/archives/1216">東日本大震災復興支援・新地町で活動する災害ボランティア募集</a></td>
+          <td>福島県災害ボランティアセンター&lt;/a&gt;</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ul>
+
+<p>これなら一人でも現地に向かうことも可能ですし、そこからはコーディネートしてもらえます。
+結局は、冒頭にも書いたとおり、田舎暮らしのマッチングの仕事の関係で被災地にも詳しい友人に相談した結果、彼女のご家族に福島駅から現地まで車をだして頂けることになり、東京ー福島間は夜行バスを利用して、友人4人とともに活動する結果となったのですが。</p>
+
+<h4 id="twitter">ボランティア情報のTwitterアカウント</h4>
+
+<p>定期的にボランディアバスツアーなどの情報は下記Twitterアカウントをフォローしておけば、チェックすることができます。(他にもあるかもしれませんが私はこちらでチェックしています。）</p>
+
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><a href="http://twitter.com/tominvc">@tominvc</a></td>
+          <td>被災地支援都民ボランティア</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><a href="http://tiwtter.com/tokyovolunteer">@tokyovolunteer</a></td>
+          <td>東京ボランティア・市民活動センター</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><a href="http://twitter.com/Tasukeaijp">@Tasukeaijp</a></td>
+          <td>助けあいジャパン</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ul>
+
+<p>あとは、健康な体と必要不可欠な装備があれば十分貢献できると思います。</p>
+
+<p>現地で少しばかり写真を撮ってきたのでFrickrにあげておきました。</p>
+
+<object type="text/html" data="http://www.flickr.com/slideShow/index.gne?user_id=53244662@N04&amp;set_id=72157626993269710" width="500" height="500"> </object>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[DotCloudのMongoDBをScalaから使ってみる]]></title>
+    <link href="http://blog.restartr.com/2011/05/28/access-from-scala-to-mongodb-on-dotcloud/"/>
+    <updated>2011-05-28T20:00:57+09:00</updated>
+    <id>http://blog.restartr.com/2011/05/28/access-from-scala-to-mongodb-on-dotcloud</id>
+    <content type="html"><![CDATA[<p>DotCloudにDuoStackが<a href="http://gigaom.com/cloud/exclusive-paas-startups-unite-dotcloud-buys-duostack/">買収され</a>て、DotCloudでもMongoDBが使えるようになりましたし、node.jsも使えるしで、ますますDotCloudが魅力的なものになってきました。</p>
+
+<p>ただし、node.jsはサポートされても、WebSocketは正式サポートされていないと<a href="http://docs.dotcloud.com/components/nodejs/">公式マニュアル</a>にも書いてありますがWebSocketサポート済みのDuoStack買収によってどう流れるか気になるところです。</p>
+
+<p>さて今回は、前回作ったものをベースにScalaからMongoDBへアクセスするサンプルをDotCloudで動かすまでを書いておきます。（まぁ、Scalaのコードはオマケみたいなものですけど…）</p>
+
+<p>前回の記事はこちらです。</p>
+
+<ul>
+  <li><a href="http://blog.restartr.com/2011/05/09/sample-sbt-project-for-dotcloud/">ScalaをDotCloudにアップロードするためのsbtサンプル</a></li>
+</ul>
+
+<p>ちなみにDotCloudは下記バージョンにて動作しているみたいです（2011.05.28現在)</p>
+
+<ul>
+  <li>nginx 0.7.65</li>
+  <li>jetty 6.1</li>
+  <li>mongodb 1.8.1</li>
+</ul>
+
+<h3 id="section">作成したサンプルアプリ</h3>
+
+<p>事情により停止する場合があるかもしれませんがご了承を。</p>
+
+<ul>
+  <li><a href="http://samplemongo.ramee.dotcloud.com/">http://samplemongo.ramee.dotcloud.com/</a></li>
+</ul>
+
+<h3 id="dotcloudmongodb">DotCloudにMongoDBサーバーを準備する</h3>
+
+<p>DotCloudのMongoDBマニュアルはこちら</p>
+
+<ul>
+  <li><a href="http://docs.dotcloud.com/components/mongodb/">MongoDB ? DotCloud documentation</a></li>
+</ul>
+
+<p>上記マニュアルにしたがって作成すればMongoDBサーバーを準備できます。
+基本的には、追加したいサーバーを登録して、ユーザーを作成するだけです。</p>
+
+<p>簡単。</p>
+
+<p>今回は”example.mongo”という名前で作成する例を記してありますので、
+それぞれ自分の作成したいアプリ名に読み替えて下さい。</p>
+
+<h4 id="section-1">サーバーを作成</h4>
+
+<p>事前に”dotcloud create example”は実行してあるものとします。
+詳しくはこちらの<a href="http://docs.dotcloud.com/tutorials/firststeps/#id2">マニュアル</a>を見てください。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>dotcloud deploy -t mongo example.mongo
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">&gt; Created <span class="s2">&quot;example.mongo&quot;</span>.
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h4 id="dbidpass">DB情報を確認（ID/PASS）</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>dotcloud info example.mongo
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>deployコマンド実行してから実際に作成されるまで少し時間がかかります。
+すぐにinfoコマンドを実行すると下記エラーがでます。
+※正確に測ってませんが数十秒くらい？</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">&gt; Sat May 28 08:14:43 Error: couldn<span class="err">&#39;</span>t connect to server 127.0.0.1 shell/mongo.js:79
+</span><span class="line">&gt; exception: connect failed
+</span><span class="line">&gt; Connection to mongo.example.dotcloud.com closed.
+</span><span class="line">&gt; Abort.
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>作成完了していれば、下記情報が表示されますので、”mongodb_password: <strong>**</strong>“に記載されたパスワードをメモしておきます。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">cluster: wolverine
+</span><span class="line">config:
+</span><span class="line">    mongodb_password: ******
+</span><span class="line">created_at: 1306570413.6722209
+</span><span class="line">name: example.mongo
+</span><span class="line">namespace: example
+</span><span class="line">ports:
+</span><span class="line">-   name: ssh
+</span><span class="line">    url: ssh://mongodb@mongo.example.dotcloud.com:5906
+</span><span class="line">-   name: mongodb
+</span><span class="line">    url: mongodb://root:******@mongo.example.dotcloud.com:5907
+</span><span class="line">state: running
+</span><span class="line"><span class="nb">type</span>: mongodb
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h4 id="mongodb">MongoDBサーバーへログイン</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>dotcloud run example.mongo mongo
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>infoコマンドで表示されたパスワードを使って、”sampledb”というdbにアプリユーザーを追加します。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">&gt; use sampledb
+</span><span class="line">switched to db sampledb
+</span><span class="line">&gt; db.getSisterDB<span class="o">(</span><span class="s2">&quot;admin&quot;</span><span class="o">)</span>.auth<span class="o">(</span><span class="s2">&quot;root&quot;</span>, <span class="s2">&quot;&lt;infoコマンドで表示されるパスワード&gt;&quot;</span><span class="o">)</span>;
+</span><span class="line">1
+</span><span class="line">&gt; db.addUser<span class="o">(</span><span class="s2">&quot;APPUSER_NAME&quot;</span>, <span class="s2">&quot;APPPUSER_PASS&quot;</span><span class="o">)</span>;
+</span><span class="line"><span class="o">{</span>
+</span><span class="line">     <span class="s2">&quot;user&quot;</span> : <span class="s2">&quot;APPUSER_NAME&quot;</span>,
+</span><span class="line">     <span class="s2">&quot;readOnly&quot;</span> : <span class="nb">false</span>,
+</span><span class="line">     <span class="s2">&quot;pwd&quot;</span> : <span class="s2">&quot;xxxxxxxxxxxxxxxxxxxxxxxxxxxxx&quot;</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">&gt; <span class="nb">exit</span>
+</span><span class="line">bye
+</span><span class="line">Connection to mongo.example.dotcloud.com closed.
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>※とりあえず一旦ログアウトしてますが、別に必須じゃないです。</p>
+
+<h4 id="section-2">再度ログインしてテスト操作してみる</h4>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>dotcloud run example.mongo mongo
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>新規作成したユーザーでDB操作が可能か確認してみます。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="c"># mongo</span>
+</span><span class="line">Warning: Permanently added <span class="s1">&#39;[mongo.example.dotcloud.com]:5906,[174.129.17.131]:5906&#39;</span> <span class="o">(</span>RSA<span class="o">)</span> &gt; to the list of known hosts.
+</span><span class="line">MongoDB shell version: 1.8.1
+</span><span class="line">connecting to: <span class="nb">test</span>
+</span><span class="line">&gt; use sampledb;
+</span><span class="line">switched to db sampledb
+</span><span class="line">&gt; db.auth<span class="o">(</span><span class="s2">&quot;sampleuser&quot;</span>, <span class="s2">&quot;samplepass&quot;</span><span class="o">)</span>;
+</span><span class="line">1
+</span><span class="line">&gt; db.sampledb.save<span class="o">({</span>id:1,name:<span class="s2">&quot;foo&quot;</span><span class="o">})</span>;
+</span><span class="line">&gt; db.sampledb.find<span class="o">()</span>;
+</span><span class="line"><span class="o">{</span> <span class="s2">&quot;_id&quot;</span> : ObjectId<span class="o">(</span><span class="s2">&quot;4de0b033a1fd29eb0e1522fd&quot;</span><span class="o">)</span>, <span class="s2">&quot;id&quot;</span> : 1, <span class="s2">&quot;name&quot;</span> : <span class="s2">&quot;foo&quot;</span> <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>問題なさそうなので、あとはアプリを”dotcloud push”して動かすだけです。</p>
+
+<h3 id="scala">scalaからアクセスするサンプル</h3>
+
+<p>サービス名を「example.samplemongo”として作成する例です。</p>
+
+<p>requirementsはイカのとおり。</p>
+
+<ul>
+  <li>scala 2.9.0</li>
+  <li>sbt 0.7.7</li>
+  <li>jetty 7.3.1.v20110307</li>
+  <li>casbah 2.1.5.0</li>
+</ul>
+
+<p><code>sbt</code>
+で基本ディレクトリを作成したら、下記プロジェクト設定を{root}/project/build/MongoSampleProject.scala”として保存します。</p>
+
+<p>前回の設定クラスをコピーしてきたので、”sbt dot_create”と”sbt dot_push”も一応使えます。</p>
+
+<p>※”example.mongo”の名称は適宜読み替えでお願いします。
+##### MongodbSampleProject.scala</p>
+
+<script src="https://gist.github.com/996769.js?file=MongodbSampleProject.scala"></script>
+
+<p>配置できたら、</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">sbt reload update
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>でライブラリを読み込みます。</p>
+
+<p>あとは下記Servletの実装とweb.xmlを用意したらOK．</p>
+
+<h5 id="mongodbservletscala">MongodbServlet.scala</h5>
+
+<script src="https://gist.github.com/996769.js?file=MonbodbServlet.scala"></script>
+
+<h5 id="webxml">web.xml</h5>
+
+<script src="https://gist.github.com/996769.js?file=web.xml"></script>
+
+<p>できたら、”sbt dot_push”でdotcloudへアップロードされるはずです。</p>
+
+<p>最後に、”http:／／samplemongo.exapmle.dotcloud.com”にアクセスして、フォームからデータ登録ができれば成功です。</p>
+
+<p>RDBMSにくらべてデータ保存・取得までが圧倒的に簡単で、PaaSでもMongoDBはいい感じですね！</p>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[ScalaをDotCloudにアップロードするためのsbtサンプル]]></title>
+    <link href="http://blog.restartr.com/2011/05/09/sample-sbt-project-for-dotcloud/"/>
+    <updated>2011-05-09T23:35:43+09:00</updated>
+    <id>http://blog.restartr.com/2011/05/09/sample-sbt-project-for-dotcloud</id>
+    <content type="html"><![CDATA[<p><a href="http://dotcloud.com/">dotcloud</a>を必要最低限操作するためのactionをsbtに追加してみました。</p>
+
+<p>sbtのアクション自体はじめてなので作法がよくわかってないので、間違っているかも知れませんが。</p>
+
+<h3 id="section">使い方</h3>
+
+<p>※scalaファイルは最後に掲載しています。
+とりあえず下記を作成するサービス名に置き換えればOKです。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">  val <span class="nv">dotApplicationName</span> <span class="o">=</span> <span class="s2">&quot;APPNAME&quot;</span>
+</span><span class="line">  val <span class="nv">dotServiceName</span> <span class="o">=</span> dotApplicationName + <span class="s2">&quot;.SERVNAME&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>あとは、下記を順に実行すればOK(dot_prepareはdot_pushの前に必ず実行されるので省略可能)</p>
+
+<ul>
+  <li>“sbt dot_create” : サービスの作成</li>
+  <li>“sbt dot_prepare” : リリース用ディレクトリ作成とwarファイルのコピー</li>
+  <li>“sbt dot_push” : dotcloudへのwarファイルpush</li>
+</ul>
+
+<h3 id="dotcloud">dotcloud用に注意すべきこと</h3>
+
+<p>“sbt package”を使用すると、”＜projectName＞-＜scala_ver＞-＜app_ver＞.war”の形式でwarファイルが作成されます。
+が、dotcloudのドキュメントにはこう書いてあるので、”root.war”で作成するのが望ましいです。</p>
+
+<blockquote>
+The java service will make your application available at http://frontend.myapp.dotcloud.com/ if your archive is named root.war or http://frontend.myapp.dotcloud.com/webapp/ if your archive is named webapp.war (../foobar/ if the archive was named foobar.war and so on). So, you can effectively serve multiple web applications with the same java service.
+
+</blockquote>
+<p><a href="http://docs.dotcloud.com/components/java/">Java — DotCloud documentation</a></p>
+
+<p>さらに、”dotcloud push”はwarファイルを含むディレクトリを指定することになり、それ以下がすべて同期されてしまいます。デフォルトだと、”./target/scala_2.8.1/”以下のすべてが。</p>
+
+<p>なので、warのみ格納する”release”ディレクトリを作り、 そこに”root.war”としてひとつだけ存在させておきました。
+順番に書くと、</p>
+
+<ul>
+  <li>sbt packageでtarget/scala_2.8.1/＜projectName＞-＜scala_ver＞-＜app_ver＞.warを生成</li>
+  <li>そのwarファイルをtarget/release/root.warにコピー</li>
+  <li>“dotcloud push ＜dotcloud_appname＞ target/release/” でwarのみアップロード</li>
+</ul>
+
+<p>という方法で対応しました。</p>
+
+<p>以下、サンプルのプロジェクト設定です。</p>
+
+<script src="https://gist.github.com/962534.js?file=RameeProject.scala"></script>
+
+<h3 id="section-1">参考リンク</h3>
+<ul>
+  <li><a href="http://docs.dotcloud.com/cli/">DotCloud command line — DotCloud documentation</a></li>
+  <li><a href="http://code.google.com/p/simple-build-tool/wiki/Process">Process - simple-build-tool - A build tool for Scala - Google Project Hosting</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

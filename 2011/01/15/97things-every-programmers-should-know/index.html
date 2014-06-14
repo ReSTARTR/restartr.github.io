@@ -1,0 +1,455 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>プログラマが知るべき97のこと - I Will Survive</title>
+  <meta name="author" content="ReSTARTR">
+
+  
+  <meta name="description" content="「プログラマが知るべき97のこと」を読みました。 プログラマが知るべき97のこと 一時期いろいろネタにもされていましたが、読んで損はない本ですね。
+内容は、プログラマの精神論から設計のTipsやパターン紹介まで多岐にわたっています。が、ひとつひとつが見開き1ページにまとまっているため、 &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://blog.restartr.com/2011/01/15/97things-every-programmers-should-know/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+   <link href="/stylesheets/data-table.css" media="screen, projection" rel="stylesheet" type="text/css" />
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="I Will Survive" type="application/atom+xml">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+
+<!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href='http://fonts.googleapis.com/css?family=Lato:400,100,100italic,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:200,300,400,500,600,700,900' rel='stylesheet' type='text/css'>
+
+
+	<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$$','$$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-894530-10']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+  <style>html{background: url("/images/background.png") no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;}</style>
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+</hgroup>
+
+</header>
+  <!-- <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:blog.restartr.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav> -->
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">プログラマが知るべき97のこと</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-01-15T00:39:03+09:00" pubdate data-updated="true">2011-01-15 (Sat)</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>「プログラマが知るべき97のこと」を読みました。</p>
+
+<ul>
+  <li><a href="http://www.amazon.co.jp/dp/4873114799">プログラマが知るべき97のこと</a></li>
+</ul>
+
+<p>一時期いろいろネタにもされていましたが、読んで損はない本ですね。
+内容は、プログラマの精神論から設計のTipsやパターン紹介まで多岐にわたっています。が、ひとつひとつが見開き1ページにまとまっているため、あとで気軽に読み返せますので、ぜひデスクに常備しておきたい一冊となりました。</p>
+
+<p><a id="more"></a><a id="more-518"></a></p>
+
+<p>主に精神論のはなしに惹かれたので少しまとめを。</p>
+
+<h3>問題のあるソフトウェアをつくりだす可能性と、それに対して立ち向かう姿勢</h3>
+<p>どれだけ経験を重ねても、度重なる変更やスケジュールからの圧力などによって、品質が悪くなることは往々にしてあります。</p>
+
+<p><strong>24.変更を恐れない     Mike Lewis</strong></p>
+
+<blockquote>
+作っている人間がシステムを嫌っているようでは、そんなものを遣わされる側はたまらないでしょう。
+
+</blockquote>
+<p>病気なソフトウェアを治すには痛みを伴うが、それを治すことで利益も得られ、治すことはメンバーにとって経験となると言っています。積極的にシステムを改良していくという姿勢はチームに伝播しやすいものであると。</p>
+
+<p><strong>52.「その場しのぎ」が長生きしてしまう     Klaus Marquardt</strong></p>
+
+<blockquote>
+いったん「暫定ソリューション」ができてしまうと、既成事実化するのです。
+
+</blockquote>
+<p>さらに、暫定ソリューションに対する修正も暫定になってしまいがち。でも、「ソリューション」というだけに必要なものではあるはず。修正の優先度があがる体制づくりをするとか、もっと有用なソリューションを開発すればよい、と言っています。
+いつまでたっても暫定のままの暫定ソリューションはいくつも見てきたので、かなり実感湧きます。</p>
+
+<h3>新しいことを学び続ける姿勢</h3>
+<p>新しい言語を毎年学ぶと良いというのは、割とよく聞く話しだと思います。</p>
+
+<p><strong>26.言語だけでなく文化も学ぶ     Anders Noras</strong></p>
+
+<blockquote>
+そうではなく、新しい言語から新たな発想を得て、同じ問題に対して違った解決策を見つけられるようになることが大事なのです。
+
+</blockquote>
+<p>ある言語では言語仕様で対応してくれているけどその他の言語では自分で実装しなければいけなかったり（GCとか）、そういった、各言語ごとの視点を自分に取り入れるのは良いことです。
+私は、ふだんPHPでオブジェクト指向プログラミングをやっていて、Scalaという関数言語を学んでいます。Scalaを学ぶことで、なんとなく関数型思考でPHPコードを書いていることもあります。あきらかにその書いたコードにたいする距離感が違っていて、そのコードの根拠が明確になっている気がするのです。</p>
+
+<h3>誰のためのコードか、という意識</h3>
+<p>なぜかこのような似通ったテーマをとりあげた人が多くいました。</p>
+
+<p><strong>35.超人の神話     Ryan Brush</strong></p>
+<blockquote>
+超人は必要ありません。必要なのはエキスパートです。積極的に自分以外にもエキスパートを育てようとする意思をもったエキスパートです。そういう人がいてくれれば、凡人が力をつけ、活躍できる可能性が生まれるでしょう。
+</blockquote>
+<p><strong>56.未来へのメッセージ     Linda Rising</strong></p>
+<blockquote>
+「自分の書くコードは、全部、未来の誰かへのメッセージだと思うのよ。その誰かは、あなたの弟さんかもしれない。誰か、とても賢い人に、自分が難しい問題をどう解いたのか、丁寧に説明するつもりで書くの。」
+</blockquote>
+<p><strong>82.他社への思いやりを意識したコーディング     Aslam Khan</strong></p>
+<blockquote>
+他人の存在を意識すれば、他人の書くコードにも当然良い影響を与えることになります。チームの同様のことを考え、思いやりを持ってコードを書けば、それは同僚たちにとって価値あるコードとなり、いずれ自分にも良い影響となって帰ってきます。どんなかたちであれ、そのコードに触れた誰もが、触れる前より良い人間、良いプログラマになれる、そういうコードを書くようにすべきでしょう。
+
+</blockquote>
+<p><strong>88.コードは生涯サポートするつもりで書く     Yuriy Zubarev</strong></p>
+<blockquote>
+「生涯サポートしなくてはならない」と考えながら仕事をするようになれば、素晴らしいことが起きるでしょう。
+</blockquote>
+<p>チームで開発するのが当然な現場では当たり前のことですが意外と意識できていなかったりします。私も、新しく知り得たパターンとかついつい自分の判断で取り入れてしまい、誰が見てもわかりにくいコードを書いたこともあります。今でもそういうコードになっているかもしれません。</p>
+
+<p>こういうことを無意識にできるように、ペアプログラミングをするのも効果的かもしれません。隣で同じ画面を見ている「他人の目」が常にあり、自分も他人も納得のいく設計が結果的にできるわけですから。</p>
+
+<p>と、ここまで書かれた複数人の内容をひとりじめするような内容の人がいましたw</p>
+
+<p><strong>91.良いプログラマになるには     Pete Goodliffe</strong></p>
+<blockquote />
+<p>‘とりあえず’という意識を捨て、他人や未来の自分のためにわかりやすいコードを書き、新しいことを学び続けよう、ということを彼は言っています。
+※前述のテーマについては、それぞれにエピソードが違うので、どれを読んでも面白いものなので、まとめのようなものがあっても別に構わないのですが。</p>
+
+<p>目の前のコードに集中しがちですが、冷静になって、こういった基本姿勢を思い返すようにしたいものです。</p>
+
+<p>「達人プログラマー」や、「リファクタリング」など、引用された本で未読のものがいくつかあったので、これらについても今後読んでみようと思います。</p>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">ReSTARTR</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-01-15T00:39:03+09:00" pubdate data-updated="true">2011-01-15 (Sat)</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/category/shu-ji/'>書籍</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2011/01/15/97things-every-programmers-should-know/" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2011/01/15/97things-every-programmers-should-know/" >Tweet</a>
+  
+  
+  <div class="g-plusone" data-size="medium"></div>
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/2011/01/10/6-targets-i-want-to-achieve-in-2011/" title="Previous Post: 2011年に達成したい6つの目標">&laquo; 2011年に達成したい6つの目標</a>
+      
+      
+        <a class="basic-alignment right" href="/2011/01/16/talk-session-what-is-programming-for-developing-a-good-software/" title="Next Post: トークセッション「よいソフトウェアを作るプログラミングとは」">トークセッション「よいソフトウェアを作るプログラミングとは」 &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section id="titles">
+  <a href="http://blog.restartr.com" title="I Will Survive"><img id="logo" src="http://blog.restartr.com/images/portrait.jpg" /></a>
+  <h1 id="site_title"><a href="http://blog.restartr.com" title="I Will Survive">I Will Survive</a></h1>
+  <h3 id="site_subtitle">An application depelopper's blog.</h3>
+</section>
+
+<section id="menu">
+  <ul>
+    <li><i class="fa fa-home fa-lg"></i><a href="http://blog.restartr.com"> Home </a></li>
+    <li><i class="fa fa-calendar fa-lg"></i><a href="http://blog.restartr.com/blog/archives/"> Archives </a></li>
+    <li><i class="fa fa-user fa-lg"></i><a href="http://blog.restartr.com/about/"> About </a></li>
+    <li><i class="fa fa-rss fa-lg"></i><a href="http://blog.restartr.com/atom.xml"> Feed </a></li>
+  </ul>
+</section>
+
+<section id="social">
+  
+
+  
+
+  
+    <a href="" title="g+#103216164658230535238"><i class="fa fa-google-plus fa-2x"></i></a>
+  
+
+  
+    <a href="https://github.com/ReSTARTR" title="ReSTARTR"><i class="fa fa-github fa-2x"></i></a>
+  
+
+  
+
+  
+    <a href="https://twitter.com/ReSTARTR" title="ReSTARTR"><i class="fa fa-twitter fa-2x"></i></a>
+  
+</section>
+
+
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/2014/05/11/build-rpm-on-docker-container/">Dockerを使って任意のrubyバージョンのrpmを作成する</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2014/04/20/vimrc-noexpandtab-in-golang/">vimで特定のファイルタイプだけタブインデントにする方法</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2014/04/06/move-from-wordpress-to-octopress/">WordpressからOctopressに移行</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2013/04/26/connect-go-and-python-with-zeromq/">GoとPythonをZeroMQで繋ぐ</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2013/04/17/bind-a-variable-to-closure-in-python/">pythonのクロージャに変数を束縛する方法</a>
+      </li>
+    
+  </ul>
+</section>
+Included file 'asides/category_list.html' not found in _includes directory
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/ReSTARTR">@ReSTARTR</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'ReSTARTR',
+            count: 4,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+<section class="googleplus">
+  <h1>
+    <a href="https://plus.google.com/103216164658230535238?rel=author">
+      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
+      Google+
+    </a>
+  </h1>
+</section>
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - ReSTARTR -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ReSTARTR';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
