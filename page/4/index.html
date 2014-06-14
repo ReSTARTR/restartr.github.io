@@ -9,7 +9,7 @@
   <meta name="author" content="ReSTARTR">
 
   
-  <meta name="description" content="※2013/04/04 更新:会社名を公開しました 3月末付でKauli株式会社を退職しました。 4月1日だと嘘っぽくなるかなと思い、1日ずらしてのご報告です。 2012年01月入社なので、1年3ヶ月という短い間でしたが、これまでで最も充実した1年だったように思います。 &hellip;">
+  <meta name="description" content="最近Rubyでプロジェクトオイラーを解きながらRubyに慣れようとしてるのですが、ちょっと飽きてきたので息抜きにGoを書いたりしています。 ついでにZeroMQも試してみたかったので、GoとPythonをZeroMQで繋いでみました。 構成はこんな感じで、Python(かGo)clientを起動し &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -119,7 +119,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/2013/04/02/retirement201303/">Kauli株式会社を退職しました</a></h1>
+      <h1 class="entry-title"><a href="/2013/04/26/connect-go-and-python-with-zeromq/">GoとPythonをZeroMQで繋ぐ</a></h1>
     
     
       <p class="meta">
@@ -135,59 +135,116 @@
   
 
 
-<time datetime="2013-04-02T22:45:29+09:00" pubdate data-updated="true">2013-04-02 (Tue)</time>
+<time datetime="2013-04-26T23:34:48+09:00" pubdate data-updated="true">2013-04-26 (Fri)</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p><a href="http://www.flickr.com/photos/53244662@N04/8599680561/" title="Cleanup my keyboard by ReSTARTR_y, on Flickr"><img src="http://farm9.staticflickr.com/8106/8599680561_da30653690.jpg" width="500" height="333" alt="Cleanup my keyboard" /></a></p>
+  <div class="entry-content"><p>最近Rubyでプロジェクトオイラーを解きながらRubyに慣れようとしてるのですが、ちょっと飽きてきたので息抜きにGoを書いたりしています。</p>
 
-<p><em>※2013/04/04 更新:会社名を公開しました</em></p>
+<p>ついでにZeroMQも試してみたかったので、GoとPythonをZeroMQで繋いでみました。</p>
 
-<p>3月末付で<a href="http://kau.li">Kauli株式会社</a>を退職しました。</p>
+<p>構成はこんな感じで、Python(かGo)clientを起動し、Goで動くmonitorq経由でGoのserverにつながります。PUB/SUBでmonitorからモニタリングできるのがミソです。</p>
 
-<p>4月1日だと嘘っぽくなるかなと思い、1日ずらしてのご報告です。</p>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line">              <span class="o">+----------------------------------------+</span>
+</span><span class="line">              <span class="o">|</span>                                        <span class="o">|</span>
+</span><span class="line">  <span class="o">+------+</span>        <span class="o">|--------------------------+</span>     <span class="o">+-----+</span> <span class="o">|</span>
+</span><span class="line">  <span class="o">|</span><span class="n">client</span><span class="o">|--------|</span><span class="mi">9001</span>     <span class="n">monitorq</span>     <span class="mi">9002</span><span class="o">|-----|</span><span class="n">serv</span> <span class="o">|</span> <span class="o">|</span>
+</span><span class="line">  <span class="o">|</span><span class="p">(</span><span class="no">REQ</span><span class="p">)</span> <span class="o">|</span>        <span class="o">|</span><span class="p">(</span><span class="no">ROUTER</span><span class="p">)</span>   <span class="mi">9003</span>   <span class="p">(</span><span class="no">DEALER</span><span class="p">)</span><span class="o">|</span>     <span class="o">|</span><span class="p">(</span><span class="no">REP</span><span class="p">)</span><span class="o">|</span> <span class="o">|</span>
+</span><span class="line">  <span class="o">+------+</span>        <span class="o">|--------------------------+</span>     <span class="o">+-----+</span> <span class="o">|</span>
+</span><span class="line">              <span class="o">|</span>          <span class="o">|</span><span class="p">(</span><span class="no">PUB</span><span class="p">)</span>                        <span class="o">|</span>
+</span><span class="line">              <span class="o">|</span>          <span class="o">|</span>                             <span class="o">|</span>
+</span><span class="line">              <span class="o">|</span>          <span class="o">|</span>                             <span class="o">|</span>
+</span><span class="line">              <span class="o">|</span>          <span class="o">|</span><span class="p">(</span><span class="no">SUB</span><span class="p">)</span>                        <span class="o">|</span>
+</span><span class="line">              <span class="o">|</span>      <span class="o">+-------+</span>                         <span class="o">|</span>
+</span><span class="line">              <span class="o">|</span>      <span class="o">|</span><span class="n">monitor</span><span class="o">|</span>                         <span class="o">|</span>
+</span><span class="line">              <span class="o">|</span>      <span class="o">+-------+</span>                         <span class="o">|</span>
+</span><span class="line">              <span class="o">+----------------------------------------+</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>2012年01月入社なので、1年3ヶ月という短い間でしたが、これまでで最も充実した1年だったように思います。</p>
-
-<p>大規模な広告配信という技術的に非常に挑戦しがいのある分野で、非常に技術力の高いエンジニアと共にPythonプログラマーとして充実した日々を過ごさせてもらいました。</p>
-
-<p>「大規模なトラフィックを直に感じながらアプリケーション開発に取り組みたい」という希望を胸に入った会社で、</p>
-
-<ul>
-  <li>データストアの検証(結果的にRedisを採用)</li>
-  <li>合計数十台自作サーバーの組立(参考：<a href="https://gist.github.com/nekoya/3749146" title="Kauli自作サーバ組み立てマニュアル" target="_blank">Kauli自作サーバ組み立てマニュアル</a>)</li>
-  <li>開発部総出でデータセンターでサーバーラッキング</li>
-  <li>某社SOAP APIに難儀</li>
-  <li>開発のベースをgithubに移行</li>
-  <li>nginx + Python(werkzeug+uWSGI) + Redisによる広告配信システムの開発</li>
-  <li>アプリケーションのパフォーマンスチューニング</li>
-</ul>
-
-<p>等々、これまでにない経験を1年ちょっとという短い期間に経験できました。</p>
-
-<p>正直離れるのが勿体無いとも思うのですが、キャリアの見直しをしたかったとか諸々の理由により、退職することを決意しました。</p>
-
-<p>同僚の方々には大変お世話になりました。どうもありがとうございました。</p>
-
-<p>転職先はまだ決まっていないので、転職活動を進めつつ、じっくり勉強しておきたかったことに１つずつ取り組んでいこうかという感じです。</p>
-
-<p>良い会社があればぜひ<a href="https://twitter.com/restartr">@ReSTARTR</a>にご紹介ください＞＜</p>
-
-<p>…</p>
-
-<p>なお、Kauli株式会社は継続してエンジニアを募集中のようですので、</p>
-
-<p>大規模広告配信システムをPythonで開発したい方々は下記からぜひぜひご応募を。</p>
+<p><em>※client/server/monitorは複数たちあげるとよしなに振り分けてくれます。</em></p>
 
 <ul>
-  <li><b><a href="http://kau.li/jp/pages/recruit">Kauli - 採用情報</a></b></li>
+  <li>monitorqでfan-in/outする</li>
 </ul>
 
-<p>それでは。</p>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>go run queue.go monitorq
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
+<ul>
+  <li>clientから”PING”を投げる(と、”PONG#<pid>&#8220;が帰る)</pid></li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>python run queue.py client
+</span><span class="line">PONG#&lt;28870&gt;
+</span><span class="line">PONG#&lt;28870&gt;
+</span><span class="line"> :
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<ul>
+  <li>serverから”PONG”を返す(clientからのPINGを表示)</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>go run queue.go serv
+</span><span class="line">Recv: PING#&lt;73835&gt;
+</span><span class="line">Recv: PING#&lt;73835&gt;
+</span><span class="line"> :
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<ul>
+  <li>monitorでリクエスト総数をモニタリング</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>go run queue.go monitor
+</span><span class="line">MONITOR: IN: 2082, OUT 2082
+</span><span class="line">MONITOR: IN: 2083, OUT 2083
+</span><span class="line"> :
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>コードはgistにあげてます。</p>
+
+<ul>
+  <li><a href="https://gist.github.com/ReSTARTR/5467656">gist</a></li>
+</ul>
+
+<p>ZeroMQなら他にもいろんな構成がとれるので、使いどころは結構あるのではないかと。</p>
+
+<p>今回、不慣れなGoで書いてみましたが、これくらいであればもわりと素直にかけるなぁという印象です。</p>
+
+<p>Goで書かれたZeroMQのサンプルは以下githubリポジトリにたくさんあるので、覗いてみると色々勉強になります。</p>
+
+<ul>
+  <li><a href="https://github.com/imatix/zguide/tree/master/examples/Go">zguide/examples/Go at master ? imatix/zguide</a></li>
+</ul>
 </div>
   
   
@@ -200,7 +257,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/2013/04/01/uml-for-programmer/">プログラマーにとっての『UMLっぽい何か』</a></h1>
+      <h1 class="entry-title"><a href="/2013/04/17/bind-a-variable-to-closure-in-python/">Pythonのクロージャに変数を束縛する方法</a></h1>
     
     
       <p class="meta">
@@ -216,63 +273,171 @@
   
 
 
-<time datetime="2013-04-01T20:12:54+09:00" pubdate data-updated="true">2013-04-01 (Mon)</time>
+<time datetime="2013-04-17T22:19:14+09:00" pubdate data-updated="true">2013-04-17 (Wed)</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>わりと普遍的な話題だったので便乗です。</p>
+  <div class="entry-content"><p>ハマったので。</p>
 
-<p><a href="http://nekoya.github.com/blog/2013/04/01/useful-uml/"> UMLも捨てたもんじゃない - nekoya press </a></p>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="n">a</span> <span class="o">=</span> <span class="mi">2</span>
+</span><span class="line"><span class="n">double</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">*</span><span class="n">a</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>  <span class="c"># 8 (=4*2)</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="c"># 20 (=10*3)</span>
+</span><span class="line"><span class="n">a</span> <span class="o">=</span> <span class="mi">3</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>  <span class="c"># 12 # WTF?</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="c"># 30</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<blockquote>
-<ul>
-<li>UMLは設計の技法ではない</li>
-<li>頭の中を整理するため、あるいは人と共有する際の表現技法である</li>
-</ul>
-</blockquote>
-<p>とか、</p>
+<p>doubleというクロージャ内の変数aを、クロージャ宣言時のaで束縛したいのです。</p>
 
-<blockquote>UMLの厳密な書式ルールには全くこだわりはなく、大まかなイメージだけ伝われば、細かい部分は口頭でフォローすれば十分だと考えていています。そういう意味ではUMLを正しく使っているとは言えないのかも知れませんが、それはそれでいいんじゃないのと。
+<p>対応は２つ。</p>
 
-</blockquote>
+<ol>
+  <li>lambdaのデフォルト引数で束縛する</li>
+  <li>functools.partialで束縛する</li>
+</ol>
 
-<p>は、まったくもって同意見で、「UML」という”なんだか面倒くさそうなイメージ”を捨てて、コードを整理もしくは伝達する補足的なものとして扱うことが大事だと思います。UMLを本を読んできっちり勉強する必要もなくて、英会話が完璧な文法に則る必要がないのと基本的に同じだと思います。</p>
+<h3 id="lambda">1. lambdaのデフォルト引数で束縛する</h3>
 
-<p>所謂SEが用いるUMLではなくプログラマーにとってのUMLは、もっとくだけたもので良いのです。</p>
+<p>参考：<a href="http://stackoverflow.com/questions/10452770/python-lambdas-binding-to-local-values">closures - Python lambda’s binding to local values - Stack Overflow</a></p>
 
-<h4 id="section">いつやるか</h4>
-<p>どのフェーズでこの図の作成にとりかかるかが問題になると思いますが、自分の場合は以下の場合に作成を試みることが多いです。</p>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="n">a</span> <span class="o">=</span> <span class="mi">2</span>
+</span><span class="line"><span class="n">double</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">a</span><span class="p">:</span> <span class="n">x</span><span class="o">*</span><span class="n">y</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>  <span class="c"># 8 (=4*2)</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="c"># 20 (=10*3)</span>
+</span><span class="line"><span class="n">a</span> <span class="o">=</span> <span class="mi">3</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>  <span class="c"># 12 (=4*2)</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="c"># 30 (=10*2)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>（主にクラス図作成の場合を想定しています。）</p>
+<h3 id="functoolspartial">2. functools.partialで束縛する</h3>
 
-<p><strong>1. プロトタイプ的に作り始めたコードが、ある程度育ってきて全体が見えづらいと感じた時</strong></p>
+<p>やってることは1と同じなのですが、一応動くよねということで。</p>
 
-<p>これは自分のために作成するもの。なのでUMLのルールに準拠する必要はありませんので、どちらかといえば書き捨て型といえます。</p>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+</span><span class="line"><span class="n">a</span> <span class="o">=</span> <span class="mi">2</span>
+</span><span class="line"><span class="n">double</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="bp">None</span><span class="p">:</span> <span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">a</span><span class="p">)</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="c"># 8 (=8*2)</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="c"># 30 (=10*2)</span>
+</span><span class="line"><span class="n">a</span> <span class="o">=</span> <span class="mi">3</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>  <span class="c"># 12 (=4*2)</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="c"># 30 (=10*2)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>（※ドキュメントの無いコードを読む場合も書き捨て型で作成します。）</p>
+<h3 id="section">そもそも変数上書きしなければ良いんじゃない？</h3>
 
-<p>そして、この図をもとに設計を見なおしたりします。</p>
+<p>普段は変数の上書きは基本的にやりません。なので変数の束縛とかあまり意識してませんでした。</p>
 
-<p><strong>2. 自分が作ったコードを他の誰かが読む時</strong></p>
+<p>今回、プロジェクトオイラーを解くにあたって、素数ジェネレータをつくろうとした結果、ハマったのでした。</p>
 
-<p>これは他人のために作成するもの。すでに設計が固まった段階のコードを追いかける上での補足情報になります。</p>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">ifilter</span><span class="p">,</span> <span class="n">count</span>
+</span><span class="line"><span class="k">def</span> <span class="nf">gen_primes</span><span class="p">():</span>
+</span><span class="line">    <span class="n">it</span> <span class="o">=</span> <span class="n">count</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>  <span class="c"># [2, 3, 4, ...]</span>
+</span><span class="line">    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+</span><span class="line">        <span class="n">v</span> <span class="o">=</span> <span class="n">it</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+</span><span class="line">        <span class="k">yield</span> <span class="n">v</span>
+</span><span class="line">        <span class="n">it</span> <span class="o">=</span> <span class="n">ifilter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">v</span><span class="p">:</span> <span class="n">x</span> <span class="o">%</span> <span class="n">y</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">it</span><span class="p">)</span>
+</span><span class="line">        <span class="c"># 当初は以下のようにしていた</span>
+</span><span class="line">        <span class="c"># これだと次のループ時のifilter内でvの値が変わってしまう</span>
+</span><span class="line">        <span class="c"># it = ifilter(lambda x: x % v &gt; 0, it)</span>
+</span><span class="line"><span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">gen_primes</span><span class="p">():</span>
+</span><span class="line">    <span class="k">print</span> <span class="n">v</span>
+</span><span class="line">    <span class="k">if</span> <span class="n">v</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">:</span>
+</span><span class="line">        <span class="k">break</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>完全にUML準拠する必要はないでしょうが、ある程度は従ったほうが余計な誤解もなくなるかもしれません。1である程度整理ができているのでこの段階での作成は非常にそれ程苦ではないはずです。</p>
+<h3 id="functoolspartial-1">余談1: functools.partialの使いどころ</h3>
+<p>ちょくちょく<a href="http://docs.python.jp/2.7/library/functools.html#functools.partial">functools.partial</a>使ってましたが、そんなの使わなくてもlambdaで事足りますね。今更気づきました…</p>
 
-<p>どちらの場合もコードありきで、後追いでの図形作成になります。注意すべきなのは、図にすべての情報を詰め込むわけではなく、必要最低限の情報に留めることで図をシンプルに保つことは必要です。</p>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="n">mul</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span>
+</span><span class="line"><span class="n">mul</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>  <span class="c"># 6</span>
+</span><span class="line"><span class="c"># lambda</span>
+</span><span class="line"><span class="n">double</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">:</span> <span class="n">mul</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>  <span class="c"># 6</span>
+</span><span class="line"><span class="c"># functools.partial</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">functools</span>
+</span><span class="line"><span class="n">double</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">mul</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>  <span class="c"># 6</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>とまぁ、これくらいシンプルなルールであれば、普段の開発フローに取り入れることはさほど大きなコストではないと考えます。多くの人はこれくらいのことはやっているんじゃないかとは思いますが、先のブログでも書かれている通り表立って議論されることはあまりないように感じます。</p>
+<p>こうなると、functools.partialの使いどころが難しいですね。
+戻り値がpartialオブジェクトなので、あとで引数とかが参照できることくらいでしょうか…</p>
 
-<h4 id="section-1">図を描くためのツール</h4>
-<p>図形作成のためにいちいち<a href="http://astah.change-vision.com/ja/index.html">astah*</a>やExcel()のようなアプリケーションを立ち上げるのは面倒ですよね。</p>
-
-<p><a href="https://drive.google.com">Google Drive</a>の「図形描画」や「プレゼンテーション」がオススメです。きっちりUML準拠の図を作成するわけではないので、クラス図(もどき)ならこれで十分ですし、共有も簡単です。シーケンス図はちょっと書きづらいかもしれませんが、そんな時はノートやホワイトボードに書いたものを写真に撮って適当な場所で共有すればOKでしょう。</p>
-
-<p>ところで、オブジェクト指向の場合ではなく、（純粋）関数型の場合はどうなのでしょうかね。数式？</p>
-
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">f</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">:</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">f</span>
+</span><span class="line"><span class="o">&lt;</span><span class="n">functools</span><span class="o">.</span><span class="n">partial</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x1092b2ec0</span><span class="o">&gt;</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">f</span><span class="o">.</span><span class="n">args</span>
+</span><span class="line"><span class="p">()</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">f</span><span class="o">.</span><span class="n">keywords</span>
+</span><span class="line"><span class="p">{</span><span class="s">&#39;b&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">f</span><span class="o">.</span><span class="n">func</span>
+</span><span class="line"><span class="o">&lt;</span><span class="n">function</span> <span class="o">&lt;</span><span class="k">lambda</span><span class="o">&gt;</span> <span class="n">at</span> <span class="mh">0x1092eab18</span><span class="o">&gt;</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">f</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,)</span>  <span class="c"># 引数を後から上書きはできない</span>
+</span><span class="line"><span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
+</span><span class="line">  <span class="n">File</span> <span class="s">&quot;&lt;stdin&gt;&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">1</span><span class="p">,</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+</span><span class="line"><span class="ne">TypeError</span><span class="p">:</span> <span class="n">readonly</span> <span class="n">attribute</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 </div>
   
   
@@ -337,19 +502,19 @@
       </li>
     
       <li class="post">
+        <a href="/2014/04/22/tech-podcast-list/">技術系podcastまとめ</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2014/04/21/golang-memcache-stats-client/">Goでmemcachedのstatsを取得する</a>
+      </li>
+    
+      <li class="post">
         <a href="/2014/04/20/vimrc-noexpandtab-in-golang/">vimで特定のファイルタイプだけタブインデントにする方法</a>
       </li>
     
       <li class="post">
-        <a href="/2014/04/06/move-from-wordpress-to-octopress/">WordpressからOctopressに移行</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2013/04/26/connect-go-and-python-with-zeromq/">GoとPythonをZeroMQで繋ぐ</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2013/04/17/bind-a-variable-to-closure-in-python/">pythonのクロージャに変数を束縛する方法</a>
+        <a href="/2014/04/06/reload-varnish-vcl/">VarnishのVCLを再起動なしに再読み込みする</a>
       </li>
     
   </ul>

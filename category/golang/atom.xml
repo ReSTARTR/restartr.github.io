@@ -4,7 +4,7 @@
   <title><![CDATA[Category: golang | I Will Survive]]></title>
   <link href="http://ReSTARTR.github.io/category/golang/atom.xml" rel="self"/>
   <link href="http://ReSTARTR.github.io/"/>
-  <updated>2014-06-14T15:42:13+09:00</updated>
+  <updated>2014-06-14T15:47:58+09:00</updated>
   <id>http://ReSTARTR.github.io/</id>
   <author>
     <name><![CDATA[ReSTARTR]]></name>
@@ -12,6 +12,154 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Goでmemcachedのstatsを取得する]]></title>
+    <link href="http://ReSTARTR.github.io/2014/04/21/golang-memcache-stats-client/"/>
+    <updated>2014-04-21T00:17:33+09:00</updated>
+    <id>http://ReSTARTR.github.io/2014/04/21/golang-memcache-stats-client</id>
+    <content type="html"><![CDATA[<p>YouTubeで使われている<a href="https://github.com/youtube/vitess">vitess</a>の実装をざっと見てたところ、memcachedクライアント実装が簡潔でわかりやすかったので出来る限りラフに実装を写経してみました。</p>
+
+<p>やってることはコマンドラインからアドレスを受け取って、memcachedのstatsを表示するだけです。</p>
+
+<h3 id="section">この写経で学べること</h3>
+
+<ul>
+  <li>flagパッケージを使ったコマンドライン引数の取得</li>
+  <li>netパッケージを使ったネットワーク接続</li>
+  <li>bufioパッケージを使ったストリームの読み出し</li>
+</ul>
+
+<h3 id="main">main()</h3>
+
+<p>```go
+func main() {
+	// 引数読み出し
+	address := flag.String(“address”, “localhost:11211”, “server address”)
+	flag.Parse()
+	fmt.Printf(“server: %s\n”, *address)</p>
+
+<pre><code>// サーバーに接続
+conn, err := GetConn(*address)
+if err != nil {
+	fmt.Printf("%#v", err)
+	os.Exit(1)
+}
+defer conn.conn.Close()
+
+// stats読み出し
+result, _ := conn.Stats()
+fmt.Printf("%s", result) } ```
+</code></pre>
+
+<h3 id="section-1">実行結果</h3>
+
+<p><code>bash
+$ go run ./memcache_stats.go --address=localhost:11211
+server: localhost:11211
+STAT pid 23282
+STAT uptime 12425
+STAT time 1398007875
+STAT version 1.4.4
+STAT pointer_size 64
+STAT rusage_user 0.335948
+STAT rusage_system 0.344947
+  :
+</code></p>
+
+<h3 id="section-2">実装全体</h3>
+
+<p><div><script src='https://gist.github.com/11116595.js?file=memcache_stats.go'></script>
+<noscript><pre><code>package main
+
+// 写経 from: https://github.com/youtube/vitess/blob/master/go/memcache/memcache.go
+//  * エラーハンドリングをできるかぎり省略して実装.
+//  * statsコマンドだけ実装
+
+import (
+	&quot;bufio&quot;
+	&quot;flag&quot;
+	&quot;fmt&quot;
+	&quot;net&quot;
+	&quot;os&quot;
+	&quot;strings&quot;
+)
+
+type Connection struct {
+	conn     net.Conn
+	buffered bufio.ReadWriter
+}
+
+func GetConn(address string) (conn *Connection, err error) {
+	nc, err := net.Dial(&quot;tcp&quot;, address)
+	if err != nil {
+		return nil, err
+	}
+	return &amp;Connection{
+		conn: nc,
+		buffered: bufio.ReadWriter{
+			Reader: bufio.NewReader(nc),
+			Writer: bufio.NewWriter(nc),
+		},
+	}, err
+}
+
+func (mc *Connection) writestring(s string) {
+	_, err := mc.buffered.WriteString(s)
+	if err != nil {
+		panic(err)
+	}
+}
+
+func (mc *Connection) readline() string {
+	mc.flush()
+	l, _, _ := mc.buffered.ReadLine()
+	return string(l)
+}
+
+func (mc *Connection) flush() {
+	err := mc.buffered.Flush()
+	if err != nil {
+		panic(err)
+	}
+}
+
+func (mc *Connection) Stats() (result []byte, err error) {
+	mc.writestring(&quot;stats\r\n&quot;)
+	mc.flush()
+	for {
+		l := mc.readline()
+		if strings.HasPrefix(l, &quot;END&quot;) {
+			break
+		}
+		if strings.Contains(l, &quot;ERROR&quot;) {
+			panic(&quot;ERROR&quot;)
+		}
+		result = append(result, l...)
+		result = append(result, &#39;\n&#39;)
+	}
+	return result, err
+}
+
+func main() {
+	address := flag.String(&quot;address&quot;, &quot;localhost:11211&quot;, &quot;server address&quot;)
+	flag.Parse()
+	fmt.Printf(&quot;server: %s\n&quot;, *address)
+
+	conn, err := GetConn(*address)
+	if err != nil {
+		fmt.Printf(&quot;%#v&quot;, err)
+		os.Exit(1)
+	}
+	defer conn.conn.Close()
+
+	result, _ := conn.Stats()
+	fmt.Printf(&quot;%s&quot;, result)
+}
+</code></pre></noscript></div>
+</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[GoとPythonをZeroMQで繋ぐ]]></title>

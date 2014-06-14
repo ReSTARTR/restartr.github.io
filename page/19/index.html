@@ -9,9 +9,7 @@
   <meta name="author" content="ReSTARTR">
 
   
-  <meta name="description" content="昨日感想をブログった「プログラマが知るべき９７のこと」刊行記念のトークセッションに行ってきました。タイトルは「よいソフトウェアを作るプログラミングとは」です。
-＃ちなみにタイトルは釣りだそうですｗ
-『プログラマが知るべき97のこと』（オライリー・ジャパン刊・オーム社発売）刊行記念トークセッション &hellip;">
+  <meta name="description" content="エキスパートPythonプログラミングを少しずつ読み進めています。といっても気になるタイトルを拾い読みですが。 そのなかの”2.4 withとcontextlib”の章のwith文の例としてファイル読み込みのコードが書いてました。 たったこれだけで、自動クローズまでやってくれるみたい。 さらに、 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -121,7 +119,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/2011/01/16/talk-session-what-is-programming-for-developing-a-good-software/">トークセッション「よいソフトウェアを作るプログラミングとは」</a></h1>
+      <h1 class="entry-title"><a href="/2011/02/07/automatically-close-the-file-in-python-and-scala/">Pythonとscalaのファイルの自動クローズ</a></h1>
     
     
       <p class="meta">
@@ -137,42 +135,46 @@
   
 
 
-<time datetime="2011-01-16T00:40:01+09:00" pubdate data-updated="true">2011-01-16 (Sun)</time>
+<time datetime="2011-02-07T00:10:22+09:00" pubdate data-updated="true">2011-02-07 (Mon)</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>昨日<a href="http://blog.restartr.com/2011/01/15/97things-every-programmers-should-know/">感想をブログった</a>「<a href="http://www.amazon.co.jp/dp/4873114799">プログラマが知るべき９７のこと</a>」刊行記念のトークセッションに行ってきました。タイトルは「よいソフトウェアを作るプログラミングとは」です。<br />
-＃ちなみにタイトルは釣りだそうですｗ</p>
-<blockquote><p>『プログラマが知るべき97のこと』（オライリー・ジャパン刊・オーム社発売）刊行記念トークセッション<br />
-よいソフトウェアを作るプログラミングとは</p>
-<p>森田創(寄稿者)×舘野祐一(寄稿者)×和田卓人(監修者)</p>
-<p>■2011年1月15日(土)19:00?</p>
-<p>新刊『プログラマが知るべき97のこと』（オライリー・ジャパン刊・オーム社発売）の刊行を記念して、本書監修者の和田卓人氏と寄稿者の森田創氏、舘野祐一氏の3名がプログラミングをテーマに語ります。<br />
-よいソフトウェアを作るために必要なこととは何でしょうか。<br />
-バージョン管理やテスト、自動化のツールとその知識、はたまたコーディング規約やスタイルでしょうか。<br />
-それともプログラマのスキルアップの勉強法や、チームでのコミュニケーションでしょうか。<br />
-自ら手がけるものの質を向上させるために、プログラミングを生業とする技術者ひとりひとりが「知るべきこと」を自らの体験を交えて大いに語り合います。
-</p></blockquote>
+  <div class="entry-content"><p>エキスパートPythonプログラミングを少しずつ読み進めています。といっても気になるタイトルを拾い読みですが。</p>
+
+<p>そのなかの”2.4 withとcontextlib”の章のwith文の例としてファイル読み込みのコードが書いてました。
+<script src="https://gist.github.com/813385.js?file=read_file_using_with.py"></script>
+たったこれだけで、自動クローズまでやってくれるみたい。</p>
+
+<p><a id="more"></a><a id="more-576"></a>
+さらに、with文を使うためのクラス定義も可能らしい。
+<script src="https://gist.github.com/813385.js?file=Reader.py"></script></p>
+
+<p>実装すべきは下記２メソッドのみ。</p>
+
 <ul>
-<li><a href="http://www.ustream.tv/recorded/12026561">USTREAM</a></li>
-<li><a href="http://togetter.com/li/89570">Togetter</a></li>
+<li>__enter__(self)</li>
+<li>__exit__(self, exception_type, exception_value, exception_traceback)</li>
 </ul>
-<p><a id="more"></a><a id="more-533"></a><br />
-壁面にトークのアジェンダのマインドマップが書かれていたので、それをベースにマップを作成してみました。細かい表現などは自分フィルターがかかっていて、本来言っていたことと一致していない可能性あります。ので、詳しくはUST,Togetterを御覧ください。。。</p>
-<div style="width:425px" id="__ss_6577665"><strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/restartr/ss-6577665" title="よいソフトウェアを作るプログラミングとは">よいソフトウェアを作るプログラミングとは</a></strong><object id="__sse6577665" width="425" height="355"><param name="movie" value="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=random-110115085249-phpapp01&amp;stripped_title=ss-6577665&amp;userName=restartr" /><param name="allowFullScreen" value="true" /><param name="allowScriptAccess" value="always" /><embed name="__sse6577665" src="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=random-110115085249-phpapp01&amp;stripped_title=ss-6577665&amp;userName=restartr" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="355" /></object>
-<div style="padding:5px 0 12px">View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/restartr">Re STARTR</a>.</div>
-</div>
-<p>トークの内容は、登壇者のプログラマになったきっかけからはじまり、どんな開発現場か、どのように技術を身につけてきたか、などを語り合うものでした。<br />
-「９７のこと」についてはQ&amp;Aのときの質問がでるまで触れられなかったというｗ</p>
-<h3>JavaScriptの特殊性</h3>
-<p>面白かったのは、和田さんが「JavaScriptはプログラミングパラダイムの交差点」と言っていたこと。<br />
-MochiKitはPythonの関数的なものを、prototype.jsはオブジェクト志向が取り入れられていたりと。たしかに、JSって言語のなかでもかなり特殊ですよね。Webサービスで言えば、サーバーサイドはいろんな言語が使われるけど、ブラウザ上では唯一のプログラミング言語（一応ASもあるけど）。だからこそ、他言語で馴染みのあるパラダイムを取り入れようとするんでしょう。</p>
-<h3>プログラマの責務</h3>
-<p>これまで感じた「うれしかったこと」に対して「信念を突き通して作ったものに対する喜びの反応をもらったとき」という回答がありましたが、こればかりは普遍ですね。スタンドアロンであれWebサービスであれ、作るものや使う技術は変われど、誰か使いたいと思ってくれる人に対して価値を提供することが我々プログラマの責務ですから。</p>
-<p>登壇者の方々、貴重なおはなしをどうもありがとうございました。</p>
+<p>__enter__の戻り値はasで受けとれます。
+__exit__で例外処理のfinallyに当たる処理を書きます。何も返さないと例外はその呼び出し元に伝播します。</p>
+
+<p>さらにさらに、contextlibというモジュールを使えば、もっと自然に書けます。
+<script src="https://gist.github.com/813385.js?file=read_file_with_closing.py"></script>
+※これは、contextmanager内のfinally句でcloseを書くのと同じ。(<a href="http://www.python.jp/doc/nightly/library/contextlib.html#contextlib.closing">参考</a>)</p>
+
+<h4>Scalaでwith（っぽいもの）を実装</h4>
+<p>pythonのwith文と同様の記述方法をScalaでやるとしたら…こんな感じでしょうか。
+<script src="https://gist.github.com/813385.js?file=FileReader.scala"></script></p>
+
+<p>ファイルの自動クローズについてはこちらを参考にさせていただきました。</p>
+
+<ul>
+  <li><a href="http://d.hatena.ne.jp/syttru/20080322/1206212125">Scalaでファイル操作 - syttruの日記</a></li>
+</ul>
+
 </div>
   
   
@@ -185,7 +187,7 @@ MochiKitはPythonの関数的なものを、prototype.jsはオブジェクト志
       
   <header>
     
-      <h1 class="entry-title"><a href="/2011/01/15/97things-every-programmers-should-know/">プログラマが知るべき97のこと</a></h1>
+      <h1 class="entry-title"><a href="/2011/02/06/introduction-of-data-mining-without-formul/">数式を使わないデータマイニング入門</a></h1>
     
     
       <p class="meta">
@@ -201,92 +203,46 @@ MochiKitはPythonの関数的なものを、prototype.jsはオブジェクト志
   
 
 
-<time datetime="2011-01-15T00:39:03+09:00" pubdate data-updated="true">2011-01-15 (Sat)</time>
+<time datetime="2011-02-06T22:47:11+09:00" pubdate data-updated="true">2011-02-06 (Sun)</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>「プログラマが知るべき97のこと」を読みました。</p>
-
-<ul>
-  <li><a href="http://www.amazon.co.jp/dp/4873114799">プログラマが知るべき97のこと</a></li>
+  <div class="entry-content"><ul>
+  <li><a href="http://www.amazon.co.jp/dp/4334033555">数式を使わないデータマイニング入門 隠れた法則を発見する (光文社新書) [新書]</a></li>
 </ul>
 
-<p>一時期いろいろネタにもされていましたが、読んで損はない本ですね。
-内容は、プログラマの精神論から設計のTipsやパターン紹介まで多岐にわたっています。が、ひとつひとつが見開き1ページにまとまっているため、あとで気軽に読み返せますので、ぜひデスクに常備しておきたい一冊となりました。</p>
+<p>テキストマイニング書を探していたら、なぜか同じ場所にあったので買いました。</p>
 
-<p><a id="more"></a><a id="more-518"></a></p>
+<p>データマイニングって何？という人向けの入門書。１時間もあればサクっと読める軽い内容。データマイニングをはじめる人だけでなく、<strong>データマイニングを依頼する側</strong>が読むと良いのではないでしょうか。</p>
 
-<p>主に精神論のはなしに惹かれたので少しまとめを。</p>
+<p><a id="more"></a><a id="more-564"></a></p>
 
-<h3>問題のあるソフトウェアをつくりだす可能性と、それに対して立ち向かう姿勢</h3>
-<p>どれだけ経験を重ねても、度重なる変更やスケジュールからの圧力などによって、品質が悪くなることは往々にしてあります。</p>
+<h4>マイニング＝採鉱</h4>
+<p>第一章にも書いてあるけど、</p>
 
-<p><strong>24.変更を恐れない     Mike Lewis</strong></p>
-
-<blockquote>
-作っている人間がシステムを嫌っているようでは、そんなものを遣わされる側はたまらないでしょう。
-
-</blockquote>
-<p>病気なソフトウェアを治すには痛みを伴うが、それを治すことで利益も得られ、治すことはメンバーにとって経験となると言っています。積極的にシステムを改良していくという姿勢はチームに伝播しやすいものであると。</p>
-
-<p><strong>52.「その場しのぎ」が長生きしてしまう     Klaus Marquardt</strong></p>
-
-<blockquote>
-いったん「暫定ソリューション」ができてしまうと、既成事実化するのです。
+<blockquote><em>マイニングとは、「採鉱」を指す言葉である。データマイニングにおけるマイニングは二段階のプロセスに分かれる。
+一段階目は、大量の情報から隠れた法則を見つけ出すこと。
+〜中略〜
+二段階目は、そこで見つかった法則のなかから、使えるものを探し出すこと。これは意外に認知されていない。</em>
 
 </blockquote>
-<p>さらに、暫定ソリューションに対する修正も暫定になってしまいがち。でも、「ソリューション」というだけに必要なものではあるはず。修正の優先度があがる体制づくりをするとか、もっと有用なソリューションを開発すればよい、と言っています。
-いつまでたっても暫定のままの暫定ソリューションはいくつも見てきたので、かなり実感湧きます。</p>
+<p>さらに、</p>
 
-<h3>新しいことを学び続ける姿勢</h3>
-<p>新しい言語を毎年学ぶと良いというのは、割とよく聞く話しだと思います。</p>
-
-<p><strong>26.言語だけでなく文化も学ぶ     Anders Noras</strong></p>
-
-<blockquote>
-そうではなく、新しい言語から新たな発想を得て、同じ問題に対して違った解決策を見つけられるようになることが大事なのです。
-
+<blockquote><em>多くの人は法則さえ見つかれば、それが有意で、お金にもなると考えている。しかし、実際には役に立たない法則の方が多い。この事実は見過ごされがちだ。</em>
 </blockquote>
-<p>ある言語では言語仕様で対応してくれているけどその他の言語では自分で実装しなければいけなかったり（GCとか）、そういった、各言語ごとの視点を自分に取り入れるのは良いことです。
-私は、ふだんPHPでオブジェクト指向プログラミングをやっていて、Scalaという関数言語を学んでいます。Scalaを学ぶことで、なんとなく関数型思考でPHPコードを書いていることもあります。あきらかにその書いたコードにたいする距離感が違っていて、そのコードの根拠が明確になっている気がするのです。</p>
+<p>マイニングを行えば、何かしら答えが見つかるものだと思われがち。結果的に答えが見つかればラッキー。データマイニングを依頼する側には「期待せずに期待してください」としか言えないですね…</p>
 
-<h3>誰のためのコードか、という意識</h3>
-<p>なぜかこのような似通ったテーマをとりあげた人が多くいました。</p>
+<p>ところで、何かしら答えを限られた期間で見つけ出すのは難しいのだとすれば、データ分析者は評価者に対して目標として何をコミットし、どのように結果を評価されるのでしょうか。プログラマーと同じく、明確な数値目標を設定しづらい職業なのかなと思ったり。</p>
 
-<p><strong>35.超人の神話     Ryan Brush</strong></p>
-<blockquote>
-超人は必要ありません。必要なのはエキスパートです。積極的に自分以外にもエキスパートを育てようとする意思をもったエキスパートです。そういう人がいてくれれば、凡人が力をつけ、活躍できる可能性が生まれるでしょう。
-</blockquote>
-<p><strong>56.未来へのメッセージ     Linda Rising</strong></p>
-<blockquote>
-「自分の書くコードは、全部、未来の誰かへのメッセージだと思うのよ。その誰かは、あなたの弟さんかもしれない。誰か、とても賢い人に、自分が難しい問題をどう解いたのか、丁寧に説明するつもりで書くの。」
-</blockquote>
-<p><strong>82.他社への思いやりを意識したコーディング     Aslam Khan</strong></p>
-<blockquote>
-他人の存在を意識すれば、他人の書くコードにも当然良い影響を与えることになります。チームの同様のことを考え、思いやりを持ってコードを書けば、それは同僚たちにとって価値あるコードとなり、いずれ自分にも良い影響となって帰ってきます。どんなかたちであれ、そのコードに触れた誰もが、触れる前より良い人間、良いプログラマになれる、そういうコードを書くようにすべきでしょう。
+<h4>監視社会</h4>
+<p>本書中盤にはデータマイニング手法としていくつか概要の説明があり、最後には監視社会について触れています。それまでの流れと少し関連性が低い内容ではあるけれど、興味深い内容。参考図書として挙げられていたもの（下記）が１０年前の書籍なので、関連する最近の書籍をさがしてみる予定。</p>
 
-</blockquote>
-<p><strong>88.コードは生涯サポートするつもりで書く     Yuriy Zubarev</strong></p>
-<blockquote>
-「生涯サポートしなくてはならない」と考えながら仕事をするようになれば、素晴らしいことが起きるでしょう。
-</blockquote>
-<p>チームで開発するのが当然な現場では当たり前のことですが意外と意識できていなかったりします。私も、新しく知り得たパターンとかついつい自分の判断で取り入れてしまい、誰が見てもわかりにくいコードを書いたこともあります。今でもそういうコードになっているかもしれません。</p>
-
-<p>こういうことを無意識にできるように、ペアプログラミングをするのも効果的かもしれません。隣で同じ画面を見ている「他人の目」が常にあり、自分も他人も納得のいく設計が結果的にできるわけですから。</p>
-
-<p>と、ここまで書かれた複数人の内容をひとりじめするような内容の人がいましたw</p>
-
-<p><strong>91.良いプログラマになるには     Pete Goodliffe</strong></p>
-<blockquote />
-<p>‘とりあえず’という意識を捨て、他人や未来の自分のためにわかりやすいコードを書き、新しいことを学び続けよう、ということを彼は言っています。
-※前述のテーマについては、それぞれにエピソードが違うので、どれを読んでも面白いものなので、まとめのようなものがあっても別に構わないのですが。</p>
-
-<p>目の前のコードに集中しがちですが、冷静になって、こういった基本姿勢を思い返すようにしたいものです。</p>
-
-<p>「達人プログラマー」や、「リファクタリング」など、引用された本で未読のものがいくつかあったので、これらについても今後読んでみようと思います。</p>
+<ul>
+  <li><a href="http://www.amazon.co.jp/dp/4791760085">監視社会 [単行本]</a></li>
+</ul>
 
 </div>
   
@@ -352,19 +308,19 @@ MochiKitはPythonの関数的なものを、prototype.jsはオブジェクト志
       </li>
     
       <li class="post">
+        <a href="/2014/04/22/tech-podcast-list/">技術系podcastまとめ</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2014/04/21/golang-memcache-stats-client/">Goでmemcachedのstatsを取得する</a>
+      </li>
+    
+      <li class="post">
         <a href="/2014/04/20/vimrc-noexpandtab-in-golang/">vimで特定のファイルタイプだけタブインデントにする方法</a>
       </li>
     
       <li class="post">
-        <a href="/2014/04/06/move-from-wordpress-to-octopress/">WordpressからOctopressに移行</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2013/04/26/connect-go-and-python-with-zeromq/">GoとPythonをZeroMQで繋ぐ</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2013/04/17/bind-a-variable-to-closure-in-python/">pythonのクロージャに変数を束縛する方法</a>
+        <a href="/2014/04/06/reload-varnish-vcl/">VarnishのVCLを再起動なしに再読み込みする</a>
       </li>
     
   </ul>

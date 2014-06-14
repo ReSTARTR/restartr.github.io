@@ -9,10 +9,9 @@
   <meta name="author" content="ReSTARTR">
 
   
-  <meta name="description" content="Scalaプログラミング入門をざっと読んでから少し間が空いてしまいました。
-第１回Scala座を見たりして刺激もらったのでちょっとScala弄りなど。
-※Scala座については非公式にトゥギャらせてもらっています。：第１回Scala座非公式勝手まとめ
-ちょっと雰囲気を振り返るため、 &hellip;">
+  <meta name="description" content="10月02日と03日の、一泊二日のPHPMASTURIに参加してきました。 ハッシュタグ: #phpmatsuri
+LTのustream: phpmatsuri on USTREAM とにかく内容が濃い 楽天の吉岡さんによる大人のプログラミングキャンプ
+CakePHP,Symfony, &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -122,7 +121,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/2010/09/05/processing-the-file-formatted-tsv/">TSVファイルを処理する</a></h1>
+      <h1 class="entry-title"><a href="/2010/10/03/phpmatsuri-hack-days-by-php-hackers/">PHPMATSURI - PHPハッカー達による一泊二日のハックデイ</a></h1>
     
     
       <p class="meta">
@@ -138,91 +137,73 @@
   
 
 
-<time datetime="2010-09-05T18:22:53+09:00" pubdate data-updated="true">2010-09-05 (Sun)</time>
+<time datetime="2010-10-03T20:26:48+09:00" pubdate data-updated="true">2010-10-03 (Sun)</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>Scalaプログラミング入門をざっと読んでから少し間が空いてしまいました。<br />
-第１回Scala座を見たりして刺激もらったのでちょっとScala弄りなど。<br />
-※Scala座については非公式にトゥギャらせてもらっています。：<a href="http://togetter.com/li/47287">第１回Scala座非公式勝手まとめ</a></p>
-<p>ちょっと雰囲気を振り返るため、普段PHPでよくやるTSVファイルの読み込みでテスト。</p>
-<p>foo.tsvの中身はこんな感じ。</p>
-<pre class="brush:c">
-u01,Tokyo
-u02,Osaka
-u03,Nagoya
-u04,Tokyo
-u05,Fukuoka
-u06,Nagoya
-u07,Nagoya
-u08,Shiga
-u09,Hokkaido
-u10,Osaka
-</pre>
-<p>これの転置インデックスを作成したい。</p>
-<p>で、<a href="http://rainyday.blog.so-net.ne.jp/2007-12-01">こちらのブログ記事</a>とかを参考にしたりして、何回か試行錯誤してできたのがこちらのソース。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-<span class="line-number">21</span>
-<span class="line-number">22</span>
-<span class="line-number">23</span>
-</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">import</span> <span class="nn">scala.collection.mutable.HashMap</span>
-</span><span class="line"><span class="k">import</span> <span class="nn">scala.io.Source</span>
-</span><span class="line"><span class="k">import</span> <span class="nn">scala.io.BufferedSource</span>
-</span><span class="line"><span class="k">object</span> <span class="nc">ReadTsv</span>
-</span><span class="line"><span class="o">{</span>
-</span><span class="line">  <span class="k">def</span> <span class="n">main</span><span class="o">(</span> <span class="n">args</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="o">)</span>
-</span><span class="line">  <span class="o">{</span>
-</span><span class="line">    <span class="k">val</span> <span class="n">source</span> <span class="k">=</span> <span class="nc">Source</span><span class="o">.</span><span class="n">fromFile</span><span class="o">(</span> <span class="s">&quot;foo.txt&quot;</span> <span class="o">)</span>
-</span><span class="line">    <span class="k">try</span> <span class="o">{</span>
-</span><span class="line">      <span class="k">var</span> <span class="n">m</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">[</span><span class="kt">String</span>,<span class="kt">List</span><span class="o">[</span><span class="kt">String</span><span class="o">]]</span>
-</span><span class="line">      <span class="k">for</span><span class="o">(</span> <span class="n">line</span> <span class="k">&lt;-</span> <span class="n">source</span><span class="o">.</span><span class="n">getLines</span> <span class="o">)</span> <span class="o">{</span>
-</span><span class="line">        <span class="k">val</span> <span class="n">x</span><span class="k">:</span><span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="n">line</span><span class="o">.</span><span class="n">stripLineEnd</span><span class="o">.</span><span class="n">split</span><span class="o">(</span><span class="s">&quot;,&quot;</span><span class="o">)</span>
-</span><span class="line">        <span class="n">m</span><span class="o">.</span><span class="n">update</span><span class="o">(</span><span class="n">x</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span> <span class="o">,</span> <span class="n">m</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="n">x</span><span class="o">(</span><span class="mi">1</span><span class="o">))</span> <span class="k">match</span> <span class="o">{</span>
-</span><span class="line">          <span class="k">case</span> <span class="nc">Some</span><span class="o">(</span><span class="n">s</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">x</span><span class="o">(</span><span class="mi">0</span><span class="o">)</span> <span class="o">::</span> <span class="n">s</span>
-</span><span class="line">          <span class="k">case</span> <span class="nc">None</span>    <span class="k">=&gt;</span> <span class="nc">List</span><span class="o">(</span> <span class="n">x</span><span class="o">(</span><span class="mi">0</span><span class="o">)</span> <span class="o">)</span>
-</span><span class="line">        <span class="o">})</span>
-</span><span class="line">      <span class="o">}</span>
-</span><span class="line">      <span class="n">println</span><span class="o">(</span> <span class="n">m</span> <span class="o">)</span>
-</span><span class="line">    <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
-</span><span class="line">      <span class="n">source</span><span class="o">.</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">BufferedSource</span><span class="o">].</span><span class="n">close</span>
-</span><span class="line">    <span class="o">}</span>
-</span><span class="line">  <span class="o">}</span>
-</span><span class="line"><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>実行</p>
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>scalac ReadTsv.scala
-</span><span class="line"><span class="nv">$ </span>scala ReadTsv
-</span><span class="line">Map<span class="o">(</span>Shiga -&gt; List<span class="o">(</span>u08<span class="o">)</span>, Nagoya -&gt; List<span class="o">(</span>u07, u06, u03<span class="o">)</span>, Tokyo -&gt; List<span class="o">(</span>u04, u01<span class="o">)</span>, Osaka -&gt; List<span class="o">(</span>u10, u02<span class="o">)</span>, Fukuoka -&gt; List<span class="o">(</span>u05<span class="o">)</span>, Hokkaido -&gt; List<span class="o">(</span>u09<span class="o">))</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>手続き型な感じが色濃い気がするけど、もっと関数型的になるのでしょうか。。<br />
-とりあえずコレクションとパターンマッチの練習にはなりました。</p>
-<p>他人のプログラムを拝見するなどして、もっとScalaの理解を深める必要がありそうです。</p>
+  <div class="entry-content"><p><a title="IMG_2470 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/5046336051/"><img src="http://farm5.static.flickr.com/4154/5046336051_aabef10eb4.jpg" alt="IMG_2470" width="500" height="333" /></a></p>
+<p><a href="http://2010.phpmatsuri.net/"><img class="alignnone size-medium wp-image-341" title="PHPMATSURI" src="http://blog.restartr.com/wp-content/uploads/2010/10/bunner-300x132.jpg" alt="" width="300" height="132" /></a><br />
+10月02日と03日の、一泊二日の<a href="http://2010.phpmatsuri.net/">PHPMASTURI</a>に参加してきました。</p>
+<ul>
+<li>ハッシュタグ: <a href="http://search.twitter.com/search?q=%23phpmatsuri">#phpmatsuri</a></li>
+<li>LTのustream: <a href="http://www.ustream.tv/channel/phpmatsuri">phpmatsuri on USTREAM</a></li>
+</ul>
+<h3>とにかく内容が濃い</h3>
+<ul>
+<li>楽天の吉岡さんによる大人のプログラミングキャンプ</li>
+<li>CakePHP,Symfony,Lithiumのデベロッパーによるセッション</li>
+<li>彼らのライブコーディングを間近に見られる各フレームワークのワークショップ</li>
+<li>スポンサー各社のセッション</li>
+<li>PHPによる開発事例プレゼン大会のJIREI NIGHT</li>
+<li>ZyngaJapanのお二人によるTDDを実体験できるワークショップ</li>
+<li>深夜まで続くハッカソンと、総勢33名による大LT大会</li>
+</ul>
+<p>ざっと並べただけでもこんな感じに、とにかく内容てんこ盛りな二日間でした。</p>
+<p><a id="more"></a><a id="more-335"></a></p>
+<p><a title="IMG_2512 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/5046956568/"><img src="http://farm5.static.flickr.com/4133/5046956568_dd9b08f6eb.jpg" alt="IMG_2512" width="500" height="333" /></a></p>
+<p>まとめるのは得意ではないので、参加した感想を少しばかり。</p>
+<h3>イベントに参加するということがいかに重要であるか</h3>
+<p>最初の吉岡さんのセッションは「この祭りをいかに楽しく有意義に過ごすか」ということを教えていただきました。また、各セッションを聞いたり、たくさんのデベロッパーの方々とコミュニケーションをとるのも非常に有意義でした。<br />
+最後のLT大会では、参加したみなさんの変態ぶりに圧倒されっぱなし。これだけ多くの発表があるとそれぞれに目の付け所が違っているが故にアイデアももらえるし、そこで発表すれば多くの反応をいただくこともできます。参加することで得られるメリットは、参加費用にはかえがたいものがあったと思います。<br />
+最後の締めで@yandoさんが「個人によるイベント」と仰っていて、このイベントは有志のスタッフの方々に支えられている、ことを実感しました。企画・運営をしてくださったスタッフのみなさんには本当に感謝します。<br />
+そして、PHPMATSURIに関わったすべての方に感謝したいと思います。ありがとうございました。</p>
+<p><a title="IMG_2491 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/5046334983/"><img src="http://farm5.static.flickr.com/4086/5046334983_8bd1c1329a.jpg" alt="IMG_2491" width="500" height="333" /></a><br />
+今回のチャレンジをまとめてみます。</p>
+<h3>チャレンジできたこと</h3>
+<ul>
+<li>CakePHP,Symfony2,Lithium各フレームワークの特徴を知る</li>
+<li>プレゼン資料を拙いながらも英語で作成する</li>
+<li>内容に関係なく発表者になる</li>
+<li>動かなかったで終わらせず、動くまでハックする</li>
+</ul>
+<h3>チャレンジできなかったこと</h3>
+<ul>
+<li>各FWデベロッパーの方々とのコミュニケーション</li>
+<li>セッションで質問する(TDDのワークでは質問しましたが)</li>
+<li>ソースコード公開</li>
+<li>Beer Driven Development</li>
+</ul>
+<h3>今後チャレンジしたいこと</h3>
+<ul>
+<li>今回の成果物のソースコード公開する</li>
+<li>英語を聞く力、話す力をつける</li>
+<li>発表の機会を自分でつくる</li>
+</ul>
+<h3>成果：XHProf CustomPanel</h3>
+<p>※詳しい話は別記事にてやります。</p>
+<div id="__ss_5344576" style="width: 425px;"><strong><a title="Php matusri xhprof custompanel" href="http://www.slideshare.net/restartr/php-matusri-xhprofcustompanelpublish">Php matusri xhprof custompanel</a></strong><object id="__sse5344576" classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" width="425" height="355" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,40,0"><param name="allowFullScreen" value="true" /><param name="allowScriptAccess" value="always" /><param name="src" value="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=phpmatusri-xhprofcustompanel-publish-101003011838-phpapp02&amp;stripped_title=php-matusri-xhprofcustompanelpublish&amp;userName=restartr" /><param name="name" value="__sse5344576" /><param name="allowfullscreen" value="true" /><embed id="__sse5344576" type="application/x-shockwave-flash" width="425" height="355" src="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=phpmatusri-xhprofcustompanel-publish-101003011838-phpapp02&amp;stripped_title=php-matusri-xhprofcustompanelpublish&amp;userName=restartr" name="__sse5344576" allowscriptaccess="always" allowfullscreen="true" /></object>
+<div style="padding: 5px 0 12px;">View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/restartr">Re STARTR</a>.</div>
+</div>
+<h3>おまけ</h3>
+<p>途中でレッドブルがふるまわれるというサービスまでありました。当日6時起きだったのに4時まで頑張れたのはレッドブルのおかげかもしれません。<br />
+<a title="IMG_2488 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/5046334797/"><img src="http://farm5.static.flickr.com/4108/5046334797_b3ed8b2f3e.jpg" alt="IMG_2488" width="500" height="333" /></a></p>
+<p>そして、最後にCakePHP開発者のGraham Weldonさんと記念撮影させてもらいました。<br />
+Thanks, Graham!<br />
+<a title="IMG_2514 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/5046335737/"><img src="http://farm5.static.flickr.com/4113/5046335737_4651050be6.jpg" alt="IMG_2514" width="500" height="333" /></a><br />
+#ほとんど会話できなかったのが悔やまれます。会話することを怖がらないことが大事ですね。反省。</p>
 </div>
   
   
@@ -235,7 +216,7 @@ u10,Osaka
       
   <header>
     
-      <h1 class="entry-title"><a href="/2010/08/23/beginning-scala/">Scalaプログラミング入門(とその他Scala本)</a></h1>
+      <h1 class="entry-title"><a href="/2010/09/19/buy-an-amazon-kindle3/">Amazon Kindle3 Free 3G + Wi-Fiを買ってみた</a></h1>
     
     
       <p class="meta">
@@ -251,46 +232,41 @@ u10,Osaka
   
 
 
-<time datetime="2010-08-23T00:21:16+09:00" pubdate data-updated="true">2010-08-23 (Mon)</time>
+<time datetime="2010-09-19T10:48:29+09:00" pubdate data-updated="true">2010-09-19 (Sun)</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><ul>
-  <li><a href="http://www.amazon.co.jp/dp/4822284239">SCALAプログラミング入門 [単行本]</a></li>
-</ul>
-
-<p>お盆前にScalaプログラミング入門を購入して、少しづつScalaについて学んでいます。</p>
-
-<p><a id="more"></a><a id="more-295"></a></p>
-
-<p>通称「コップ本」と読み比べた上で、とっつきやすく実践寄りな「Scalaプログラミング入門」を選択しました。<br /></p>
-
-<ul>
-  <li><a href="http://www.amazon.co.jp/dp/4844327453">Scalaスケーラブルプログラミング[コンセプト&amp;コーディング] (Programming in Scala) [単行本]</a></li>
-</ul>
-
-<p>正直、「Scalaプログラミング入門」は自分にとっては手強いです。</p>
-
-<p>その文脈で説明している以外のところで唐突に新しい文法が含まれたコードが説明なしに含まれていたり。いきなり”sealed”とか書かれましても…</p>
-
-<p>まず文法について一通り把握するなら、こちらの「ボクらのScala」のほうが良いと思います。<br /></p>
-
-<ul>
-  <li><a href="http://www.amazon.co.jp/dp/4797359404">ボクらのScala ~ 次世代Java徹底入門 [単行本]</a></li>
-</ul>
-
-<p>「Scalaプログラミング入門」を一通り読んでモヤモヤがたまったあとに「ボクらのScala」を立ち読みして、「これはわかりやすい！ちゃんと整理されている！」と驚きました。</p>
-
-<p>順序良く学ぶなら、「ボクらのScala」→「Scalaプログラミング入門」→「Scalaスケーラブルプログラミング」の順が良いのではないでしょうか。<br />
-必要最低限の言語仕様を学び、実践よりの解説に目を通し、言語仕様の深いところを学ぶ、という流れになると思います。（すごく個人的な感想ですが。）</p>
-
-<p>まぁ、本の内容をひとつづつこのブログで解説する、なんてことはしませんが、少しづつでも得た知識をこのブログで整理していこうと思います。</p>
-
-<p>当面の目標は「ScalaでHadoopのジョブを書く」ですかね。</p>
-
+  <div class="entry-content"><p><a title="IMG_2302 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/5003018900/"><img src="http://farm5.static.flickr.com/4087/5003018900_5a22f2eca5.jpg" alt="IMG_2302" width="500" height="333" /></a></p>
+<p>今流行の<a href="http://www.amazon.com/dp/B002FQJT3Q">Amazon Kindle3(3G+Wi-Fi)</a>を買ってみました。<br />
+発売開始の翌日に注文して、２週間程度での受け取りでした。<br />
+Amazon純正のKindle3用レザーカバーも頼んだんですが、そちらだけ先に届いてましたが、やっと本体も届きましたんで、<br />
+軽くレビューでも書いてみます。</p>
+<p><a id="more"></a><a id="more-325"></a><br />
+注文したのがたしか、8/28日。発送の連絡がきたのが9/10なのでその間約二週間。さらに受け取りまでは以下のように、不在による再配達も影響して、長い道のりとなりました。<br />
+<a href="http://www.flickr.com/photos/53244662@N04/5002490605/" title="配達履歴 by ReSTARTR_y, on Flickr"><img src="http://farm5.static.flickr.com/4092/5002490605_3cfe829cef.jpg" width="488" height="500" alt="配達履歴" /></a></p>
+<p>先に受け取ったレザーカバーのときもそうだったんですが、箱が工夫されています。<br />
+ダンボールの箱はガムテープで閉じられているのが普通ですが、お菓子の箱のようにダンボール自体に切り取れる細工がしてあります。<br />
+<a href="http://www.flickr.com/photos/53244662@N04/5002411379/" title="IMG_2285 by ReSTARTR_y, on Flickr"><img src="http://farm5.static.flickr.com/4107/5002411379_a1ab728694_m.jpg" width="240" height="160" alt="IMG_2285" /></a><br />
+<a href="http://www.flickr.com/photos/53244662@N04/5003018636/" title="IMG_2289 by ReSTARTR_y, on Flickr"><img src="http://farm5.static.flickr.com/4131/5003018636_5681651c2c_m.jpg" width="240" height="160" alt="IMG_2289" /></a><br />
+汎用サイズのダンボールでは難しいかもしれませんが、こういう工夫はなんとなく嬉しいです。</p>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5003018740/" title="IMG_2290 by ReSTARTR_y, on Flickr"><img src="http://farm5.static.flickr.com/4154/5003018740_245397caef.jpg" width="500" height="333" alt="IMG_2290" /></a><br />
+箱を開けるとこんなかんじ。<br />
+画面にPC接続の指示が書いてあります。表面にはってあるシートにプリントされているかのように見える程に電子インクは素晴らしいです。</p>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5002411213/" title="IMG_2274 by ReSTARTR_y, on Flickr"><img src="http://farm5.static.flickr.com/4089/5002411213_8cf4392a79.jpg" width="500" height="333" alt="IMG_2274" /></a><br />
+ちなみにレザーカバーはこんなかんじ。</p>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5003018454/" title="IMG_2279 by ReSTARTR_y, on Flickr"><img src="http://farm5.static.flickr.com/4125/5003018454_ba7fc2faf4.jpg" width="500" height="333" alt="IMG_2279" /></a><br />
+Kindle本体とは↑の写真のようなカバーの「フック」にひっかけて固定するようになってます。</p>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5002412019/" title="IMG_2295 by ReSTARTR_y, on Flickr"><img src="http://farm5.static.flickr.com/4126/5002412019_02ef7106de.jpg" width="500" height="333" alt="IMG_2295" /></a><br />
+ということでカバーと本体をくっつけるとこんなかんじになります。<br />
+重量はカバーなしの二倍くらいに重くなったように感じますが、実際に電車内で片手で持っていても腕が疲れないレベルです。</p>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5003019014/" title="IMG_2307 by ReSTARTR_y, on Flickr"><img src="http://farm5.static.flickr.com/4109/5003019014_4b7343171c.jpg" width="333" height="500" alt="IMG_2307" /></a><br />
+Experimentalな機能としてwebkitなブラウザが搭載されています。Twitterを見るとこんな感じになります。<br />
+表示速度ははっきりいって遅いうえに正直見づらいですが、本を呼んでいる最中にTLをチラ見したいときとか役立ちます。</p>
+<p>TwitterへツイートできたりFacebookへShareできたり連携機能があるので、ブラウザが搭載されているのはそれらサービス認証が主な目的だと思います。</p>
+<p>まだ数日しか使っていないですが、かなり便利なシロモノでした。</p>
 </div>
   
   
@@ -355,19 +331,19 @@ u10,Osaka
       </li>
     
       <li class="post">
+        <a href="/2014/04/22/tech-podcast-list/">技術系podcastまとめ</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2014/04/21/golang-memcache-stats-client/">Goでmemcachedのstatsを取得する</a>
+      </li>
+    
+      <li class="post">
         <a href="/2014/04/20/vimrc-noexpandtab-in-golang/">vimで特定のファイルタイプだけタブインデントにする方法</a>
       </li>
     
       <li class="post">
-        <a href="/2014/04/06/move-from-wordpress-to-octopress/">WordpressからOctopressに移行</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2013/04/26/connect-go-and-python-with-zeromq/">GoとPythonをZeroMQで繋ぐ</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2013/04/17/bind-a-variable-to-closure-in-python/">pythonのクロージャに変数を束縛する方法</a>
+        <a href="/2014/04/06/reload-varnish-vcl/">VarnishのVCLを再起動なしに再読み込みする</a>
       </li>
     
   </ul>

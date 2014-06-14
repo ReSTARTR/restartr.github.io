@@ -9,8 +9,10 @@
   <meta name="author" content="ReSTARTR">
 
   
-  <meta name="description" content="2011.08.31 kmizushimaさんから頂いたコメントを元に、下記の記述を修正＆追記しました。 Twitterのutil-evalの一時ファイル生成について AkkaのConfigファイルのパース手法について
-&lt;/em&gt; TwitterのOAuthの鍵やDB接続情報など、 &hellip;">
+  <meta name="description" content="イベント管理サービスについて
+勉強会などでよく利用されるのが、イベント管理サービス。 ATNDやZusaar,Partakeなど、様々なサービスがあり、現在も新しいものが生まれている状況。
+今や勉強会を開催する上で必須のサービスとなっていますよね。
+ですが、 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -120,7 +122,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/2011/08/30/config-libraries-in-scala/">Scalaで設定ファイルを使いたい時どうしたらいいの？</a></h1>
+      <h1 class="entry-title"><a href="/2011/12/10/eventstats/">イベントの参加人数の遷移が見れるサービス『EventStats』を作りました。 #atnd #zusaar #partake</a></h1>
     
     
       <p class="meta">
@@ -136,227 +138,53 @@
   
 
 
-<time datetime="2011-08-30T00:02:15+09:00" pubdate data-updated="true">2011-08-30 (Tue)</time>
+<time datetime="2011-12-10T18:58:51+09:00" pubdate data-updated="true">2011-12-10 (Sat)</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p><em style="color:red">2011.08.31 kmizushimaさんから頂いた<a href="http://blog.restartr.com/2011/08/30/config-libraries-in-scala/?preview=true&amp;preview_id=1049&amp;preview_nonce=ad0bbeeef6#comment-108">コメント</a>を元に、下記の記述を修正＆追記しました。</em></p>
+  <div class="entry-content"><h3>イベント管理サービスについて</h3>
+<p>勉強会などでよく利用されるのが、イベント管理サービス。
 
+ATNDやZusaar,Partakeなど、様々なサービスがあり、現在も新しいものが生まれている状況。</p>
+<p>今や勉強会を開催する上で必須のサービスとなっていますよね。</p>
+<p>ですが、主催者や参加者にとってそれらのサービスで閲覧できるのは『今どのような状況か』ということだけです。それまでどのように参加者が増えてきたのか、その後も参加者が増えそうか、ということまでは見ることができません。</p>
+<p>「今」ではなく「過去」を知りたい。(by @ReSTARTR)</p>
+<p>ということで作りました。</p>
+<h3>イベントごとに登録数、補欠数、枠数を記録するサービス「EventStats｣</h3>
 <ul>
-  <li>Twitterのutil-evalの一時ファイル生成について</li>
-  <li>AkkaのConfigファイルのパース手法について
-&lt;/em&gt;</li>
+<li><a href="http://eventstats.restartr.com">EventStats - イベントの統計情報が見れます</a></li>
 </ul>
+<p>簡単にいうと<a href="http://klout.com">Klout</a>の勉強会バージョン（のとっかかり）です。
 
-<p>TwitterのOAuthの鍵やDB接続情報など、アプリを書く上で環境によって切り替える設定が大抵の場合あると思います。普段使っているPHPの場合、設定を外部ファイルに書きだす場合、ini,yaml,xml,phpのいずれかを使うことが多いのですが、Scalaの場合、設定ファイルってどうするのか気になりました。</p>
+このサービスを使えば、登録数と枠数の推移を時系列のチャートで確認することができます。
 
-<p>ということで、適当に思いついたライブラリやフレームワークがどのように対応しているのか調査。</p>
+5分おきに各イベント管理サービスの情報を取得して蓄積し、情報を表示しているだけのシンプルなサービスです。
 
-<h2 id="section">ライブラリ</h2>
+<em>(※ SVGベースのチャートのため、androidでは2.4/3.0以降でないと見れません)</em></p>
+<p>あと、2011年11月頭くらいからデータ蓄積開始したのでそれ以前のイベントの履歴は見れない場合があるのと、Partakeの枠数が0人なのも蓄積ミスです。</p>
+<h3>使い方</h3>
+<ol>
+<li><a href="javascript:(function(){s=window.location.href.split('/');type='';if(s[2]=='atnd.org'&amp;&amp;s[3]=='events')type='atnd';else if(s[2]=='www.zusaar.com'&amp;&amp;s[3]=='event')type='zusaar';else if(s[2]=='partake.in'&amp;&amp;s[3]=='events')type='partake';else return false; window.location.href=['http://eventstats.restartr.com/events/'+type,s[4]].join('/');})();">ブックマークレット</a>をブラウザに登録する</li>
+<li>履歴を知りたいイベント管理サービスの詳細ページに移動する</li>
+<li>ブックマークレットを実行する</li>
+</ol>
+<h3>技術的なこと</h3>
+<p>とりあえずHeroku上でScalaのUnfilteredを使って動かしています。
 
-<h3 id="properties">propertiesファイル</h3>
+技術的な話しは追々。</p>
+<h3>今後どう料理するか</h3>
+<p>実はMA7の締切りぎりぎりに公開してました。（証拠↓）</p>
+<p><a href="https://ma7.mashupaward.jp/works/478?locale=ja">https://ma7.mashupaward.jp/works/478?locale=ja</a></p>
+<p>が、リソースが足りてないさくらのVPSで動かしていたので、公開したことはとくにアナウンスとかしてませんでした。（MA7には当然のごとく選考漏れでしたが。）で、それからHerokuへの移行を進めつつ機能の修正などをやってたという訳です。</p>
+<p>今後は蓄積したデータをもとに、勉強会運営や勉強会への参加の助けとなる数値を加えていければいいなと。
 
+実はテストとか負荷試験とかあんまりできてないのであまりイジメないでください^^;</p>
 <ul>
-  <li>javaの古くから使われている</li>
-  <li>キーと値のみ設定可能</li>
-  <li>依存関係がないので手軽。</li>
-  <li>すべてが文字列</li>
-  <li>例えばこんな感じ</li>
+<li><a href="http://eventstats.restartr.com">EventStats - イベントの統計情報が見れます</a></li>
 </ul>
-
-<p>path/to/conf.properties</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="n">hoge</span> <span class="k">=</span> <span class="s">&quot;moge&quot;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">val</span> <span class="n">p</span> <span class="k">=</span> <span class="k">new</span> <span class="n">java</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="nc">Properties</span><span class="o">()</span>
-</span><span class="line"><span class="k">val</span> <span class="n">config</span> <span class="k">=</span> <span class="n">p</span><span class="o">.</span><span class="n">load</span><span class="o">(</span><span class="k">new</span> <span class="n">java</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="nc">FileInputStream</span><span class="o">(</span><span class="s">&quot;path/to/conf.properties&quot;</span><span class="o">);</span>
-</span><span class="line"><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="s">&quot;hoge&quot;</span><span class="o">)</span> <span class="c1">// &quot;moge&quot;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h3 id="twitterconfiggy">twitterのconfiggy</h3>
-
-<ul>
-  <li><a href="https://github.com/robey/configgy">https://github.com/robey/configgy</a></li>
-  <li>独自フォーマット</li>
-  <li>オワコン</li>
-</ul>
-
-<h3 id="twitterutil-eval">twitterのutil-eval</h3>
-
-<ul>
-  <li><a href="http://twitter.github.com/util/">http://twitter.github.com/util/</a></li>
-  <li>Evalした値をそのまま利用</li>
-  <li>Scalaのコンパイラに任せられる。つまりScalaコードがそのまま設定ファイルに。</li>
-  <li>型安全</li>
-  <li>詳しいことはこちらを参照
-    <ul>
-      <li><a href="http://d.hatena.ne.jp/xuwei/20110805/1312551980">twitter が Scala 大好きすぎて (?) 設定ファイルまで Scala のソースコードな件 - scalaとか・・・</a></li>
-      <li><a href="http://blog.youhei.jp/scala-util-eval">Scala アプリケーションのコンフィグレーションに Twitter 製の util-eval を使ってみた - blog.youhei.jp</a></li>
-    </ul>
-  </li>
-  <li>下記処理にて設定クラスインスタンスをapply経由で取り出せる
-    <ul>
-      <li><a href="https://github.com/twitter/util/blob/master/util-eval/src/main/scala/com/twitter/util/Eval.scala#L247">com.twitter.util.Eval#L247</a></li>
-    </ul>
-  </li>
-  <li><del>一時的にjarファイルを生成するので環境に制約あるとダメ（たぶん）</del>
-    <ul>
-      <li>一時ファイルを生成するのは、ローカルにcloneした古いままのバージョン（1.2.5）で動作確認していたためでした。</li>
-      <li>古いコード: <a href="https://github.com/twitter/util/blob/7c81842286f30aee4b2176bceb8c79ded710c88e/src/main/scala/com/twitter/util/Evaluator.scala">com.twitter.util.Evaluator</a>のコメントに<a href="https://github.com/twitter/util/blob/7c81842286f30aee4b2176bceb8c79ded710c88e/src/main/scala/com/twitter/util/Evaluator.scala#L57">All generated .scala and .class files are stored, by default, in System.getProperty(“java.io.tmpdir”)</a>と書いてあったので、「一時ファイルが生成される」と認識し、実際の動作確認でもその一時ファイルが確認できていました。</li>
-      <li>しかし、新しいコード: <a href="https://github.com/twitter/util/blob/master/util-eval/src/main/scala/com/twitter/util/Eval.scala">com.twitter.util.Eval</a>のコメントには<a href="https://github.com/twitter/util/blob/master/util-eval/src/main/scala/com/twitter/util/Eval.scala#L50">If target is None, the results are compiled to memory (and are therefore ephemeral)</a>とある通り、パス指定がない場合はメモリ上の仮想ディレクトリに対して操作を行う模様です。</li>
-    </ul>
-  </li>
-  <li>使い方</li>
-</ul>
-
-<p>設定のtraitを定義</p>
-
-<p>src/main/scala/com/restartr/utilSample/MyConfig.scala</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">package</span> <span class="nn">com.restartr.utilSample</span>
-</span><span class="line">
-</span><span class="line"><span class="k">trait</span> <span class="nc">MyConfig</span> <span class="o">{</span>
-</span><span class="line">  <span class="k">val</span> <span class="n">num</span><span class="k">:</span> <span class="kt">Int</span>
-</span><span class="line">  <span class="k">val</span> <span class="n">str</span><span class="k">:</span> <span class="kt">String</span>
-</span><span class="line"><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>実際の設定ファイルでは、設定のTraitを継承してインスタンス生成</p>
-
-<p>※クラスインスタンスでなくても文字列やリストでもOK。</p>
-
-<p>path/to/config/MyConfig.scala</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">import</span> <span class="nn">com.restartr.utilSample.MyConfig</span>
-</span><span class="line"><span class="k">new</span> <span class="nc">MyConfig</span> <span class="o">{</span>
-</span><span class="line">  <span class="k">val</span> <span class="n">num</span> <span class="k">=</span> <span class="mi">1</span>
-</span><span class="line">  <span class="k">val</span> <span class="n">str</span> <span class="k">=</span> <span class="s">&quot;san&quot;</span>
-</span><span class="line"><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>使いたい場所でEval。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">val</span> <span class="n">conf</span> <span class="k">=</span> <span class="nc">Eval</span><span class="o">[</span><span class="kt">MyConfig</span><span class="o">](</span><span class="k">new</span> <span class="n">java</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="nc">File</span><span class="o">(</span><span class="s">&quot;path/to/config/MyConfig.scala&quot;</span><span class="o">))</span>
-</span><span class="line"><span class="n">conf</span><span class="o">.</span><span class="n">num</span> <span class="c1">// 1</span>
-</span><span class="line"><span class="n">conf</span><span class="o">.</span><span class="n">str</span> <span class="c1">// &quot;san&quot;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h3 id="configrity">configrity</h3>
-
-<ul>
-  <li><a href="https://github.com/paradigmatic/Configrity">https://github.com/paradigmatic/Configrity</a></li>
-  <li>akkaのフォーマットと同等
-    <ul>
-      <li><a href="https://github.com/paradigmatic/Configrity/wiki/Formats">設定のフォーマット</a></li>
-      <li>Scala 2.9以上対象。</li>
-      <li>configファイルの<strong>読み書き</strong>ができる
-        <ul>
-          <li>immutable, thread safe, allow functional design pattern</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-</ul>
-
-<h2 id="section-1">各種フレームワーク</h2>
-
-<p>以下のフレームワークはすべて独自実装でした。Propertiesじゃ役不足だし、かといってデファクトな設定用ライブラリがないからなのでしょうか。</p>
-
-<h3 id="akkaconfig">akkaのconfig</h3>
-
-<ul>
-  <li>akka.confとかがそれ。</li>
-  <li>独自パーサーを使用
-    <ul>
-      <li>70行程度のシンプルなパーサー</li>
-      <li><a href="https://github.com/jboner/akka/blob/master/akka-actor/src/main/scala/akka/config/ConfigParser.scala">akka.config.ConfigParser</a></li>
-      <li><del>正規表現で定義されてる</del>Scalaのパーザコンビネータ(RegexParsersを継承)で定義されている</li>
-      <li>”{“と”}”で階層構造を表現</li>
-    </ul>
-  </li>
-</ul>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="n">akka</span> <span class="o">{</span>
-</span><span class="line">  <span class="n">cluster</span><span class="o">{</span>
-</span><span class="line">    <span class="n">name</span> <span class="k">=</span> <span class="s">&quot;test-cluster&quot;</span>
-</span><span class="line">  <span class="o">}</span>
-</span><span class="line"><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<ul>
-  <li>使える型</li>
-  <li>数値</li>
-  <li>文字列</li>
-  <li>真偽値（on/off , true/false)</li>
-  <li>リスト [1,2,3] / [“hoge”,”moge”]</li>
-</ul>
-
-<h3 id="playframeworkconfig">play!frameworkのconfig</h3>
-
-<ul>
-  <li>独自パーサー
-    <ul>
-      <li><a href="https://github.com/playframework/play/blob/master/framework/src/play/utils/OrderSafeProperties.java">play.utils.OrderSafeProperties</a></li>
-    </ul>
-  </li>
-  <li>java.util.propertiesを継承したもの。</li>
-  <li>環境ごとにIDを割り当てられる
-    <ul>
-      <li>http://playdocja.appspot.com/documentation/1.2.1/production</li>
-      <li>http://playdocja.appspot.com/documentation/1.2.1/guide11</li>
-      <li>IDごとに%{ID}を頭につければ切り替えてくれるみたい</li>
-    </ul>
-  </li>
-</ul>
-
-<h3 id="lift">Lift</h3>
-
-<ul>
-  <li>LiftRulesが設定をもつ
-    <ul>
-      <li><a href="http://simply.liftweb.net/index-3.1.html#toc-Subsection-3.1.2">http://simply.liftweb.net/index-3.1.html#toc-Subsection-3.1.2</a></li>
-      <li>実装はここ
-*<a href="https://github.com/lift/framework/blob/master/web/webkit/src/main/scala/net/liftweb/http/LiftRules.scala">net.liftweb.http.LiftRules</a></li>
-      <li>たぶんこのへん
-        <ul>
-          <li><a href="https://github.com/lift/framework/blob/master/core/util/src/main/scala/net/liftweb/util/Props.scala">net.liftweb.util.Props</a></li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-</ul>
-
-<p>ざっと調べて使ってみたところ、手軽にやるならProperties、フレームワークを使うならそれに則り、厳密にやるならTwitterのEvalや、設定ファイルを読み書きできる独特なConfigrityなんかがよさそうです。</p>
-
-<p>XMLは…まぁないでしょうね。</p>
-
 </div>
   
   
@@ -369,7 +197,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/2011/08/16/3-things-that-i-was-in-trouble-using-squeryl/">ScalaのORMapperのSquerylを試してみてハマった３つのこと</a></h1>
+      <h1 class="entry-title"><a href="/2011/12/02/dropped-out/">（もうすぐ）退職します。</a></h1>
     
     
       <p class="meta">
@@ -385,160 +213,59 @@
   
 
 
-<time datetime="2011-08-16T08:00:15+09:00" pubdate data-updated="true">2011-08-16 (Tue)</time>
+<time datetime="2011-12-02T21:27:57+09:00" pubdate data-updated="true">2011-12-02 (Fri)</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>ScalaのORMとしてSquerylってのがあります。</p>
+  <div class="entry-content"><p>私事ですが現職の会社を退職することになり、本日無事に最終出社を終えてきました。</p>
+
+<p>退職日は年明けですが、これから有給消化期間に入ります。</p>
+
+<p>ということで記念碑的に退職エントリを書いておこうと思います。</p>
+
+<p>有益な退職エントリをご希望の方は下記まとめに移動することをオススメします。</p>
 
 <ul>
-<li><a href="http://squeryl.org/index.html">Squeryl - A Scala ORM for SQL Databases</a></li>
+  <li><a href="http://matome.naver.jp/odai/2128832350940033301">「退職しました」ブログエントリのまとめ - NAVER まとめ</a></li>
+  <li><a href="http://matome.naver.jp/odai/2132023611765736801">「退職しました。」系エントリーに学びが多い件 - NAVER まとめ</a></li>
 </ul>
-<p>使い方は上記リンク先を見ればだいたいわかります。</p>
 
-<p>あと、<a href="http://twitter.com/jugyo">@jugyo</a>さんのブログに導入あたりはまとまっていますし、つまづいたらGoogleGroupで検索すれば何か見つかるかもしれません。</p>
+<h3 id="section">現職のはなし</h3>
 
-<ul>
-<li><a href="http://blog.twiwt.org/e/f34763"> Twiwt:Blog / jugyo : squeryl を試す </a></li>
-<li><a href="http://blog.twiwt.org/e/7e40ce">Twiwt:Blog / jugyo : Squeryl の使い方 - セットアップ, モデルの定義, テーブル作成</a></li>
-<li><a href="https://groups.google.com/group/squeryl/about"> Squeryl | Google Groups </a></li>
-</ul>
-<p>さて、今回はTwitterっぽいものを想定して機能を試してみたのですが、３つほどハマったところを記しておきます。</p>
+<p>現職では、2006年に新卒入社してから約5年半、某ポータルサイトの開発全般を担当してました。</p>
 
-<p>環境はScala2.9.0.1、Sbt0.7.7、MySQL5.5、Squeryl0.9.4です。</p>
+<p>1年に1回部署異動が発生するくらい頻繁に体制変更があったおかげで様々な経験をさせてもらい、「自分がやりたいこと」を見つけるにはとても良い環境だったと思います。</p>
 
-<p>ソースはgistに登録。それを本文末尾にも掲載しておきました。</p>
+<p>入社してすぐ営業研修で外回りとか経験した後、データ入稿まわりを担当。その後1年間で二度のサイトリニューアルプロジェクトを経験。1年間のサイト運用期間を経て、今担当しているログシステムの開発をやりました。</p>
 
-<h3>１．プライマリーキーの指定での嵌りどころ</h3>
-<p>1つのカラムがPKとなるテーブルスキーマの場合、org.squeryl.KeyedEntity[T]を継承して使います。</p>
+<p>入社から数年はPHP+RDBMSを中心としたWebアプリ開発に従事してましたが、ここ1年くらいはログシステムをHadoop/Hiveにリプレースする担当をやってました。年を経るごとにインフラに近づいていってる感じです。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">class</span> <span class="nc">Users</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">text</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">KeyedEntity</span><span class="o">[</span><span class="kt">Long</span><span class="o">]</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<h3 id="section-1">技術的知見が広がるシロモノ</h3>
 
-<p>KeyedEntityにはidというフィールドが用意されていて、継承時に型を指定することで、PKの型に適用させることができます。今回の場合であればLong型のPK「id」ということになります。</p>
+<p>Hadoopって技術的には上から下まで幅広い知識とか素養が必要なんですよね。</p>
 
-<p>ただし、この場合、PKはautoincrementedになってしまいます。</p>
+<p>実際のクラスタ構築はインフラチームの担当でしたが、それに至るまでの導入実験とかは自分でもひと通り経験していて、それにを肌で実感していくうちにもっとシステム全般に関わりたいと思うようになりました。現職ではアプリケーションとそれを載せるインフラの担当が明確に分かれていました。そのおかげで我々はアプリケーションの開発に専念できるのですが、一方でインフラにはどうしても疎くなりがちでした。(現在社内ではその垣根を改善する動きが出てきているので今後はもっと良い体制に変わっていくと思います)</p>
 
-<p>コード的には下記のようにKeyedEntity[T]を使わずSchema継承時に定義するのと同等になるわけです。</p>
+<p>そういう意味でHadoopは「技術の交差点」なんだと思います。非常に低いレイヤーからアルゴリズムまでがごっちゃごちゃに混ざったおもちゃ箱のような。それまでPHPのステートレスなシングルスレッド内であれこれするだけしたが、そこでは得られなかったものに興味関心が広がっていきました。Hadoopで実際何を実現するかはさておき、それをひと通り経験することで技術者として一歩前にすすむことができるし、その中でさらに深堀りしたいものを見つけることのできるシロモノだったと思います。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">class</span> <span class="nc">Users</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">text</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span>
-</span><span class="line">
-</span><span class="line"><span class="k">class</span> <span class="nc">Db</span> <span class="k">extends</span> <span class="nc">Schema</span> <span class="o">{</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">val</span> <span class="n">users</span> <span class="k">=</span> <span class="n">table</span><span class="o">[</span><span class="kt">User</span><span class="o">](</span><span class="s">&quot;users&quot;</span><span class="o">)</span>
-</span><span class="line">
-</span><span class="line">  <span class="n">on</span><span class="o">(</span><span class="n">users</span><span class="o">)(</span><span class="n">u</span> <span class="k">=&gt;</span> <span class="n">declare</span><span class="o">(</span>
-</span><span class="line">
-</span><span class="line">    <span class="n">u</span><span class="o">.</span><span class="n">id</span> <span class="n">is</span> <span class="o">(</span><span class="n">primaryKey</span><span class="o">,</span> <span class="n">autoincremented</span><span class="o">))</span>
-</span><span class="line">
-</span><span class="line"><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<h3 id="section-2">オープンソースコミュニティ</h3>
 
-<p>これは結構困ります。そんな場合はSchemaを継承するときに定義を上書きすればOK。</p>
+<p>ここ1年ほどは社外のカンファレンスや勉強会へも平日休日問わずよく参加してたのですが、上司にもそれついてよく理解して頂き、本当自分の動きたいようにさせてもらえたことは有難い限りです。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">class</span> <span class="nc">Users</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">text</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">KeyedEntity</span><span class="o">[</span><span class="kt">Long</span><span class="o">]</span>
-</span><span class="line">
-</span><span class="line"><span class="k">class</span> <span class="nc">Db</span> <span class="k">extends</span> <span class="nc">Schema</span> <span class="o">{</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">val</span> <span class="n">users</span> <span class="k">=</span> <span class="n">table</span><span class="o">[</span><span class="kt">User</span><span class="o">](</span><span class="s">&quot;users&quot;</span><span class="o">)</span>
-</span><span class="line">
-</span><span class="line">  <span class="n">on</span><span class="o">(</span><span class="n">users</span><span class="o">)(</span><span class="n">u</span> <span class="k">=&gt;</span> <span class="n">declare</span><span class="o">(</span>
-</span><span class="line">
-</span><span class="line">    <span class="n">u</span><span class="o">.</span><span class="n">id</span> <span class="n">is</span> <span class="o">(</span><span class="n">primaryKey</span><span class="o">))</span>
-</span><span class="line">
-</span><span class="line"><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>外の世界は自分が想像している以上でした。勉強会で発表を聴いたり懇親会で話しをさせていただいたりすることで、自分の足りないところが嫌でも見えてきました。現職に限らず今後どのように成長したいのか、について改めて考えるきっかけにもなりました。</p>
 
-<p>これはSquerylのGoogleGroupに書いてました。</p>
+<p>今はちょっとメンタル的な問題もあって勉強会参加は自粛していますが、年明け以降にまた少しづつ参加させていただこうと思ってます。</p>
 
-<ul>
-<li><a href="https://groups.google.com/forum/#!topic/squeryl/BTrKBwikMqs">how to cancel &#8220;autoincremented&#8221; from KeyedEntity[T]</a></li>
-</ul>
-<h3>２．DDLのカラムの順番の嵌りどころ</h3>
-<p>Db.printDdlを実行した時にカラムの順番が予測できません。</p>
+<h3 id="section-3">さいごに</h3>
 
-<p>PKが最初にくるのかと思えばそうでもないみたい。ここは細かく追ってないですが、これもGoogleGroupに答えがありました。</p>
+<p>年明けまでは旅行とか帰省とかしてゆっくり静養しつつ、技術的な取り組みも継続していこうと思います。暇を見つけて開発しているものもあるのですが、それも近々公開できると思います。あと、次の会社も決まっているのですが今後の話しはまたあらためて別の機会に。</p>
 
-<ul>
-<li><a href="https://groups.google.com/forum/#!topic/squeryl/ZwiDf5Q-IUI">CREATE TABLE columns in order of constructor arguments</a></li>
-</ul>
-<p>答えとしては、org.squeryl.internals.DatabaseAdapter:: writeCreateTableあたりをorverrideしてなんとかしてくれとのこと。</p>
+<p>（このブログの読者に現職の方がどれくらいいるのかわかりませんが）とにかく現職で関わった皆様には本当に大変お世話になりました。改めて御礼もうしあげます。</p>
 
-<p><a href="https://github.com/max-l/Squeryl/blob/master/src/main/scala/org/squeryl/internals/DatabaseAdapter.scala#L255">https://github.com/max-l/Squeryl/blob/master/src/main/scala/org/squeryl/internals/DatabaseAdapter.scala#L255</a></p>
-
-<p>なんか良い方法はないの…</p>
-
-<p>とりあえず、printDdlした結果をコピーして、順番だけ書き換えて、手動で直接DBにクエリ発行すればなんとかなるでしょう。</p>
-
-<h3>３．外部キーの利用でのはまりどころ</h3>
-<p>２つのテーブルにRelationを設定してからDb.createした際、外部キーが設定されない問題がありました。</p>
-
-<p>MySQLは5.5を使っているので外部キーに対応していない訳でもないです。</p>
-
-<p>問題はAdapterの選定にありました。</p>
-
-<p>org.squeryl.adapter.MySQLAdapter</p>
-
-<p>をつかっていたのですが、</p>
-
-<p>org.squeryl.adapter.MySQLInnoDBAdapter</p>
-
-<p>を使えばOKでした。</p>
-
-<p>根本の原因は、org.squeryl.adapter.MySQLAdapterに</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">override</span> <span class="k">def</span> <span class="n">supportsForeignKeyConstraints</span> <span class="k">=</span> <span class="kc">false</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>と定義してあり、一方のorg.squeryl.adapter.MySQLInnoDBAdapterには</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">override</span> <span class="k">def</span> <span class="n">supportsForeignKeyConstraints</span> <span class="k">=</span> <span class="kc">true</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>と定義してあります。</p>
-
-<p>この値がtrueになっていないとForeignKeyの制約がDDLに含まれなくなってしまうので注意です。</p>
-
-<p><a href="https://github.com/max-l/Squeryl/blob/master/src/main/scala/org/squeryl/adapters/MySQLAdapter.scala#L75">Docコメントにも書いてある</a>ので注意です。</p>
-
-<p>以上、Squerylを弄ってみて嵌ったことをまとめてみました。</p>
-
-<h3>Squerylの使用感</h3>
-<p>ちょっと前にTwitterのStreamAPIのデータをMySQLに格納するためにSquerylを使ったのと今回少し弄ってみただけなのでまだまだ知らないことだらけです。他にも機能的はたくさん用意されていると思いますし、APIも割となじみやすいので複雑すぎないテーブル定義の場合には積極的にSquerylを使っていこうと思います。</p>
-
-<p><em>※ドキュメントや本体のソースを追いかけたりしながら使い方を学ぶのは非常に楽しいです:)</em></p>
-
-<p>で、ソースは以下です。</p>
-
-<script src="https://gist.github.com/1146854.js"> </script>
+<p>約5年半、どうもありがとうございました。</p>
 
 </div>
   
@@ -604,19 +331,19 @@
       </li>
     
       <li class="post">
+        <a href="/2014/04/22/tech-podcast-list/">技術系podcastまとめ</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2014/04/21/golang-memcache-stats-client/">Goでmemcachedのstatsを取得する</a>
+      </li>
+    
+      <li class="post">
         <a href="/2014/04/20/vimrc-noexpandtab-in-golang/">vimで特定のファイルタイプだけタブインデントにする方法</a>
       </li>
     
       <li class="post">
-        <a href="/2014/04/06/move-from-wordpress-to-octopress/">WordpressからOctopressに移行</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2013/04/26/connect-go-and-python-with-zeromq/">GoとPythonをZeroMQで繋ぐ</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2013/04/17/bind-a-variable-to-closure-in-python/">pythonのクロージャに変数を束縛する方法</a>
+        <a href="/2014/04/06/reload-varnish-vcl/">VarnishのVCLを再起動なしに再読み込みする</a>
       </li>
     
   </ul>
