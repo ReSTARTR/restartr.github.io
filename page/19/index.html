@@ -7,9 +7,14 @@
   <meta charset="utf-8">
   <title>I Will Survive</title>
   <meta name="author" content="ReSTARTR">
+  <link rel="author" href="https://plus.google.com/103216164658230535238" />
+  <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="エキスパートPythonプログラミングを少しずつ読み進めています。といっても気になるタイトルを拾い読みですが。 そのなかの”2.4 withとcontextlib”の章のwith文の例としてファイル読み込みのコードが書いてました。 たったこれだけで、自動クローズまでやってくれるみたい。 さらに、 &hellip;">
+  <meta name="description" content="今年の目標として
+3.pythonに手を出す
+というのを掲げていて、「エキスパートPythonプログラミング」を買ったので、pythonの学習をこんな感じではじめてみるつもり、というのを書いておきます。 エキスパートPythonプログラミング &lt;/p&gt;
+1.リファレンスを用意する &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +23,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://ReSTARTR.github.io/page/19/">
+  <link rel="canonical" href="http://blog.restartr.com/page/19/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
    <link href="/stylesheets/data-table.css" media="screen, projection" rel="stylesheet" type="text/css" />
@@ -83,6 +88,7 @@
   </script>
 
 
+  <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
   <style>html{background: url("/images/background.png") no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;}</style>
 </head>
 
@@ -98,7 +104,7 @@
   
 <form action="https://www.google.com/search" method="get">
   <fieldset role="search">
-    <input type="hidden" name="q" value="site:ReSTARTR.github.io" />
+    <input type="hidden" name="q" value="site:blog.restartr.com" />
     <input class="search" type="text" name="q" results="0" placeholder="Search"/>
   </fieldset>
 </form>
@@ -119,7 +125,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/2011/02/07/automatically-close-the-file-in-python-and-scala/">Pythonとscalaのファイルの自動クローズ</a></h1>
+      <h1 class="entry-title"><a href="/2011/01/30/how-to-start-learning-python-programming/">Pythonをはじめるために</a></h1>
     
     
       <p class="meta">
@@ -135,46 +141,68 @@
   
 
 
-<time datetime="2011-02-07T00:10:22+09:00" pubdate data-updated="true">2011-02-07 (Mon)</time>
+<time datetime="2011-01-30T22:04:12+09:00" pubdate data-updated="true">2011-01-30 (Sun)</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>エキスパートPythonプログラミングを少しずつ読み進めています。といっても気になるタイトルを拾い読みですが。</p>
-
-<p>そのなかの”2.4 withとcontextlib”の章のwith文の例としてファイル読み込みのコードが書いてました。
-<script src="https://gist.github.com/813385.js?file=read_file_using_with.py"></script>
-たったこれだけで、自動クローズまでやってくれるみたい。</p>
-
-<p><a id="more"></a><a id="more-576"></a>
-さらに、with文を使うためのクラス定義も可能らしい。
-<script src="https://gist.github.com/813385.js?file=Reader.py"></script></p>
-
-<p>実装すべきは下記２メソッドのみ。</p>
+  <div class="entry-content"><p><a href="http://blog.restartr.com/2011/01/10/6-targets-i-want-to-achieve-in-2011/">今年の目標</a>として</p>
+<blockquote><p>3.pythonに手を出す</p></blockquote>
+<p>というのを掲げていて、「エキスパートPythonプログラミング」を買ったので、pythonの学習をこんな感じではじめてみるつもり、というのを書いておきます。</p>
 
 <ul>
-<li>__enter__(self)</li>
-<li>__exit__(self, exception_type, exception_value, exception_traceback)</li>
+  <li><a href="http://www.amazon.co.jp/dp/4048686291">エキスパートPythonプログラミング</a></li>
 </ul>
-<p>__enter__の戻り値はasで受けとれます。
-__exit__で例外処理のfinallyに当たる処理を書きます。何も返さないと例外はその呼び出し元に伝播します。</p>
 
-<p>さらにさらに、contextlibというモジュールを使えば、もっと自然に書けます。
-<script src="https://gist.github.com/813385.js?file=read_file_with_closing.py"></script>
-※これは、contextmanager内のfinally句でcloseを書くのと同じ。(<a href="http://www.python.jp/doc/nightly/library/contextlib.html#contextlib.closing">参考</a>)</p>
-
-<h4>Scalaでwith（っぽいもの）を実装</h4>
-<p>pythonのwith文と同様の記述方法をScalaでやるとしたら…こんな感じでしょうか。
-<script src="https://gist.github.com/813385.js?file=FileReader.scala"></script></p>
-
-<p>ファイルの自動クローズについてはこちらを参考にさせていただきました。</p>
-
+<p><a id="more"></a><a id="more-544"></a>&lt;/p&gt;</p>
+<h3>1.リファレンスを用意する</h3>
 <ul>
-  <li><a href="http://d.hatena.ne.jp/syttru/20080322/1206212125">Scalaでファイル操作 - syttruの日記</a></li>
-</ul>
+<li>基礎文法：<a href="http://www.python.jp/doc/release/reference/">Python 言語リファレンス &mdash; Python v2.6.2 documentation</a></li>
+<li>チュートリアル：<a href="http://www.python.jp/doc/release/tutorial/index.html">Python チュートリアル &mdash; Python v2.6.2 documentation</a></li>
+<li>痒いところ向け：エキスパートPythonプログラミング</li>
+<li>PHPから逆引き：<a href="http://www.php2python.com/">Php2Python - Python alternatives to PHP functions, classes and librarie</a>
 
+<p>基礎文法は公式リファレンスで大体まかなえますし、ググれば大体の情報は手に入るので、あえて購入していません。オライリーの「初めてのpython 第3版」は古い上にゴツイので却下しました。（「初めてのpython第4版が洋書は最近出ましたが日本語訳はまだ）</p>
+<p>PHP2Pythonは、PHP関数をPythonに置き換えると…というのを投稿できるサイトです。PHP関数から逆引きできるので、目的がはっきりしていれば探しやすくてかなり便利です。</p>
+<h3>2.目標を決める</h3>
+<p>pythonを学び始めるにあたっては、何をどこまで学ぶのか、というのは明確にすべきでしょう。<br />
+私の場合は、こんな感じ。</p>
+<h4>他言語との違いを探る</h4>
+<p>新しい言語を学んだほうが良いというのはよく言われるところだと思います。たとえ直接的に必要性がなくても。その言語やコミュニティの特徴を知ることで、新しい視点が生まれます。<br />
+普段のプログラミングに良い部分を取り入れることができると期待しています。</p>
+<p><b>python界隈で知りたいこと</b><br />
+その言語に求めるものは、言語毎に異なるもの。私が気になっているのは以下のとおり。</p>
+<ul>
+<li>オブジェクト指向プログラミング</li>
+<li>関数型プログラミング</li>
+<li>アプリ開発フロー
+<li>
+<li>アジャイルへの取り組みやテスト手法</li>
+<li>メタプログラミング</li>
+
+<p>これを知るために最適だったのが、上述の「エキスパートPythonプログラミング」でした。</p>
+<p>また、特定の目的も一応あって、以下の２つを予定しています。</p>
+<p><b>自然言語処理入門</b><br />
+積読中の書籍に「入門　自然言語処理」があるのですが、pythonで解説されていますので、コードでつまづかない程度に基礎体力をつけておきます。<br />
+
+* [入門　自然言語処理](http://amazon.co.jp/dp/4873114705)
+
+必要そうな技術はこんな感じ。</p>
+<ul>
+<li>文字列の取り扱い</li>
+<li>NLTK(pythonの言語処理モジュール)の取り扱い</li>
+<li>統計処理ライブラリの取り扱い</li>
+</ul>
+<p><b>GAEアプリ開発</b><br />
+Scalaでも少し手をつけていたりますが、JMV系とPythonでどのような違いがあるのかも見てみたいところ。</p>
+<ul>
+<li>Webフレームワーク(Django, Kay等)の取り扱い</li>
+<li>連携する各サービスAPIの取り扱い</li>
+</ul>
+<p>当分は言語仕様と戯れようと思います。</p>
+</li></li></ul></li></ul>
 </div>
   
   
@@ -187,7 +215,7 @@ __exit__で例外処理のfinallyに当たる処理を書きます。何も返�
       
   <header>
     
-      <h1 class="entry-title"><a href="/2011/02/06/introduction-of-data-mining-without-formul/">数式を使わないデータマイニング入門</a></h1>
+      <h1 class="entry-title"><a href="/2011/01/16/talk-session-what-is-programming-for-developing-a-good-software/">トークセッション「よいソフトウェアを作るプログラミングとは」</a></h1>
     
     
       <p class="meta">
@@ -203,47 +231,42 @@ __exit__で例外処理のfinallyに当たる処理を書きます。何も返�
   
 
 
-<time datetime="2011-02-06T22:47:11+09:00" pubdate data-updated="true">2011-02-06 (Sun)</time>
+<time datetime="2011-01-16T00:40:01+09:00" pubdate data-updated="true">2011-01-16 (Sun)</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><ul>
-  <li><a href="http://www.amazon.co.jp/dp/4334033555">数式を使わないデータマイニング入門 隠れた法則を発見する (光文社新書) [新書]</a></li>
-</ul>
-
-<p>テキストマイニング書を探していたら、なぜか同じ場所にあったので買いました。</p>
-
-<p>データマイニングって何？という人向けの入門書。１時間もあればサクっと読める軽い内容。データマイニングをはじめる人だけでなく、<strong>データマイニングを依頼する側</strong>が読むと良いのではないでしょうか。</p>
-
-<p><a id="more"></a><a id="more-564"></a></p>
-
-<h4>マイニング＝採鉱</h4>
-<p>第一章にも書いてあるけど、</p>
-
-<blockquote><em>マイニングとは、「採鉱」を指す言葉である。データマイニングにおけるマイニングは二段階のプロセスに分かれる。
-一段階目は、大量の情報から隠れた法則を見つけ出すこと。
-〜中略〜
-二段階目は、そこで見つかった法則のなかから、使えるものを探し出すこと。これは意外に認知されていない。</em>
-
-</blockquote>
-<p>さらに、</p>
-
-<blockquote><em>多くの人は法則さえ見つかれば、それが有意で、お金にもなると考えている。しかし、実際には役に立たない法則の方が多い。この事実は見過ごされがちだ。</em>
-</blockquote>
-<p>マイニングを行えば、何かしら答えが見つかるものだと思われがち。結果的に答えが見つかればラッキー。データマイニングを依頼する側には「期待せずに期待してください」としか言えないですね…</p>
-
-<p>ところで、何かしら答えを限られた期間で見つけ出すのは難しいのだとすれば、データ分析者は評価者に対して目標として何をコミットし、どのように結果を評価されるのでしょうか。プログラマーと同じく、明確な数値目標を設定しづらい職業なのかなと思ったり。</p>
-
-<h4>監視社会</h4>
-<p>本書中盤にはデータマイニング手法としていくつか概要の説明があり、最後には監視社会について触れています。それまでの流れと少し関連性が低い内容ではあるけれど、興味深い内容。参考図書として挙げられていたもの（下記）が１０年前の書籍なので、関連する最近の書籍をさがしてみる予定。</p>
-
+  <div class="entry-content"><p>昨日<a href="http://blog.restartr.com/2011/01/15/97things-every-programmers-should-know/">感想をブログった</a>「<a href="http://www.amazon.co.jp/dp/4873114799">プログラマが知るべき９７のこと</a>」刊行記念のトークセッションに行ってきました。タイトルは「よいソフトウェアを作るプログラミングとは」です。<br />
+＃ちなみにタイトルは釣りだそうですｗ</p>
+<blockquote><p>『プログラマが知るべき97のこと』（オライリー・ジャパン刊・オーム社発売）刊行記念トークセッション<br />
+よいソフトウェアを作るプログラミングとは</p>
+<p>森田創(寄稿者)×舘野祐一(寄稿者)×和田卓人(監修者)</p>
+<p>■2011年1月15日(土)19:00?</p>
+<p>新刊『プログラマが知るべき97のこと』（オライリー・ジャパン刊・オーム社発売）の刊行を記念して、本書監修者の和田卓人氏と寄稿者の森田創氏、舘野祐一氏の3名がプログラミングをテーマに語ります。<br />
+よいソフトウェアを作るために必要なこととは何でしょうか。<br />
+バージョン管理やテスト、自動化のツールとその知識、はたまたコーディング規約やスタイルでしょうか。<br />
+それともプログラマのスキルアップの勉強法や、チームでのコミュニケーションでしょうか。<br />
+自ら手がけるものの質を向上させるために、プログラミングを生業とする技術者ひとりひとりが「知るべきこと」を自らの体験を交えて大いに語り合います。
+</p></blockquote>
 <ul>
-  <li><a href="http://www.amazon.co.jp/dp/4791760085">監視社会 [単行本]</a></li>
+<li><a href="http://www.ustream.tv/recorded/12026561">USTREAM</a></li>
+<li><a href="http://togetter.com/li/89570">Togetter</a></li>
 </ul>
-
+<p><a id="more"></a><a id="more-533"></a><br />
+壁面にトークのアジェンダのマインドマップが書かれていたので、それをベースにマップを作成してみました。細かい表現などは自分フィルターがかかっていて、本来言っていたことと一致していない可能性あります。ので、詳しくはUST,Togetterを御覧ください。。。</p>
+<div style="width:425px" id="__ss_6577665"><strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/restartr/ss-6577665" title="よいソフトウェアを作るプログラミングとは">よいソフトウェアを作るプログラミングとは</a></strong><object id="__sse6577665" width="425" height="355"><param name="movie" value="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=random-110115085249-phpapp01&amp;stripped_title=ss-6577665&amp;userName=restartr" /><param name="allowFullScreen" value="true" /><param name="allowScriptAccess" value="always" /><embed name="__sse6577665" src="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=random-110115085249-phpapp01&amp;stripped_title=ss-6577665&amp;userName=restartr" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="355" /></object>
+<div style="padding:5px 0 12px">View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/restartr">Re STARTR</a>.</div>
+</div>
+<p>トークの内容は、登壇者のプログラマになったきっかけからはじまり、どんな開発現場か、どのように技術を身につけてきたか、などを語り合うものでした。<br />
+「９７のこと」についてはQ&amp;Aのときの質問がでるまで触れられなかったというｗ</p>
+<h3>JavaScriptの特殊性</h3>
+<p>面白かったのは、和田さんが「JavaScriptはプログラミングパラダイムの交差点」と言っていたこと。<br />
+MochiKitはPythonの関数的なものを、prototype.jsはオブジェクト志向が取り入れられていたりと。たしかに、JSって言語のなかでもかなり特殊ですよね。Webサービスで言えば、サーバーサイドはいろんな言語が使われるけど、ブラウザ上では唯一のプログラミング言語（一応ASもあるけど）。だからこそ、他言語で馴染みのあるパラダイムを取り入れようとするんでしょう。</p>
+<h3>プログラマの責務</h3>
+<p>これまで感じた「うれしかったこと」に対して「信念を突き通して作ったものに対する喜びの反応をもらったとき」という回答がありましたが、こればかりは普遍ですね。スタンドアロンであれWebサービスであれ、作るものや使う技術は変われど、誰か使いたいと思ってくれる人に対して価値を提供することが我々プログラマの責務ですから。</p>
+<p>登壇者の方々、貴重なおはなしをどうもありがとうございました。</p>
 </div>
   
   
@@ -264,17 +287,17 @@ __exit__で例外処理のfinallyに当たる処理を書きます。何も返�
 <aside class="sidebar">
   
     <section id="titles">
-  <a href="http://ReSTARTR.github.io" title="I Will Survive"><img id="logo" src="http://ReSTARTR.github.io/images/portrait.jpg" /></a>
-  <h1 id="site_title"><a href="http://ReSTARTR.github.io" title="I Will Survive">I Will Survive</a></h1>
+  <a href="http://blog.restartr.com" title="I Will Survive"><img id="logo" src="http://blog.restartr.com/images/portrait.jpg" /></a>
+  <h1 id="site_title"><a href="http://blog.restartr.com" title="I Will Survive">I Will Survive</a></h1>
   <h3 id="site_subtitle">An application depelopper&#8217;s blog.</h3>
 </section>
 
 <section id="menu">
   <ul>
-    <li><i class="fa fa-home fa-lg"></i><a href="http://ReSTARTR.github.io"> Home </a></li>
-    <li><i class="fa fa-calendar fa-lg"></i><a href="http://ReSTARTR.github.io/blog/archives/"> Archives </a></li>
-    <li><i class="fa fa-user fa-lg"></i><a href="http://ReSTARTR.github.io/about/"> About </a></li>
-    <li><i class="fa fa-rss fa-lg"></i><a href="http://ReSTARTR.github.io/atom.xml"> Feed </a></li>
+    <li><i class="fa fa-home fa-lg"></i><a href="http://blog.restartr.com"> Home </a></li>
+    <li><i class="fa fa-calendar fa-lg"></i><a href="http://blog.restartr.com/blog/archives/"> Archives </a></li>
+    <li><i class="fa fa-user fa-lg"></i><a href="http://blog.restartr.com/about/"> About </a></li>
+    <li><i class="fa fa-rss fa-lg"></i><a href="http://blog.restartr.com/atom.xml"> Feed </a></li>
   </ul>
 </section>
 
@@ -296,6 +319,8 @@ __exit__で例外処理のfinallyに当たる処理を書きます。何も返�
   
     <a href="https://twitter.com/ReSTARTR" title="ReSTARTR"><i class="fa fa-twitter fa-2x"></i></a>
   
+
+  
 </section>
 
 
@@ -304,15 +329,11 @@ __exit__で例外処理のfinallyに当たる処理を書きます。何も返�
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2014/06/28/about-docker-libchan/">Doker謹製ライブラリのlibchanについて調べてみた</a>
+      </li>
+    
+      <li class="post">
         <a href="/2014/05/11/build-rpm-on-docker-container/">Dockerを使って任意のrubyバージョンのrpmを作成する</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2014/04/22/tech-podcast-list/">技術系podcastまとめ</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2014/04/21/golang-memcache-stats-client/">Goでmemcachedのstatsを取得する</a>
       </li>
     
       <li class="post">
@@ -320,12 +341,21 @@ __exit__で例外処理のfinallyに当たる処理を書きます。何も返�
       </li>
     
       <li class="post">
-        <a href="/2014/04/06/reload-varnish-vcl/">VarnishのVCLを再起動なしに再読み込みする</a>
+        <a href="/2014/04/06/move-from-wordpress-to-octopress/">WordpressからOctopressに移行</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2013/04/26/connect-go-and-python-with-zeromq/">GoとPythonをZeroMQで繋ぐ</a>
       </li>
     
   </ul>
 </section>
-Included file &#8216;asides/category_list.html&#8217; not found in _includes directory
+<section>
+  <h1>Categories</h1>
+  <ul id="categories">
+    <li><a href='/category/docker/'>docker</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
+  </ul>
+</section>
 <section>
   <h1>GitHub Repos</h1>
   <ul id="gh_repos">

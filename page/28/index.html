@@ -7,11 +7,16 @@
   <meta charset="utf-8">
   <title>I Will Survive</title>
   <meta name="author" content="ReSTARTR">
+  <link rel="author" href="https://plus.google.com/103216164658230535238" />
+  <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="queueing
-webページを生成する際には、今すぐやらなきゃいけないことと、今すぐでなくても良いものがあります。
-今すぐやらなきゃいけないこととは、ユーザーリクエストに対するDB参照結果等のことで、今すぐでなくても良いものとはアクセスログなどの処理をDBに書き込んだりメール送信したりなど。 &hellip;">
+  <meta name="description" content="今年も残すところあとわずか。
+今はアカウントの整理に追われていますw
+お仕事やプライベートなど、いろんなところでいろんな方にお世話になりました。
+故郷の方では悲しいお別れもあったし、姉の結婚式もありました。
+今年やったことを総括してみます ４月は毎年恒例人事異動
+本格的にTwitterはじめた &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -20,7 +25,7 @@ webページを生成する際には、今すぐやらなきゃいけないこ�
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://ReSTARTR.github.io/page/28/">
+  <link rel="canonical" href="http://blog.restartr.com/page/28/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
    <link href="/stylesheets/data-table.css" media="screen, projection" rel="stylesheet" type="text/css" />
@@ -85,6 +90,7 @@ webページを生成する際には、今すぐやらなきゃいけないこ�
   </script>
 
 
+  <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
   <style>html{background: url("/images/background.png") no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;}</style>
 </head>
 
@@ -100,7 +106,7 @@ webページを生成する際には、今すぐやらなきゃいけないこ�
   
 <form action="https://www.google.com/search" method="get">
   <fieldset role="search">
-    <input type="hidden" name="q" value="site:ReSTARTR.github.io" />
+    <input type="hidden" name="q" value="site:blog.restartr.com" />
     <input class="search" type="text" name="q" results="0" placeholder="Search"/>
   </fieldset>
 </form>
@@ -121,7 +127,7 @@ webページを生成する際には、今すぐやらなきゃいけないこ�
       
   <header>
     
-      <h1 class="entry-title"><a href="/2010/01/31/gearman%25e3%2581%25a7queueing/">Gearmanでqueueing</a></h1>
+      <h1 class="entry-title"><a href="/2009/12/31/good-bye-2009/">さようなら、2009年</a></h1>
     
     
       <p class="meta">
@@ -137,277 +143,33 @@ webページを生成する際には、今すぐやらなきゃいけないこ�
   
 
 
-<time datetime="2010-01-31T00:16:51+09:00" pubdate data-updated="true">2010-01-31 (Sun)</time>
+<time datetime="2009-12-31T18:11:05+09:00" pubdate data-updated="true">2009-12-31 (Thu)</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><h3>queueing</h3>
-<p>webページを生成する際には、今すぐやらなきゃいけないことと、今すぐでなくても良いものがあります。<br />
-今すぐやらなきゃいけないこととは、ユーザーリクエストに対するDB参照結果等のことで、今すぐでなくても良いものとはアクセスログなどの処理をDBに書き込んだりメール送信したりなど。それ以外にもあるかもですが大体そんな感じです。</p>
-<p>通常であればすべて一回のHTTPリクエストの中でやるわけですが、queueingをすれば今やるべきでないことを後回しにできます。他にもメリットはありますが割愛で。</p>
-<p>で、phpでqueuingをやるとしたら、こんなのがあるそうです。</p>
+  <div class="entry-content"><p>今年も残すところあとわずか。</p>
+<p>今はアカウントの整理に追われていますw</p>
+<p>お仕事やプライベートなど、いろんなところでいろんな方にお世話になりました。</p>
+<p>故郷の方では悲しいお別れもあったし、姉の結婚式もありました。</p>
+<p>今年やったことを総括してみます</p>
+<p><a id="more"></a><a id="more-150"></a></p>
 <ul>
-<li><a href="http://q4m.31tools.com/">Q4M<br />
-</a>
-</li>
-<li><a href="http://gearman.org">Gearman</a></li>
-<li><a href="http://activemq.apache.org/">ActiveMQ</a></li>
-<li><a href="http://kr.github.com/beanstalkd/">beanstalkd</a></li>
+<li>４月は毎年恒例人事異動</li>
+<li>本格的にTwitterはじめた</li>
+<li>Twitterボットつくった</li>
+<li>MySQLに悩まされ、詳しくなった</li>
+<li>このブログをギリギリで始めた</li>
+<li>などなど</li>
 </ul>
-<p>で、Q4Mを試そうとしたらMySQL5.1以降でないとダメとか。<br />
-ちょっとした事情で「5.1以降」という制約は避けたいので、Gearmanを試してみる事に。<br />
-※最後のbeanstalkdは<a href="http://rad-dev.org/">lithium</a>から使えるみたいです(<a href="http://rad-dev.org/li3_queue">li3_queue</a>)。<br />
-<a id="more"></a><a id="more-190"></a></p>
-<h3>仕組み</h3>
-<p>図解は<a href="http://gearman.org/images/gearman_stack.png">公式サイトの図</a>を見て下さい。</p>
-<p>登場人物は大きく３つ。</p>
-<ul>
-<li> ・Client：処理を依頼する人</li>
-<li> ・Worker：依頼された処理を実行する人</li>
-<li> ・JobServer：ClientとWorkerの橋渡しをする人</li>
-</ul>
-<p>JobServerはdaemonで常駐していて、<br />
-Clientからの要求がある度に、別途常駐しているWorkerに対して処理を投げます。<br />
-かなりシンプルです。</p>
-<h3>使い道</h3>
-<p>Client側から処理を依頼するパターンはだいたい４つ。</p>
-<ul>
-<li>今すぐ依頼して、その結果を受け取る</li>
-<li>今すぐ依頼して、結果を待たずに終了する</li>
-<li>タスクを追加して、最後にまとめて実行して、その結果を受け取る</li>
-<li>タスクを追加して、最後にまとめて実行して、結果を待たずに終了する</li>
-</ul>
-<h3>インストール</h3>
-<p>Gearmanサーバーのインストール</p>
-<blockquote><p>wget http://launchpad.net/gearmand/trunk/0.11/+download/gearmand-0.11.tar.gz<br />
-tar zxf gearmand-0.11.tar.gz<br />
-cd gearmand-0.11<br />
-./configure<br />
-make; make install</p></blockquote>
-<p>起動</p>
-<blockquote><p>/usr/local/sbin/gearmand  -u root &#8211;daemon</p></blockquote>
-<p>php extensionのインストール</p>
-<blockquote><p>wget http://pecl.php.net/get/gearman-0.6.0.tgz<br />
-tar zxf gearman-0.6.0.tgz<br />
-cd gearman-0.6.0<br />
-phpize<br />
-./configure<br />
-make; make install</p></blockquote>
-<h3>サンプル</h3>
-<h4>今すぐ依頼して、結果を受け取るパターン</h4>
-<p>worker.php</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="o">&lt;?</span> <span class="nx">php</span>
-</span><span class="line"><span class="nv">$worker</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GearmanWorker</span><span class="p">();</span>
-</span><span class="line"><span class="nv">$worker</span><span class="o">-&gt;</span><span class="na">addServer</span><span class="p">();</span>
-</span><span class="line"><span class="nv">$worker</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="nx">addFunction</span><span class="p">(</span><span class="s1">&#39;hoge&#39;</span><span class="p">,</span><span class="s1">&#39;hoge_func&#39;</span><span class="p">);</span>
-</span><span class="line"><span class="c1">// 常駐</span>
-</span><span class="line"><span class="k">while</span><span class="p">(</span><span class="nv">$worker</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="nx">work</span><span class="p">());</span>
-</span><span class="line">
-</span><span class="line"><span class="k">function</span> <span class="nf">hoge_func</span><span class="p">(</span><span class="nx">GearmanJob</span> <span class="nv">$job</span><span class="p">)</span>
-</span><span class="line"><span class="p">{</span>
-</span><span class="line">    <span class="k">return</span> <span class="s1">&#39;hoge&#39;</span><span class="o">.</span><span class="nv">$job</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="nx">workload</span><span class="p">();</span>
-</span><span class="line"><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>&lt;? php</p>
-
-<p>client.php</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="o">&lt;?</span> <span class="nx">php</span>
-</span><span class="line"><span class="nv">$worker</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GearmanWorker</span><span class="p">();</span>
-</span><span class="line"><span class="nv">$worker</span><span class="o">-&gt;</span><span class="na">addServer</span><span class="p">();</span>
-</span><span class="line"><span class="k">echo</span>  <span class="nv">$client</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="k">do</span><span class="p">(</span><span class="s1">&#39;hoge&#39;</span><span class="p">,</span> <span class="s1">&#39;hello&#39;</span><span class="p">);</span>
-</span><span class="line"><span class="k">echo</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>実行してみる</p>
-<blockquote><p>$ php woker.php &amp;<br />
-$ php client.php<br />
-hello, hoge</p></blockquote>
-<p>これだけだとほぼ意味ないので、重い処理を遅延実行させてみます。</p>
-<h4>今すぐ依頼して、結果を待たずに終了するパターン</h4>
-<p>worker.php</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="o">&lt;?</span> <span class="nx">php</span>
-</span><span class="line"><span class="nv">$worker</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GearmanWorker</span><span class="p">();</span>
-</span><span class="line"><span class="nv">$worker</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="nx">addServer</span><span class="p">();</span>
-</span><span class="line"><span class="nv">$worker</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="nx">addFunction</span><span class="p">(</span><span class="s1">&#39;hoge&#39;</span><span class="p">,</span><span class="s1">&#39;hoge_func&#39;</span><span class="p">);</span>
-</span><span class="line"><span class="nv">$worker</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="nx">addFunction</span><span class="p">(</span><span class="s1">&#39;heavy&#39;</span><span class="p">,</span><span class="s1">&#39;heavy_func&#39;</span><span class="p">);</span>
-</span><span class="line"><span class="c1">// 常駐</span>
-</span><span class="line"><span class="k">while</span><span class="p">(</span><span class="nv">$worker</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="nx">work</span><span class="p">());</span>
-</span><span class="line">
-</span><span class="line"><span class="k">function</span> <span class="nf">hoge_func</span><span class="p">(</span><span class="nx">GearmanJob</span> <span class="nv">$job</span><span class="p">)</span>
-</span><span class="line"><span class="p">{</span>
-</span><span class="line">    <span class="k">return</span> <span class="s1">&#39;hoge, &#39;</span><span class="o">.</span><span class="nv">$job</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="nx">workload</span><span class="p">();</span>
-</span><span class="line"><span class="p">}</span>
-</span><span class="line"><span class="k">function</span> <span class="nf">heavy_func</span><span class="p">(</span><span class="nx">GearmanJob</span> <span class="nv">$job</span><span class="p">)</span>
-</span><span class="line"><span class="p">{</span>
-</span><span class="line">        <span class="k">echo</span> <span class="s2">&quot;wait...&quot;</span><span class="p">;</span>
-</span><span class="line">        <span class="nb">sleep</span><span class="p">(</span><span class="mi">10</span><span class="p">);</span>
-</span><span class="line">    <span class="k">return</span> <span class="s1">&#39;hoge, &#39;</span><span class="o">.</span><span class="nv">$job</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="nx">workload</span><span class="p">();</span>
-</span><span class="line"><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>client.php</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="o">&lt;?</span> <span class="nx">php</span>
-</span><span class="line"><span class="nv">$client</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GearmanClient</span><span class="p">();</span>
-</span><span class="line"><span class="nv">$client</span><span class="o">-&gt;</span><span class="na">addServer</span><span class="p">();</span>
-</span><span class="line"><span class="k">echo</span>  <span class="nv">$client</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="k">do</span><span class="p">(</span><span class="s1">&#39;hoge&#39;</span><span class="p">,</span> <span class="s1">&#39;hello&#39;</span><span class="p">);</span>
-</span><span class="line"><span class="k">echo</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
-</span><span class="line"><span class="k">echo</span> <span class="nv">$client</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="k">do</span><span class="p">(</span><span class="s1">&#39;heavy&#39;</span><span class="p">,</span> <span class="s1">&#39;hello (sync)&#39;</span><span class="p">);</span>
-</span><span class="line"><span class="k">echo</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
-</span><span class="line"><span class="nv">$client</span><span class="o">-&amp;</span><span class="nx">gt</span><span class="p">;</span><span class="nx">doBackground</span><span class="p">(</span><span class="s1">&#39;heavy&#39;</span><span class="p">,</span> <span class="s1">&#39;hello (async)&#39;</span><span class="p">);</span>
-</span><span class="line"><span class="k">echo</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>実行してみる</p>
-<blockquote><p>$ php worker.php &amp;<br />
-$ php client.php<br />
-hoge, hello<br />
-hoge, hello (sync)</p></blockquote>
-<p>とまぁ、doBackgroundで依頼したキューの場合、clientでは結果を受け取ってません。<br />
-これが基本的な使い方。</p>
-<h4>タスクを追加して、最後にまとめて実行して、その結果を受け取る</h4>
-<p>task_client.php</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="o">&lt;?</span> <span class="nx">php</span>
-</span><span class="line"><span class="nv">$client</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GearmanClient</span><span class="p">();</span>
-</span><span class="line"><span class="nv">$client</span><span class="o">-&gt;</span><span class="na">addServer</span><span class="p">();</span>
-</span><span class="line"><span class="nv">$client</span><span class="o">-&gt;</span><span class="na">setCompleteCallback</span><span class="p">(</span><span class="s1">&#39;task_cb&#39;</span><span class="p">);</span>
-</span><span class="line"><span class="nv">$client</span><span class="o">-&gt;</span><span class="na">addTask</span><span class="p">(</span><span class="s1">&#39;hoge&#39;</span><span class="p">,</span> <span class="s1">&#39;arg1&#39;</span><span class="p">);</span>
-</span><span class="line"><span class="nv">$client</span><span class="o">-&gt;</span><span class="na">addTask</span><span class="p">(</span><span class="s1">&#39;heavy&#39;</span><span class="p">,</span> <span class="s1">&#39;arg2&#39;</span><span class="p">);</span>
-</span><span class="line"><span class="nv">$client</span><span class="o">-&gt;</span><span class="na">runTasks</span><span class="p">();</span>
-</span><span class="line"><span class="k">function</span> <span class="nf">task_cb</span><span class="p">(</span><span class="nx">GearmanTask</span> <span class="nv">$task</span><span class="p">)</span>
-</span><span class="line"><span class="p">{</span>
-</span><span class="line">    <span class="k">echo</span> <span class="s1">&#39;[result]&#39;</span><span class="o">.</span><span class="nv">$task</span><span class="o">-&gt;</span><span class="na">data</span><span class="p">();</span>
-</span><span class="line">    <span class="k">echo</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
-</span><span class="line"><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<blockquote><p>
-$ worker.php &amp;<br />
-$ task_client.php<br />
-[result]hoge, arg1<br />
-[result]hoge, arg2
-</p></blockquote>
-
-<p>と、ひとつめの結果表示のあとには重い処理待ちが発生します。</p>
-<h4>タスクを追加して、最後にまとめて実行して、結果を待たずに終了する</h4>
-<p>重い処理をバックグラウンドのタスクとして登録します。<br />
-task_client.php</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-</pre></td><td class="code"><pre><code class="php"><span class="line"><span class="o">&lt;?</span> <span class="nx">php</span>
-</span><span class="line">
-</span><span class="line"><span class="nv">$client</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">GearmanClient</span><span class="p">();</span>
-</span><span class="line"><span class="nv">$client</span><span class="o">-&gt;</span><span class="na">addServer</span><span class="p">();</span>
-</span><span class="line"><span class="nv">$client</span><span class="o">-&gt;</span><span class="na">setCompleteCallback</span><span class="p">(</span><span class="s1">&#39;task_cb&#39;</span><span class="p">);</span>
-</span><span class="line"><span class="nv">$client</span><span class="o">-&gt;</span><span class="na">addTask</span><span class="p">(</span><span class="s1">&#39;hoge&#39;</span><span class="p">,</span> <span class="s1">&#39;arg1&#39;</span><span class="p">);</span>
-</span><span class="line"><span class="nv">$client</span><span class="o">-&gt;</span><span class="na">addTaskBackground</span><span class="p">(</span><span class="s1">&#39;heavy&#39;</span><span class="p">,</span> <span class="s1">&#39;arg2&#39;</span><span class="p">);</span>
-</span><span class="line"><span class="nv">$client</span><span class="o">-&gt;</span><span class="na">runTasks</span><span class="p">();</span>
-</span><span class="line">
-</span><span class="line"><span class="k">function</span> <span class="nf">task_cb</span><span class="p">(</span><span class="nx">GearmanTask</span> <span class="nv">$task</span><span class="p">)</span>
-</span><span class="line"><span class="p">{</span>
-</span><span class="line">        <span class="k">echo</span> <span class="s1">&#39;[result]&#39;</span><span class="o">.</span><span class="nv">$task</span><span class="o">-&gt;</span><span class="na">data</span><span class="p">();</span>
-</span><span class="line">        <span class="k">echo</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
-</span><span class="line"><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>実行</p>
-
-<blockquote><p>
-[result]hoge, arg1
-</p></blockquote>
-<p>addTaskBackgroundで追加したタスクの結果のみ待たずに処理が終了します。<br />
-この例だと意味ないですが、今すぐ結果を必要としない処理を後回しにすることでユーザーへのレスポンスを高速化することができます。</p>
-<h3>注意点</h3>
-<h4>引数は数字と文字列のみ</h4>
-<p>配列やオブジェクトではやりとりできないので、<br />
-そういったものはシリアライズするとかjsonにするとかして渡さないとだめです。
-<h4>workerが見つかるまで待つ</h4>
-<p>clientからリクエストするworker名が存在しない（常駐していない場合）は、<br />
-JobServerはworkerが見つかるまで待ちます。clientがバックグラウンドで依頼しなければそちらでも待ちが発生します。で、対象workerを起動すると即座にJobServerはキュー処理をworkerに渡します。当然ですが。</p>
-<p>もう少し現実的な処理の中でqueueingして試したかったのですが、<br />
-まずは入り口ということで。次回はもうちょっと突っ込んだ処理をやってみたいと。</p>
-<h3>参考資料</h3>
-<ul>
-<li><a href="http://gearman.org">Gearman(公式サイト)</a></li>
-<li><a href="http://www.php.net/manual/en/book.gearman.php">PHP: Gearman - Manual</a></li>
-<li><a href="http://www.ibm.com/developerworks/jp/opensource/library/os-php-gearman/">Gearman を使って PHP アプリケーションのワークロードを分散する</a></li>
-</ul>
-</p>
+<p>そんなにニュースないですね…</p>
+<p>新年に目標をちゃんと掲げられるように今から練り始めようと思います。テレビでも観ながら。</p>
+<p>あ、僕の2009年はこんな漢字（感じ）らしいです。</p>
+<p><a href="http://cake.oresama.jp/result/13cd6ce78b00fc6f2526ff060d1de08e.html ">一文字２００９年版 あなたの今年を一文字で-</a></p>
+<p>…2010年はもう少し前向きな漢字で終われますように。</p>
+<p>では、皆様よいお年を。</p>
 </div>
   
   
@@ -420,7 +182,7 @@ JobServerはworkerが見つかるまで待ちます。clientがバックグラ�
       
   <header>
     
-      <h1 class="entry-title"><a href="/2010/01/01/10-targets-that-i-want-to-achieve-in-2010/">こんにちは、2010年 - 今年達成したい10の目標</a></h1>
+      <h1 class="entry-title"><a href="/2009/12/31/twig-is-the-template-engine-written-in-php/">Phpのテンプレートエンジンtwigとは</a></h1>
     
     
       <p class="meta">
@@ -436,34 +198,195 @@ JobServerはworkerが見つかるまで待ちます。clientがバックグラ�
   
 
 
-<time datetime="2010-01-01T23:39:44+09:00" pubdate data-updated="true">2010-01-01 (Fri)</time>
+<time datetime="2009-12-31T02:10:55+09:00" pubdate data-updated="true">2009-12-31 (Thu)</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>あけましておめでとうございます。<br />
-昨年中は大変お世話になりました。<br />
-本年もどうぞよろしくお願いいたします。</p>
-<p>と、新年のご挨拶をしたところで、今年の目標をつらつら挙げてみようと思います。</p>
-<p><a id="more"></a><a id="more-156"></a></p>
-<ol>
-<li>禁煙を継続する</li>
-<li>間食は一日一回</li>
-<li>ヤフオクは一ヶ月に一回まで</li>
-<li>春までにいらないものを積極的に(捨てて|売って)身軽になる</li>
-<li>身軽になったところで家を引っ越す</li>
-<li>ブログを一週間に一回は更新する</li>
-<li>何かひとつオリジナルのwebサービスを公開する</li>
-<li>PHP以外の言語にも積極的に取り組む(c++/java/python/erlang?)</li>
-<li>自然言語処理に詳しくなる</li>
-<li>英語と数学をちゃんと勉強し直す</li>
-</ol>
-<p>1〜5は生活習慣の改善です。ヤフオクに依存しすぎなので少し距離をおこうかな、と&#8230;</p>
-<p>5〜10は技術的なことで主にTwitterや本ブログでの活動について。仕事につながることもありますが基本的にはプライベートな活動についてということで。英語は海外ブログの読解できるレベルまで、数学は高校の文系レベルくらいまでいけたらな、と。</p>
-<p>あまり具体的すぎる目標を掲げるのも気が重くなるだけなのでなんとなく思いつきベースでこんな感じにしてみました。</p>
-<p>適当にがんばります。</p>
+  <div class="entry-content"><div>最近、PHPのテンプレートエンジン<a href="http://www.twig-project.org/" target="_blank">Twig</a>の紹介記事をちらほら見かけるようになってきました。</div>
+<div>
+<ul>
+<li><span style="font-family: Consolas, Monaco, 'Courier New', Courier, monospace; line-height: 18px; font-size: 12px; white-space: pre;"><a href="http://labs.unoh.net/2009/12/phptwig.html" target="_blank">ウノウラボ Unoh Labs: PHPテンプレートエンジンTwigをいじってみました</a></span></li>
+<li><span style="font-family: Consolas, Monaco, 'Courier New', Courier, monospace; line-height: 18px; font-size: 12px; white-space: pre;"><a href="http://d.hatena.ne.jp/anatoo/20091225/1261749843" target="_blank">テンプレートエンジンを素のPHPからTwigに乗り換えた理由 - id:anatooのブログ</a></span></li>
+<li><a href="http://blog.nully.org/archives/154">[Twig]なにやら話題のテンプレートエンジンTwigを使ってみた | Nullyのぶろぐ</a></li>
+</ul>
+</div>
+<div>自分自身も気になってはいたのですが、試してみるきっかけがなく今に至ってしまいました。現在のプロジェクトではviewは関わらないのですが、それまではSmarty2を使っていました。Smarty3や他テンプレートエンジンも気になるところですが、次はTwigがくるだろうと勝手に予測しています。</div>
+<div>とりあえず今回はTwigの特徴と他テンプレートエンジンとの比較をまとめてみます。</div>
+<div><a id="more"></a><a id="more-3"></a></div>
+<h2>Twigの特徴</h2>
+<p>公式サイトから英訳（適当に）してみました。</p>
+<div>
+<ul>
+<li>簡潔に書ける</li>
+<li>テンプレート指向文法である</li>
+<li>自動エスケープなど必要なものをすべてサポートしている</li>
+<li>文法を簡単に学習できる（※他テンプレートエンジンはPHP4ベースで作られていたりして、web開発においてベストプラクティスとして採用できない。）</li>
+<li>高い拡張性で独自DSLも作れる</li>
+<li>ユニットテストされているのでライブラリは堅牢で、大きなプロジェクトにもすぐに使える。</li>
+<li>ちゃんとドキュメント化されている：</li>
+<li>セキュリティでは自動出力エスケープやsandboxモードによって安全性を確保</li>
+<li>詳細なエラーメッセージでデバッグもカンタン</li>
+<li>テンプレートを素のPHPコードにコンパイルするので、普通のPHPコードに比べてオーバーヘッドを最小限に抑えることができる。</li>
+</ul>
+</div>
+<h2>開発者について</h2>
+<div>Symfony開発者でもある<a href="http://fabien.potencier.org/article/34/templating-engines-in-php" target="_blank">Fabienのブログ記事</a>（と<a href="http://fabien.potencier.org/article/35/templating-engines-in-php-follow-up" target="_blank">そのフォロー記事</a>）を見れば、開発の経緯や他テンプレートエンジンとの比較、それからPHP自体テンプレートエンジンじゃないかという点について言及しています。</div>
+<div>素のPHPをViewとして使いたい人はSymfonyTemplateComponentがスタンドアロンで動作するのでそれを使うと良いと。ViewでPHP的な文法を用いることに疑問を持っていたようです。</div>
+<div>
+<h2>既存テンプレートエンジンとの比較</h2>
+</div>
+<div>
+<div>もともと彼は以下機能を求めてテンプレートエンジンを探していたので、この観点でそれぞれのテンプレートエンジンを評価しています。(なのでこれがそのままTwigの特徴になっています。）</div>
+<div>
+<div>
+<ul>
+<li>Concision (記述が簡潔)</li>
+<li>Template oriented syntax (テンプレート指向な文法)</li>
+<li>Reusability (再利用性)</li>
+<li>Security (安全性)</li>
+<li>Sandbox mode (砂場モード)</li>
+</ul>
+</div>
+</div>
+</div>
+<div>
+<div><strong><a href="http://www.smarty.net/" target="_blank">Smarty</a></strong><strong>:<span style="font-weight: normal;">Smarty3で機能要求を満たしているものの、パフォーマンスが悪い。<br />
+<strong><a href="http://phptal.org/" target="_blank">PHPTAL</a></strong><strong>:<span style="font-weight: normal;">よく設計されていて、機能もあるが、webデザイナにはとっつきにくく、テンプレートの継承的なことは特にそう。</span></strong></span></strong></div>
+<div><strong><span style="font-weight: normal;"><strong><a href="http://www.ezcomponents.org/docs/tutorials/Template" target="_blank">ezComponents Template</a></strong><strong>:<span style="font-weight: normal;">よく設計されていて、多くの機能を持つが、継承をサポートしていないのと、パフォーマンスが他よりかなり劣る。<br />
+<strong><a href="http://dwoo.org/" target="_blank">Dowoo</a></strong><strong>:<span style="font-weight: normal;">Smartyの代替プロジェクトとしてSmartyを真似てつくられていて、継承などの新機能も追加されている。パフォーマンスもSmartyより良いけど、sandboxがないのと、コアシステムの拡張性が十分でない。<br />
+<strong><a href="http://www.beberlei.de/calypso/" target="_blank">Calyps</a></strong><strong><a href="http://www.beberlei.de/calypso/" target="_blank">o</a></strong><strong>:</strong>DjangoのPHPクローンだけど諸問題により開発停止している。</span></strong></span></strong></span></strong></div>
+</div>
+<h3>ベンチマーク</h3>
+<p>既存のテンプレートエンジンに関するベンチマーク結果です。</p>
+<h4>ベンチマーク方法</h4>
+<div>
+<div id="_mcePaste">
+<ul>
+<li>３つのアイテムをループさせ、シンプルな装飾のレイアウト出力の比較。</li>
+<li>10000回表示するテストを１０回実行した平均値。</li>
+<li>継承はヘッダとフィッタを代わりに使用。</li>
+<li>自動出力エスケープができないものは手動でエスケープ処理。</li>
+<li>コマンドラインでPHPAcceleratorなどを使用しない環境で実行</li>
+</ul>
+</div>
+<h4>処理時間とメモリ消費</h4>
+</div>
+<div>
+<table border="1">
+<tbody>
+<tr>
+<th>Library</th>
+<th>Time (sec)</th>
+<th>Memory (Ko)</th>
+<th>Templates rendered per second</th>
+</tr>
+<tr>
+<th>Twig</th>
+<td>3</td>
+<td>1,190</td>
+<td>3,333</td>
+</tr>
+<tr>
+<th>PHPTAL</th>
+<td>3.8</td>
+<td>2,100</td>
+<td>2,632</td>
+</tr>
+<tr>
+<th>Dwoo</th>
+<td>6.9</td>
+<td>1,870</td>
+<td>1,449</td>
+</tr>
+<tr>
+<th>Smarty 2</th>
+<td>12.9</td>
+<td>2,350</td>
+<td>775</td>
+</tr>
+<tr>
+<th>Smarty 3</th>
+<td>14.9</td>
+<td>3,230</td>
+<td>671</td>
+</tr>
+<tr>
+<th>Calypso</th>
+<td>34.3</td>
+<td>620</td>
+<td>292</td>
+</tr>
+<tr>
+<th>eZ Templates</th>
+<td>53</td>
+<td>5,850</td>
+<td>189</td>
+</tr>
+</tbody>
+</table>
+</div>
+<h4>コンパイル後のメモリ消費</h4>
+<p>※フォロー記事の方がSmartyの数値が妥当らしいのでそっちを引用しています。</p>
+<table border="1">
+<tbody>
+<tr>
+<th>Library</th>
+<td>Time(sec)</td>
+<td>Memory without compilation (Ko)</td>
+</tr>
+<tr>
+<th>Plain PHP</th>
+<td>2.4</td>
+<td>114</td>
+</tr>
+<tr>
+<th>Twig</th>
+<td>3</td>
+<td>383</td>
+</tr>
+<tr>
+<th>PHPTAL</th>
+<td>3.8</td>
+<td>598</td>
+</tr>
+<tr>
+<th>Dwoo</th>
+<td>6.9</td>
+<td>1,645</td>
+</tr>
+<tr>
+<th>Smarty 2</th>
+<td>12.9</td>
+<td>610</td>
+</tr>
+<tr>
+<th>Smarty 3</th>
+<td>14.9</td>
+<td>799</td>
+</tr>
+<tr>
+<th>Calypso</th>
+<td>34.3</td>
+<td>614</td>
+</tr>
+<tr>
+<th>eZ Templates</th>
+<td>53</td>
+<td>2,783</td>
+</tr>
+</tbody>
+</table>
+<h2>まとめ</h2>
+<div>機能性だけでなく速さも兼ね備えたテンプレートエンジンTwig。</div>
+<div>便利なテンプレートエンジンはSmartyがデファクトでしたが、Twigはそれを追い抜くかもしれませんね。</div>
+<div>Symfony2.0でオプションのViewとして用意するかも、とFabienは個人的見解として言っているので、そうなると日本語圏でも利用が加速するかもしれません。ただ、Symfony2.0はPHP5.3以上必須なのでPHP5.3への移行に依存しますかね。Smarty3が正式リリースまでにどこまでパフォーマンス改善してくるかも楽しみなところです。</div>
+<div>
+<p>Smartyから乗り換える場合はプログラマよりデザイナの移行コストが高いと思われるのですが、それがクリアできるならぜひ移行してみたいですね。素のPHPよりは断然読みやすく理解しやすですし。</p>
+</div>
+<p>次は機能的なところをまとめたいと思います。</p>
 </div>
   
   
@@ -484,17 +407,17 @@ JobServerはworkerが見つかるまで待ちます。clientがバックグラ�
 <aside class="sidebar">
   
     <section id="titles">
-  <a href="http://ReSTARTR.github.io" title="I Will Survive"><img id="logo" src="http://ReSTARTR.github.io/images/portrait.jpg" /></a>
-  <h1 id="site_title"><a href="http://ReSTARTR.github.io" title="I Will Survive">I Will Survive</a></h1>
+  <a href="http://blog.restartr.com" title="I Will Survive"><img id="logo" src="http://blog.restartr.com/images/portrait.jpg" /></a>
+  <h1 id="site_title"><a href="http://blog.restartr.com" title="I Will Survive">I Will Survive</a></h1>
   <h3 id="site_subtitle">An application depelopper&#8217;s blog.</h3>
 </section>
 
 <section id="menu">
   <ul>
-    <li><i class="fa fa-home fa-lg"></i><a href="http://ReSTARTR.github.io"> Home </a></li>
-    <li><i class="fa fa-calendar fa-lg"></i><a href="http://ReSTARTR.github.io/blog/archives/"> Archives </a></li>
-    <li><i class="fa fa-user fa-lg"></i><a href="http://ReSTARTR.github.io/about/"> About </a></li>
-    <li><i class="fa fa-rss fa-lg"></i><a href="http://ReSTARTR.github.io/atom.xml"> Feed </a></li>
+    <li><i class="fa fa-home fa-lg"></i><a href="http://blog.restartr.com"> Home </a></li>
+    <li><i class="fa fa-calendar fa-lg"></i><a href="http://blog.restartr.com/blog/archives/"> Archives </a></li>
+    <li><i class="fa fa-user fa-lg"></i><a href="http://blog.restartr.com/about/"> About </a></li>
+    <li><i class="fa fa-rss fa-lg"></i><a href="http://blog.restartr.com/atom.xml"> Feed </a></li>
   </ul>
 </section>
 
@@ -516,6 +439,8 @@ JobServerはworkerが見つかるまで待ちます。clientがバックグラ�
   
     <a href="https://twitter.com/ReSTARTR" title="ReSTARTR"><i class="fa fa-twitter fa-2x"></i></a>
   
+
+  
 </section>
 
 
@@ -524,15 +449,11 @@ JobServerはworkerが見つかるまで待ちます。clientがバックグラ�
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2014/06/28/about-docker-libchan/">Doker謹製ライブラリのlibchanについて調べてみた</a>
+      </li>
+    
+      <li class="post">
         <a href="/2014/05/11/build-rpm-on-docker-container/">Dockerを使って任意のrubyバージョンのrpmを作成する</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2014/04/22/tech-podcast-list/">技術系podcastまとめ</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2014/04/21/golang-memcache-stats-client/">Goでmemcachedのstatsを取得する</a>
       </li>
     
       <li class="post">
@@ -540,12 +461,21 @@ JobServerはworkerが見つかるまで待ちます。clientがバックグラ�
       </li>
     
       <li class="post">
-        <a href="/2014/04/06/reload-varnish-vcl/">VarnishのVCLを再起動なしに再読み込みする</a>
+        <a href="/2014/04/06/move-from-wordpress-to-octopress/">WordpressからOctopressに移行</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2013/04/26/connect-go-and-python-with-zeromq/">GoとPythonをZeroMQで繋ぐ</a>
       </li>
     
   </ul>
 </section>
-Included file &#8216;asides/category_list.html&#8217; not found in _includes directory
+<section>
+  <h1>Categories</h1>
+  <ul id="categories">
+    <li><a href='/category/docker/'>docker</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
+  </ul>
+</section>
 <section>
   <h1>GitHub Repos</h1>
   <ul id="gh_repos">

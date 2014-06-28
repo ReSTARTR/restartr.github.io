@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[I Will Survive]]></title>
-  <link href="http://ReSTARTR.github.io/atom.xml" rel="self"/>
-  <link href="http://ReSTARTR.github.io/"/>
-  <updated>2014-06-14T18:33:03+09:00</updated>
-  <id>http://ReSTARTR.github.io/</id>
+  <link href="http://blog.restartr.com/atom.xml" rel="self"/>
+  <link href="http://blog.restartr.com/"/>
+  <updated>2014-06-28T15:00:27+09:00</updated>
+  <id>http://blog.restartr.com/</id>
   <author>
     <name><![CDATA[ReSTARTR]]></name>
     <email><![CDATA[yoshida.masaki+restartr@gmail.com]]></email>
@@ -14,10 +14,222 @@
 
   
   <entry>
+    <title type="html"><![CDATA[Doker謹製ライブラリのlibchanについて調べてみた]]></title>
+    <link href="http://blog.restartr.com/2014/06/28/about-docker-libchan/"/>
+    <updated>2014-06-28T14:44:23+09:00</updated>
+    <id>http://blog.restartr.com/2014/06/28/about-docker-libchan</id>
+    <content type="html"><![CDATA[<p>DockerCon2014で発表された<a href="https://github.com/docker/libchan">libchan</a>について調べたことをまとめてみます。</p>
+
+<p>libchanは<a href="https://github.com/docker/libcontainer">libcontainer</a>や<a href="https://github.com/docker/libswarm">libswarm</a>と共に発表されました。
+libswarmはDockerを中心にしたエコシステムにおけるベンダーロックインを回避するためのソリューションであり、libcontainerは<a href="http://d.hatena.ne.jp/mainyaa/20140311/p1">Docker 0.9リリースドキュメント日本語訳: Execution driversとlibcontainer導入 - Happy New World</a>を参照するのがよいでしょう。</p>
+
+<p>では、libchanとは何なのでしょうか。</p>
+
+<p>READMEには<code>like Go channels over the network</code>とあります。ネットワーク上のgo channel?よくかりませんね。。。</p>
+
+<p>README.mdとPROTOCOL.md、いくつかのテストコードをもとに簡単な実装をしてみた結果をまとめます。</p>
+
+<h3 id="libchan">libchanとはなにか</h3>
+
+<ul>
+  <li><a href="https://github.com/docker/libchan/README.md">README</a></li>
+</ul>
+
+<p>libchanは超軽量なネットワークライブラリであり、多様な通信プロトコルの土台となるものです。
+同一プロセス内でも、同一ホストの別プロセス間でも、ネットワークを超えた別ホストの別プロセス間でも双方向通信可能にするための基礎的なAPIを提供しています。
+モダンなmicro-serviesなどRPCやRESTプロトコルにはフィットしない領域で、libchanを使うことが想定されています。</p>
+
+<p>利用例はいまのところlibswarmのみです。というかlibswarmから抽出された汎用的な通信ライブラリだと思います。
+APIが安定してくると他のフレームワーク等への導入などもあるかもしれません。</p>
+
+<p>では、具体的にどうやって双方向通信を可能にしてるのでしょう。</p>
+
+<h3 id="libchan-1">libchanのプロトコル</h3>
+
+<ul>
+  <li><a href="https://github.com/docker/libchan/PROTOCOL.md">PROTOCOL</a></li>
+</ul>
+
+<p>libchanは以下のコンポーネントで構成されています。</p>
+
+<ul>
+  <li>channel</li>
+  <li>session</li>
+  <li>message</li>
+  <li>byte stream</li>
+  <li>nesting</li>
+</ul>
+
+<p>channelとは、並行プログラム間の双方向通信用オブジェクトです。goのchannelに似てるけどそのものではありません。Sender/Receiverがそれぞれ1方向ずつの経路を持つため、ソケットというよりパイプの概念に近いです。</p>
+
+<p>この２つの通信経路がsessionとなり、その間を流れるのがbyte stream。
+で、byte streamにはmessageが乗っかり、messageにはchannelを含めることができるという概念です。</p>
+
+<h3 id="libchan-2">libchanのメッセージ</h3>
+
+<p>メッセージはlibchan.Message。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">type</span> <span class="nx">libchan</span><span class="p">.</span><span class="nx">Message</span> <span class="kd">struct</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">Data</span> <span class="p">[]</span><span class="kt">byte</span> <span class="c1">// メッセージの内容</span>
+</span><span class="line">  <span class="nx">Fd</span> <span class="o">*</span><span class="nx">os</span><span class="p">.</span><span class="nx">File</span>
+</span><span class="line">  <span class="nx">Ret</span> <span class="nx">Sender</span>  <span class="c1">// 受信者が返答するためのchannel</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>このメッセージ型を、各種通信方式に対応したSender/Receiver経由でやりとりすることになります。</p>
+
+<h3 id="section">メッセージの構造化</h3>
+
+<p>メッセージは以下のようにして生成します。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="nx">message</span> <span class="o">:=</span> <span class="nx">libchan</span><span class="p">.</span><span class="nx">Message</span><span class="p">{</span><span class="nx">Data</span><span class="p">:</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&quot;Hello, libchan&quot;</span><span class="p">),</span> <span class="nx">Ret</span><span class="p">:</span> <span class="nx">libchan</span><span class="p">.</span><span class="nx">RetPipe</span><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>で、ただのテキストではなく構造化されたデータも送れます。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kn">import</span> <span class="s">&quot;github.com/docker/libchan/data&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="nx">d</span> <span class="o">:=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">Empty</span><span class="p">().</span><span class="nx">Set</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="p">)</span>
+</span><span class="line"><span class="nx">d</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">)</span> <span class="c1">// &quot;bar&quot;</span>
+</span><span class="line"><span class="nx">d</span><span class="p">.</span><span class="nx">Pretty</span><span class="p">()</span> <span class="c1">// foo=bar</span>
+</span><span class="line"><span class="nx">message</span> <span class="o">:=</span> <span class="nx">libchan</span><span class="p">.</span><span class="nx">Message</span><span class="p">{</span><span class="nx">Data</span><span class="p">:</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">Ret</span><span class="p">:</span> <span class="nx">libchan</span><span class="p">.</span><span class="nx">RetPipe</span><span class="p">))</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>ちなみに、各メソッド(Add,Set,Get,Del)はMessageのポインタをかえさないので、変数を上書きするかメソッドチェインにする必要があります。</p>
+
+<h3 id="section-1">メッセージの送受信</h3>
+
+<p>作成したメッセージををSender経由で送ります。（ここでのSender/Receiverは擬似コードです）</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="nx">sender</span><span class="p">.</span><span class="nx">Send</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">libchan</span><span class="p">.</span><span class="nx">Message</span><span class="p">{</span><span class="nx">Data</span><span class="p">:</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">msg</span><span class="p">)})</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>で、Receiverが受信したメッセージは<code>data.Decode()</code>で<code>map[string][]string</code>に変換できます。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="nx">message</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">receiver</span><span class="p">.</span><span class="nx">Receive</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span><span class="line"><span class="nx">decoded</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">Decode</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">message</span><span class="p">.</span><span class="nx">Data</span><span class="p">))</span>
+</span><span class="line"><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%$v\n&quot;</span><span class="p">,</span> <span class="nx">docoded</span><span class="p">)</span> <span class="c1">// map[string][]string{&quot;foo&quot;:[]string{&quot;bar&quot;}}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="senderreceiver">Sender/Receiver</h3>
+
+<p>実際にメッセージを送受信するのは、Send/Receiverメソッドを持つinterfaceを実装したものを使います。
+定義はだいたいこんなかんじになっています。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">type</span> <span class="nx">Sender</span> <span class="kd">interface</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">Send</span><span class="p">(</span><span class="nx">msg</span> <span class="o">*</span><span class="nx">Message</span><span class="p">)</span> <span class="p">(</span><span class="nx">Receiver</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">Sender</span><span class="p">)</span> <span class="nx">Send</span><span class="p">(</span><span class="nx">msg</span> <span class="o">*</span><span class="nx">libchan</span><span class="p">.</span><span class="nx">Message</span><span class="p">)</span> <span class="p">(</span><span class="nx">libchan</span><span class="p">.</span><span class="nx">Receiver</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="kd">type</span> <span class="nx">Receiver</span> <span class="kd">interface</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">Receiver</span><span class="p">(</span><span class="nx">mode</span> <span class="kt">int</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">Message</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">Receiver</span><span class="p">)</span> <span class="nx">Receive</span><span class="p">(</span><span class="nx">mode</span> <span class="kt">int</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">libchan</span><span class="p">.</span><span class="nx">Message</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>主要な実装は以下</p>
+
+<ul>
+  <li><a href="https://github.com/docker/libchan/blob/master/nop.go">nop</a></li>
+  <li><a href="https://github.com/docker/libchan/blob/master/inmem.go">inmem</a></li>
+  <li><a href="https://github.com/docker/libchan/blob/master/unix">unix</a></li>
+  <li><a href="https://github.com/docker/libchan/blob/master/http2">http2</a></li>
+</ul>
+
+<h3 id="inmem-in-memory-go-channel">inmem (In-memory Go channel)</h3>
+
+<p><a href="https://github.com/docker/libchan/blob/master/inmem_test.go">inmem_test.go</a>を参考に実装してみます。</p>
+
+<p>まずは<code>libchan.Pipe()</code>を使って、receiver/senderを取得します。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="nx">receiver</span><span class="p">,</span> <span class="nx">sender</span> <span class="o">:=</span> <span class="nx">libchan</span><span class="p">.</span><span class="nx">Pipe</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>送信側はgorutine内でsender経由でメッセージを送信して、送信側から受信したメッセージに対してさらに返信します。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">recv</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">sender</span><span class="p">.</span><span class="nx">Send</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">libchan</span><span class="p">.</span><span class="nx">Message</span><span class="p">{</span>
+</span><span class="line">    <span class="nx">Data</span><span class="p">:</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&quot;Hello&quot;</span><span class="p">),</span>
+</span><span class="line">    <span class="nx">Ret</span><span class="p">:</span> <span class="nx">libchan</span><span class="p">.</span><span class="nx">RetPipe</span><span class="p">,</span>
+</span><span class="line">  <span class="p">)</span>
+</span><span class="line">  <span class="nx">msg</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">recv</span><span class="p">.</span><span class="nx">Receive</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c1">// mode=0で自動Close()</span>
+</span><span class="line">  <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">Data</span><span class="p">))</span> <span class="c1">// &quot;World&quot;</span>
+</span><span class="line"><span class="p">}()</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>受信側はreceiver経由でメッセージ受信して、それに対して返信します。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="nx">msg</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">receiver</span><span class="p">.</span><span class="nx">Receive</span><span class="p">(</span><span class="nx">libchan</span><span class="p">.</span><span class="nx">Ret</span><span class="p">)</span>
+</span><span class="line"><span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">Data</span><span class="p">))</span> <span class="c1">// &quot;Hello&quot;</span>
+</span><span class="line"><span class="c1">// msg.Retが返信用のchannelとなっている</span>
+</span><span class="line"><span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">Ret</span><span class="p">.</span><span class="nx">Send</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">libchan</span><span class="p">.</span><span class="nx">Message</span><span class="p">{</span><span class="nx">Data</span><span class="p">:</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&quot;World&quot;</span><span class="p">)})</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="unixhttp2">unix/http2の実装</h3>
+
+<p>それぞれにテストコードがあるので覗いてみるとだいたいのイメージがつかめます。</p>
+
+<ul>
+  <li><a href="https://github.com/docker/libchan/blob/master/unix/unix_test.go">unix/unix_test.go</a></li>
+  <li><a href="https://github.com/docker/libchan/blob/master/http2/listener_test.go">http2/listener_test.go</a></li>
+</ul>
+
+<h2 id="section-2">まとめ</h2>
+
+<p>libchanにおけるchannelとgoのchannel、名前は同じでも別モノです。
+今のところこれといった用途が思いつかないですが、libswarmから派生したものとすると多様なプロトコルの差異を吸収するためのアダプター実装を手助けしてくれるレイヤーと考えるのがよさそうです。</p>
+
+<p>というか、DockerConでちょくちょく言及されていた「マイクロサービス」という概念のほうが興味あります。</p>
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[Dockerを使って任意のrubyバージョンのrpmを作成する]]></title>
-    <link href="http://ReSTARTR.github.io/2014/05/11/build-rpm-on-docker-container/"/>
+    <link href="http://blog.restartr.com/2014/05/11/build-rpm-on-docker-container/"/>
     <updated>2014-05-11T00:00:00+09:00</updated>
-    <id>http://ReSTARTR.github.io/2014/05/11/build-rpm-on-docker-container</id>
+    <id>http://blog.restartr.com/2014/05/11/build-rpm-on-docker-container</id>
     <content type="html"><![CDATA[<p>CentOSを使ってて不便なのがruby2系のインストール。</p>
 
 <p>rbenvやruby-buildを使うかソースからインストールするのですが、この場合、環境を構築するたびにビルドすることになり時間もかかるし大変面倒です。</p>
@@ -275,390 +487,10 @@
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[技術系podcastまとめ]]></title>
-    <link href="http://ReSTARTR.github.io/2014/04/22/tech-podcast-list/"/>
-    <updated>2014-04-22T23:58:29+09:00</updated>
-    <id>http://ReSTARTR.github.io/2014/04/22/tech-podcast-list</id>
-    <content type="html"><![CDATA[<p>更新続いていると思われる技術系Podcastをまとめてみました.</p>
-
-<h3 id="rebuild-podcast">Rebuild Podcast</h3>
-
-<blockquote>
-Rebuild はソフトウェア開発、テクノロジー、ガジェットなどの話題を中心に、ゲストと話すギーク、デベロッパー向けのポッドキャスト番組です。
-</blockquote>
-
-<ul>
-  <li>Hosted by <a href="http://twitter.com/miyagawa">@miyagawa</a></li>
-  <li><a href="http://rebuild.fm/">http://rebuild.fm/</a></li>
-  <li><a href="http://feeds.rebuild.fm/rebuildfm">RSS</a></li>
-  <li><a href="https://itunes.apple.com/jp/podcast/rebuild/id603013428?mt=2">iTunes</a></li>
-</ul>
-
-<h3 id="mosaicfm">mosaic.fm</h3>
-
-<blockquote>
-次世代 Web Podcast Mozaic
-</blockquote>
-
-<ul>
-  <li>Hosted by <a href="https://twitter.com/jxck_">@Jxck_</a></li>
-  <li><a href="http://mozaic.fm/">http://mozaic.fm/</a></li>
-  <li><a href="http://feeds.feedburner.com/mozaicfm">RSS</a></li>
-</ul>
-
-<h3 id="section">だんごゆっけの平和な話</h3>
-
-<blockquote>
-仲良し三十路男二人。Web業界にいるプランナーとエンジニア。それぞれの日常を平和にまとめあげていきます
-</blockquote>
-
-<ul>
-  <li>Hosted by <a href="https://twitter.com/kamadango">@kamadango</a>, <a href="https://twitter.com/yusukebe">@yusukebe</a></li>
-  <li><a href="http://dandy.fm/">http://dandy.fm/</a></li>
-  <li><a href="http://feed.dandy.fm/dandyfm">RSS</a></li>
-  <li><a href="https://itunes.apple.com/jp/podcast/id806076544?mt=2">iTunes</a></li>
-</ul>
-
-<h3 id="section-1">職質テックトーク</h3>
-
-<ul>
-  <li>Hosted by <a href="https://twitter.com/moznion/">@moznion</a></li>
-  <li><a href="http://shock-sheets-tech.tumblr.com/">http://shock-sheets-tech.tumblr.com/</a></li>
-  <li><a href="http://shock-sheets-tech.tumblr.com/rss">RSS</a></li>
-</ul>
-
-<h3 id="backspacefm">backspace.fm</h3>
-
-<blockquote>
-一週間分のテック・ガジェットニュースを配信するポッドキャスト
-</blockquote>
-
-<ul>
-  <li><a href="http://backspace.fm/">http://backspace.fm/</a></li>
-  <li><a href="http://feeds.backspace.fm/backspacefm">RSS</a></li>
-  <li><a href="https://itunes.apple.com/jp/podcast/backspace.fm/id830709730">iTunes</a></li>
-  <li>Hosted by <a href="https://twitter.com/drikin">@drikin</a></li>
-</ul>
-
-<h3 id="code-lunch">CODE LUNCH</h3>
-
-<ul>
-  <li><a href="http://codelunch.fm/">http://codelunch.fm/</a></li>
-  <li><a href="http://codelunch.fm/rss.xml">RSS</a></li>
-  <li>Hosted by <a href="https://twitter.com/h13i32maru">@h13i32maru</a>, <a href="https://twitter.com/iizukak">@iizukak</a></li>
-</ul>
-
-<h3 id="podcast">ジュンク堂書店Podcast</h3>
-
-<blockquote>
-ジュンク堂書店の店頭で行われているトークセッションやイベントなどを配信するポッドキャスト（ベータ版）です。
-</blockquote>
-
-<ul>
-  <li><a href="http://junkudo.seesaa.net/index20.rdf">RSS</a></li>
-  <li><a href="https://itunes.apple.com/jp/podcast/junku-tang-shu-dianpodcast/id398125301">iTunes</a></li>
-</ul>
-
-<h2 id="section-2">海外</h2>
-
-<p>海外では<a href="http://5by5.tv/">5by5</a>がポータルっぽい。</p>
-
-<h3 id="ruby-on-rails-podcast">Ruby on Rails Podcast</h3>
-
-<ul>
-  <li><a href="http://5by5.tv/rubyonrails/147">http://5by5.tv/rubyonrails/147</a></li>
-  <li><a href="http://feeds.5by5.tv/rubyonrails">RSS</a></li>
-  <li><a href="https://itunes.apple.com/us/podcast/ruby-on-rails-podcast/id840890158?mt=2&amp;uo=8&amp;at=11laDR">iTunes</a></li>
-  <li>Hosted by <a href="http://twitter.com/barelyknown">@barelyknown</a></li>
-</ul>
-
-<h3 id="the-changelog">The Changelog</h3>
-
-<blockquote>
-The Changelog covers the intersection of software development and open source. Open source moves fast. Keep up!
-</blockquote>
-
-<ul>
-  <li><a href="http://5by5.tv/changelog/">http://5by5.tv/changelog/</a></li>
-  <li><a href="http://feeds.5by5.tv/changelog">RSS</a></li>
-  <li><a href="https://itunes.apple.com/us/podcast/the-changelog/id341623264?uo=8&amp;at=11laDR">iTunes</a></li>
-</ul>
-
-<h3 id="aws-podcast---listen-and-lean-about-aws">AWS Podcast - Listen and Lean About AWS</h3>
-
-<ul>
-  <li><a href="http://aws.amazon.com/jp/apac/awspodcast/">http://aws.amazon.com/jp/apac/awspodcast/</a></li>
-  <li><a href="http://d1i0y6b5oi739x.cloudfront.net/feed.xml">RSS</a></li>
-  <li><a href="http://itunes.apple.com/sg/podcast/aws-podcast/id526624928">iTunes</a></li>
-</ul>
-
-<h3 id="in-beta">In Beta</h3>
-
-<blockquote>
-In Beta is a talk show about tech culture, making open source software, and how mobile, social, and web apps are changing the world.
-</blockquote>
-
-<ul>
-  <li><a href="http://feeds.5by5.tv/inbeta">http://feeds.5by5.tv/inbeta</a></li>
-  <li><a href="http://feeds.5by5.tv/inbeta">RSS</a></li>
-</ul>
-
-<h3 id="floss">FLOSS</h3>
-
-<blockquote>
-We&#8217;re not talking dentistry here; FLOSS all about Free Libre Open Source Software.
-</blockquote>
-
-<ul>
-  <li><a href="http://twit.tv/floss">http://twit.tv/floss</a></li>
-  <li><a href="http://feeds.twit.tv/floss.xml">RSS</a></li>
-</ul>
-
-<h3 id="tuxradar">TuxRadar</h3>
-
-<blockquote>
-a new TuxRadar podcast all about Linux and free software will be posted here every three weeks for free download
-</blockquote>
-
-<ul>
-  <li><a href="http://www.tuxradar.com/podcast">http://www.tuxradar.com/podcast</a></li>
-  <li><a href="http://www.tuxradar.com/rss">RSS</a></li>
-</ul>
-
-<h3 id="the-news">The News</h3>
-
-<blockquote>
-A daily update on the latest in tech, Apple, gaming, web, and geek culture. It&#8217;s the only news that matters.
-</blockquote>
-
-<ul>
-  <li><a href="http://5by5.tv/news">http://5by5.tv/news</a></li>
-  <li><a href="http://feeds.5by5.tv/news">RSS</a></li>
-  <li><a href="https://itunes.apple.com/us/podcast/the-news/id602266713?mt=2&amp;uo=8&amp;at=11laDR">iTunes</a></li>
-  <li>Hosted by <a href="http://twitter.com/imyke">@imyke</a></li>
-</ul>
-
-<h3 id="sourcetrunk">Sourcetrunk</h3>
-
-<p>デスクトップアプリ紹介中心</p>
-
-<ul>
-  <li><a href="http://www.sourcetrunk.com/">http://www.sourcetrunk.com/</a></li>
-  <li><a href="http://feeds.feedburner.com/sourcetrunk">RSS</a></li>
-  <li><a href="http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewPodcast?id=193827468">iTunes</a></li>
-</ul>
-
-<h3 id="sofrware-engineering-radio">Sofrware Engineering Radio</h3>
-
-<ul>
-  <li><a href="http://www.se-radio.net/">http://www.se-radio.net/</a></li>
-  <li><a href="http://www.se-radio.net/">RSS</a></li>
-</ul>
-
-<h3 id="the-engineering-commons-podcast">The Engineering Commons Podcast</h3>
-
-<blockquote>
-Practical insights for the engineering crowd
-</blockquote>
-
-<ul>
-  <li><a href="http://theengineeringcommons.com/">http://theengineeringcommons.com/</a></li>
-  <li><a href="http://feeds.feedburner.com/TheEngineeringCommonsPodcast">RSS</a></li>
-</ul>
-
-<h2 id="section-3">参考リンク</h2>
-
-<ul>
-  <li><a href="http://weblog.bulknews.net/post/58665793844/tech-podcast-5">オススメ Tech Podcast 5選 - Tatsuhiko Miyagawa’s blog</a></li>
-  <li><a href="http://www.infoq.com/jp/news/2011/09/archcasts">ソフトウェアアーキテクチャ関連ポッドキャストの薦め</a></li>
-  <li><a href="http://overflow-memo.blogspot.jp/2014/01/podcast.html">_overflow: 技術系Podcast・動画ニュースメモ</a></li>
-  <li><a href="http://tunein.com/radio/Technology-g2738/">テクノロジーラジオ - Listen Online</a></li>
-  <li><a href="http://blackshadow.seesaa.net/article/144207109.html">幻影随想: 科学なポッドキャストをまとめて紹介してみる</a></li>
-  <li><a href="https://player.fm/featured/open-source">Best Open Source Podcasts (April, 2014)</a></li>
-</ul>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Goでmemcachedのstatsを取得する]]></title>
-    <link href="http://ReSTARTR.github.io/2014/04/21/golang-memcache-stats-client/"/>
-    <updated>2014-04-21T00:17:33+09:00</updated>
-    <id>http://ReSTARTR.github.io/2014/04/21/golang-memcache-stats-client</id>
-    <content type="html"><![CDATA[<p>YouTubeで使われている<a href="https://github.com/youtube/vitess">vitess</a>の実装をざっと見てたところ、memcachedクライアント実装が簡潔でわかりやすかったので出来る限りラフに実装を写経してみました。</p>
-
-<p>やってることはコマンドラインからアドレスを受け取って、memcachedのstatsを表示するだけです。</p>
-
-<h3 id="section">この写経で学べること</h3>
-
-<ul>
-  <li>flagパッケージを使ったコマンドライン引数の取得</li>
-  <li>netパッケージを使ったネットワーク接続</li>
-  <li>bufioパッケージを使ったストリームの読み出し</li>
-</ul>
-
-<h3 id="main">main()</h3>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
-</span><span class="line">	<span class="c1">// 引数読み出し</span>
-</span><span class="line">	<span class="nx">address</span> <span class="o">:=</span> <span class="nx">flag</span><span class="p">.</span><span class="nx">String</span><span class="p">(</span><span class="s">&quot;address&quot;</span><span class="p">,</span> <span class="s">&quot;localhost:11211&quot;</span><span class="p">,</span> <span class="s">&quot;server address&quot;</span><span class="p">)</span>
-</span><span class="line">	<span class="nx">flag</span><span class="p">.</span><span class="nx">Parse</span><span class="p">()</span>
-</span><span class="line">	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;server: %s\n&quot;</span><span class="p">,</span> <span class="o">*</span><span class="nx">address</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line">	<span class="c1">// サーバーに接続</span>
-</span><span class="line">	<span class="nx">conn</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">GetConn</span><span class="p">(</span><span class="o">*</span><span class="nx">address</span><span class="p">)</span>
-</span><span class="line">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-</span><span class="line">		<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%#v&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
-</span><span class="line">		<span class="nx">os</span><span class="p">.</span><span class="nx">Exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-</span><span class="line">	<span class="p">}</span>
-</span><span class="line">	<span class="k">defer</span> <span class="nx">conn</span><span class="p">.</span><span class="nx">conn</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
-</span><span class="line">
-</span><span class="line">	<span class="c1">// stats読み出し</span>
-</span><span class="line">	<span class="nx">result</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">conn</span><span class="p">.</span><span class="nx">Stats</span><span class="p">()</span>
-</span><span class="line">	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%s&quot;</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span>
-</span><span class="line"><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h3 id="section-1">実行結果</h3>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>go run ./memcache_stats.go --address<span class="o">=</span>localhost:11211
-</span><span class="line">server: localhost:11211
-</span><span class="line">STAT pid 23282
-</span><span class="line">STAT uptime 12425
-</span><span class="line">STAT <span class="nb">time </span>1398007875
-</span><span class="line">STAT version 1.4.4
-</span><span class="line">STAT pointer_size 64
-</span><span class="line">STAT rusage_user 0.335948
-</span><span class="line">STAT rusage_system 0.344947
-</span><span class="line">  :
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h3 id="section-2">実装全体</h3>
-
-<div><script src="https://gist.github.com/11116595.js?file=memcache_stats.go"></script>
-<noscript><pre><code>package main
-
-// 写経 from: https://github.com/youtube/vitess/blob/master/go/memcache/memcache.go
-//  * エラーハンドリングをできるかぎり省略して実装.
-//  * statsコマンドだけ実装
-
-import (
-	&quot;bufio&quot;
-	&quot;flag&quot;
-	&quot;fmt&quot;
-	&quot;net&quot;
-	&quot;os&quot;
-	&quot;strings&quot;
-)
-
-type Connection struct {
-	conn     net.Conn
-	buffered bufio.ReadWriter
-}
-
-func GetConn(address string) (conn *Connection, err error) {
-	nc, err := net.Dial(&quot;tcp&quot;, address)
-	if err != nil {
-		return nil, err
-	}
-	return &amp;Connection{
-		conn: nc,
-		buffered: bufio.ReadWriter{
-			Reader: bufio.NewReader(nc),
-			Writer: bufio.NewWriter(nc),
-		},
-	}, err
-}
-
-func (mc *Connection) writestring(s string) {
-	_, err := mc.buffered.WriteString(s)
-	if err != nil {
-		panic(err)
-	}
-}
-
-func (mc *Connection) readline() string {
-	mc.flush()
-	l, _, _ := mc.buffered.ReadLine()
-	return string(l)
-}
-
-func (mc *Connection) flush() {
-	err := mc.buffered.Flush()
-	if err != nil {
-		panic(err)
-	}
-}
-
-func (mc *Connection) Stats() (result []byte, err error) {
-	mc.writestring(&quot;stats\r\n&quot;)
-	mc.flush()
-	for {
-		l := mc.readline()
-		if strings.HasPrefix(l, &quot;END&quot;) {
-			break
-		}
-		if strings.Contains(l, &quot;ERROR&quot;) {
-			panic(&quot;ERROR&quot;)
-		}
-		result = append(result, l...)
-		result = append(result, &#39;\n&#39;)
-	}
-	return result, err
-}
-
-func main() {
-	address := flag.String(&quot;address&quot;, &quot;localhost:11211&quot;, &quot;server address&quot;)
-	flag.Parse()
-	fmt.Printf(&quot;server: %s\n&quot;, *address)
-
-	conn, err := GetConn(*address)
-	if err != nil {
-		fmt.Printf(&quot;%#v&quot;, err)
-		os.Exit(1)
-	}
-	defer conn.conn.Close()
-
-	result, _ := conn.Stats()
-	fmt.Printf(&quot;%s&quot;, result)
-}
-</code></pre></noscript></div>
-
-]]></content>
-  </entry>
-  
-  <entry>
     <title type="html"><![CDATA[vimで特定のファイルタイプだけタブインデントにする方法]]></title>
-    <link href="http://ReSTARTR.github.io/2014/04/20/vimrc-noexpandtab-in-golang/"/>
+    <link href="http://blog.restartr.com/2014/04/20/vimrc-noexpandtab-in-golang/"/>
     <updated>2014-04-20T16:15:21+09:00</updated>
-    <id>http://ReSTARTR.github.io/2014/04/20/vimrc-noexpandtab-in-golang</id>
+    <id>http://blog.restartr.com/2014/04/20/vimrc-noexpandtab-in-golang</id>
     <content type="html"><![CDATA[<p>rubyやpythonなど通常のプログラムを書く場合は、基本的にソフトタブ(2spaces)でインデントされるようにvimを設定しています。</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
@@ -698,93 +530,10 @@ func main() {
   </entry>
   
   <entry>
-    <title type="html"><![CDATA[VarnishのVCLを再起動なしに再読み込みする]]></title>
-    <link href="http://ReSTARTR.github.io/2014/04/06/reload-varnish-vcl/"/>
-    <updated>2014-04-06T15:38:08+09:00</updated>
-    <id>http://ReSTARTR.github.io/2014/04/06/reload-varnish-vcl</id>
-    <content type="html"><![CDATA[<p>/etc/varnish/default.vclを書き換えた時、</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">/etc/init.d/varnishd restart
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>ってやってたけど、reloadできることを今更知った。</p>
-
-<h3 id="vcllist-vcl">vcl.list: 現在の読み込んでるVCLの一覧を見る</h3>
-
-<p>CentOSのyumで入れたvarnishはデフォルトでこんなふうになってる</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>varnishadm -T localhost:6082 vcl.list
-</span><span class="line">active        579 boot
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h3 id="vclload-vcl">vcl.load: 新規にVCLをロードする</h3>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>varnishadm -T localhost:6082 vcl.load boot-<span class="sb">`</span>date+%Y%m%d%H%M%S<span class="sb">`</span> /etc/varnish/default.vcl
-</span><span class="line">VCL compiled.
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>この時点では利用可能な状態であって、まだ変更は反映されていない</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>varnishadm -T localhost:6082 vcl.list
-</span><span class="line">active        579 boot
-</span><span class="line">available       0 boot-20140406153127
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h3 id="vcluse-vcl">vcl.use: ロードしたVCLに切り替える</h3>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>varnishadm -T localhost:6082 vcl.use boot-20140406153127
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>何も表示されないけどちゃんと切り替わっている</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>varnishadm -T localhost:6082 vcl.list
-</span><span class="line">available     526 boot
-</span><span class="line">active         53 boot-20140406153127
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>ちなみに、真ん中の数値はactiveの場合は経過秒数で、availableになると数値が減っていく。
-でも、0になっても居座り続ける。この数値の変化のルールはよくわかってない。</p>
-
-<p>ということで不要な過去のvclは定期的に消さないとずっと残り続けてしまうので注意。</p>
-
-<h3 id="vcldiscard-vcl">vcl.discard: ロード済みvclの破棄</h3>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>varnishadm -T localhost:6082 vcl.discard boot
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>ここでも結果が表示されないけどちゃんと消えている。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>varnishadm -T localhost:6082 vcl.list
-</span><span class="line">available       11 boot-20140406155155
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>本当はinitスクリプト化すると便利なんだろうけど、手動でも良いかなと。</p>
-
-<ul>
-  <li><a href="http://blog.xcir.net/?p=124">Varnishで再起動無しで設定ファイルを適用する方法(reload) » cat /dev/random &gt; /dev/null &amp;</a></li>
-</ul>
-]]></content>
-  </entry>
-  
-  <entry>
     <title type="html"><![CDATA[WordpressからOctopressに移行]]></title>
-    <link href="http://ReSTARTR.github.io/2014/04/06/move-from-wordpress-to-octopress/"/>
+    <link href="http://blog.restartr.com/2014/04/06/move-from-wordpress-to-octopress/"/>
     <updated>2014-04-06T13:00:00+09:00</updated>
-    <id>http://ReSTARTR.github.io/2014/04/06/move-from-wordpress-to-octopress</id>
+    <id>http://blog.restartr.com/2014/04/06/move-from-wordpress-to-octopress</id>
     <content type="html"><![CDATA[<p>もともとさくらのレンサバ上でWordpressで構築していたブログを<a href="http://octopress.org/">Octopress</a>に移行してGithub Pagesでホスティングするように切り替え。
 最初は<a href="http://jekyllrb.com/">Jekyll</a>だけでやろうとしてたけど、ブロクとしての機能を見るとOctopressのほうが良さそうだったので途中で方針転換。</p>
 
@@ -855,9 +604,9 @@ func main() {
   
   <entry>
     <title type="html"><![CDATA[GoとPythonをZeroMQで繋ぐ]]></title>
-    <link href="http://ReSTARTR.github.io/2013/04/26/connect-go-and-python-with-zeromq/"/>
+    <link href="http://blog.restartr.com/2013/04/26/connect-go-and-python-with-zeromq/"/>
     <updated>2013-04-26T23:34:48+09:00</updated>
-    <id>http://ReSTARTR.github.io/2013/04/26/connect-go-and-python-with-zeromq</id>
+    <id>http://blog.restartr.com/2013/04/26/connect-go-and-python-with-zeromq</id>
     <content type="html"><![CDATA[<p>最近Rubyでプロジェクトオイラーを解きながらRubyに慣れようとしてるのですが、ちょっと飽きてきたので息抜きにGoを書いたりしています。</p>
 
 <p>ついでにZeroMQも試してみたかったので、GoとPythonをZeroMQで繋いでみました。</p>
@@ -966,9 +715,9 @@ func main() {
   
   <entry>
     <title type="html"><![CDATA[pythonのクロージャに変数を束縛する方法]]></title>
-    <link href="http://ReSTARTR.github.io/2013/04/17/bind-a-variable-to-closure-in-python/"/>
+    <link href="http://blog.restartr.com/2013/04/17/bind-a-variable-to-closure-in-python/"/>
     <updated>2013-04-17T22:19:14+09:00</updated>
-    <id>http://ReSTARTR.github.io/2013/04/17/bind-a-variable-to-closure-in-python</id>
+    <id>http://blog.restartr.com/2013/04/17/bind-a-variable-to-closure-in-python</id>
     <content type="html"><![CDATA[<p>ハマったので。</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
@@ -1132,9 +881,9 @@ func main() {
   
   <entry>
     <title type="html"><![CDATA[pythonのテストにpytestを使ってみた]]></title>
-    <link href="http://ReSTARTR.github.io/2013/04/05/my-first-pytest/"/>
+    <link href="http://blog.restartr.com/2013/04/05/my-first-pytest/"/>
     <updated>2013-04-05T21:00:24+09:00</updated>
-    <id>http://ReSTARTR.github.io/2013/04/05/my-first-pytest</id>
+    <id>http://blog.restartr.com/2013/04/05/my-first-pytest</id>
     <content type="html"><![CDATA[<p>pytestを使い始めました。</p>
 
 <ul>
@@ -1308,9 +1057,9 @@ pytestはかなり詳細に表示してくれるので、レポートの内容�
   
   <entry>
     <title type="html"><![CDATA[Kauli株式会社を退職しました]]></title>
-    <link href="http://ReSTARTR.github.io/2013/04/02/retirement201303/"/>
+    <link href="http://blog.restartr.com/2013/04/02/retirement201303/"/>
     <updated>2013-04-02T22:45:29+09:00</updated>
-    <id>http://ReSTARTR.github.io/2013/04/02/retirement201303</id>
+    <id>http://blog.restartr.com/2013/04/02/retirement201303</id>
     <content type="html"><![CDATA[<p><a href="http://www.flickr.com/photos/53244662@N04/8599680561/" title="Cleanup my keyboard by ReSTARTR_y, on Flickr"><img src="http://farm9.staticflickr.com/8106/8599680561_da30653690.jpg" width="500" height="333" alt="Cleanup my keyboard" /></a></p>
 
 <p><em>※2013/04/04 更新:会社名を公開しました</em></p>
@@ -1362,9 +1111,9 @@ pytestはかなり詳細に表示してくれるので、レポートの内容�
   
   <entry>
     <title type="html"><![CDATA[プログラマーにとっての『UMLっぽい何か』]]></title>
-    <link href="http://ReSTARTR.github.io/2013/04/01/uml-for-programmer/"/>
+    <link href="http://blog.restartr.com/2013/04/01/uml-for-programmer/"/>
     <updated>2013-04-01T20:12:54+09:00</updated>
-    <id>http://ReSTARTR.github.io/2013/04/01/uml-for-programmer</id>
+    <id>http://blog.restartr.com/2013/04/01/uml-for-programmer</id>
     <content type="html"><![CDATA[<p>わりと普遍的な話題だったので便乗です。</p>
 
 <p><a href="http://nekoya.github.com/blog/2013/04/01/useful-uml/"> UMLも捨てたもんじゃない - nekoya press </a></p>
@@ -1420,9 +1169,9 @@ pytestはかなり詳細に表示してくれるので、レポートの内容�
   
   <entry>
     <title type="html"><![CDATA[EventStatsをConnpassに対応させました]]></title>
-    <link href="http://ReSTARTR.github.io/2012/12/22/eventstats-support-connpass/"/>
+    <link href="http://blog.restartr.com/2012/12/22/eventstats-support-connpass/"/>
     <updated>2012-12-22T22:54:54+09:00</updated>
-    <id>http://ReSTARTR.github.io/2012/12/22/eventstats-support-connpass</id>
+    <id>http://blog.restartr.com/2012/12/22/eventstats-support-connpass</id>
     <content type="html"><![CDATA[<p>ふと思い立って、イベントの登録者数の推移が見れるEventStatsをConnpassにも対応させました。</p>
 
 <ul>
@@ -1442,9 +1191,9 @@ pytestはかなり詳細に表示してくれるので、レポートの内容�
   
   <entry>
     <title type="html"><![CDATA[はてなダイアリーからTumblrへデータ移行するpythonスクリプト]]></title>
-    <link href="http://ReSTARTR.github.io/2012/03/25/python-script-for-moving-from-movabletype-to-tumblr/"/>
+    <link href="http://blog.restartr.com/2012/03/25/python-script-for-moving-from-movabletype-to-tumblr/"/>
     <updated>2012-03-25T02:30:19+09:00</updated>
-    <id>http://ReSTARTR.github.io/2012/03/25/python-script-for-moving-from-movabletype-to-tumblr</id>
+    <id>http://blog.restartr.com/2012/03/25/python-script-for-moving-from-movabletype-to-tumblr</id>
     <content type="html"><![CDATA[<p>どうも。もうすぐ入社３ヶ月が経って試用期間が終わろうとしている状況な僕です。</p>
 
 <p>すっかり停滞気味のブログですが保守も兼ねて投稿を。</p>
@@ -1541,10 +1290,10 @@ pytestはかなり詳細に表示してくれるので、レポートの内容�
   
   <entry>
     <title type="html"><![CDATA[EventStatsはherokuとMongoLabとさくらVPSで動いている]]></title>
-    <link href="http://ReSTARTR.github.io/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps/"/>
+    <link href="http://blog.restartr.com/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps/"/>
     <updated>2011-12-28T21:27:52+09:00</updated>
-    <id>http://ReSTARTR.github.io/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps</id>
-    <content type="html"><![CDATA[<p>今月頭に<a href="http://ReSTARTR.github.io/2011/12/10/eventststs">ブログ書きました</a>が、EventStatsという勉強会の参加者の推移が見れるサービスを公開しました。</p>
+    <id>http://blog.restartr.com/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps</id>
+    <content type="html"><![CDATA[<p>今月頭に<a href="http://blog.restartr.com/2011/12/10/eventststs">ブログ書きました</a>が、EventStatsという勉強会の参加者の推移が見れるサービスを公開しました。</p>
 
 <ul>
   <li><a href="http://eventstats.restartr.com">EventStats - イベントの統計情報が見れます</a></li>
@@ -1764,9 +1513,9 @@ atndとの違い
   
   <entry>
     <title type="html"><![CDATA[イベントの参加人数の遷移が見れるサービス『EventStats』を作りました。 #atnd #zusaar #partake]]></title>
-    <link href="http://ReSTARTR.github.io/2011/12/10/eventstats/"/>
+    <link href="http://blog.restartr.com/2011/12/10/eventstats/"/>
     <updated>2011-12-10T18:58:51+09:00</updated>
-    <id>http://ReSTARTR.github.io/2011/12/10/eventstats</id>
+    <id>http://blog.restartr.com/2011/12/10/eventstats</id>
     <content type="html"><![CDATA[<h3>イベント管理サービスについて</h3>
 <p>勉強会などでよく利用されるのが、イベント管理サービス。
 
@@ -1812,9 +1561,9 @@ ATNDやZusaar,Partakeなど、様々なサービスがあり、現在も新し�
   
   <entry>
     <title type="html"><![CDATA[（もうすぐ）退職します。]]></title>
-    <link href="http://ReSTARTR.github.io/2011/12/02/dropped-out/"/>
+    <link href="http://blog.restartr.com/2011/12/02/dropped-out/"/>
     <updated>2011-12-02T21:27:57+09:00</updated>
-    <id>http://ReSTARTR.github.io/2011/12/02/dropped-out</id>
+    <id>http://blog.restartr.com/2011/12/02/dropped-out</id>
     <content type="html"><![CDATA[<p>私事ですが現職の会社を退職することになり、本日無事に最終出社を終えてきました。</p>
 
 <p>退職日は年明けですが、これから有給消化期間に入ります。</p>
@@ -1867,9 +1616,9 @@ ATNDやZusaar,Partakeなど、様々なサービスがあり、現在も新し�
   
   <entry>
     <title type="html"><![CDATA[第二回 #Playframework 勉強会 in Tokyo #play_ja に行ってきた]]></title>
-    <link href="http://ReSTARTR.github.io/2011/10/10/play-framework-study-in-tokyo/"/>
+    <link href="http://blog.restartr.com/2011/10/10/play-framework-study-in-tokyo/"/>
     <updated>2011-10-10T15:59:13+09:00</updated>
-    <id>http://ReSTARTR.github.io/2011/10/10/play-framework-study-in-tokyo</id>
+    <id>http://blog.restartr.com/2011/10/10/play-framework-study-in-tokyo</id>
     <content type="html"><![CDATA[<ul>
   <li><a href="http://atnd.org/events/19107">第二回 #Playframework 勉強会 in Tokyo #play_ja</a></li>
 </ul>
@@ -1920,9 +1669,9 @@ ATNDやZusaar,Partakeなど、様々なサービスがあり、現在も新し�
   
   <entry>
     <title type="html"><![CDATA[Scalaで設定ファイルを使いたい時どうしたらいいの？]]></title>
-    <link href="http://ReSTARTR.github.io/2011/08/30/config-libraries-in-scala/"/>
+    <link href="http://blog.restartr.com/2011/08/30/config-libraries-in-scala/"/>
     <updated>2011-08-30T00:02:15+09:00</updated>
-    <id>http://ReSTARTR.github.io/2011/08/30/config-libraries-in-scala</id>
+    <id>http://blog.restartr.com/2011/08/30/config-libraries-in-scala</id>
     <content type="html"><![CDATA[<p><em style="color:red">2011.08.31 kmizushimaさんから頂いた<a href="http://blog.restartr.com/2011/08/30/config-libraries-in-scala/?preview=true&amp;preview_id=1049&amp;preview_nonce=ad0bbeeef6#comment-108">コメント</a>を元に、下記の記述を修正＆追記しました。</em></p>
 
 <ul>
@@ -2142,9 +1891,9 @@ ATNDやZusaar,Partakeなど、様々なサービスがあり、現在も新し�
   
   <entry>
     <title type="html"><![CDATA[ScalaのORMapperのSquerylを試してみてハマった３つのこと]]></title>
-    <link href="http://ReSTARTR.github.io/2011/08/16/3-things-that-i-was-in-trouble-using-squeryl/"/>
+    <link href="http://blog.restartr.com/2011/08/16/3-things-that-i-was-in-trouble-using-squeryl/"/>
     <updated>2011-08-16T08:00:15+09:00</updated>
-    <id>http://ReSTARTR.github.io/2011/08/16/3-things-that-i-was-in-trouble-using-squeryl</id>
+    <id>http://blog.restartr.com/2011/08/16/3-things-that-i-was-in-trouble-using-squeryl</id>
     <content type="html"><![CDATA[<p>ScalaのORMとしてSquerylってのがあります。</p>
 
 <ul>
@@ -2298,9 +2047,9 @@ ATNDやZusaar,Partakeなど、様々なサービスがあり、現在も新し�
   
   <entry>
     <title type="html"><![CDATA[Varnish勉強会 #tokyovcl に行ってきた]]></title>
-    <link href="http://ReSTARTR.github.io/2011/06/21/go-to-varnish-study-tokyovc/"/>
+    <link href="http://blog.restartr.com/2011/06/21/go-to-varnish-study-tokyovc/"/>
     <updated>2011-06-21T23:56:40+09:00</updated>
-    <id>http://ReSTARTR.github.io/2011/06/21/go-to-varnish-study-tokyovc</id>
+    <id>http://blog.restartr.com/2011/06/21/go-to-varnish-study-tokyovc</id>
     <content type="html"><![CDATA[<p><a href="http://www.flickr.com/photos/53244662@N04/5856931526/" title="IMAG0053 by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5029/5856931526_1119c53a87.jpg" width="500" height="299" alt="IMAG0053" /></a></p>
 
 <p>6/18(土)に開催された<a href="http://atnd.org/events/16681">Varnish勉強会 Tokyo.vcl : ATND</a>に行ってきました。
@@ -2518,6 +2267,376 @@ ATNDやZusaar,Partakeなど、様々なサービスがあり、現在も新し�
     </ul>
   </li>
 </ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[東京から福島へ一泊二日でボランティアに行ってきた]]></title>
+    <link href="http://blog.restartr.com/2011/06/19/volunteer-at-shinchi-fukushima-pref/"/>
+    <updated>2011-06-19T12:03:20+09:00</updated>
+    <id>http://blog.restartr.com/2011/06/19/volunteer-at-shinchi-fukushima-pref</id>
+    <content type="html"><![CDATA[<p><a href="http://www.flickr.com/photos/53244662@N04/5847245836/" title="IMG_5100 by ReSTARTR_y, on Flickr"><img src="http://farm4.static.flickr.com/3538/5847245836_ca37b883fe_z.jpg" width="640" height="427" alt="IMG_5100" /></a></p>
+
+<p>6/11,12の土日を利用して、福島県相馬郡新地町にボランティア活動に行ってきました。</p>
+
+<h2 id="section">活動の経緯</h2>
+
+<p>東日本大震災がおきてから、被災地に対して何かできることを、ということでこれまで募金と献血をやってきました。が、それだけでなく何かできることはないかと常々考えていました。
+仕事柄、ITを利用した貢献も考えたのですが、イマイチ現地の状況がわからない。情報を得ようとしても地域やソースによって様々かつ時間とともに大きく変化しているからです。
+また、社会人とはいうものの土日の時間やお金については結構余裕があるので、じゃあ現地でボランティアをすることで現状を知ることができるのではないか、と考えたのが今回の経緯です。
+その後、被災地の状況に詳しい元同僚に相談し、その子の母親と友人2名を加えた5名で活動をしてきました。</p>
+
+<h3 id="section-1">活動内容</h3>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5846683717/" title="IMG_5090 by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5109/5846683717_604f687639_m.jpg" width="240" height="160" alt="IMG_5090" /></a></p>
+
+<p>津波の被害をうけた民家の瓦礫撤去作業を行いました。
+とはいっても大きな物はあらかた自衛隊が撤去しているので、我々の役目は倒れた木の撤去や、瓦・ガラス等の破片の収集、側溝の泥かきなど、担当した民家の敷地内を綺麗にすること。
+計10名程度で、1日かけて行いましたが、天候が曇りだったこともあって順調に作業をすることができました。</p>
+
+<h2 id="section-2">現地に行ってみて</h2>
+
+<h4 id="section-3">ボランティアセンターすごい</h4>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5822614663/" title="現地到着。まだ受付前。 by ReSTARTR_y, on Flickr"><img src="http://farm3.static.flickr.com/2673/5822614663_ec084f0dfd_m.jpg" width="240" height="144" alt="現地到着。まだ受付前。" /></a></p>
+
+<p>被災地のボランティアセンターもずいぶん落ち着いてきているようです。
+活動に必要な道具（スコップやマスク）だけでなく、水や活動後のアイスコーヒーなどの提供もして頂きました。
+ボランティア活動自体初めてだったのですが、たとえ不慣れであっても、コーディネーターの方々や一緒に活動する方々の力を借りながら活動することは可能であると実感しました。
+現地でボランティアをしたいと考えているけど踏み出せなかった方は、真夏になる前に一度足を運んでみてはいかがでしょう。</p>
+
+<h4 id="section-4">電波悪い</h4>
+<p>SoftBankの黒SIMをDesireSに入れて利用しているのですが、ほぼ繋がりません。
+全然つながらない訳ではないですが、かなり不安定でたまにつながる程度。picplzで写真アップロードしようとしても100%失敗します。
+今回の震災でインターネットが活躍したという話は聞きますが、このような電波状況のままでは欲しい情報も手に入らないでしょう。震災後にこうなったのかもともと電波の弱い地域だったのかわかりませんが、これではインターネットの存在も無意味。</p>
+
+<p>利用した福島県伊達市（福島市の近く）の宿泊施設で、地震を体験したのですが、電波が皆無だったために震源や地震の規模などの情報が全く手に入りませんでした。</p>
+
+<p>これまで、インターネットでほしい情報をいつでもどこでもすぐに手に入れられると思っていただけに、手に入らない状況に出くわすとかなりの不安感を覚えます。
+こうなると、頼れるものはテレビやラジオ、町内放送やご近所ネットワークになってくるでしょう。
+もちろん有線でのインターネットもあるかもしれませんが、緊急時にわざわざPCを起動したりしないでしょう。</p>
+
+<p>そう考えると、インターネットの果たすべき役割はリアルタイムに必要な一次的情報ではなく、その後の情報配信とその整理に注力すべきだと実感しました。</p>
+
+<h4 id="section-5">活動内容と現地で聞いたこと</h4>
+
+<p>一日目は新地町でボランティアを行い、宿泊施設はりょうぜん里山がっこうを利用。
+二日目は里山がっこうの自然体験をさせてもらい、その後温泉街で足湯につかって帰宅。</p>
+
+<ul>
+  <li><a href="http://www.date-satoyama.com/">NPO法人りょうぜん里山がっこう</a></li>
+</ul>
+
+<p>里山がっこうでは、震災後の放射能の影響とその取組みについて色々お話を伺いました。友人のブログにその詳細が書かれていますので、そちらを参照してもらうほうが良いと思います。</p>
+
+<ul>
+  <li><a href="http://agreenqoostar.blog129.fc2.com/blog-entry-604.html">AGREEN　イナカとトカイの橋渡し　 伊達市りょうぜん里山がっこうの「除染」への取り組み</a></li>
+</ul>
+
+<p>1日目の活動レポートもあります。</p>
+
+<ul>
+  <li><a href="http://agreenqoostar.blog129.fc2.com/blog-entry-603.html">AGREEN　イナカとトカイの橋渡し　 新地町ボランティアレポート</a></li>
+</ul>
+
+<h2 id="section-6">ボランティア活動に必要な情報</h2>
+
+<h4 id="section-7">ボランティアバスツアー</h4>
+
+<p>被災地は基本的に交通が整備されていません。
+一人暮らしで車も所有していない自分としては、現地の交通手段がネックになります。
+幸い、「ボランティアバスツアー」というものがあったのでこれを利用することを考えました。</p>
+
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><a href="http://www.pref-f-svc.org/archives/1216">東日本大震災復興支援・新地町で活動する災害ボランティア募集</a></td>
+          <td>福島県災害ボランティアセンター&lt;/a&gt;</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ul>
+
+<p>これなら一人でも現地に向かうことも可能ですし、そこからはコーディネートしてもらえます。
+結局は、冒頭にも書いたとおり、田舎暮らしのマッチングの仕事の関係で被災地にも詳しい友人に相談した結果、彼女のご家族に福島駅から現地まで車をだして頂けることになり、東京ー福島間は夜行バスを利用して、友人4人とともに活動する結果となったのですが。</p>
+
+<h4 id="twitter">ボランティア情報のTwitterアカウント</h4>
+
+<p>定期的にボランディアバスツアーなどの情報は下記Twitterアカウントをフォローしておけば、チェックすることができます。(他にもあるかもしれませんが私はこちらでチェックしています。）</p>
+
+<ul>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><a href="http://twitter.com/tominvc">@tominvc</a></td>
+          <td>被災地支援都民ボランティア</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><a href="http://tiwtter.com/tokyovolunteer">@tokyovolunteer</a></td>
+          <td>東京ボランティア・市民活動センター</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><a href="http://twitter.com/Tasukeaijp">@Tasukeaijp</a></td>
+          <td>助けあいジャパン</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ul>
+
+<p>あとは、健康な体と必要不可欠な装備があれば十分貢献できると思います。</p>
+
+<p>現地で少しばかり写真を撮ってきたのでFrickrにあげておきました。</p>
+
+<object type="text/html" data="http://www.flickr.com/slideShow/index.gne?user_id=53244662@N04&amp;set_id=72157626993269710" width="500" height="500"> </object>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[DotCloudのMongoDBをScalaから使ってみる]]></title>
+    <link href="http://blog.restartr.com/2011/05/28/access-from-scala-to-mongodb-on-dotcloud/"/>
+    <updated>2011-05-28T20:00:57+09:00</updated>
+    <id>http://blog.restartr.com/2011/05/28/access-from-scala-to-mongodb-on-dotcloud</id>
+    <content type="html"><![CDATA[<p>DotCloudにDuoStackが<a href="http://gigaom.com/cloud/exclusive-paas-startups-unite-dotcloud-buys-duostack/">買収され</a>て、DotCloudでもMongoDBが使えるようになりましたし、node.jsも使えるしで、ますますDotCloudが魅力的なものになってきました。</p>
+
+<p>ただし、node.jsはサポートされても、WebSocketは正式サポートされていないと<a href="http://docs.dotcloud.com/components/nodejs/">公式マニュアル</a>にも書いてありますがWebSocketサポート済みのDuoStack買収によってどう流れるか気になるところです。</p>
+
+<p>さて今回は、前回作ったものをベースにScalaからMongoDBへアクセスするサンプルをDotCloudで動かすまでを書いておきます。（まぁ、Scalaのコードはオマケみたいなものですけど…）</p>
+
+<p>前回の記事はこちらです。</p>
+
+<ul>
+  <li><a href="http://blog.restartr.com/2011/05/09/sample-sbt-project-for-dotcloud/">ScalaをDotCloudにアップロードするためのsbtサンプル</a></li>
+</ul>
+
+<p>ちなみにDotCloudは下記バージョンにて動作しているみたいです（2011.05.28現在)</p>
+
+<ul>
+  <li>nginx 0.7.65</li>
+  <li>jetty 6.1</li>
+  <li>mongodb 1.8.1</li>
+</ul>
+
+<h3 id="section">作成したサンプルアプリ</h3>
+
+<p>事情により停止する場合があるかもしれませんがご了承を。</p>
+
+<ul>
+  <li><a href="http://samplemongo.ramee.dotcloud.com/">http://samplemongo.ramee.dotcloud.com/</a></li>
+</ul>
+
+<h3 id="dotcloudmongodb">DotCloudにMongoDBサーバーを準備する</h3>
+
+<p>DotCloudのMongoDBマニュアルはこちら</p>
+
+<ul>
+  <li><a href="http://docs.dotcloud.com/components/mongodb/">MongoDB ? DotCloud documentation</a></li>
+</ul>
+
+<p>上記マニュアルにしたがって作成すればMongoDBサーバーを準備できます。
+基本的には、追加したいサーバーを登録して、ユーザーを作成するだけです。</p>
+
+<p>簡単。</p>
+
+<p>今回は”example.mongo”という名前で作成する例を記してありますので、
+それぞれ自分の作成したいアプリ名に読み替えて下さい。</p>
+
+<h4 id="section-1">サーバーを作成</h4>
+
+<p>事前に”dotcloud create example”は実行してあるものとします。
+詳しくはこちらの<a href="http://docs.dotcloud.com/tutorials/firststeps/#id2">マニュアル</a>を見てください。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>dotcloud deploy -t mongo example.mongo
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">&gt; Created <span class="s2">&quot;example.mongo&quot;</span>.
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h4 id="dbidpass">DB情報を確認（ID/PASS）</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>dotcloud info example.mongo
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>deployコマンド実行してから実際に作成されるまで少し時間がかかります。
+すぐにinfoコマンドを実行すると下記エラーがでます。
+※正確に測ってませんが数十秒くらい？</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">&gt; Sat May 28 08:14:43 Error: couldn<span class="err">&#39;</span>t connect to server 127.0.0.1 shell/mongo.js:79
+</span><span class="line">&gt; exception: connect failed
+</span><span class="line">&gt; Connection to mongo.example.dotcloud.com closed.
+</span><span class="line">&gt; Abort.
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>作成完了していれば、下記情報が表示されますので、”mongodb_password: <strong>**</strong>“に記載されたパスワードをメモしておきます。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">cluster: wolverine
+</span><span class="line">config:
+</span><span class="line">    mongodb_password: ******
+</span><span class="line">created_at: 1306570413.6722209
+</span><span class="line">name: example.mongo
+</span><span class="line">namespace: example
+</span><span class="line">ports:
+</span><span class="line">-   name: ssh
+</span><span class="line">    url: ssh://mongodb@mongo.example.dotcloud.com:5906
+</span><span class="line">-   name: mongodb
+</span><span class="line">    url: mongodb://root:******@mongo.example.dotcloud.com:5907
+</span><span class="line">state: running
+</span><span class="line"><span class="nb">type</span>: mongodb
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h4 id="mongodb">MongoDBサーバーへログイン</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>dotcloud run example.mongo mongo
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>infoコマンドで表示されたパスワードを使って、”sampledb”というdbにアプリユーザーを追加します。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">&gt; use sampledb
+</span><span class="line">switched to db sampledb
+</span><span class="line">&gt; db.getSisterDB<span class="o">(</span><span class="s2">&quot;admin&quot;</span><span class="o">)</span>.auth<span class="o">(</span><span class="s2">&quot;root&quot;</span>, <span class="s2">&quot;&lt;infoコマンドで表示されるパスワード&gt;&quot;</span><span class="o">)</span>;
+</span><span class="line">1
+</span><span class="line">&gt; db.addUser<span class="o">(</span><span class="s2">&quot;APPUSER_NAME&quot;</span>, <span class="s2">&quot;APPPUSER_PASS&quot;</span><span class="o">)</span>;
+</span><span class="line"><span class="o">{</span>
+</span><span class="line">     <span class="s2">&quot;user&quot;</span> : <span class="s2">&quot;APPUSER_NAME&quot;</span>,
+</span><span class="line">     <span class="s2">&quot;readOnly&quot;</span> : <span class="nb">false</span>,
+</span><span class="line">     <span class="s2">&quot;pwd&quot;</span> : <span class="s2">&quot;xxxxxxxxxxxxxxxxxxxxxxxxxxxxx&quot;</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">&gt; <span class="nb">exit</span>
+</span><span class="line">bye
+</span><span class="line">Connection to mongo.example.dotcloud.com closed.
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>※とりあえず一旦ログアウトしてますが、別に必須じゃないです。</p>
+
+<h4 id="section-2">再度ログインしてテスト操作してみる</h4>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>dotcloud run example.mongo mongo
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>新規作成したユーザーでDB操作が可能か確認してみます。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="c"># mongo</span>
+</span><span class="line">Warning: Permanently added <span class="s1">&#39;[mongo.example.dotcloud.com]:5906,[174.129.17.131]:5906&#39;</span> <span class="o">(</span>RSA<span class="o">)</span> &gt; to the list of known hosts.
+</span><span class="line">MongoDB shell version: 1.8.1
+</span><span class="line">connecting to: <span class="nb">test</span>
+</span><span class="line">&gt; use sampledb;
+</span><span class="line">switched to db sampledb
+</span><span class="line">&gt; db.auth<span class="o">(</span><span class="s2">&quot;sampleuser&quot;</span>, <span class="s2">&quot;samplepass&quot;</span><span class="o">)</span>;
+</span><span class="line">1
+</span><span class="line">&gt; db.sampledb.save<span class="o">({</span>id:1,name:<span class="s2">&quot;foo&quot;</span><span class="o">})</span>;
+</span><span class="line">&gt; db.sampledb.find<span class="o">()</span>;
+</span><span class="line"><span class="o">{</span> <span class="s2">&quot;_id&quot;</span> : ObjectId<span class="o">(</span><span class="s2">&quot;4de0b033a1fd29eb0e1522fd&quot;</span><span class="o">)</span>, <span class="s2">&quot;id&quot;</span> : 1, <span class="s2">&quot;name&quot;</span> : <span class="s2">&quot;foo&quot;</span> <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>問題なさそうなので、あとはアプリを”dotcloud push”して動かすだけです。</p>
+
+<h3 id="scala">scalaからアクセスするサンプル</h3>
+
+<p>サービス名を「example.samplemongo”として作成する例です。</p>
+
+<p>requirementsはイカのとおり。</p>
+
+<ul>
+  <li>scala 2.9.0</li>
+  <li>sbt 0.7.7</li>
+  <li>jetty 7.3.1.v20110307</li>
+  <li>casbah 2.1.5.0</li>
+</ul>
+
+<p><code>sbt</code>
+で基本ディレクトリを作成したら、下記プロジェクト設定を{root}/project/build/MongoSampleProject.scala”として保存します。</p>
+
+<p>前回の設定クラスをコピーしてきたので、”sbt dot_create”と”sbt dot_push”も一応使えます。</p>
+
+<p>※”example.mongo”の名称は適宜読み替えでお願いします。
+##### MongodbSampleProject.scala</p>
+
+<script src="https://gist.github.com/996769.js?file=MongodbSampleProject.scala"></script>
+
+<p>配置できたら、</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">sbt reload update
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>でライブラリを読み込みます。</p>
+
+<p>あとは下記Servletの実装とweb.xmlを用意したらOK．</p>
+
+<h5 id="mongodbservletscala">MongodbServlet.scala</h5>
+
+<script src="https://gist.github.com/996769.js?file=MonbodbServlet.scala"></script>
+
+<h5 id="webxml">web.xml</h5>
+
+<script src="https://gist.github.com/996769.js?file=web.xml"></script>
+
+<p>できたら、”sbt dot_push”でdotcloudへアップロードされるはずです。</p>
+
+<p>最後に、”http:／／samplemongo.exapmle.dotcloud.com”にアクセスして、フォームからデータ登録ができれば成功です。</p>
+
+<p>RDBMSにくらべてデータ保存・取得までが圧倒的に簡単で、PaaSでもMongoDBはいい感じですね！</p>
 
 ]]></content>
   </entry>

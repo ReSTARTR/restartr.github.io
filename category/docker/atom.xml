@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: docker | I Will Survive]]></title>
-  <link href="http://ReSTARTR.github.io/category/docker/atom.xml" rel="self"/>
-  <link href="http://ReSTARTR.github.io/"/>
-  <updated>2014-06-14T18:33:03+09:00</updated>
-  <id>http://ReSTARTR.github.io/</id>
+  <link href="http://blog.restartr.com/category/docker/atom.xml" rel="self"/>
+  <link href="http://blog.restartr.com/"/>
+  <updated>2014-06-28T15:00:27+09:00</updated>
+  <id>http://blog.restartr.com/</id>
   <author>
     <name><![CDATA[ReSTARTR]]></name>
     <email><![CDATA[yoshida.masaki+restartr@gmail.com]]></email>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Dockerを使って任意のrubyバージョンのrpmを作成する]]></title>
-    <link href="http://ReSTARTR.github.io/2014/05/11/build-rpm-on-docker-container/"/>
+    <link href="http://blog.restartr.com/2014/05/11/build-rpm-on-docker-container/"/>
     <updated>2014-05-11T00:00:00+09:00</updated>
-    <id>http://ReSTARTR.github.io/2014/05/11/build-rpm-on-docker-container</id>
+    <id>http://blog.restartr.com/2014/05/11/build-rpm-on-docker-container</id>
     <content type="html"><![CDATA[<p>CentOSを使ってて不便なのがruby2系のインストール。</p>
 
 <p>rbenvやruby-buildを使うかソースからインストールするのですが、この場合、環境を構築するたびにビルドすることになり時間もかかるし大変面倒です。</p>

@@ -2,10 +2,10 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 
   <title><![CDATA[Category: golang | I Will Survive]]></title>
-  <link href="http://ReSTARTR.github.io/category/golang/atom.xml" rel="self"/>
-  <link href="http://ReSTARTR.github.io/"/>
-  <updated>2014-06-14T18:33:03+09:00</updated>
-  <id>http://ReSTARTR.github.io/</id>
+  <link href="http://blog.restartr.com/category/golang/atom.xml" rel="self"/>
+  <link href="http://blog.restartr.com/"/>
+  <updated>2014-06-28T15:00:27+09:00</updated>
+  <id>http://blog.restartr.com/</id>
   <author>
     <name><![CDATA[ReSTARTR]]></name>
     <email><![CDATA[yoshida.masaki+restartr@gmail.com]]></email>
@@ -14,158 +14,191 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Goでmemcachedのstatsを取得する]]></title>
-    <link href="http://ReSTARTR.github.io/2014/04/21/golang-memcache-stats-client/"/>
-    <updated>2014-04-21T00:17:33+09:00</updated>
-    <id>http://ReSTARTR.github.io/2014/04/21/golang-memcache-stats-client</id>
-    <content type="html"><![CDATA[<p>YouTubeで使われている<a href="https://github.com/youtube/vitess">vitess</a>の実装をざっと見てたところ、memcachedクライアント実装が簡潔でわかりやすかったので出来る限りラフに実装を写経してみました。</p>
+    <title type="html"><![CDATA[Doker謹製ライブラリのlibchanについて調べてみた]]></title>
+    <link href="http://blog.restartr.com/2014/06/28/about-docker-libchan/"/>
+    <updated>2014-06-28T14:44:23+09:00</updated>
+    <id>http://blog.restartr.com/2014/06/28/about-docker-libchan</id>
+    <content type="html"><![CDATA[<p>DockerCon2014で発表された<a href="https://github.com/docker/libchan">libchan</a>について調べたことをまとめてみます。</p>
 
-<p>やってることはコマンドラインからアドレスを受け取って、memcachedのstatsを表示するだけです。</p>
+<p>libchanは<a href="https://github.com/docker/libcontainer">libcontainer</a>や<a href="https://github.com/docker/libswarm">libswarm</a>と共に発表されました。
+libswarmはDockerを中心にしたエコシステムにおけるベンダーロックインを回避するためのソリューションであり、libcontainerは<a href="http://d.hatena.ne.jp/mainyaa/20140311/p1">Docker 0.9リリースドキュメント日本語訳: Execution driversとlibcontainer導入 - Happy New World</a>を参照するのがよいでしょう。</p>
 
-<h3 id="section">この写経で学べること</h3>
+<p>では、libchanとは何なのでしょうか。</p>
+
+<p>READMEには<code>like Go channels over the network</code>とあります。ネットワーク上のgo channel?よくかりませんね。。。</p>
+
+<p>README.mdとPROTOCOL.md、いくつかのテストコードをもとに簡単な実装をしてみた結果をまとめます。</p>
+
+<h3 id="libchan">libchanとはなにか</h3>
 
 <ul>
-  <li>flagパッケージを使ったコマンドライン引数の取得</li>
-  <li>netパッケージを使ったネットワーク接続</li>
-  <li>bufioパッケージを使ったストリームの読み出し</li>
+  <li><a href="https://github.com/docker/libchan/README.md">README</a></li>
 </ul>
 
-<h3 id="main">main()</h3>
+<p>libchanは超軽量なネットワークライブラリであり、多様な通信プロトコルの土台となるものです。
+同一プロセス内でも、同一ホストの別プロセス間でも、ネットワークを超えた別ホストの別プロセス間でも双方向通信可能にするための基礎的なAPIを提供しています。
+モダンなmicro-serviesなどRPCやRESTプロトコルにはフィットしない領域で、libchanを使うことが想定されています。</p>
 
-<p>```go
-func main() {
-	// 引数読み出し
-	address := flag.String(“address”, “localhost:11211”, “server address”)
-	flag.Parse()
-	fmt.Printf(“server: %s\n”, *address)</p>
+<p>利用例はいまのところlibswarmのみです。というかlibswarmから抽出された汎用的な通信ライブラリだと思います。
+APIが安定してくると他のフレームワーク等への導入などもあるかもしれません。</p>
 
-<pre><code>// サーバーに接続
-conn, err := GetConn(*address)
-if err != nil {
-	fmt.Printf("%#v", err)
-	os.Exit(1)
+<p>では、具体的にどうやって双方向通信を可能にしてるのでしょう。</p>
+
+<h3 id="libchan-1">libchanのプロトコル</h3>
+
+<ul>
+  <li><a href="https://github.com/docker/libchan/PROTOCOL.md">PROTOCOL</a></li>
+</ul>
+
+<p>libchanは以下のコンポーネントで構成されています。</p>
+
+<ul>
+  <li>channel</li>
+  <li>session</li>
+  <li>message</li>
+  <li>byte stream</li>
+  <li>nesting</li>
+</ul>
+
+<p>channelとは、並行プログラム間の双方向通信用オブジェクトです。goのchannelに似てるけどそのものではありません。Sender/Receiverがそれぞれ1方向ずつの経路を持つため、ソケットというよりパイプの概念に近いです。</p>
+
+<p>この２つの通信経路がsessionとなり、その間を流れるのがbyte stream。
+で、byte streamにはmessageが乗っかり、messageにはchannelを含めることができるという概念です。</p>
+
+<h3 id="libchan-2">libchanのメッセージ</h3>
+
+<p>メッセージはlibchan.Message。</p>
+
+<p><code>go
+type libchan.Message struct {
+  Data []byte // メッセージの内容
+  Fd *os.File
+  Ret Sender  // 受信者が返答するためのchannel
 }
-defer conn.conn.Close()
-
-// stats読み出し
-result, _ := conn.Stats()
-fmt.Printf("%s", result) } ```
-</code></pre>
-
-<h3 id="section-1">実行結果</h3>
-
-<p><code>bash
-$ go run ./memcache_stats.go --address=localhost:11211
-server: localhost:11211
-STAT pid 23282
-STAT uptime 12425
-STAT time 1398007875
-STAT version 1.4.4
-STAT pointer_size 64
-STAT rusage_user 0.335948
-STAT rusage_system 0.344947
-  :
 </code></p>
 
-<h3 id="section-2">実装全体</h3>
+<p>このメッセージ型を、各種通信方式に対応したSender/Receiver経由でやりとりすることになります。</p>
 
-<p><div><script src='https://gist.github.com/11116595.js?file=memcache_stats.go'></script>
-<noscript><pre><code>package main
+<h3 id="section">メッセージの構造化</h3>
 
-// 写経 from: https://github.com/youtube/vitess/blob/master/go/memcache/memcache.go
-//  * エラーハンドリングをできるかぎり省略して実装.
-//  * statsコマンドだけ実装
+<p>メッセージは以下のようにして生成します。</p>
 
-import (
-	&quot;bufio&quot;
-	&quot;flag&quot;
-	&quot;fmt&quot;
-	&quot;net&quot;
-	&quot;os&quot;
-	&quot;strings&quot;
-)
+<p><code>go
+message := libchan.Message{Data: []byte("Hello, libchan"), Ret: libchan.RetPipe}
+</code></p>
 
-type Connection struct {
-	conn     net.Conn
-	buffered bufio.ReadWriter
-}
+<p>で、ただのテキストではなく構造化されたデータも送れます。</p>
 
-func GetConn(address string) (conn *Connection, err error) {
-	nc, err := net.Dial(&quot;tcp&quot;, address)
-	if err != nil {
-		return nil, err
-	}
-	return &amp;Connection{
-		conn: nc,
-		buffered: bufio.ReadWriter{
-			Reader: bufio.NewReader(nc),
-			Writer: bufio.NewWriter(nc),
-		},
-	}, err
-}
+<p>```go
+import “github.com/docker/libchan/data”</p>
 
-func (mc *Connection) writestring(s string) {
-	_, err := mc.buffered.WriteString(s)
-	if err != nil {
-		panic(err)
-	}
-}
+<p>d := data.Empty().Set(“foo”, “bar”)
+d.Get(“foo”) // “bar”
+d.Pretty() // foo=bar
+message := libchan.Message{Data: d, Ret: libchan.RetPipe))
+```</p>
 
-func (mc *Connection) readline() string {
-	mc.flush()
-	l, _, _ := mc.buffered.ReadLine()
-	return string(l)
-}
+<p>ちなみに、各メソッド(Add,Set,Get,Del)はMessageのポインタをかえさないので、変数を上書きするかメソッドチェインにする必要があります。</p>
 
-func (mc *Connection) flush() {
-	err := mc.buffered.Flush()
-	if err != nil {
-		panic(err)
-	}
-}
+<h3 id="section-1">メッセージの送受信</h3>
 
-func (mc *Connection) Stats() (result []byte, err error) {
-	mc.writestring(&quot;stats\r\n&quot;)
-	mc.flush()
-	for {
-		l := mc.readline()
-		if strings.HasPrefix(l, &quot;END&quot;) {
-			break
-		}
-		if strings.Contains(l, &quot;ERROR&quot;) {
-			panic(&quot;ERROR&quot;)
-		}
-		result = append(result, l...)
-		result = append(result, &#39;\n&#39;)
-	}
-	return result, err
-}
+<p>作成したメッセージををSender経由で送ります。（ここでのSender/Receiverは擬似コードです）</p>
 
-func main() {
-	address := flag.String(&quot;address&quot;, &quot;localhost:11211&quot;, &quot;server address&quot;)
-	flag.Parse()
-	fmt.Printf(&quot;server: %s\n&quot;, *address)
+<p><code>go
+sender.Send(&amp;libchan.Message{Data: []byte(msg)})
+</code></p>
 
-	conn, err := GetConn(*address)
-	if err != nil {
-		fmt.Printf(&quot;%#v&quot;, err)
-		os.Exit(1)
-	}
-	defer conn.conn.Close()
+<p>で、Receiverが受信したメッセージは<code>data.Decode()</code>で<code>map[string][]string</code>に変換できます。</p>
 
-	result, _ := conn.Stats()
-	fmt.Printf(&quot;%s&quot;, result)
-}
-</code></pre></noscript></div>
-</p>
+<p><code>go
+message, _ := receiver.Receive(0)
+decoded, _ := data.Decode(string(message.Data))
+fmt.Printf("%$v\n", docoded) // map[string][]string{"foo":[]string{"bar"}}
+</code></p>
+
+<h3 id="senderreceiver">Sender/Receiver</h3>
+
+<p>実際にメッセージを送受信するのは、Send/Receiverメソッドを持つinterfaceを実装したものを使います。
+定義はだいたいこんなかんじになっています。</p>
+
+<p>```go
+type Sender interface {
+  Send(msg *Message) (Receiver, error)
+}</p>
+
+<p>func (s *Sender) Send(msg *libchan.Message) (libchan.Receiver, error)</p>
+
+<p>type Receiver interface {
+  Receiver(mode int) (*Message, error)
+}</p>
+
+<p>func (r <em>Receiver) Receive(mode int) (</em>libchan.Message, error)
+```</p>
+
+<p>主要な実装は以下</p>
+
+<ul>
+  <li><a href="https://github.com/docker/libchan/blob/master/nop.go">nop</a></li>
+  <li><a href="https://github.com/docker/libchan/blob/master/inmem.go">inmem</a></li>
+  <li><a href="https://github.com/docker/libchan/blob/master/unix">unix</a></li>
+  <li><a href="https://github.com/docker/libchan/blob/master/http2">http2</a></li>
+</ul>
+
+<h3 id="inmem-in-memory-go-channel">inmem (In-memory Go channel)</h3>
+
+<p><a href="https://github.com/docker/libchan/blob/master/inmem_test.go">inmem_test.go</a>を参考に実装してみます。</p>
+
+<p>まずは<code>libchan.Pipe()</code>を使って、receiver/senderを取得します。</p>
+
+<p><code>go
+receiver, sender := libchan.Pipe()
+</code></p>
+
+<p>送信側はgorutine内でsender経由でメッセージを送信して、送信側から受信したメッセージに対してさらに返信します。</p>
+
+<p><code>go
+go func() {
+  recv, _ := sender.Send(&amp;libchan.Message{
+    Data: []byte("Hello"),
+    Ret: libchan.RetPipe,
+  )
+  msg, _ := recv.Receive(0) // mode=0で自動Close()
+  fmt.Println(string(msg.Data)) // "World"
+}()
+</code></p>
+
+<p>受信側はreceiver経由でメッセージ受信して、それに対して返信します。</p>
+
+<p><code>go
+msg, err := receiver.Receive(libchan.Ret)
+fmt.Println(string(msg.Data)) // "Hello"
+// msg.Retが返信用のchannelとなっている
+_, err := msg.Ret.Send(&amp;libchan.Message{Data: []byte("World")})
+</code></p>
+
+<h3 id="unixhttp2">unix/http2の実装</h3>
+
+<p>それぞれにテストコードがあるので覗いてみるとだいたいのイメージがつかめます。</p>
+
+<ul>
+  <li><a href="https://github.com/docker/libchan/blob/master/unix/unix_test.go">unix/unix_test.go</a></li>
+  <li><a href="https://github.com/docker/libchan/blob/master/http2/listener_test.go">http2/listener_test.go</a></li>
+</ul>
+
+<h2 id="section-2">まとめ</h2>
+
+<p>libchanにおけるchannelとgoのchannel、名前は同じでも別モノです。
+今のところこれといった用途が思いつかないですが、libswarmから派生したものとすると多様なプロトコルの差異を吸収するためのアダプター実装を手助けしてくれるレイヤーと考えるのがよさそうです。</p>
+
+<p>というか、DockerConでちょくちょく言及されていた「マイクロサービス」という概念のほうが興味あります。</p>
 ]]></content>
   </entry>
   
   <entry>
     <title type="html"><![CDATA[GoとPythonをZeroMQで繋ぐ]]></title>
-    <link href="http://ReSTARTR.github.io/2013/04/26/connect-go-and-python-with-zeromq/"/>
+    <link href="http://blog.restartr.com/2013/04/26/connect-go-and-python-with-zeromq/"/>
     <updated>2013-04-26T23:34:48+09:00</updated>
-    <id>http://ReSTARTR.github.io/2013/04/26/connect-go-and-python-with-zeromq</id>
+    <id>http://blog.restartr.com/2013/04/26/connect-go-and-python-with-zeromq</id>
     <content type="html"><![CDATA[<p>最近Rubyでプロジェクトオイラーを解きながらRubyに慣れようとしてるのですが、ちょっと飽きてきたので息抜きにGoを書いたりしています。</p>
 
 <p>ついでにZeroMQも試してみたかったので、GoとPythonをZeroMQで繋いでみました。</p>

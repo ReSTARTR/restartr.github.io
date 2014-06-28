@@ -7,10 +7,12 @@
   <meta charset="utf-8">
   <title>I Will Survive</title>
   <meta name="author" content="ReSTARTR">
+  <link rel="author" href="https://plus.google.com/103216164658230535238" />
+  <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="dotcloudを必要最低限操作するためのactionをsbtに追加してみました。 sbtのアクション自体はじめてなので作法がよくわかってないので、間違っているかも知れませんが。 使い方 ※scalaファイルは最後に掲載しています。
-とりあえず下記を作成するサービス名に置き換えればOKです。 1 &hellip;">
+  <meta name="description" content="今回は、Desire Sのカメラ性能がどの程度なのか、iPhone3GSとデジカメを比較しながらみていきます。 iPhoneもDesire Sどちらもデフォルトのカメラアプリをデフォルトの設定で使用しました。
+あと、Degital Cameraは具体的なモデル名は言及しませんが2年くらい前の所謂” &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +21,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://ReSTARTR.github.io/page/12/">
+  <link rel="canonical" href="http://blog.restartr.com/page/12/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
    <link href="/stylesheets/data-table.css" media="screen, projection" rel="stylesheet" type="text/css" />
@@ -84,6 +86,7 @@
   </script>
 
 
+  <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
   <style>html{background: url("/images/background.png") no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;}</style>
 </head>
 
@@ -99,7 +102,7 @@
   
 <form action="https://www.google.com/search" method="get">
   <fieldset role="search">
-    <input type="hidden" name="q" value="site:ReSTARTR.github.io" />
+    <input type="hidden" name="q" value="site:blog.restartr.com" />
     <input class="search" type="text" name="q" results="0" placeholder="Search"/>
   </fieldset>
 </form>
@@ -120,7 +123,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/2011/05/09/sample-sbt-project-for-dotcloud/">ScalaをDotCloudにアップロードするためのsbtサンプル</a></h1>
+      <h1 class="entry-title"><a href="/2011/04/28/compare-iphone3gs-to-desire-s-%25e2%2580%2593camera/">Desire SをiPhone3GSと比較してみた ? カメラ編</a></h1>
     
     
       <p class="meta">
@@ -136,69 +139,176 @@
   
 
 
-<time datetime="2011-05-09T23:35:43+09:00" pubdate data-updated="true">2011-05-09 (Mon)</time>
+<time datetime="2011-04-28T09:00:42+09:00" pubdate data-updated="true">2011-04-28 (Thu)</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p><a href="http://dotcloud.com/">dotcloud</a>を必要最低限操作するためのactionをsbtに追加してみました。</p>
+  <div class="entry-content"><p>今回は、Desire Sのカメラ性能がどの程度なのか、iPhone3GSとデジカメを比較しながらみていきます。</p>
 
-<p>sbtのアクション自体はじめてなので作法がよくわかってないので、間違っているかも知れませんが。</p>
+<p>iPhoneもDesire Sどちらもデフォルトのカメラアプリをデフォルトの設定で使用しました。
+あと、Degital Cameraは具体的なモデル名は言及しませんが2年くらい前の所謂”普通のデジカメ”です。</p>
 
-<h3 id="section">使い方</h3>
+<h2 id="desire-s">Desire Sで撮影してみての感想</h2>
 
-<p>※scalaファイルは最後に掲載しています。
-とりあえず下記を作成するサービス名に置き換えればOKです。</p>
+<p>最近の携帯のカメラってこんなもんなんですかね。あまり携帯カメラ事情に詳しくないのもあって、正直想像以上に綺麗で驚きました。とくに順光の性能が良いです。Desire Sは多少青味が強くでますが、あとから少し補正する前提なら満足度が高いと思いました。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">  val <span class="nv">dotApplicationName</span> <span class="o">=</span> <span class="s2">&quot;APPNAME&quot;</span>
-</span><span class="line">  val <span class="nv">dotServiceName</span> <span class="o">=</span> dotApplicationName + <span class="s2">&quot;.SERVNAME&quot;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>ただ、夕暮れ以降になるととたんに脆くなり、フォーカスが迷いまくります。iPhone3GSの方が合焦速度は早いくらいです。かつ、合焦したはずが実際はピンぼけってことも。ISOはAUTO/100/200/400/800まであるのですが、日中〜明るめの屋内までがカバー範囲でしょうか。</p>
 
-<p>あとは、下記を順に実行すればOK(dot_prepareはdot_pushの前に必ず実行されるので省略可能)</p>
+<p>もちろん、ビンテージカメラ風に加工してくれるアプリを用いた楽しみ方(instagramやpicplzなど)もあると思います。が、私の場合、手軽に撮れるスナップ機として必要最低限の機能を求めており、基本性能を重要視していました。
+使ってみるとiPhone3GSではストレスフルだった起動速度が非常に満足のいくもので、起動?撮影?確認みたいなフローがストレスなく行えます。（あくまでiPhone3GSとの比較であり、最近のスマートフォンなら大体こんな感じなのかもしれません。)</p>
 
+<h2 id="desire-siphone3gs">Desire SとiPhone3GSとの比較撮影サンプル</h2>
+
+<p>Desire Sのフォーマットは5:3と4:3に切り替え可能ですが、今回は5:3のワイドで撮影しました。
+（※というか撮影後に切り替え可能なことに気づいた…orz)</p>
+
+<p>コメントはDesire S中心に書きました。</p>
+
+<h3 id="section">風景その１</h3>
+<p>太陽を背にした順光での比較です。</p>
+
+<h4 id="iphone-3gs">iPhone 3GS</h4>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5653782282/" title="001_IP by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5303/5653782282_b4d5cf3d97_z.jpg" width="500" height="375" alt="001_IP" /></a></p>
+
+<h4 id="desire-s-1">Desire S</h4>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5653778670/" title="001_DS by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5265/5653778670_5886531d9c_z.jpg" width="500" height="333" alt="001_DS" /></a></p>
+
+<h4 id="degital-camera">Degital Camera</h4>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5653775032/" title="001_DC by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5067/5653775032_76f7ac9abf_z.jpg" width="500" height="300" alt="001_DC" /></a></p>
+
+<h3 id="section-1">風景その２</h3>
+<p>左前方に太陽があります。</p>
+
+<h4 id="iphone-3gs-1">iPhone 3GS</h4>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5653211387/" title="002_IP by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5262/5653211387_0076831cc3_z.jpg" width="500" height="375" alt="002_IP" /></a></p>
+
+<h4 id="desire-s-2">Desire S</h4>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5653208715/" title="002_DS by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5187/5653208715_6d4e0d0523_z.jpg" width="500" height="333" alt="002_DS" /></a></p>
+
+<h4 id="degital-camera-1">Degital Camera</h4>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5653204723/" title="002_DC by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5305/5653204723_3c3e7052f2_z.jpg" width="500" height="300" alt="002_DC" /></a></p>
+
+<h3 id="section-2">逆光性能</h3>
+<p>フォーカスはクレーン本体にあわせています。
+Desire Sのカメラのレンズ前面をプラスチックが覆っているせいかフレアが目立ちます。あえて狙うこともできると思いますが。
+暗い部分もディティールも割と残っています。</p>
+
+<h4 id="iphone-3gs-2">iPhone 3GS</h4>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5653782540/" title="003_IP by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5226/5653782540_7f2971459f_z.jpg" width="500" height="375" alt="003_IP" /></a></p>
+
+<h4 id="desire-s-3">Desire S</h4>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5653778984/" title="003_DS by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5146/5653778984_62109ea1c3_z.jpg" width="500" height="333" alt="003_DS" /></a></p>
+
+<h4 id="degital-camera-2">Degital Camera</h4>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5653204925/" title="003_DC by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5062/5653204925_cd2962bae4_z.jpg" width="500" height="300" alt="003_DC" /></a></p>
+
+<h3 id="section-3">ダイナミックレンジ</h3>
+<p>明るい部分から暗い部分までちゃんとつぶれず残っています。</p>
+
+<h4 id="iphone-3gs-3">iPhone 3GS</h4>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5653782852/" title="004_IP by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5022/5653782852_0236fd9b22_z.jpg" width="500" height="375" alt="004_IP" /></a></p>
+
+<h4 id="desire-s-4">Desire S</h4>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5653209073/" title="004_DS by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5146/5653209073_9c4225cd50_z.jpg" width="500" height="333" alt="004_DS" /></a></p>
+
+<h4 id="degital-camera-3">Degital Camera</h4>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5653775946/" title="004_DC by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5188/5653775946_73fa06e8fd_z.jpg" width="500" height="300" alt="004_DC" /></a></p>
+
+<h3 id="section-4">夕日を逆光で撮る</h3>
+<p>これは私が割とよく好んで撮るシーンですが、ちゃんと暗い部分まで残っています。</p>
+
+<h4 id="iphone-3gs-4">iPhone 3GS</h4>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5653212703/" title="005_IP by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5066/5653212703_b5c493e234_z.jpg" width="500" height="375" alt="005_IP" /></a></p>
+
+<h4 id="desire-s-5">Desire S</h4>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5653209315/" title="005_DS by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5103/5653209315_4d578dc3f6_z.jpg" width="500" height="333" alt="005_DS" /></a></p>
+
+<h4 id="degital-camera-4">Degital Camera</h4>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5653776184/" title="005_DC by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5070/5653776184_cf12b0a47a_z.jpg" width="500" height="300" alt="005_DC" /></a></p>
+
+<h3 id="section-5">トワイライト</h3>
+<p>このあたりの時間からDesire Sの挙動が怪しくなります。とくに暗所にノイズが目立つようになりました。</p>
+
+<h4 id="iphone-3gs-5">iPhone 3GS</h4>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5653212949/" title="006_IP by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5308/5653212949_bcd0001834_z.jpg" width="500" height="375" alt="006_IP" /></a></p>
+
+<h4 id="desire-s-6">Desire S</h4>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5653209585/" title="006_DS by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5068/5653209585_fafbf35f56_z.jpg" width="500" height="333" alt="006_DS" /></a></p>
+
+<h4 id="degital-camera-5">Degital Camera</h4>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5653776478/" title="006_DC by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5267/5653776478_d209130e42_z.jpg" width="500" height="300" alt="006_DC" /></a></p>
+
+<h3 id="section-6">ライトアップされた建造物</h3>
+<p>Desire Sの写真、フォーカスあってません…</p>
+
+<h4 id="iphone-3gs-6">iPhone 3GS</h4>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5653213723/" title="007_IP by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5223/5653213723_355085e054_z.jpg" width="375" height="500" alt="007_IP" /></a></p>
+
+<h4 id="desire-s-7">Desire S</h4>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5653210185/" title="007_DS by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5029/5653210185_1862065604_z.jpg" width="333" height="500" alt="007_DS" /></a></p>
+
+<h4 id="degital-camera-6">Degital Camera</h4>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5653206365/" title="007_DC by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5223/5653206365_7aed7efdd2_z.jpg" width="300" height="500" alt="007_DC" /></a></p>
+
+<h3 id="section-7">街灯のある暗がり</h3>
+<p>こちらも、Desire Sの写真はフォーカスあってないです。</p>
+
+<h4 id="iphone-3gs-7">iPhone 3GS</h4>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5653214051/" title="008_IP by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5061/5653214051_ec8f359063_z.jpg" width="500" height="375" alt="008_IP" /></a></p>
+
+<h4 id="desire-s-8">Desire S</h4>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5653780952/" title="008_DS by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5061/5653780952_74bb8d6c3e_z.jpg" width="500" height="333" alt="008_DS" /></a></p>
+
+<h4 id="degital-camera-7">Degital Camera</h4>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5653777348/" title="008_DC by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5263/5653777348_a4328aa334_z.jpg" width="500" height="300" alt="008_DC" /></a></p>
+
+<h3 id="section-8">夜の寺院</h3>
+<p>iPhone3GSよりはDesire Sが色味など幾分かマシ。</p>
+
+<h4 id="iphone-3gs-8">iPhone 3GS</h4>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5653213413/" title="011_IP by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5108/5653213413_7d06759434_z.jpg" width="500" height="375" alt="011_IP" /></a></p>
+
+<h4 id="desire-s-9">Desire S</h4>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5653209905/" title="011_DS by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5110/5653209905_010d44e046_z.jpg" width="500" height="333" alt="011_DS" /></a></p>
+
+<h4 id="degital-camera-8">Degital Camera</h4>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5653207079/" title="011_DC by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5270/5653207079_20d043dc28_z.jpg" width="500" height="300" alt="011_DC" /></a></p>
+
+<h3 id="section-9">街の夜景</h3>
+<p>ここまで暗いと、手前の暗い部分にノイズがのりまくります。</p>
+
+<h4 id="iphone-3gs-9">iPhone 3GS</h4>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5653214545/" title="009_IP by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5265/5653214545_67f3c03688_z.jpg" width="500" height="375" alt="009_IP" /></a></p>
+
+<h4 id="desire-s-10">Desire S</h4>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5653781294/" title="009_DS by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5270/5653781294_42844e1e51_z.jpg" width="500" height="333" alt="009_DS" /></a></p>
+
+<h4 id="degital-camera-9">Degital Camera</h4>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5653777944/" title="009_DC by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5023/5653777944_dc9478b928_z.jpg" width="500" height="300" alt="009_DC" /></a></p>
+
+<h3 id="section-10">ほぼ暗闇の河川沿い</h3>
+<p>肉眼だと”Degital Camera”の写真くらいの明るさなのですが、Desire SもiPhone3GSも街灯以外ほぼまっ暗。ここまでくると携帯カメラには不利すぎるシチュエーションですかね。</p>
+
+<h4 id="iphone-3gs-10">iPhone 3GS</h4>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5653214277/" title="010_IP by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5306/5653214277_9cd4145e14_z.jpg" width="500" height="375" alt="010_IP" /></a></p>
+
+<h4 id="desire-s-11">Desire S</h4>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5653781498/" title="010_DS by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5143/5653781498_4ededbb142_z.jpg" width="500" height="333" alt="010_DS" /></a></p>
+
+<h4 id="degital-camera-10">Degital Camera</h4>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5653207725/" title="010_DC by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5187/5653207725_8f2e979f83_z.jpg" width="500" height="300" alt="010_DC" /></a></p>
+
+<h2 id="section-11">参考リンク</h2>
 <ul>
-  <li>“sbt dot_create” : サービスの作成</li>
-  <li>“sbt dot_prepare” : リリース用ディレクトリ作成とwarファイルのコピー</li>
-  <li>“sbt dot_push” : dotcloudへのwarファイルpush</li>
+  <li><a href="http://pocketnow.com/android/htc-desire-s-review">HTC Desire S Review</a>(簡単なレビューとカメラ・ビデオのサンプルがあります。)</li>
 </ul>
 
-<h3 id="dotcloud">dotcloud用に注意すべきこと</h3>
+<p>Desire Sのインプレは多分これで終了です。</p>
 
-<p>“sbt package”を使用すると、”＜projectName＞-＜scala_ver＞-＜app_ver＞.war”の形式でwarファイルが作成されます。
-が、dotcloudのドキュメントにはこう書いてあるので、”root.war”で作成するのが望ましいです。</p>
-
-<blockquote>
-The java service will make your application available at http://frontend.myapp.dotcloud.com/ if your archive is named root.war or http://frontend.myapp.dotcloud.com/webapp/ if your archive is named webapp.war (../foobar/ if the archive was named foobar.war and so on). So, you can effectively serve multiple web applications with the same java service.
-
-</blockquote>
-<p><a href="http://docs.dotcloud.com/components/java/">Java — DotCloud documentation</a></p>
-
-<p>さらに、”dotcloud push”はwarファイルを含むディレクトリを指定することになり、それ以下がすべて同期されてしまいます。デフォルトだと、”./target/scala_2.8.1/”以下のすべてが。</p>
-
-<p>なので、warのみ格納する”release”ディレクトリを作り、 そこに”root.war”としてひとつだけ存在させておきました。
-順番に書くと、</p>
-
-<ul>
-  <li>sbt packageでtarget/scala_2.8.1/＜projectName＞-＜scala_ver＞-＜app_ver＞.warを生成</li>
-  <li>そのwarファイルをtarget/release/root.warにコピー</li>
-  <li>“dotcloud push ＜dotcloud_appname＞ target/release/” でwarのみアップロード</li>
-</ul>
-
-<p>という方法で対応しました。</p>
-
-<p>以下、サンプルのプロジェクト設定です。</p>
-
-<script src="https://gist.github.com/962534.js?file=RameeProject.scala"></script>
-
-<h3 id="section-1">参考リンク</h3>
-<ul>
-  <li><a href="http://docs.dotcloud.com/cli/">DotCloud command line — DotCloud documentation</a></li>
-  <li><a href="http://code.google.com/p/simple-build-tool/wiki/Process">Process - simple-build-tool - A build tool for Scala - Google Project Hosting</a></li>
-</ul>
+<p>今後はiOSと比較しながらandroid端末の良さについていろいろ考えてみようと思います。</p>
 
 </div>
   
@@ -212,7 +322,7 @@ The java service will make your application available at http://frontend.myapp.d
       
   <header>
     
-      <h1 class="entry-title"><a href="/2011/05/01/how-to-send-and-receive-softbank-mms-on-sim-free-android/">SIMフリーのandroid端末でSoftBankのMMSを受信する方法</a></h1>
+      <h1 class="entry-title"><a href="/2011/04/27/compare-desire-s-andiphone-3gs-f/">Desire SをiPhone3GSと比較してみた - 外観編</a></h1>
     
     
       <p class="meta">
@@ -228,117 +338,193 @@ The java service will make your application available at http://frontend.myapp.d
   
 
 
-<time datetime="2011-05-01T22:18:15+09:00" pubdate data-updated="true">2011-05-01 (Sun)</time>
+<time datetime="2011-04-27T09:00:30+09:00" pubdate data-updated="true">2011-04-27 (Wed)</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>Desire SでS!メールを受信しようと、apnの設定をしてみたのですが、全く送受信が成功しませんでした。
-いろいろ調査していたところ、SoftBankメールのアプリのバージョンが原因だと判明しました。
-古いバージョンをインストールすれば問題ないようです。</p>
+  <div class="entry-content"><p>先日購入したばかりのHTC Desire S。
+今回は基本スペックの確認と、今まで現役使用していたiPhone3GSとの外観の比較をしてみます。</p>
 
-<p>SoftBankメールを送受信するための手順を下記に記しておきます。</p>
-
-<h3 id="apn">1.apn設定</h3>
+<h3 id="section">基本スペック</h3>
+<p>各所に公表されているとおりなのでここでは細かく触れませんが、比較するとこんな感じになります。
+Desire S, iPhone3GS, iPhone4, Nexus Sの主要項目(独断と偏見)の比較表になります。</p>
 
 <table>
   <thead>
     <tr>
-      <th style="text-align: left">項目名</th>
-      <th style="text-align: left">設定値</th>
+      <th style="text-align: left"> </th>
+      <th style="text-align: left">DesireS</th>
+      <th style="text-align: left">iPhone3GS</th>
+      <th style="text-align: left">iPhone4</th>
+      <th style="text-align: left">Nexus S</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td style="text-align: left">名前</td>
-      <td style="text-align: left">＜任意＞</td>
+      <td style="text-align: left">縦幅</td>
+      <td style="text-align: left">115mm</td>
+      <td style="text-align: left">115.5mm</td>
+      <td style="text-align: left">115.2mm</td>
+      <td style="text-align: left">123.9mm</td>
     </tr>
     <tr>
-      <td style="text-align: left">APN</td>
-      <td style="text-align: left">smile.world</td>
+      <td style="text-align: left">横幅</td>
+      <td style="text-align: left">59.8mm</td>
+      <td style="text-align: left">62.1mm</td>
+      <td style="text-align: left">58.6mm</td>
+      <td style="text-align: left">63mm</td>
     </tr>
     <tr>
-      <td style="text-align: left">プロキシ</td>
-      <td style="text-align: left">＜未設定＞</td>
+      <td style="text-align: left">奥行き</td>
+      <td style="text-align: left">11.63mm</td>
+      <td style="text-align: left">12.3mm</td>
+      <td style="text-align: left">9.3mm</td>
+      <td style="text-align: left">10.88mm</td>
     </tr>
     <tr>
-      <td style="text-align: left">ポート</td>
-      <td style="text-align: left">＜未設定＞</td>
+      <td style="text-align: left">重量</td>
+      <td style="text-align: left">130g</td>
+      <td style="text-align: left">135g</td>
+      <td style="text-align: left">137g</td>
+      <td style="text-align: left">129g</td>
     </tr>
     <tr>
-      <td style="text-align: left">ユーザー名</td>
-      <td style="text-align: left">dna1trop</td>
+      <td style="text-align: left">CPU</td>
+      <td style="text-align: left">1.1GHz</td>
+      <td style="text-align: left">600MHz</td>
+      <td style="text-align: left">1GHz</td>
+      <td style="text-align: left">1GHz</td>
     </tr>
     <tr>
-      <td style="text-align: left">パスワード</td>
-      <td style="text-align: left">so2t3k3m2a</td>
+      <td style="text-align: left">RAM</td>
+      <td style="text-align: left">768MB</td>
+      <td style="text-align: left">256MB</td>
+      <td style="text-align: left">512MB</td>
+      <td style="text-align: left">512MB</td>
     </tr>
     <tr>
-      <td style="text-align: left">MMSC</td>
-      <td style="text-align: left">http://mms/</td>
+      <td style="text-align: left">背面カメラ</td>
+      <td style="text-align: left">5.0M</td>
+      <td style="text-align: left">3.0M</td>
+      <td style="text-align: left">5.0M</td>
+      <td style="text-align: left">5.0M</td>
     </tr>
     <tr>
-      <td style="text-align: left">MMSプロキシ</td>
-      <td style="text-align: left">smilemms.softbank.ne.jp</td>
+      <td style="text-align: left">電池</td>
+      <td style="text-align: left">1450mAh</td>
+      <td style="text-align: left">1219mAh</td>
+      <td style="text-align: left">1420mAh</td>
+      <td style="text-align: left">1500mAh</td>
     </tr>
     <tr>
-      <td style="text-align: left">MMSポート</td>
-      <td style="text-align: left">8080</td>
+      <td style="text-align: left">ディスプレイ</td>
+      <td style="text-align: left">3.7</td>
+      <td style="text-align: left">3.5</td>
+      <td style="text-align: left">3.5</td>
+      <td style="text-align: left">4.0</td>
     </tr>
     <tr>
-      <td style="text-align: left">MCC</td>
-      <td style="text-align: left">440</td>
+      <td style="text-align: left">解像度</td>
+      <td style="text-align: left">800x480</td>
+      <td style="text-align: left">480x320</td>
+      <td style="text-align: left">960x640</td>
+      <td style="text-align: left">800x480</td>
     </tr>
     <tr>
-      <td style="text-align: left">MNC</td>
-      <td style="text-align: left">20</td>
+      <td style="text-align: left">microSD</td>
+      <td style="text-align: left">o</td>
+      <td style="text-align: left">-</td>
+      <td style="text-align: left">-</td>
+      <td style="text-align: left">-</td>
     </tr>
     <tr>
-      <td style="text-align: left">認証タイプ</td>
-      <td style="text-align: left">＜未設定&gt;</td>
+      <td style="text-align: left">Wi-Fi</td>
+      <td style="text-align: left">802.11b/g/n</td>
+      <td style="text-align: left">802.11b/g</td>
+      <td style="text-align: left">802.11b/g</td>
+      <td style="text-align: left">802.11b/g/n</td>
     </tr>
     <tr>
-      <td style="text-align: left">APNタイプ</td>
-      <td style="text-align: left">＜未設定＞</td>
+      <td style="text-align: left">OS</td>
+      <td style="text-align: left">android2.3.3</td>
+      <td style="text-align: left">iOS</td>
+      <td style="text-align: left">iOS</td>
+      <td style="text-align: left">android2.3.3</td>
     </tr>
   </tbody>
 </table>
 
-<p>※こちらを参考にしました。</p>
+<p>スペックだけみると最後発のDesireSが非常にバランス良く見えます。
+もちろん、OSや諸々の組み合わせによって満足度は変わるので一概には言えないでしょう。</p>
 
+<p>iPhone3GSが出た当時はそのスペックもかなり魅力的に感じていたのですが、さすがに二年後の現役モデルと比較するとくすんで見えますね…</p>
+
+<h3 id="iphone3gs">外観についてiPhone3GSと比較</h3>
+
+<p>ボタンの位置やサイズ感など、比べてみればみるほどよく似ていることがわかります。</p>
+
+<p>まずは表側。パッと見は同サイズ。
+ディスプレイはDesireSが若干縦長です。</p>
+
+<p><a href="http://www.flickr.com/photos/53244662@N04/5653202925/" title="IMG_4574 by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5185/5653202925_aa51ca6efb_z.jpg" width="500" height="333" alt="IMG_4574" /></a></p>
+
+<p>裏面。こちらも同様の形状をしていて、中心に向かってカーブしているデザイン。
+カメラの位置もほぼ同じですね。</p>
+
+<p><a href="http://www.flickr.com/photos/53244662@N04/5653773818/" title="IMG_4575 by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5147/5653773818_cd430ae2af_z.jpg" width="500" height="333" alt="IMG_4575" /></a></p>
+
+<p>上面。イヤホンジャックと電源ボタンがありますが、こちらも同じ配置です。</p>
+
+<p>ただ、ジャックの口がDesire Sは平面に切られているのに対して、iPhone3GSはカーブに沿って口の形状が加工されています。
+仕上げの細かさで言えばiPhone3GSのほうが上ということでしょうか。</p>
+
+<p><a href="http://www.flickr.com/photos/53244662@N04/5653773240/" title="IMG_4581 by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5107/5653773240_821093e634_z.jpg" width="500" height="333" alt="IMG_4581" /></a></p>
+
+<p>厚みもほぼ同じ。</p>
+
+<p>iPhoneは表面が一直線ですが、DesireSはボディ末端がカーブしています。</p>
+
+<p><a href="http://www.flickr.com/photos/53244662@N04/5653774040/" title="IMG_4585 by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5187/5653774040_22573c28bb_z.jpg" width="500" height="333" alt="IMG_4585" /></a></p>
+
+<p>iPhone 3GSのカバーをつけてみると、少しDesire Sが小さいことがよくわかります。</p>
+
+<p>特に縦のサイズがコンパクトさが際立ちますね。</p>
+
+<p><a href="http://www.flickr.com/photos/53244662@N04/5653203875/" title="Desire S that is wared cover for iPhone3GS by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5307/5653203875_2a1048bd3a_z.jpg" width="500" height="333" alt="Desire S that is wared cover for iPhone3GS" /></a></p>
+
+<p>DesireSはiPhone3GSよりは少し小さいです。
+手に持ってみると、裏面のカーブが大きいDesireSのほうがしっくり手になじむ感じがします。
+ただ、つや消し塗装のユニボディなせいか、サラサラした感じで滑って落としそう。。。</p>
+
+<p>現在はiPhone3GSの黒SIMをつけて使用しています。
+あと、SDカードは最初からSANDISKの8GBが挿入されていました。</p>
+
+<p><a href="http://www.flickr.com/photos/53244662@N04/5653223571/" title="IMG_4590 by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5029/5653223571_8bc82103b3_z.jpg" width="500" height="333" alt="IMG_4590" /></a></p>
+
+<p>ちなみにDesire SにはDesireの保護シートをつけている為サイズが足りていませんがご愛嬌ってことでｗ</p>
+
+<p>次回は、カメラ性能について比較してみようと思います。</p>
+
+<h3 id="section-1">参考リンク:</h3>
 <ul>
+  <li><a href="http://www.htc.com/www/product/desires/overview.html">HTC - Products - HTC Desire S - Overview</a></li>
   <li>
     <table>
       <tbody>
         <tr>
-          <td><a href="http://blog.yukinishijima.net/android/android-dev-phone-1-%E3%81%A7mms%E3%82%92%E4%BD%BF%E3%81%88%E3%82%8B%E3%82%88%E3%81%86%E3%81%AB%E3%81%99%E3%82%8B%E3%81%BE%E3%81%A7%E3%81%AE%E9%81%93%E3%81%AE%E3%82%8A">Android Dev Phone 1 でMMSを使えるようにするまでの道のり </a></td>
-          <td> Yuki Nishijima Blog&lt;/a&gt;</td>
+          <td><a href="http://www.samsung.com/us/mobile/cell-phones/GT-I9020FSTTMB">Nexus S from Google</a></td>
+          <td>Samsung Nexus&lt;/a&gt;</td>
         </tr>
       </tbody>
     </table>
   </li>
+  <li><a href="http://www.apple.com/jp/iphone/">アップル - iPhone - 携帯電話、iPod、インターネットデバイスがひとつに。</a></li>
+  <li><a href="http://www.knowyourmobile.com/comparisons/854017/samsung_google_nexus_s_vs_htc_desire_s.html">Samsung Google Nexus S vs HTC Desire S</a></li>
+  <li><a href="http://ja.wikipedia.org/wiki/IPhone">iPhone - Wikipedia</a></li>
 </ul>
-
-<h3 id="softbank">2.SoftBankメールをインストール</h3>
-
-<p>最新版(2011.05.01時点でv2.1)の<a href="https://market.android.com/details?id=jp.softbank.mb.mail">SoftBankメール</a>では送受信に失敗します。</p>
-
-<p>なので、下記ブログ記事よりv1.6の古いバージョンをダウンロード＆インストールします。
-※既にAndroidマーケットから最新版をダウンロードしている場合は、そちらを先にアンインストールしておく必要があります。</p>
-
-<ul>
-  <li><a href="http://gadgetordiary.wordpress.com/2011/04/13/softbank%E3%83%A1%E3%83%BC%E3%83%AB%E3%82%A2%E3%83%97%E3%83%AA1-6%E3%82%92%E5%86%8D%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB/">Softbankメールアプリ1.6を再インストール « デジタルガジェッター日記</a></li>
-</ul>
-
-<p>端末のブラウザからダウンロードしてインストールするか、android-sdkの入っているPCから
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="bash"><span class="line">adb install jp.softbank.mb.mail-1.6.apk
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
-でインストールできます。</p>
-
-<p>あとは、アプリを起動すればメールの閲覧や送信が自由にできます。</p>
 
 </div>
   
@@ -360,17 +546,17 @@ The java service will make your application available at http://frontend.myapp.d
 <aside class="sidebar">
   
     <section id="titles">
-  <a href="http://ReSTARTR.github.io" title="I Will Survive"><img id="logo" src="http://ReSTARTR.github.io/images/portrait.jpg" /></a>
-  <h1 id="site_title"><a href="http://ReSTARTR.github.io" title="I Will Survive">I Will Survive</a></h1>
+  <a href="http://blog.restartr.com" title="I Will Survive"><img id="logo" src="http://blog.restartr.com/images/portrait.jpg" /></a>
+  <h1 id="site_title"><a href="http://blog.restartr.com" title="I Will Survive">I Will Survive</a></h1>
   <h3 id="site_subtitle">An application depelopper&#8217;s blog.</h3>
 </section>
 
 <section id="menu">
   <ul>
-    <li><i class="fa fa-home fa-lg"></i><a href="http://ReSTARTR.github.io"> Home </a></li>
-    <li><i class="fa fa-calendar fa-lg"></i><a href="http://ReSTARTR.github.io/blog/archives/"> Archives </a></li>
-    <li><i class="fa fa-user fa-lg"></i><a href="http://ReSTARTR.github.io/about/"> About </a></li>
-    <li><i class="fa fa-rss fa-lg"></i><a href="http://ReSTARTR.github.io/atom.xml"> Feed </a></li>
+    <li><i class="fa fa-home fa-lg"></i><a href="http://blog.restartr.com"> Home </a></li>
+    <li><i class="fa fa-calendar fa-lg"></i><a href="http://blog.restartr.com/blog/archives/"> Archives </a></li>
+    <li><i class="fa fa-user fa-lg"></i><a href="http://blog.restartr.com/about/"> About </a></li>
+    <li><i class="fa fa-rss fa-lg"></i><a href="http://blog.restartr.com/atom.xml"> Feed </a></li>
   </ul>
 </section>
 
@@ -392,6 +578,8 @@ The java service will make your application available at http://frontend.myapp.d
   
     <a href="https://twitter.com/ReSTARTR" title="ReSTARTR"><i class="fa fa-twitter fa-2x"></i></a>
   
+
+  
 </section>
 
 
@@ -400,15 +588,11 @@ The java service will make your application available at http://frontend.myapp.d
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2014/06/28/about-docker-libchan/">Doker謹製ライブラリのlibchanについて調べてみた</a>
+      </li>
+    
+      <li class="post">
         <a href="/2014/05/11/build-rpm-on-docker-container/">Dockerを使って任意のrubyバージョンのrpmを作成する</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2014/04/22/tech-podcast-list/">技術系podcastまとめ</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2014/04/21/golang-memcache-stats-client/">Goでmemcachedのstatsを取得する</a>
       </li>
     
       <li class="post">
@@ -416,12 +600,21 @@ The java service will make your application available at http://frontend.myapp.d
       </li>
     
       <li class="post">
-        <a href="/2014/04/06/reload-varnish-vcl/">VarnishのVCLを再起動なしに再読み込みする</a>
+        <a href="/2014/04/06/move-from-wordpress-to-octopress/">WordpressからOctopressに移行</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2013/04/26/connect-go-and-python-with-zeromq/">GoとPythonをZeroMQで繋ぐ</a>
       </li>
     
   </ul>
 </section>
-Included file &#8216;asides/category_list.html&#8217; not found in _includes directory
+<section>
+  <h1>Categories</h1>
+  <ul id="categories">
+    <li><a href='/category/docker/'>docker</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
+  </ul>
+</section>
 <section>
   <h1>GitHub Repos</h1>
   <ul id="gh_repos">

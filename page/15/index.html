@@ -7,11 +7,11 @@
   <meta charset="utf-8">
   <title>I Will Survive</title>
   <meta name="author" content="ReSTARTR">
+  <link rel="author" href="https://plus.google.com/103216164658230535238" />
+  <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="最近、会社の組織変更に伴い新グループに移動しました。
-その際、グループ内の自己紹介用に作ったものをGithubに上げてみました。
-動いているものを公開したかったのですが永続的に公開できる場所がないのでソース公開のみです。 ReSTARTR/checkin_map - GitHub 以前scala &hellip;">
+  <meta name="description" content="前回はCasbahというライブラリを使ってMongoDBへアクセスしてみました。 ScalaからMongoDBへアクセスする ? Casbah編 今回は、Casbahに加えて、Salatというライブラリをを組み合わせて、より便利にMongoDBとScalaとやりとりをする方法について見ていきます &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -20,7 +20,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://ReSTARTR.github.io/page/15/">
+  <link rel="canonical" href="http://blog.restartr.com/page/15/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
    <link href="/stylesheets/data-table.css" media="screen, projection" rel="stylesheet" type="text/css" />
@@ -85,6 +85,7 @@
   </script>
 
 
+  <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
   <style>html{background: url("/images/background.png") no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;}</style>
 </head>
 
@@ -100,7 +101,7 @@
   
 <form action="https://www.google.com/search" method="get">
   <fieldset role="search">
-    <input type="hidden" name="q" value="site:ReSTARTR.github.io" />
+    <input type="hidden" name="q" value="site:blog.restartr.com" />
     <input class="search" type="text" name="q" results="0" placeholder="Search"/>
   </fieldset>
 </form>
@@ -121,7 +122,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/2011/04/06/realtime-checkin-map-build-with-scala-and-jetty7-websocket/">ScalaとJetty7のWebSocketでリアルタイムチェックインマップを作ってみた</a></h1>
+      <h1 class="entry-title"><a href="/2011/03/09/access-to-mongodb-in-scala-with-salat/">ScalaからMongoDBへアクセスする - Salat編</a></h1>
     
     
       <p class="meta">
@@ -137,50 +138,174 @@
   
 
 
-<time datetime="2011-04-06T09:00:50+09:00" pubdate data-updated="true">2011-04-06 (Wed)</time>
+<time datetime="2011-03-09T09:00:38+09:00" pubdate data-updated="true">2011-03-09 (Wed)</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p><a href="http://blog.restartr.com/wp-content/uploads/2011/04/check-in-map-screenshot.png"><img src="http://blog.restartr.com/wp-content/uploads/2011/04/check-in-map-screenshot.png" alt="チェックインマップのスクリーンショット" title="チェックインマップのスクリーンショット" width="619" height="441" class="alignnone size-full wp-image-800" /></a></p>
+  <div class="entry-content"><p>前回はCasbahというライブラリを使ってMongoDBへアクセスしてみました。</p>
 
-<p>最近、会社の組織変更に伴い新グループに移動しました。
-その際、グループ内の自己紹介用に作ったものをGithubに上げてみました。
-動いているものを公開したかったのですが永続的に公開できる場所がないのでソース公開のみです。</p>
+<p><a href="http://blog.restartr.com/2011/03/07/access-to-mongodb-in-scala-with-casbah/">ScalaからMongoDBへアクセスする ? Casbah編</a></p>
 
+<p>今回は、Casbahに加えて、<a href="https://github.com/novus/salat">Salat</a>というライブラリをを組み合わせて、より便利にMongoDBとScalaとやりとりをする方法について見ていきます。</p>
+
+<h3>Salat</h3>
+<p><a href="https://github.com/novus/salat">novus/salat - GitHub</a></p>
+
+<p>Salatは、CasbahのMongoDBObjectとscalaのケースクラスと相互変換してくれる、ORマッパーです。wikiから引用するとこうあります。</p>
+
+<blockquote>
+Salat is a bi-directional Scala case class serialization library that leverages MongoDB&#8217;s DBObject (which uses BSON underneath) as its target format. This project is focused on fostering a DWIM and intuitive usage pattern for the end-user&#8217;s benefit, without sacrificing run time performance.
+
+</blockquote>
+<p>パフォーマンスの犠牲なしに、より便利にMongoDBとやりとりできるというものらしいです。DWIMって初耳なんですが、”Do What I Mean.”の略語だそうです。意図したとおりに動いてくれる、くらいの意味でしょうか。
+あと、「Salat」って、ロシア語で「サラダ」の意味だそうです。</p>
+
+<p>では、Salatの簡単な使い方を見ていきます。</p>
+
+<p><a id="more"></a><a id="more-749"></a></p>
+
+<h3> インストール </h3>
+<p>今回もsbt前提です。
+<script src="https://gist.github.com/860266.js?file=SalatTestProject.scala"></script>
+CasbahとSalatどちらも必要です。今回はCasbahは2.0.2を、Salatは0.0.5を利用します。あとはいつものように”sbt reload update”を実行するだけです。</p>
+
+<h3>CasbahでMongoDBへアクセス</h3>
+<p>まずはCasbaとSalatをインポート。
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="scala"><span class="line"><span class="k">import</span> <span class="nn">com.novus.salat._</span>
+</span><span class="line"><span class="k">import</span> <span class="nn">com.novus.salat.global._</span>
+</span><span class="line"><span class="k">import</span> <span class="nn">com.mongodb.casbah.Imports._</span>
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
+
+<p>CasbahのみでMongoDBに入れる例を復習します。
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="scala"><span class="line"><span class="k">val</span> <span class="n">collection</span> <span class="k">=</span> <span class="nc">MongoConnection</span><span class="o">()(</span><span class="s">&quot;salat_test&quot;</span><span class="o">)(</span><span class="s">&quot;sample&quot;</span><span class="o">)</span>
+</span><span class="line"><span class="n">collection</span> <span class="o">+=</span> <span class="nc">MongoDBObject</span><span class="o">(</span><span class="s">&quot;id&quot;</span><span class="o">-&gt;</span><span class="mi">1</span><span class="o">,</span> <span class="s">&quot;name&quot;</span><span class="o">-&gt;</span><span class="s">&quot;me&quot;</span><span class="o">,</span> <span class="s">&quot;age&quot;</span><span class="o">-&gt;</span><span class="mi">27</span><span class="o">)</span>
+</span><span class="line"><span class="n">println</span><span class="o">(</span><span class="n">collection</span><span class="o">.</span><span class="n">findOne</span><span class="o">(</span> <span class="nc">MongoDBObject</span><span class="o">(</span><span class="s">&quot;id&quot;</span><span class="o">-&gt;</span><span class="mi">1</span><span class="o">)).</span><span class="n">get</span> <span class="o">)</span>
+</span><span class="line"><span class="c1">// { &quot;_id&quot; : { &quot;$oid&quot; : &quot;4d76475ce10d23dcda26857d&quot;} , &quot;id&quot; : 1 , &quot;name&quot; : &quot;me&quot; , &quot;age&quot; : 27}</span>
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
+で、このような値がすでにMongoDBに入っているとして、それぞれのフィールドにアクセスする場合、以下のようになります。
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="scala"><span class="line"><span class="k">val</span> <span class="n">me2</span> <span class="k">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">findOne</span><span class="o">(</span> <span class="nc">MongoDBObject</span><span class="o">(</span><span class="s">&quot;id&quot;</span><span class="o">-&gt;</span><span class="mi">1</span><span class="o">)).</span><span class="n">get</span>
+</span><span class="line"><span class="n">println</span><span class="o">(</span> <span class="n">me2</span><span class="o">.</span><span class="n">getClass</span> <span class="o">)</span> <span class="c1">// class com.mongodb.BasicDBObject</span>
+</span><span class="line"><span class="n">println</span><span class="o">(</span> <span class="n">me2</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="s">&quot;name&quot;</span><span class="o">)</span> <span class="o">)</span> <span class="c1">// me</span>
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
+最後の”me2.get(“name”)”というのが格好悪いですね。もしかしたらDBから取り出したときに”name”というキーが存在しないかもしれません。ということで、そのフォーマットをケースクラスで定義できるSalatの出番です。
+Salatでは、grater[<type>]のインスタンスを用いてMongoDBObjectとケースクラスの変換を行います。シリアライズは
+DBに保存する際は「asDBObject」メソッドで取り出してクラスインスタンスとして扱う場合は「asObject」メソッドを使います。</type></p>
+
+<p>まずはクラスインスタンスをDBに入れる例。</p>
+
+<p>Userというケースクラスを定義して、graterを用いてDBObjectに変換しています。
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="scala"><span class="line"><span class="k">case</span> <span class="k">class</span> <span class="nc">User</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">age</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span>
+</span><span class="line">
+</span><span class="line"><span class="k">val</span> <span class="n">me</span> <span class="k">=</span> <span class="nc">User</span><span class="o">(</span><span class="n">id</span><span class="k">=</span><span class="mi">2</span><span class="o">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;me2&quot;</span><span class="o">,</span> <span class="n">age</span><span class="k">=</span><span class="mi">54</span><span class="o">)</span>
+</span><span class="line"><span class="k">val</span> <span class="n">g</span> <span class="k">=</span> <span class="n">grater</span><span class="o">[</span><span class="kt">User</span><span class="o">]</span>
+</span><span class="line"><span class="n">collection</span> <span class="o">+=</span> <span class="n">g</span><span class="o">.</span><span class="n">asDBObject</span><span class="o">(</span><span class="n">me</span><span class="o">)</span>
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
+
+<p>つぎに、DBからとりだした値をクラスインスタンスに変換する例です。
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="scala"><span class="line"><span class="k">val</span> <span class="n">meInDB</span> <span class="k">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">findOne</span><span class="o">(</span> <span class="nc">MongoDBObject</span><span class="o">(</span><span class="s">&quot;id&quot;</span><span class="o">-&gt;</span><span class="mi">2</span><span class="o">)).</span><span class="n">get</span>
+</span><span class="line"><span class="n">println</span><span class="o">(</span> <span class="n">meInDB</span><span class="o">.</span><span class="n">getClass</span> <span class="o">)</span>
+</span><span class="line"><span class="c1">// class com.mongodb.BasicDBObject</span>
+</span><span class="line"><span class="n">println</span><span class="o">(</span> <span class="n">meInDB</span> <span class="o">)</span>
+</span><span class="line"><span class="c1">// { &quot;_id&quot; : { &quot;$oid&quot; : &quot;4d764830e10d23dc4758c29a&quot;} , &quot;_typeHint&quot; : &quot;User&quot; , &quot;id&quot; : 2 , &quot;name&quot; : &quot;me2&quot; , &quot;age&quot; : 54}</span>
+</span><span class="line"><span class="n">println</span><span class="o">(</span> <span class="n">g</span><span class="o">.</span><span class="n">asObject</span><span class="o">(</span><span class="n">meInDB</span><span class="o">)</span> <span class="o">)</span>
+</span><span class="line"><span class="c1">// User(2,me2,54)</span>
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
+このように、ケースクラスへのマッピングが行われることにより、Scalaのコード中で扱うMongoDBのドキュメントの型が明確になり、見通しがよくなります。</p>
+
+<p>「asObject(meInDB)」で変換する前の、DBからとりだしたままの状態(BasicDBObject型)の段階で</p>
+
+<blockquote>
+&#8221;_typeHint&#8221; : &#8220;User&#8221;
+
+</blockquote>
+<p>というキーと値が見えます。この値がこのドキュメントに対応するクラス型を定義することになります。</p>
+
+<h4>問題点：意図しないケースクラスへの変換</h4>
+<p>別のケースクラスに変換しようとするとどうなるでしょうか。
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="scala"><span class="line"><span class="k">case</span> <span class="k">class</span> <span class="nc">UserA</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">age</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span>
+</span><span class="line"><span class="n">println</span><span class="o">(</span> <span class="n">grater</span><span class="o">[</span><span class="kt">UserA</span><span class="o">].</span><span class="n">asObject</span><span class="o">(</span><span class="n">meInDB</span><span class="o">)</span> <span class="o">)</span> <span class="c1">// UserA(2,me2,54)</span>
+</span><span class="line"><span class="k">case</span> <span class="k">class</span> <span class="nc">UserB</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">salary</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span>
+</span><span class="line"><span class="n">println</span><span class="o">(</span> <span class="n">grater</span><span class="o">[</span><span class="kt">UserB</span><span class="o">].</span><span class="n">asObject</span><span class="o">(</span><span class="n">meInDB</span><span class="o">)</span> <span class="o">)</span>
+</span><span class="line"><span class="c1">// java.lang.Exception: class UserB requires value for &#39;salary&#39;</span>
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
+クラス名が違うUserAに変換しようとすると変換できてしまいます。キー名が異なるUserBに変換しようとした場合はコンパイルエラーとなります。「_typeHint」の値がうまく機能しているのか、少々疑問が残ります…</p>
+
+<h4>問題点：クラス階層の保持</h4>
+<p>また、クラス階層をもつ場合がテストケースにあるのですが、これも微妙な挙動をします。</p>
+
+<p><a href="https://github.com/novus/salat/blob/master/salat-core/src/test/scala/com/novus/salat/test/model/TestModel.scala">salat-core/src/test/scala/com/novus/salat/test/model/TestModel.scala at master from novus/salat - GitHub</a></p>
+
+<p>上記はテストケース用のモデル定義なのですが、Desmondのように別クラスの型を保持するケースクラスをDBObjectに変換する際に、Desmond型は保持できるのですが、それに含まれるAlice型が保持できずにリストに変換されてしまいます。</p>
+
+<p>こんな感じのコードで試してみました。
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="scala"><span class="line"><span class="k">case</span> <span class="k">class</span> <span class="nc">Group</span><span class="o">(</span><span class="n">group_id</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">leader</span><span class="k">:</span> <span class="kt">User</span><span class="o">,</span> <span class="n">members</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">User</span><span class="o">])</span>
+</span><span class="line">
+</span><span class="line"><span class="k">val</span> <span class="n">me</span> <span class="k">=</span> <span class="nc">User</span><span class="o">(</span><span class="n">id</span><span class="k">=</span><span class="mi">11</span><span class="o">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;me&quot;</span><span class="o">,</span> <span class="n">age</span><span class="k">=</span><span class="mi">27</span><span class="o">)</span>
+</span><span class="line"><span class="k">val</span> <span class="n">you</span> <span class="k">=</span> <span class="nc">User</span><span class="o">(</span><span class="n">id</span><span class="k">=</span><span class="mi">12</span><span class="o">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;you&quot;</span><span class="o">,</span> <span class="n">age</span><span class="k">=</span><span class="mi">30</span><span class="o">)</span>
+</span><span class="line"><span class="k">val</span> <span class="n">members</span> <span class="k">=</span> <span class="nc">MongoDBList</span><span class="o">.</span><span class="n">newBuilder</span>
+</span><span class="line"><span class="n">members</span> <span class="o">+=</span> <span class="n">me</span>
+</span><span class="line"><span class="n">members</span> <span class="o">+=</span> <span class="n">you</span>
+</span><span class="line"><span class="k">val</span> <span class="n">group</span> <span class="k">=</span> <span class="nc">Group</span><span class="o">(</span><span class="n">group_id</span><span class="k">=</span><span class="mi">1</span><span class="o">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;you and me&quot;</span><span class="o">,</span> <span class="n">leader</span><span class="k">=</span><span class="n">me</span><span class="o">,</span> <span class="n">members</span><span class="k">=</span><span class="nc">List</span><span class="o">(</span><span class="n">me</span><span class="o">,</span> <span class="n">you</span><span class="o">))</span>
+</span><span class="line"><span class="n">println</span><span class="o">(</span><span class="n">group</span><span class="o">)</span>
+</span><span class="line"><span class="c1">// Group(1,you and me,List(User(11,me,27), User(12,you,30)))</span>
+</span><span class="line">
+</span><span class="line"><span class="n">println</span><span class="o">(</span><span class="n">grater</span><span class="o">[</span><span class="kt">Group</span><span class="o">].</span><span class="n">asDBObject</span><span class="o">(</span><span class="n">group</span><span class="o">))</span>
+</span><span class="line"><span class="c1">// // { &quot;_typeHint&quot; : &quot;Group&quot; , &quot;group_id&quot; : 1 , &quot;name&quot; : &quot;you and me&quot; , &quot;leader&quot; : [ 11 , &quot;me&quot; , 27] , &quot;members&quot; : [ [ 11 , &quot;me&quot; , 27] , [ 12 , &quot;you&quot; , 30]]}</span>
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
+DBObjectに変換すると、leaderの値やmembersのList要素がリストに変換されてます。
+このままMongoDBに保存して、それを取り出したあとで”grater[Group].asObject(group)”しようとするとエラーになります。</p>
+
+<p>まだ触り始めたばかりでGithubのWikiもちゃんと読み込んでないので、扱い方が違っているのかもしれません。引き続き動作検証をすすめたいと思います。（結局、Rogueを使うというオチになりそうな気がしないくもないですが…）</p>
+
+<h3>関連リンク</h3>
 <ul>
-<li><a href="https://github.com/ReSTARTR/checkin_map"> ReSTARTR/checkin_map - GitHub </a></li>
+<li><a href="https://github.com/novus/salat/wiki/Quick-start">Quick start - GitHub</a></li>
 </ul>
-<p>以前scala advent calender 2010で「<a href="http://blog.restartr.com/2010/12/29/websocket-server-written-in-scala-with-netty/">NettyでWebSocketサーバーを実装する</a>」にてWebSocketサーバーを実装してましたが、今回はJettyを使っての実装にしてみました。</p>
-
-<p>pub/subモデルもどきを採用してみたりしましたが、正直勉強不足でうまい実装方法ができていないのが現状。
-少しづつリファクタリングしたいところ。
-コメントやフォークでのツッコミいただけると大変嬉しいです。</p>
-
-<h2 id="section">実行方法</h2>
-<p>こちらに実行方法を記述してる通りにやれば動作するはず。</p>
-
-<ul>
-<li><a href="https://github.com/ReSTARTR/checkin_map/blob/master/README.md">https://github.com/ReSTARTR/checkin_map/blob/master/README.md</a></li>
-</ul>
-<p>仕組み
-—-
- * TwitterのStreamingAPIを使って、foursquareのチェックインツイートを取得
- * それをWebsocket経由で地図にリアルタイムプロット</p>
-
-<h2 id="jetty7">Jetty7を使うに当たって</h2>
-<p>今のところ、sbt-0.7.5RC1 + jetty7.3.1.v20110307で動作確認済みです。</p>
-
-<p>jetty7.3のwebsocketを使うには、sbt-0.7.5RC以上を使わないといけないようです。
-sbt0.7.4だとjetty7.1までしかコンパイルできず、jetty7.1だとwebsocketの最新仕様にあってなくてソケットオープン時にコケます。
-(このあたりの組み合わせは記憶があいまいですが。。。）</p>
-
-<h2 id="scalajsonsjson">scalaのjsonオブジェクトではなくsjsonを使うこと</h2>
-<p>scala.util.parsing.json.JSONをつかってシリアライズすると、javascript側でのevalに失敗します。
-（原因はクオート処理しないため。）
-Scala内で完結するならまだしも、JavaScriptへ転送する場合はsjsonが良いようです。</p>
+<p>今回も一応全コードを掲載しておきます。
+<script src="https://gist.github.com/860266.js?file=SalatSample.scala"></script></p>
 
 </div>
   
@@ -194,7 +319,7 @@ Scala内で完結するならまだしも、JavaScriptへ転送する場合はsj
       
   <header>
     
-      <h1 class="entry-title"><a href="/2011/03/16/i-feel-a-wrongness-about-terrible-disaster/">大震災を通じて感じた違和感</a></h1>
+      <h1 class="entry-title"><a href="/2011/03/07/access-to-mongodb-in-scala-with-casbah/">ScalaからMongoDBへアクセスする - Casbah編</a></h1>
     
     
       <p class="meta">
@@ -210,50 +335,218 @@ Scala内で完結するならまだしも、JavaScriptへ転送する場合はsj
   
 
 
-<time datetime="2011-03-16T22:09:05+09:00" pubdate data-updated="true">2011-03-16 (Wed)</time>
+<time datetime="2011-03-07T08:45:28+09:00" pubdate data-updated="true">2011-03-07 (Mon)</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>大震災から早くも５日が経過しました。</p>
+  <div class="entry-content"><p>ここ２，３日、ScalaからMongoDBへのアクセスのため、CasbahとSalatをお試し中です。</p>
 
-<p>私は東京で震度５を体験しました。感じたあの揺れの大きさは今も鮮明に残っています。現在も余震が続いていたり、様々な二次災害が続いていますが、これまでに感じた違和感を書きだしてみました。</p>
+<p>もともとはAkkaを弄ってたんですが、Akkaに含まれるPersistent(MongoDBなどNoSQLへの接続用)がなくなるらしいので、別のがないかなー、と寄り道したのがきっかけです。</p>
 
-<p>全然まとめにもなっていないし、多くは「感覚値」でしかないですが。</p>
+<h3>Casbah</h3>
+<p>MongoDBを開発している10gen謹製Scalaライブラリです。
+Scala製のドライバは他にもLiftの<a href="http://www.assembla.com/wiki/show/liftweb/MongoDB">MongoDB</a>や、Liftと組み合わせて使う<a href="http://engineering.foursquare.com/2011/01/21/rogue-a-type-safe-scala-dsl-for-querying-mongodb/">Rogue</a>、mongo-java-driverのラッパーの<a href="http://github.com/alaz/mongo-scala-driver">mongo-scala-driver</a>などがあります。
+一覧は以下に掲載されています。</p>
 
-<h3>情報の信ぴょう性</h3>
-<p>テレビというかマスコミの信ぴょう性って今に始まったことではないですよね？</p>
+<p><a href="http://github.com/alaz/mongo-scala-driver">Java Language Center - MongoDB</a></p>
 
-<p>今回の地震を発端としてさらにひどさが際立っているのは確かだけれど、受け手の判断基準に任されているというのはこれまでと同じ。テレビは「正しいことを伝える媒体」ではなく「話題を提供する媒体」でしかないと思います。</p>
+<p>Rogueについては、Fungoingのbibrostさんのブログが詳しいのでそちらをご覧ください。</p>
 
-<p>※いま話題になっている事柄についての意見はここでは述べるのは辞めておきます。</p>
+<p><a href="http://fungoing.blogspot.com/2011/02/liftscala-dslroguemongodb.html">Fungoing Labs: Lift用Scala DSL”Rogue”を使ってMongoDBにアクセス（１）〜概要編〜</a></p>
 
-<h3>ソーシャルメディア上の振る舞い</h3>
-<p>で、Twitterなどソーシャルメディアにおいても同様。</p>
+<p>なぜ、LiftのMongoDBなりRogueなりを使わなかったかというと、フレームワークに依存したくなかったからです。単体で動作するものが使いたいのです。なので、Casbahを選択しました。
+が、Casbahだけだと、複雑なレコードを作成するのには少々面倒なところがあります。ORマッパーが欲しくなるのです。その解決策となるSalatがあります。今回はCasbahのまとめにとどめ、Salatについては後日改めてまとめようと思います。</p>
 
-<p>地震発生後から、TL上にとにかくたくさん知らないアカウントのツイートが嫌というほど流れてきた。
-現在は落ち着き始めているものの、まだ多いのは確か。RTされるツイートには、感動話、批判話、同情話、ネタなどさまざまで、無責任なRTで溢れかえっていたというのが正直な感想。そもそも、「あんた、誰よ？」。</p>
+<blockquote>
+※追記※
+Salat編を書きました。
+<a href="http://blog.restartr.com/2011/03/09/access-to-mongodb-in-scala-with-salat/">ScalaからMongoDBへアクセスする ? Salat編</a>
+</blockquote>
+<p>では、Casbahの使い方について見ていきます。</p>
 
-<p>プライベートで使用しているアカウントではアーティストを中心にフォローしているのだけれど、この人達のRTがひどい。拡散希望を募り、自分のアカウントを媒体にRTしまくる。行方不明者が見つかるかもしれないという可能性は否定できないけど、その拡散の責任を負うのはアーティスト達ではない気がします。</p>
+<p><a id="more"></a><a id="more-722"></a></p>
 
-<p>RTされて有難いと思えたのは、被災地の画像でした。事実としてそこに存在する被災風景。気ままで演出好きなだけのマスコミからは伝えられないその事実を伝えようとしてくれることには感謝したいです。</p>
+<h3>インストール</h3>
+<p>sbtの設定はこんな感じです。
+project/build/SalatTestProject.scala
+<script src="https://gist.github.com/857260.js?file=SalatTestProject.scala"></script></p>
 
-<h3>次々と立ち上がる被災支援Webサービス</h3>
-<p>地震が起きてまもなくGoogleがperson-finderというサービスを立ち上げ、そのスピードには驚きました。
-そしてその後たくさんの被災関連のサイトが乱立。Twitterのツイートを被災地ごとに整理するのもや、特定のハッシュタグをまとめるもの、独自のハッシュタグでのツイートを強いるものや、独自データベースに情報を登録してくださいというものなど。</p>
+<p>そしたら、sbtプロンプトでreload, updateをします。</p>
 
-<p>「なんとか役に立ちたい」という気持ちは理解できるけど、利用者としてはどれを使ったらよいのかわからないのでは。結局GoogleやYahooが提供してくれる情報サイトに落ち着いているのではないでしょうか。</p>
+<p>これで、project/lib_managed/scala_2.x.x/compile以下にjarファイルが読み込まれるはず。</p>
 
-<p>やるべきことは、「データベースの集約」と「情報入手経路（媒体）の充実化」では。</p>
+<h3>CasbahでMongoDBへアクセス</h3>
+<p>目次は以下の通りです。</p>
 
-<p>そもそも、生み出したそのwebサービス、役目を終えるまでメンテを続けられますか？</p>
+<ul>
+<li>MongoDBObjectの作成</li>
+<li>ドキュメントの検索</li>
+<li>ドキュメントのJOIN</li>
+<li>ListObjectの生成</li>
+<li>クエリの構築</li>
+<li>クエリの構築(DSLを利用)</li>
+</ul>
+<h4>MongoDBObjectの作成</h4>
+<p>Casbahでは、MongoDB上のドキュメントをMongoDBObjectとして取り扱います。</p>
 
-<h3>危惧していること</h3>
-<p>というか、揺れたときみんなツイートしすぎｗ</p>
+<p>MongoDBObjectをインスタンス化する、もしくはMongoDBObjectBuilderで逐次フィールドを定義するかのどちらかになります。
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="scala"><span class="line"><span class="c1">// MongoDBObjectをインスタンス化</span>
+</span><span class="line"><span class="k">val</span> <span class="n">user</span> <span class="k">=</span> <span class="nc">MongoDBObject</span><span class="o">(</span><span class="s">&quot;id&quot;</span><span class="o">-&gt;</span><span class="mi">1</span><span class="o">,</span> <span class="s">&quot;name&quot;</span><span class="o">-&gt;</span><span class="s">&quot;me&quot;</span><span class="o">)</span>
+</span><span class="line"><span class="n">println</span><span class="o">(</span><span class="n">user</span><span class="o">)</span> <span class="c1">// { &quot;id&quot; : 1 , &quot;name&quot; : &quot;me&quot;}</span>
+</span><span class="line">
+</span><span class="line"><span class="c1">// MongoDBObjectBuilderで逐次フィールド定義</span>
+</span><span class="line"><span class="k">val</span> <span class="n">builder</span> <span class="k">=</span> <span class="nc">MongoDBObject</span><span class="o">.</span><span class="n">newBuilder</span>
+</span><span class="line"><span class="n">builder</span> <span class="o">+=</span> <span class="s">&quot;id&quot;</span><span class="o">-&gt;</span><span class="mi">2</span>
+</span><span class="line"><span class="n">builder</span> <span class="o">+=</span> <span class="s">&quot;name&quot;</span><span class="o">-&gt;</span><span class="s">&quot;you&quot;</span>
+</span><span class="line"><span class="k">val</span> <span class="n">user2</span> <span class="k">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">result</span> <span class="c1">// これでMongoDBObjectができる</span>
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
 
-<p>ツイートするのに必死で、逃げ遅れたとか笑えないですよ…</p>
+<p>できたら、これをMongoDBに保存します。</p>
+
+<p>まずはコレクションのインスタンス取得から。
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="scala"><span class="line"><span class="k">val</span> <span class="n">conn</span> <span class="k">=</span> <span class="nc">MongoConnection</span><span class="o">()</span>
+</span><span class="line"><span class="c1">// MongoConnection(&quot;localhost&quot;, 27017)でホストおよびポート指定が可能</span>
+</span><span class="line"><span class="k">val</span> <span class="n">db</span> <span class="k">=</span> <span class="n">conn</span><span class="o">(</span><span class="s">&quot;casbah_test&quot;</span><span class="o">)</span>
+</span><span class="line"><span class="k">val</span> <span class="n">collection</span> <span class="k">=</span> <span class="n">db</span><span class="o">(</span><span class="s">&quot;sample&quot;</span><span class="o">)</span>
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
+下記のように１行にまとめてもでもOKです。
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="scala"><span class="line"><span class="k">val</span> <span class="n">collection</span> <span class="k">=</span> <span class="nc">MongoConnection</span><span class="o">()(</span><span class="s">&quot;casbah_test&quot;</span><span class="o">)(</span><span class="s">&quot;sample&quot;</span><span class="o">)</span>
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
+
+<p>で、コレクションに保存します。「+=」を使うだけと、とてもシンプルな操作になっています。
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="scala"><span class="line"><span class="n">collection</span> <span class="o">+=</span> <span class="n">user</span> <span class="c1">// { &quot;_id&quot; : ObjectId(&quot;4d7385ebf21423dcecb4c578&quot;), &quot;id&quot; : 1, &quot;name&quot; : &quot;me&quot; }</span>
+</span><span class="line"><span class="n">collection</span> <span class="o">+=</span> <span class="n">user2</span> <span class="c1">// { &quot;_id&quot; : ObjectId(&quot;4d7385ebf21423dcedb4c578&quot;), &quot;id&quot; : 2, &quot;name&quot; : &quot;you&quot; }</span>
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
+
+<h4>ドキュメントの検索</h4>
+<p>保存したドキュメントを全件取得します。mongodbのコンソールでいう、db.collection.find()にあたる操作です。
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="scala"><span class="line"><span class="n">collection</span><span class="o">.</span><span class="n">find</span><span class="o">().</span><span class="n">foreach</span> <span class="o">{</span> <span class="n">println</span><span class="o">(</span><span class="k">_</span><span class="o">)</span> <span class="o">}</span>
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
+
+<h4>ドキュメントのJOIN</h4>
+<p>MongoDBでJoinはできないので、アプリ側で対処する場合に使うんでしょうかね。</p>
+
+<p>やり方は、MongoDBObjectを「++」でつなぐだけ。簡単です。
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="scala"><span class="line"><span class="k">val</span> <span class="n">identity</span> <span class="k">=</span> <span class="nc">MongoDBObject</span><span class="o">(</span><span class="s">&quot;name&quot;</span><span class="o">-&gt;</span><span class="s">&quot;me&quot;</span><span class="o">,</span> <span class="s">&quot;age&quot;</span><span class="o">-&gt;</span><span class="mi">27</span><span class="o">)</span>
+</span><span class="line"><span class="k">val</span> <span class="n">address</span> <span class="k">=</span> <span class="nc">MongoDBObject</span><span class="o">(</span><span class="s">&quot;country&quot;</span><span class="o">-&gt;</span><span class="s">&quot;Japan&quot;</span><span class="o">,</span> <span class="s">&quot;prefecture&quot;</span><span class="o">-&gt;</span><span class="s">&quot;Tokyo&quot;</span><span class="o">)</span>
+</span><span class="line"><span class="k">val</span> <span class="n">user</span> <span class="k">=</span> <span class="n">identity</span> <span class="o">++</span> <span class="n">address</span>
+</span><span class="line"><span class="n">println</span><span class="o">(</span><span class="n">user</span><span class="o">)</span> <span class="c1">// { &quot;age&quot; : 27 , &quot;country&quot; : &quot;Japan&quot; , &quot;prefecture&quot; : &quot;Tokyo&quot; , &quot;name&quot; : &quot;me&quot;}</span>
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
+
+<h4>ListObjectの生成</h4>
+<p>List(javascriptでいうArrayのこと)はMongoDBListでつくります。
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="scala"><span class="line"><span class="k">val</span> <span class="n">users1</span> <span class="k">=</span> <span class="nc">MongoDBList</span><span class="o">(</span>
+</span><span class="line">  <span class="nc">MongoDBObject</span><span class="o">(</span><span class="s">&quot;name&quot;</span><span class="o">-&gt;</span><span class="s">&quot;me&quot;</span><span class="o">),</span>
+</span><span class="line">  <span class="nc">MongoDBObject</span><span class="o">(</span><span class="s">&quot;name&quot;</span><span class="o">-&gt;</span><span class="s">&quot;you&quot;</span><span class="o">))</span>
+</span><span class="line"><span class="n">println</span><span class="o">(</span><span class="n">users1</span><span class="o">)</span> <span class="c1">// [ { &quot;name&quot; : &quot;me&quot;} , { &quot;name&quot; : &quot;you&quot;}]</span>
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
+当然ですが、Listの要素（MongoDBListの引数は）MongoDBObjectだけでなく、文字列や数値もOKです。</p>
+
+<p>でListの場合もBuilder経由で作成が可能です。
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="scala"><span class="line"><span class="k">val</span> <span class="n">users</span> <span class="k">=</span> <span class="nc">MongoDBList</span><span class="o">.</span><span class="n">newBuilder</span>
+</span><span class="line"><span class="k">val</span> <span class="n">user1</span> <span class="k">=</span> <span class="nc">MongoDBObject</span><span class="o">(</span><span class="s">&quot;name&quot;</span><span class="o">-&gt;</span><span class="s">&quot;me&quot;</span><span class="o">)</span>
+</span><span class="line"><span class="k">val</span> <span class="n">user2</span> <span class="k">=</span> <span class="nc">MongoDBObject</span><span class="o">(</span><span class="s">&quot;name&quot;</span><span class="o">-&gt;</span><span class="s">&quot;you&quot;</span><span class="o">)</span>
+</span><span class="line"><span class="n">users</span> <span class="o">+=</span> <span class="n">user1</span>
+</span><span class="line"><span class="n">users</span> <span class="o">+=</span> <span class="n">user2</span>
+</span><span class="line"><span class="n">println</span><span class="o">(</span><span class="n">users</span><span class="o">.</span><span class="n">result</span><span class="o">)</span> <span class="c1">// [ { &quot;name&quot; : &quot;me&quot;} , { &quot;name&quot; : &quot;you&quot;}]</span>
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
+
+<h4>クエリの構築</h4>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="c1">// 取得条件を指定</span>
+</span><span class="line"><span class="k">val</span> <span class="n">condition</span> <span class="k">=</span> <span class="nc">MongoDBObject</span><span class="o">(</span><span class="s">&quot;name&quot;</span><span class="o">-&gt;</span><span class="s">&quot;me&quot;</span><span class="o">)</span>
+</span><span class="line"><span class="n">collection</span><span class="o">.</span><span class="n">find</span><span class="o">(</span><span class="n">condition</span><span class="o">).</span><span class="n">foreach</span><span class="o">(</span> <span class="n">println</span> <span class="o">)</span>
+</span><span class="line">
+</span><span class="line"><span class="c1">// 取得フィールドを限定</span>
+</span><span class="line"><span class="k">val</span> <span class="n">fields</span> <span class="k">=</span> <span class="nc">MongoDBObject</span><span class="o">(</span><span class="s">&quot;id&quot;</span><span class="o">-&gt;</span><span class="mi">1</span><span class="o">)</span>
+</span><span class="line"><span class="n">collection</span><span class="o">.</span><span class="n">find</span><span class="o">(</span><span class="n">condition</span><span class="o">,</span> <span class="n">fields</span><span class="o">).</span><span class="n">foreach</span><span class="o">(</span> <span class="n">println</span> <span class="o">)</span>
+</span><span class="line">
+</span><span class="line"><span class="c1">// 条件の指定をせずに取得フィールドのみ限定する場合</span>
+</span><span class="line"><span class="k">val</span> <span class="n">conditionEmpty</span> <span class="k">=</span> <span class="nc">MongoDBObject</span><span class="o">.</span><span class="n">empty</span>
+</span><span class="line"><span class="n">collection</span><span class="o">.</span><span class="n">find</span><span class="o">(</span><span class="n">conditionEmpty</span><span class="o">,</span> <span class="n">fields</span><span class="o">).</span><span class="n">foreach</span><span class="o">(</span> <span class="n">println</span> <span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h4>クエリの構築(DSLを利用)</h4>
+<p>$exists, $gt, $ltなど、以下にあるものはDSLとして使えるらしいです。</p>
+
+<ul>
+<li><a href="http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-ConditionalOperators">Advanced Queries - MongoDB</a></li>
+</ul>
+<p>findの引数にDSLを使って記述します。複数条件を組み合わせる場合は「++」でつなげます。
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="scala"><span class="line"><span class="n">collection</span><span class="o">.</span><span class="n">find</span><span class="o">(</span> <span class="s">&quot;name&quot;</span> <span class="nc">$exists</span> <span class="kc">true</span> <span class="o">).</span><span class="n">foreach</span><span class="o">{</span> <span class="n">println</span> <span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="c1">// 組み合わせる場合は&quot;++&quot;でつなげる</span>
+</span><span class="line"><span class="n">collection</span><span class="o">.</span><span class="n">find</span><span class="o">(</span> <span class="o">(</span><span class="s">&quot;name&quot;</span> <span class="nc">$exists</span> <span class="kc">true</span><span class="o">)</span> <span class="o">++</span> <span class="o">(</span><span class="s">&quot;age&quot;</span> <span class="nc">$gte</span> <span class="mi">20</span> <span class="nc">$lt</span> <span class="mi">30</span> <span class="o">)</span> <span class="o">).</span><span class="n">foreach</span><span class="o">{</span> <span class="n">println</span> <span class="o">}</span>
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
+『(“age” $gte 20) ++ (“age” $lt 30)』と書かなくても、『(“age” $gte 20 $lt 30 ) 』とかけるので記述量がへって良いですね。</p>
+
+<p>あと、追加ですけど、１ドキュメントのみ取得したい時はfindOneが使えます。
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="scala"><span class="line"><span class="k">val</span> <span class="n">obj</span> <span class="k">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">findOne</span><span class="o">().</span><span class="n">get</span> <span class="c1">// Option[DBObject]からDBObjectを取り出すためにgetを呼ぶ</span>
+</span><span class="line"><span class="n">println</span><span class="o">(</span><span class="n">obj</span><span class="o">(</span><span class="s">&quot;name&quot;</span><span class="o">))</span> <span class="c1">//me</span>
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
+
+<p>以上、かんたんにSasbahの使い方についてまとめてみました。</p>
+
+<h3>関連リンク</h3>
+<ul>
+<li><a href="https://github.com/mongodb/casbah">GitHub</a></li>
+<li><a href="http://api.mongodb.org/scala/casbah/2.0.2/tutorial.html">Casbahチュートリアル</a></li>
+<li><a href="http://api.mongodb.org/scala/casbah/2.0.2/scaladoc/">ScalaDoc (casbah-core v2.0.2)</a></li>
+</ul>
+<p>ちなみに、細切れで説明した上記サンプルプログラムの全体を以下に掲載しておきます。</p>
+
+<p>※convertObjectTypeメソッドの中身については現在検証中です(；・∀・)
+<script src="https://gist.github.com/857260.js?file=CasbahSample.scala"></script></p>
 
 </div>
   
@@ -275,17 +568,17 @@ Scala内で完結するならまだしも、JavaScriptへ転送する場合はsj
 <aside class="sidebar">
   
     <section id="titles">
-  <a href="http://ReSTARTR.github.io" title="I Will Survive"><img id="logo" src="http://ReSTARTR.github.io/images/portrait.jpg" /></a>
-  <h1 id="site_title"><a href="http://ReSTARTR.github.io" title="I Will Survive">I Will Survive</a></h1>
+  <a href="http://blog.restartr.com" title="I Will Survive"><img id="logo" src="http://blog.restartr.com/images/portrait.jpg" /></a>
+  <h1 id="site_title"><a href="http://blog.restartr.com" title="I Will Survive">I Will Survive</a></h1>
   <h3 id="site_subtitle">An application depelopper&#8217;s blog.</h3>
 </section>
 
 <section id="menu">
   <ul>
-    <li><i class="fa fa-home fa-lg"></i><a href="http://ReSTARTR.github.io"> Home </a></li>
-    <li><i class="fa fa-calendar fa-lg"></i><a href="http://ReSTARTR.github.io/blog/archives/"> Archives </a></li>
-    <li><i class="fa fa-user fa-lg"></i><a href="http://ReSTARTR.github.io/about/"> About </a></li>
-    <li><i class="fa fa-rss fa-lg"></i><a href="http://ReSTARTR.github.io/atom.xml"> Feed </a></li>
+    <li><i class="fa fa-home fa-lg"></i><a href="http://blog.restartr.com"> Home </a></li>
+    <li><i class="fa fa-calendar fa-lg"></i><a href="http://blog.restartr.com/blog/archives/"> Archives </a></li>
+    <li><i class="fa fa-user fa-lg"></i><a href="http://blog.restartr.com/about/"> About </a></li>
+    <li><i class="fa fa-rss fa-lg"></i><a href="http://blog.restartr.com/atom.xml"> Feed </a></li>
   </ul>
 </section>
 
@@ -307,6 +600,8 @@ Scala内で完結するならまだしも、JavaScriptへ転送する場合はsj
   
     <a href="https://twitter.com/ReSTARTR" title="ReSTARTR"><i class="fa fa-twitter fa-2x"></i></a>
   
+
+  
 </section>
 
 
@@ -315,15 +610,11 @@ Scala内で完結するならまだしも、JavaScriptへ転送する場合はsj
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2014/06/28/about-docker-libchan/">Doker謹製ライブラリのlibchanについて調べてみた</a>
+      </li>
+    
+      <li class="post">
         <a href="/2014/05/11/build-rpm-on-docker-container/">Dockerを使って任意のrubyバージョンのrpmを作成する</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2014/04/22/tech-podcast-list/">技術系podcastまとめ</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2014/04/21/golang-memcache-stats-client/">Goでmemcachedのstatsを取得する</a>
       </li>
     
       <li class="post">
@@ -331,12 +622,21 @@ Scala内で完結するならまだしも、JavaScriptへ転送する場合はsj
       </li>
     
       <li class="post">
-        <a href="/2014/04/06/reload-varnish-vcl/">VarnishのVCLを再起動なしに再読み込みする</a>
+        <a href="/2014/04/06/move-from-wordpress-to-octopress/">WordpressからOctopressに移行</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2013/04/26/connect-go-and-python-with-zeromq/">GoとPythonをZeroMQで繋ぐ</a>
       </li>
     
   </ul>
 </section>
-Included file &#8216;asides/category_list.html&#8217; not found in _includes directory
+<section>
+  <h1>Categories</h1>
+  <ul id="categories">
+    <li><a href='/category/docker/'>docker</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
+  </ul>
+</section>
 <section>
   <h1>GitHub Repos</h1>
   <ul id="gh_repos">

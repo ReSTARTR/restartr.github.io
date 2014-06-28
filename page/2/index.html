@@ -7,9 +7,16 @@
   <meta charset="utf-8">
   <title>I Will Survive</title>
   <meta name="author" content="ReSTARTR">
+  <link rel="author" href="https://plus.google.com/103216164658230535238" />
+  <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="YouTubeで使われているvitessの実装をざっと見てたところ、memcachedクライアント実装が簡潔でわかりやすかったので出来る限りラフに実装を写経してみました。 やってることはコマンドラインからアドレスを受け取って、memcachedのstatsを表示するだけです。 この写経で学べること &hellip;">
+  <meta name="description" content="rubyやpythonなど通常のプログラムを書く場合は、基本的にソフトタブ(2spaces)でインデントされるようにvimを設定しています。 1
+2
+3
+set noexpandtab
+set tabstop=2
+set shiftwidth=2 けれど、Goの場合はインデントはハードタブが通例 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -18,7 +25,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://ReSTARTR.github.io/page/2/">
+  <link rel="canonical" href="http://blog.restartr.com/page/2/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
    <link href="/stylesheets/data-table.css" media="screen, projection" rel="stylesheet" type="text/css" />
@@ -83,6 +90,7 @@
   </script>
 
 
+  <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
   <style>html{background: url("/images/background.png") no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;}</style>
 </head>
 
@@ -98,7 +106,7 @@
   
 <form action="https://www.google.com/search" method="get">
   <fieldset role="search">
-    <input type="hidden" name="q" value="site:ReSTARTR.github.io" />
+    <input type="hidden" name="q" value="site:blog.restartr.com" />
     <input class="search" type="text" name="q" results="0" placeholder="Search"/>
   </fieldset>
 </form>
@@ -113,208 +121,6 @@
     <div id="content">
       <div class="blog-index">
   
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2014/04/21/golang-memcache-stats-client/">Goでmemcachedのstatsを取得する</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-04-21T00:17:33+09:00" pubdate data-updated="true">2014-04-21 (Mon)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>YouTubeで使われている<a href="https://github.com/youtube/vitess">vitess</a>の実装をざっと見てたところ、memcachedクライアント実装が簡潔でわかりやすかったので出来る限りラフに実装を写経してみました。</p>
-
-<p>やってることはコマンドラインからアドレスを受け取って、memcachedのstatsを表示するだけです。</p>
-
-<h3 id="section">この写経で学べること</h3>
-
-<ul>
-  <li>flagパッケージを使ったコマンドライン引数の取得</li>
-  <li>netパッケージを使ったネットワーク接続</li>
-  <li>bufioパッケージを使ったストリームの読み出し</li>
-</ul>
-
-<h3 id="main">main()</h3>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
-</span><span class="line">	<span class="c1">// 引数読み出し</span>
-</span><span class="line">	<span class="nx">address</span> <span class="o">:=</span> <span class="nx">flag</span><span class="p">.</span><span class="nx">String</span><span class="p">(</span><span class="s">&quot;address&quot;</span><span class="p">,</span> <span class="s">&quot;localhost:11211&quot;</span><span class="p">,</span> <span class="s">&quot;server address&quot;</span><span class="p">)</span>
-</span><span class="line">	<span class="nx">flag</span><span class="p">.</span><span class="nx">Parse</span><span class="p">()</span>
-</span><span class="line">	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;server: %s\n&quot;</span><span class="p">,</span> <span class="o">*</span><span class="nx">address</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line">	<span class="c1">// サーバーに接続</span>
-</span><span class="line">	<span class="nx">conn</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">GetConn</span><span class="p">(</span><span class="o">*</span><span class="nx">address</span><span class="p">)</span>
-</span><span class="line">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-</span><span class="line">		<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%#v&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
-</span><span class="line">		<span class="nx">os</span><span class="p">.</span><span class="nx">Exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-</span><span class="line">	<span class="p">}</span>
-</span><span class="line">	<span class="k">defer</span> <span class="nx">conn</span><span class="p">.</span><span class="nx">conn</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
-</span><span class="line">
-</span><span class="line">	<span class="c1">// stats読み出し</span>
-</span><span class="line">	<span class="nx">result</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">conn</span><span class="p">.</span><span class="nx">Stats</span><span class="p">()</span>
-</span><span class="line">	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%s&quot;</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span>
-</span><span class="line"><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h3 id="section-1">実行結果</h3>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>go run ./memcache_stats.go --address<span class="o">=</span>localhost:11211
-</span><span class="line">server: localhost:11211
-</span><span class="line">STAT pid 23282
-</span><span class="line">STAT uptime 12425
-</span><span class="line">STAT <span class="nb">time </span>1398007875
-</span><span class="line">STAT version 1.4.4
-</span><span class="line">STAT pointer_size 64
-</span><span class="line">STAT rusage_user 0.335948
-</span><span class="line">STAT rusage_system 0.344947
-</span><span class="line">  :
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h3 id="section-2">実装全体</h3>
-
-<div><script src="https://gist.github.com/11116595.js?file=memcache_stats.go"></script>
-<noscript><pre><code>package main
-
-// 写経 from: https://github.com/youtube/vitess/blob/master/go/memcache/memcache.go
-//  * エラーハンドリングをできるかぎり省略して実装.
-//  * statsコマンドだけ実装
-
-import (
-	&quot;bufio&quot;
-	&quot;flag&quot;
-	&quot;fmt&quot;
-	&quot;net&quot;
-	&quot;os&quot;
-	&quot;strings&quot;
-)
-
-type Connection struct {
-	conn     net.Conn
-	buffered bufio.ReadWriter
-}
-
-func GetConn(address string) (conn *Connection, err error) {
-	nc, err := net.Dial(&quot;tcp&quot;, address)
-	if err != nil {
-		return nil, err
-	}
-	return &amp;Connection{
-		conn: nc,
-		buffered: bufio.ReadWriter{
-			Reader: bufio.NewReader(nc),
-			Writer: bufio.NewWriter(nc),
-		},
-	}, err
-}
-
-func (mc *Connection) writestring(s string) {
-	_, err := mc.buffered.WriteString(s)
-	if err != nil {
-		panic(err)
-	}
-}
-
-func (mc *Connection) readline() string {
-	mc.flush()
-	l, _, _ := mc.buffered.ReadLine()
-	return string(l)
-}
-
-func (mc *Connection) flush() {
-	err := mc.buffered.Flush()
-	if err != nil {
-		panic(err)
-	}
-}
-
-func (mc *Connection) Stats() (result []byte, err error) {
-	mc.writestring(&quot;stats\r\n&quot;)
-	mc.flush()
-	for {
-		l := mc.readline()
-		if strings.HasPrefix(l, &quot;END&quot;) {
-			break
-		}
-		if strings.Contains(l, &quot;ERROR&quot;) {
-			panic(&quot;ERROR&quot;)
-		}
-		result = append(result, l...)
-		result = append(result, &#39;\n&#39;)
-	}
-	return result, err
-}
-
-func main() {
-	address := flag.String(&quot;address&quot;, &quot;localhost:11211&quot;, &quot;server address&quot;)
-	flag.Parse()
-	fmt.Printf(&quot;server: %s\n&quot;, *address)
-
-	conn, err := GetConn(*address)
-	if err != nil {
-		fmt.Printf(&quot;%#v&quot;, err)
-		os.Exit(1)
-	}
-	defer conn.conn.Close()
-
-	result, _ := conn.Stats()
-	fmt.Printf(&quot;%s&quot;, result)
-}
-</code></pre></noscript></div>
-
-</div>
-  
-  
-
-
-    </article>
   
   
     <article>
@@ -386,6 +192,106 @@ func main() {
 
     </article>
   
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2014/04/06/move-from-wordpress-to-octopress/">WordpressからOctopressに移行</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-04-06T13:00:00+09:00" pubdate data-updated="true">2014-04-06 (Sun)</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>もともとさくらのレンサバ上でWordpressで構築していたブログを<a href="http://octopress.org/">Octopress</a>に移行してGithub Pagesでホスティングするように切り替え。
+最初は<a href="http://jekyllrb.com/">Jekyll</a>だけでやろうとしてたけど、ブロクとしての機能を見るとOctopressのほうが良さそうだったので途中で方針転換。</p>
+
+<h4 id="section">手順</h4>
+
+<p>詳細な手順は面倒なので割愛するとして、だいたいこんな感じの流れで移行。</p>
+
+<ol>
+  <li>作業用環境にjekyll, jekyll-import, mysql2, sequelをgem install</li>
+  <li>さくらのレンサバ上のMySQLのデータをmysqldumpしてscp</li>
+  <li>dumpデータを作業用環境のMySQLにリストア</li>
+  <li>リストアしたデータから<a href="http://import.jekyllrb.com/docs/wordpress/">jekyll-import</a>を使って記事のmarkdownファイルを吐き出す</li>
+  <li>octopressをcloneして、<code>rake install</code></li>
+  <li>jekyll-importで吐き出されたファイルをoctopressのsource/_posts以下に移動</li>
+  <li><code>rake preview</code>で表示を確認しながら、source/_posts以下のmarkdownファイルをひたすら修正</li>
+  <li>テーマを調整&amp;元記事のURLパスと同一になるように<code>_config.yml</code>に設定</li>
+  <li>githubにpushしてgithub pagesとして公開</li>
+  <li>CNAMEを設定してgithub.ioから元のドメイン(blog.restartr.com)に移行</li>
+</ol>
+
+<p>さくらのレンサバ内からしかWordpressのDBに接続できないのと、レンサバ内でrubyを使うのはなんか面倒事が多そうだったので、環境整備済みなvpsで移行作業。</p>
+
+<p><em>※wordpressのエクスポート機能で吐き出したxmlからmigrateする方法もあるけど今回は不採用</em></p>
+
+<h4 id="wordpress">Wordpressの時のドメイン、パスを同一にするための設定</h4>
+
+<p>wordpressでは<code>/year/month/day/title</code>というpermalinkを設定していたのでそれと同一にするための作業。</p>
+
+<ul>
+  <li>ドメインはgithub pagesのカスタムドメインとCNAME設定で解決</li>
+  <li>パスは<code>_config.yml</code>のpermalinkを<code>/:year/:month/:day/:title</code>にして解決</li>
+</ul>
+
+<h4 id="section-1">さくらのレンサバ側の独自ドメイン設定</h4>
+
+<p>これでハマりました。さくらのドメインの設定で”blog.restartr.com”のCNAMEを設定したのに、DNSへの問い合わせ結果が常にAレコードしか帰ってこなくてかなり悩んでた。
+結論は、さくらのレンサバの設定画面で独自ドメインとして”blog.restartr.com”を登録していて、そっちの設定が邪魔をしていた。</p>
+
+<p>さくらのレンサバの独自ドメイン設定をはずして、さくらのドメインのCNAME設定を追加したら無事に解決。</p>
+
+<p><em>さくらのレンサバの独自ドメインの解除から、2時間以上反映に時間かかるらしい</em></p>
+
+<h4 id="post">postデータの修正</h4>
+
+<p>jekyll-importを使ってmarkdownを吐き出すところまではすんなりいけたけど、なにより面倒だったのが吐き出したmarkdownを修正する作業。</p>
+
+<ul>
+  <li>シンタックスハイライトするために<code>[ccW_python]...[/ccW_python]</code>とか<code>&lt;pre class="brush:pyton"&gt;...&lt;/pre&gt;</code>とか独自タグがある</li>
+  <li>amazonのリンク生成用タグ<code>[tmkm-amazon]123456[/tmkm-amazon]</code>というタグがある</li>
+  <li><code>&lt;p&gt;</code>タグと<code>&lt;br /&gt;</code>タグの嵐</li>
+</ul>
+
+<p>これらの対応のためにいちいち置換するのが非常に大変。<code>[ccW]</code>と<code>[tmkm-amazon]</code>タグは置換できたけど、<code>&lt;pre class="brush:..."&gt;</code>についてはハイライトされないだけで表示上問題なさそうなので無視。
+あとはmarkdownにhtmlが混じってるのが気持ち悪いので<code>&lt;p&gt;</code>と<code>&lt;br /&gt;</code>を置換して行間を調整。</p>
+
+<p>ドラフト記事をリモートにpushしてなくて別のPCから記事の途中からかけなくて困った…とならないように基本的にVPS上にcloneすることにした。
+これで記事編集のための苦痛を感じる事無く純粋なmarkdownで記事がかけるようになる。</p>
+
+<ul>
+  <li>参考にした記事</li>
+  <li><a href="http://hadihariri.com/2013/12/24/migrating-from-wordpress-to-jekyll/">Migrating from WordPress.com to Jekyll – Hadi Hariri</a></li>
+  <li><a href="http://blog.glidenote.com/blog/2011/12/20/how-to-use-custom-domain-on-github-pages/">GitHub PagesでCustom Domainを利用する - Glide Note - グライドノート</a></li>
+  <li>ベースにしたテーマ</li>
+  <li><a href="https://github.com/bijumon/oct2">bijumon/oct2</a></li>
+</ul>
+</div>
+  
+  
+
+
+    </article>
+  
   <div class="pagination">
     
       <a class="prev" href="/page/3/">&larr; Older</a>
@@ -399,17 +305,17 @@ func main() {
 <aside class="sidebar">
   
     <section id="titles">
-  <a href="http://ReSTARTR.github.io" title="I Will Survive"><img id="logo" src="http://ReSTARTR.github.io/images/portrait.jpg" /></a>
-  <h1 id="site_title"><a href="http://ReSTARTR.github.io" title="I Will Survive">I Will Survive</a></h1>
+  <a href="http://blog.restartr.com" title="I Will Survive"><img id="logo" src="http://blog.restartr.com/images/portrait.jpg" /></a>
+  <h1 id="site_title"><a href="http://blog.restartr.com" title="I Will Survive">I Will Survive</a></h1>
   <h3 id="site_subtitle">An application depelopper&#8217;s blog.</h3>
 </section>
 
 <section id="menu">
   <ul>
-    <li><i class="fa fa-home fa-lg"></i><a href="http://ReSTARTR.github.io"> Home </a></li>
-    <li><i class="fa fa-calendar fa-lg"></i><a href="http://ReSTARTR.github.io/blog/archives/"> Archives </a></li>
-    <li><i class="fa fa-user fa-lg"></i><a href="http://ReSTARTR.github.io/about/"> About </a></li>
-    <li><i class="fa fa-rss fa-lg"></i><a href="http://ReSTARTR.github.io/atom.xml"> Feed </a></li>
+    <li><i class="fa fa-home fa-lg"></i><a href="http://blog.restartr.com"> Home </a></li>
+    <li><i class="fa fa-calendar fa-lg"></i><a href="http://blog.restartr.com/blog/archives/"> Archives </a></li>
+    <li><i class="fa fa-user fa-lg"></i><a href="http://blog.restartr.com/about/"> About </a></li>
+    <li><i class="fa fa-rss fa-lg"></i><a href="http://blog.restartr.com/atom.xml"> Feed </a></li>
   </ul>
 </section>
 
@@ -431,6 +337,8 @@ func main() {
   
     <a href="https://twitter.com/ReSTARTR" title="ReSTARTR"><i class="fa fa-twitter fa-2x"></i></a>
   
+
+  
 </section>
 
 
@@ -439,15 +347,11 @@ func main() {
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2014/06/28/about-docker-libchan/">Doker謹製ライブラリのlibchanについて調べてみた</a>
+      </li>
+    
+      <li class="post">
         <a href="/2014/05/11/build-rpm-on-docker-container/">Dockerを使って任意のrubyバージョンのrpmを作成する</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2014/04/22/tech-podcast-list/">技術系podcastまとめ</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2014/04/21/golang-memcache-stats-client/">Goでmemcachedのstatsを取得する</a>
       </li>
     
       <li class="post">
@@ -455,12 +359,21 @@ func main() {
       </li>
     
       <li class="post">
-        <a href="/2014/04/06/reload-varnish-vcl/">VarnishのVCLを再起動なしに再読み込みする</a>
+        <a href="/2014/04/06/move-from-wordpress-to-octopress/">WordpressからOctopressに移行</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2013/04/26/connect-go-and-python-with-zeromq/">GoとPythonをZeroMQで繋ぐ</a>
       </li>
     
   </ul>
 </section>
-Included file &#8216;asides/category_list.html&#8217; not found in _includes directory
+<section>
+  <h1>Categories</h1>
+  <ul id="categories">
+    <li><a href='/category/docker/'>docker</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
+  </ul>
+</section>
 <section>
   <h1>GitHub Repos</h1>
   <ul id="gh_repos">

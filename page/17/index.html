@@ -7,11 +7,12 @@
   <meta charset="utf-8">
   <title>I Will Survive</title>
   <meta name="author" content="ReSTARTR">
+  <link rel="author" href="https://plus.google.com/103216164658230535238" />
+  <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="Hadoop conference japan 2011に参加してきました。 Hadoop Conference Japan 2011 - Eventbrite 今回の個人的トピック AWSがHBaseサポート予定
-DremelはHadoopの補完的位置づけ
-DSLとしてのAsakusaの魅力 &hellip;">
+  <meta name="description" content="[tmkm-amazon]4827550719[/tmkm-amazon] 2009年5月発刊なので、2年以上前の本です。発刊時から存在は知ってましたが、ブックオフにてちょうど目に入ってきて、興味があったので購入してみました。ボリュームとしては2時間弱。
+私自身も同じようにWebサイト（ &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -20,7 +21,7 @@ DSLとしてのAsakusaの魅力 &hellip;">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://ReSTARTR.github.io/page/17/">
+  <link rel="canonical" href="http://blog.restartr.com/page/17/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
    <link href="/stylesheets/data-table.css" media="screen, projection" rel="stylesheet" type="text/css" />
@@ -85,6 +86,7 @@ DSLとしてのAsakusaの魅力 &hellip;">
   </script>
 
 
+  <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
   <style>html{background: url("/images/background.png") no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;}</style>
 </head>
 
@@ -100,7 +102,7 @@ DSLとしてのAsakusaの魅力 &hellip;">
   
 <form action="https://www.google.com/search" method="get">
   <fieldset role="search">
-    <input type="hidden" name="q" value="site:ReSTARTR.github.io" />
+    <input type="hidden" name="q" value="site:blog.restartr.com" />
     <input class="search" type="text" name="q" results="0" placeholder="Search"/>
   </fieldset>
 </form>
@@ -121,7 +123,7 @@ DSLとしてのAsakusaの魅力 &hellip;">
       
   <header>
     
-      <h1 class="entry-title"><a href="/2011/02/24/attended-hadoop-conference-japan-2011-hcj2011/">Hadoop Conference Japan 2011に参加してきた #hcj2011</a></h1>
+      <h1 class="entry-title"><a href="/2011/02/14/cookpad-the-business-that-supported-by-600-million-women/">600万人の女性に支持されるクックパッドというビジネス</a></h1>
     
     
       <p class="meta">
@@ -137,399 +139,47 @@ DSLとしてのAsakusaの魅力 &hellip;">
   
 
 
-<time datetime="2011-02-24T09:09:42+09:00" pubdate data-updated="true">2011-02-24 (Thu)</time>
+<time datetime="2011-02-14T08:00:42+09:00" pubdate data-updated="true">2011-02-14 (Mon)</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>Hadoop conference japan 2011に参加してきました。</p>
+  <div class="entry-content"><p>[tmkm-amazon]4827550719[/tmkm-amazon]</p>
 
-<ul>
-  <li><a href="http://hadoop-conference-japan-2011.eventbrite.com/">Hadoop Conference Japan 2011 - Eventbrite</a></li>
-</ul>
+<p>2009年5月発刊なので、2年以上前の本です。発刊時から存在は知ってましたが、ブックオフにてちょうど目に入ってきて、興味があったので購入してみました。ボリュームとしては2時間弱。
+私自身も同じようにWebサイト（うちの場合ポータルですが）を運営している会社に所属していることもあり、双方を重ねて考えてしまいます。私自身はプログラマーなので、サービス云々については疎いので、こういう本の内容にはすぐ看過されてしまいがちです。
+あと、数年前の本ですが、本質的なところは古くなく、今後数年読めるものだと思いました。</p>
 
-<p>今回の個人的トピック</p>
+<p>ということで私的メモを少々。（※各所レビューの方が100倍的確だと思います。）</p>
 
-<ul>
-<li>AWSがHBaseサポート予定</li>
-<li>DremelはHadoopの補完的位置づけ</li>
-<li>DSLとしてのAsakusaの魅力</li>
-<li>AmebaのpatriotはRubyDSLで簡単ジョブ記述</li>
-<li>MySQLでもMapReduceできるよ</li>
-<li>HBaseを使うとシステムがシンプルになるよ</li>
-</ul>
-<p>以下、メモ書きです。
-<a id="more"></a><a id="more-703"></a></p>
+<p><a id="more"></a><a id="more-643"></a></p>
 
-<h3 id="hadoop-on---amazon-elastic-mapreduce">Hadoop on クラウド / Amazon Elastic MapReduceの真価</h3>
+<h2 id="section">試行錯誤の過程は無駄ではない</h2>
+<p>p88
+&gt; <em>完成したものから見ると、一見捨てた90パーセントは無駄なように見えるんですが、そうじゃない。ゴールまでの進み方がわかっていないときの90パーセントというのはすごく重要で、これがなかったらゴールには辿りつけない。
+&gt; 〜中略〜
+&gt; とにかく、一発で当てるのではなく、たくさん試す。それが、ゴールに行き着くための最短の方法だと思っています。</em></p>
 
-<div style="width:425px" id="__ss_7006529"> <strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/kentamagawa/amazon-elastic-mapreduce" title="Amazon Elastic MapReduceの紹介(英語)">Amazon Elastic MapReduceの紹介(英語)</a></strong> <object id="__sse7006529" width="425" height="355"><param name="movie" value="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=aws2011q1elasticmapreducev2-110221205244-phpapp01&amp;stripped_title=amazon-elastic-mapreduce&amp;userName=kentamagawa" /><param name="allowFullScreen" value="true" /><param name="allowScriptAccess" value="always" /><embed name="__sse7006529" src="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=aws2011q1elasticmapreducev2-110221205244-phpapp01&amp;stripped_title=amazon-elastic-mapreduce&amp;userName=kentamagawa" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="355" /></object>
-<div style="padding:5px 0 12px"> View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/kentamagawa">玉川憲 (Ken Tamagawa) - Amazon Web Services</a> </div>
+<p>成功の大きさが試行錯誤の数に比例する、と。私自身サービスは数ヶ月使っていた時期があるだけなのですが、実際どのくらいの頻度でどれだけの試行が繰り返されているのか、非常に気になります。社内で検証する段階での試行錯誤だけでなく、サービス開始した後の試行錯誤もある訳だし。</p>
 
-</div>
-<ul>
-  <li>11:30?12:05</li>
-  <li>Amazon Web Services, Jeff Barr ( @jeffbarr )</li>
-  <li>EMR removes ‘MUCK’(=ぬかるんだ感じ) from big data operation
-    <ul>
-      <li>hard to manage, tuning, monitoring, debug</li>
-    </ul>
-  </li>
-  <li>issues  prevent operation in cloud</li>
-  <li>instance types
-    <ul>
-      <li>data or I/O intensive</li>
-      <li>compute or I/O intensive</li>
-    </ul>
-  </li>
-  <li>BestBuy
-    <ul>
-      <li>100 node on demand</li>
-      <li>3.5 billion records, 71 million unique cookies.</li>
-      <li>increased ROAS(returns of advertising spend) by 500%</li>
-    </ul>
-  </li>
-  <li>QA
-    <ul>
-      <li>HBaseのサポートもやります。</li>
-    </ul>
-  </li>
-</ul>
+<h2 id="section-1">コミュニケーションが成功したかどうかという指標</h2>
+<p>本当の広告効果とは何なのか、という文脈のなかで、</p>
 
-<h3 id="mapreduce">MapReduceによる大規模データを利用した機械学習</h3>
+<blockquote>
+  <p><em>「本当にどれだけファンが作れて、毎月、商品を買ってくれてる人がどれだけ増やせたか、それこそが、コミュニケーションが成功したかどうか、だと思うんです。”この商品を教えてくれてありがとう”という人を、どれだけ作れたか。それを広告効果として追求していたなければいけないと思っています。」</em></p>
+</blockquote>
 
-<div style="width:425px" id="__ss_7022974"> <strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/pfi/mapreduce-7022974" title="MapReduceによる大規模データを利用した機械学習">MapReduceによる大規模データを利用した機械学習</a></strong> <object id="__sse7022974" width="425" height="355"><param name="movie" value="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=hadoopconference2011okanohara-110222203754-phpapp01&amp;stripped_title=mapreduce-7022974&amp;userName=pfi" /><param name="allowFullScreen" value="true" /><param name="allowScriptAccess" value="always" /><embed name="__sse7022974" src="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=hadoopconference2011okanohara-110222203754-phpapp01&amp;stripped_title=mapreduce-7022974&amp;userName=pfi" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="355" /></object>
-<div style="padding:5px 0 12px"> View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/pfi">PFI Marketing </a> </div>
+<p>とあります。
+この「コミュニケーションが成功したかどうか」という表現がすごく響いてきました。形式は違えど、電話やメールなどと同じコミュニケーションの手段であるということでしょうか。うん、良い言葉です。</p>
 
-</div>
-<ul>
-  <li>12:05?12:40</li>
-  <li>株式会社Preferred Infrastructure, 岡野原 大輔 ( @hillbig )</li>
-  <li>mahout</li>
-  <li>大規模分散並列処理</li>
-  <li>グラフィカルモデル</li>
-  <li>写真の人物切り出しとか、これでできる</li>
-  <li>グラフィカルモデルの推論は一般に困難</li>
-  <li>[S, Singh LCCC 2010]</li>
-  <li>数値最適化の並列分散化</li>
-  <li>最適なのは[Iterative Parameter Mixture]
-    <ol>
-      <li>データ分割してshardに配布</li>
-      <li>shardごとに最適化</li>
-      <li>全部のθの平均をとる</li>
-      <li>θを再度各shardに配り１からくりかえす</li>
-    </ol>
-  </li>
-  <li>Dremel</li>
-  <li>MRにくらべて低レイテンシ</li>
-  <li>簡単な統計処理のみ</li>
-  <li>クエリ言語はSQL</li>
-  <li>top-k, joinなども可能</li>
-  <li>use 6 years in google</li>
-  <li>クロール、障害分析などに利用</li>
-  <li>列志向DB</li>
-  <li>木構造に列志向を導入</li>
-  <li>M/Rの補助にDremel</li>
-  <li>使い分け</li>
-  <li>データの構築コストは高い</li>
-</ul>
+<h2 id="section-2">シンプルなサービスと複雑なサービス</h2>
+<p>Twitterのようなシンプルなものがあれば、Facebookのように複雑なものもあったりして。結局サービスって何が受け入れられるのでしょう。
+できることを説明書なしにユーザーが気持よく目的を果たせるように工夫した結果として、機能をシンプルにしたのがクックパッドの今の形な訳で。だとすれば、「徹底的に」目的を追求すれば、おのずとサイトの複雑性は決まるのでしょうか。
+もう少し視野を広げて見識を深める必要がありそうです。</p>
 
-<h3 id="hadoop">モバゲーの大規模データマイニング基盤におけるHadoop活用</h3>
-
-<div style="width:425px" id="__ss_7009088"> <strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/hamadakoichi/hadoop-hadoop-conference-japan-2011-hcj2011" title="モバゲーの大規模データマイニング基盤におけるHadoop活用?Hadoop Conference Japan 2011? #hcj2011 ">モバゲーの大規模データマイニング基盤におけるHadoop活用?Hadoop Conference Japan 2011? #hcj2011 </a></strong> <object id="__sse7009088" width="425" height="355"><param name="movie" value="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=dataminingmbgahadoopconference2011-110222022814-phpapp02&amp;stripped_title=hadoop-hadoop-conference-japan-2011-hcj2011&amp;userName=hamadakoichi" /><param name="allowFullScreen" value="true" /><param name="allowScriptAccess" value="always" /><embed name="__sse7009088" src="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=dataminingmbgahadoopconference2011-110222022814-phpapp02&amp;stripped_title=hadoop-hadoop-conference-japan-2011-hcj2011&amp;userName=hamadakoichi" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="355" /></object>
-<div style="padding:5px 0 12px"> View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/hamadakoichi">Koichi Hamada</a> </div>
-
-</div>
-<ul>
-  <li>13:40?14:15</li>
-  <li>株式会社ディー・エヌ・エー,  濱田 晃一( @hamadakoichi )</li>
-  <li>DeNA: 2010/07 23億のアクティビティ</li>
-  <li>データマイニング基盤
-    <ul>
-      <li>KPI定常算出・共有</li>
-      <li>変化の検知基盤</li>
-    </ul>
-  </li>
-  <li>Business Planning
-    <ul>
-      <li>意思決定</li>
-    </ul>
-  </li>
-  <li>Service
-    <ul>
-      <li>Hadoop</li>
-      <li>DFS</li>
-    </ul>
-  </li>
-  <li>全行動ログを統一形式で蓄積</li>
-  <li>適用範囲</li>
-  <li>Pig
-    <ul>
-      <li>一時的なもの、BI</li>
-    </ul>
-  </li>
-  <li>Zebra
-    <ul>
-      <li>スキーマ管理（＋Pig）</li>
-    </ul>
-  </li>
-  <li>M/R
-    <ul>
-      <li>JavaだけでなくPerlでも。</li>
-      <li>ゲームの分散シミュレーション</li>
-    </ul>
-  </li>
-  <li>R
-    <ul>
-      <li>二次集計</li>
-      <li>データマイニング</li>
-      <li>Streamingもあわせて活用</li>
-    </ul>
-  </li>
-  <li>Mahout
-    <ul>
-      <li>データマイニング＆機械学習</li>
-    </ul>
-  </li>
-  <li>DeNA Datamining libraries
-    <ul>
-      <li>独自レコメンドエンジン</li>
-    </ul>
-  </li>
-  <li>Tuning</li>
-  <li>LZOなど最適化</li>
-  <li>Pig
-    <ul>
-      <li>Partitioner実装最適化</li>
-      <li>多段M/RのTempを圧縮</li>
-      <li>独自UDF</li>
-      <li>汎用の日次処理や文字列処理、ソーシャル用の独自Mapも。</li>
-      <li>共通ログ：Loader</li>
-    </ul>
-  </li>
-  <li>Mahout
-    <ul>
-      <li>目的に応じた組み合わせ、ジョブの実装</li>
-    </ul>
-  </li>
-  <li>楽しさ
-    <ul>
-      <li>統計的有意</li>
-      <li>多くの人々への還元（２３００万ユーザー）</li>
-      <li>感情を伴った行動情報</li>
-      <li>ユーザーのソーシャル体験への還元</li>
-      <li>パターン</li>
-      <li>楽しさ：夢中になるきっかけ</li>
-    </ul>
-  </li>
-  <li>健全なプラットフォームへ
-    <ul>
-      <li>不正書きこみの判別、年齢詐称の判別</li>
-      <li>ユーザーの声</li>
-      <li>テキストマイニング</li>
-    </ul>
-  </li>
-  <li>統一の行動記述</li>
-  <li>重要な要素
-    <ul>
-      <li>Hadoop上にすべてある。</li>
-      <li>記述が統一されている</li>
-      <li>すべてがHadoop上に統一されている</li>
-      <li>解析に力を入れることができる</li>
-    </ul>
-  </li>
-</ul>
-
-<h3 id="enterprise-batch-processing-framework-for-hadoop">Enterprise Batch Processing Framework for Hadoop</h3>
-
-<div style="width:425px" id="__ss_7021975"> <strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/okachimachi/asakusa-enterprise-batch-processing-framework-for-hadoop" title="Asakusa Enterprise Batch Processing Framework for Hadoop">Asakusa Enterprise Batch Processing Framework for Hadoop</a></strong> <object id="__sse7021975" width="425" height="355"><param name="movie" value="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=asakusa2011-2-22disclosed-110222174121-phpapp01&amp;stripped_title=asakusa-enterprise-batch-processing-framework-for-hadoop&amp;userName=okachimachi" /><param name="allowFullScreen" value="true" /><param name="allowScriptAccess" value="always" /><embed name="__sse7021975" src="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=asakusa2011-2-22disclosed-110222174121-phpapp01&amp;stripped_title=asakusa-enterprise-batch-processing-framework-for-hadoop&amp;userName=okachimachi" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="355" /></object>
-<div style="padding:5px 0 12px"> View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/okachimachi">okachimachi</a> </div>
-
-</div>
-<ul>
-  <li>14:15?14:50</li>
-  <li>ウルシステムズ株式会社, 神林 飛志( @okachimachiorz1 )</li>
-  <li>Asakusa
-    <ul>
-      <li>基幹バッチ</li>
-      <li>夜間バッチゼロ。</li>
-      <li>Hadoopは開発手法や運用に問題有り。</li>
-      <li>Pig/Hiveでは足りない</li>
-      <li>DAGベースの多層DSL</li>
-      <li>TX/Rollback制御をHadoopの外（Asakusa）でやる</li>
-      <li>MRコンパイラ
-        <ul>
-          <li>Ashigel</li>
-          <li>運用スクリプトまではく。</li>
-        </ul>
-      </li>
-      <li>ModelGenerator</li>
-      <li>データ層の自動化</li>
-      <li>テストのインテグレーション</li>
-    </ul>
-  </li>
-</ul>
-
-<h3 id="hiveameba">Hiveを用いたAmebaサービスのログ解析共通基盤</h3>
-
-<div style="width:425px" id="__ss_7014518"> <strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/toutouzone/hadoop-conferencejapan2011" title="Hadoop conferencejapan2011">Hadoop conferencejapan2011</a></strong> <object id="__sse7014518" width="425" height="355"><param name="movie" value="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=hadoopconferencejapan2011-110222063021-phpapp01&amp;stripped_title=hadoop-conferencejapan2011&amp;userName=toutouzone" /><param name="allowFullScreen" value="true" /><param name="allowScriptAccess" value="always" /><embed name="__sse7014518" src="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=hadoopconferencejapan2011-110222063021-phpapp01&amp;stripped_title=hadoop-conferencejapan2011&amp;userName=toutouzone" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="355" /></object>
-<div style="padding:5px 0 12px"> View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/toutouzone">Ichiro Fukuda</a> </div>
-
-</div>
-<ul>
-  <li>14:50?15:25</li>
-  <li>株式会社サイバーエージェント, 福田 一郎( @toutou )</li>
-  <li>Blog: <a href="http://ameblo.jp/principia-ca/entry-10635727790.html">http://ameblo.jp/principia-ca/entry-10635727790.html</a></li>
-  <li>非エンジニア向け</li>
-  <li>hadoop実績</li>
-  <li>pigg：HDFS</li>
-  <li>pico：ログ解析にEMR/Pig</li>
-  <li>アクセス解析(0.13.1)</li>
-  <li>解析基盤partiot</li>
-  <li>独自に解析してるけどだいたい定形</li>
-  <li>サービス全体の統合的な現状把握と未来予測</li>
-  <li>結果の表示にpatriot</li>
-  <li>アドホック集計にhue</li>
-  <li>patriot</li>
-  <li>CDH3b1</li>
-  <li>puppet/nagios/ganglia</li>
-  <li>ext_js/hue/hinemos</li>
-  <li>gzip/sequenceFileのブロック単位圧縮</li>
-  <li>インポート：scp/hdfs get</li>
-  <li>importDSL</li>
-  <li>log</li>
-  <li>600job/daily</li>
-  <li>700job/monthly</li>
-  <li>record 1300万以上</li>
-  <li>前処理を３〜４時間</li>
-  <li>Replication
-    <ul>
-      <li>clusterをmaster/slaveにする</li>
-      <li>slaveを非エンジニアに利用させる</li>
-    </ul>
-  </li>
-</ul>
-
-<h3 id="section">ライトニングトーク</h3>
-<ul>
-  <li>15:40?16:30</li>
-</ul>
-
-<h4 id="gfarmhadoop-mapreduce">分散ファイルシステムGfarm上でのHadoop MapReduce</h4>
-
-<div style="width:425px" id="__ss_7029061"> <strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/shun0102/h-7029061" title="分散ファイルシステムGfarm上でのHadoop MapReduce">分散ファイルシステムGfarm上でのHadoop MapReduce</a></strong> <object id="__sse7029061" width="425" height="355"><param name="movie" value="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=hcj2011-110223050641-phpapp01&amp;stripped_title=h-7029061&amp;userName=shun0102" /><param name="allowFullScreen" value="true" /><param name="allowScriptAccess" value="always" /><embed name="__sse7029061" src="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=hcj2011-110223050641-phpapp01&amp;stripped_title=h-7029061&amp;userName=shun0102" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="355" /></object>
-<div style="padding:5px 0 12px"> View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/shun0102">shun0102</a> </div>
-
-</div>
-<ul>
-  <li>Shunsuke Mikami( @shun0102 )</li>
-  <li>GlusterFS</li>
-  <li>Ceph: 高負荷で固まる</li>
-  <li>Lustre,PVFS2</li>
-  <li>GFarm: ≒HDFS
-    <ul>
-      <li>複製の作成は同期的</li>
-    </ul>
-  </li>
-  <li>他FSの利用
-    <ul>
-      <li>JNIのlayer　／　マウント</li>
-    </ul>
-  </li>
-  <li>GlusterFS
-    <ul>
-      <li>マスターなし</li>
-      <li>FUSEベース</li>
-    </ul>
-  </li>
-  <li>HDFS&gt;HDFS(3reps)&gt;GlusterFS</li>
-</ul>
-
-<h4 id="mysqlmapreduce">MySQLにMapReduceジョブトラッカを実装する</h4>
-<ul>
-  <li>Sadayuki Furuhashi( @frsyuki )</li>
-</ul>
-
-<h3 id="hadoop-and-hbase-for-ranking-processing-at-rakuten">Hadoop and HBase for ranking processing at Rakuten</h3>
-<ul>
-  <li>Yifeng Jiang( @uprush )</li>
-  <li>Hadoop</li>
-  <li>リアルタイムから年次まで。</li>
-  <li>mutable data?扱いにくい</li>
-  <li>HBase</li>
-  <li>usecase</li>
-  <li>pig: realtime ranking</li>
-  <li>100 pure java jobs per day</li>
-  <li>HBase</li>
-  <li>soft realtime access</li>
-  <li>40x faster on ranking contents</li>
-  <li>before</li>
-  <li>DB -&gt; HDFS</li>
-  <li>table split is boring</li>
-  <li>after</li>
-  <li>data go to hBase, the processed by MR</li>
-  <li>1.5k rows insert /s</li>
-  <li>0.3M rows scan /s</li>
-  <li>system become simple</li>
-  <li>balance</li>
-  <li>HW</li>
-  <li>OS resources</li>
-  <li>config</li>
-  <li>application design</li>
-</ul>
-
-<h4 id="sneak-preview-of-hapyrus--hadoop-on-the-cloud">Sneak Preview of “Hapyrus” ~ Hadoopアプリ開発＆共有サービス on the CLOUD</h4>
-
-<div style="width:425px" id="__ss_7038404"> <strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/fujibee/hadoop-conference-japan-2011-lt-hapyrus" title="Hadoop Conference Japan 2011 LT Hapyrus">Hadoop Conference Japan 2011 LT Hapyrus</a></strong> <object id="__sse7038404" width="425" height="355"><param name="movie" value="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=hadoopconferencejapan2011ltnomovie-110223203652-phpapp02&amp;stripped_title=hadoop-conference-japan-2011-lt-hapyrus&amp;userName=fujibee" /><param name="allowFullScreen" value="true" /><param name="allowScriptAccess" value="always" /><embed name="__sse7038404" src="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=hadoopconferencejapan2011ltnomovie-110223203652-phpapp02&amp;stripped_title=hadoop-conference-japan-2011-lt-hapyrus&amp;userName=fujibee" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="355" /></object>
-<div style="padding:5px 0 12px"> View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/fujibee">Koichi Fujikawa</a> </div>
-
-</div>
-<ul>
-  <li>Fujikawa Koichi( @fujibee )</li>
-  <li>敷居が高い（セットアップ?M/R?運用の工数）</li>
-  <li>Hapyrus
-    <ul>
-      <li>サイト：<a href="http://hapyrus.com/">http://hapyrus.com/</a></li>
-      <li>デモビデオ: <a href="http://www.youtube.com/watch?v=1cF-1tcapvE">http://www.youtube.com/watch?v=1cF-1tcapvE</a></li>
-      <li>ホスティング（＝EMR）</li>
-      <li>ディストリビューション＝マーケットプレイス</li>
-      <li>基本無料</li>
-    </ul>
-  </li>
-</ul>
-
-<h4 id="bonding-">Bonding とネットワークスループット</h4>
-<ul>
-  <li>Takahiro Kaneko</li>
-  <li>802.3ad + src-dst-id</li>
-</ul>
-
-<h4 id="yuuna-kurita-hadoopmongodbrruby">Yuuna Kurita: Hadoop+MongoDBでRで出力する時にRubyでミドルウェアを使う</h4>
-
-<p>※これ以降も有用な発表でしたがバッテリー切れのためメモはなしです…orz※</p>
-
-<h3 id="hadoop-1">マルチユーザーでHadoop環境を利用するためのポイント</h3>
-<ul>
-  <li>16:30?17:05</li>
-  <li>株式会社NTTデータ, 山下 真一</li>
-</ul>
-
-<h3 id="hadoopknime">Hadoopと分析統計ソフトKNIMEを用いた効率的データ活用</h3>
-<ul>
-  <li>17:05?17:40</li>
-  <li>株式会社リクルート, 中野 猛</li>
-</ul>
-
-<h3 id="section-1">関連エントリ</h3>
-<ul>
-  <li><a href="http://togetter.com/li/104169">http://togetter.com/li/104169</a></li>
-  <li><a href="http://d.hatena.ne.jp/nokuno/20110222/1298364343">http://d.hatena.ne.jp/nokuno/20110222/1298364343</a></li>
-  <li><a href="http://d.hatena.ne.jp/hamadakoichi/20110222/p1">http://d.hatena.ne.jp/hamadakoichi/20110222/p1</a></li>
-  <li><a href="http://d.hatena.ne.jp/seikoudoku2000/20110222/1298379932">http://d.hatena.ne.jp/seikoudoku2000/20110222/1298379932</a></li>
-  <li><a href="http://diary.overlasting.net/2011-02-22-1.html">http://diary.overlasting.net/2011-02-22-1.html</a></li>
-</ul>
+<p>ここ1年程ちゃんとした料理をしていない私ですが、簡単につくれるレシピをクックパッドで探してみようかな。</p>
 
 </div>
   
@@ -543,7 +193,7 @@ DSLとしてのAsakusaの魅力 &hellip;">
       
   <header>
     
-      <h1 class="entry-title"><a href="/2011/02/20/attended-nicotextmining-1st/">第一回 にこにこテキストマイニングに参加してきた #nicoTextMining</a></h1>
+      <h1 class="entry-title"><a href="/2011/02/13/analysing-text-with-the-natual-language-toolkit-chap1/">入門 自然言語処理 第一章</a></h1>
     
     
       <p class="meta">
@@ -559,254 +209,275 @@ DSLとしてのAsakusaの魅力 &hellip;">
   
 
 
-<time datetime="2011-02-20T09:30:52+09:00" pubdate data-updated="true">2011-02-20 (Sun)</time>
+<time datetime="2011-02-13T09:00:29+09:00" pubdate data-updated="true">2011-02-13 (Sun)</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>第一回 にこにこテキストマイニングに参加してきました。</p>
+  <div class="entry-content"><p><a href="http://www.amazon.co.jp/dp/4873114705/">入門 自然言語処理</a>は11月に購入してから寝かせたままでしたが、本日より読み始めることにしました。</p>
+
+<p>本日は第一章です。内容は大きく以下2点。</p>
 
 <ul>
-  <li><a href="http://atnd.org/events/12264">第1回 にこにこテキストマイニング勉強会</a></li>
+<li>pythonとnltkでの簡単なテキスト処理方法</li>
+<li>自然言語処理を俯瞰する</li>
 </ul>
+<p>内容は本に任せるとして、ここでは演習問題の解答をしようと思います。</p>
 
-<p>主催は@NLP_PRMさんと@toilet_luhchさん。会場はオラクル青山センターさん。
-懇親会と二次会にも参加させていただき、皆様の豊富な知識に圧倒されて参りました。精進しようと思います。いろいろな話しをありがとうございました。</p>
+<p><a id="more"></a><a id="more-588"></a></p>
 
-<p>当日の内容はTogetterにまとめられています。</p>
+<p>問題文は簡潔に記述するため、本書に記載されているものとは異なる表記をしています。</p>
+
+<h3>納得いかない問題</h3>
+<p>ひとつだけ納得いかない問題がありました。
+「<i>17. text9からtext.9.index()を使って’sunset’を含む一文を抜き出す</i>」です。</p>
+
+<p>解答をググっても、こちらしか出てこず。
+<a href="http://sojin.kyoto-math.jp/nlp/1-3.html#id1">1-15. bで始まる単語抽出 — 入門自然言語処理</a></p>
+
+<p>たしかに、</p>
+
+<pre class="brush:python">
+&gt;&gt;&gt; text9.index('sunset')
+629
+</pre>
+<p>と帰ってきます。でも、実際には’sunset’を含む一文は複数あるわけです。
+確認するとこんな感じ。</p>
+
+<pre class="brush:python">
+&gt;&gt;&gt; [t for t in text9 if t=='sunset']
+['sunset', 'sunset', 'sunset', 'sunset', 'sunset', 'sunset', 'sunset', 'sunset', 'sunset', 'sunset', 'sunset', 'sunset', 'sunset', 'sunset']
+</pre>
+<p>複数ある一文を抽出しなくていいの？という疑問が出てきました。すべての文を抽出する方法はさておき、今回はひとつだけ抽出する解答だけを書きました。</p>
+
+<h3>演習問題</h3>
+<h4>準備</h4>
+<p>nltkとmatplotlibがインポートできていれば、以下コードだけですみます。</p>
+
+<pre class="brush:python">from nltk.book import *</pre>
+<p>以下が、すべての問題の解答です。
+(私個人の解答であり、正解の保証はどこにもありません。）</p>
+
+<h4>1. Pythonインタプリタを電卓として、12 / (4 + 1)のような計算を入力してみよう</h4>
+<pre class="brush:python">&gt;&gt;&gt; 12 / 4 + 1
+2.3999999999999999</pre>
+<h4>2. 26文字のアルファベットが与えられたとき、10字の文字列は26の10乗（あるいは26**10）種類も作ることができるが、100文字だったら何種類か。</h4>
+<pre class="brush:python">&gt;&gt;&gt; 26 ** 100
+3142930641582938830174357788501626427282669988762475256374173175398995908420104023465432599069702289330964075081611719197835869803511992549376L</pre>
+<h4>3. [&#8216;Monty&#8217;, &#8216;Python&#8217;] * 20や 3 * sent1を実行すると何が起こるか</h4>
+<pre class="brush:python">&gt;&gt;&gt; ['Monty', 'Python'] * 3
+['Monty', 'Python', 'Monty', 'Python', 'Monty', 'Python']</pre>
+<h4>4. text2には単語がいくつ含まれているか。また重複を除くといくつか。</h4>
+<pre class="brush:python">&gt;&gt;&gt; #単語数
+&gt;&gt;&gt; len(text2)
+141576
+&gt;&gt;&gt; #重複除いた単語数
+&gt;&gt;&gt; len(set(text2))
+6833</pre>
+<h4>5. ユーモア小説とロマンス小説の間で、どちらが語彙の多様性が高いか。</h4>
+<ul>
+<li>ユーモア小説：多様性＝6.9</li>
+<li>ロマンス小説：多様性＝8.3</li>
+</ul>
+<p>?ロマンス小説が高い。</p>
+
+<h4>6. Sense and Sensibilityのなかで、エリナ、マリアン、エドワード、ウィロビーの分散プロットを表示してみよう。</h4>
+<p>名前まで日本語表記されていて元の綴りがわからない…
+なのでまず探すところから。</p>
+
+<pre class="brush:python">&gt;&gt;&gt;[t for t in set(text2) if t.startswith('El')]
+['Elinor', 'Eliza']</pre>
+<p>な感じで4人分探します。
+で、プロットする</p>
+
+<pre class="brush:python">&gt;&gt;&gt; text2.dispersion_plot(['Elinor', 'Mrianne', 'Edward', 'Willoughbys'])
+# ※ここでプロットウインドウが表示される
+</pre>
+<h5>男女の役割の違い</h5>
+<p>女性が高頻度に出現</p>
+
+<h5>カップルの特定は可能か</h5>
+<p>できない。どうしろと…</p>
+
+<h4>7. text5のコロケーションを探してみよう。</h4>
+<pre class="brush:python">&gt;&gt;&gt; text5.collocations()
+Building collocations list
+wanna chat; PART JOIN; MODE #14-19teens; JOIN PART; PART PART;
+cute.-ass MP3; MP3 player; JOIN JOIN; times .. .; ACTION watches; guys
+wanna; song lasts; last night; ACTION sits; -...)...- S.M.R.; Lime
+Player; Player 12%; dont know; lez gurls; long time</pre>
+<h4>8. len(set(text4))の目的</h4>
+<p>単語のユニーク数を求める</p>
+
+<h4>9. リストと文字列</h4>
+<h5>(a) 変数の定義と2種類の出力を試してみよう</h5>
+<pre class="brush:python">&gt;&gt;&gt; my_string = 'My String'
+&gt;&gt;&gt; my_string
+My String
+&gt;&gt;&gt; print my_string
+My String
+</pre>
+<h5>(b). 連結と演算</h5>
+<pre class="brush:python">&gt;&gt;&gt; my_string + my_string 
+'My StringMyString'
+&gt;&gt;&gt; my_string * 3 
+'My StringMy StringMy String'
+</pre>
+<h4>10. 単語のリストを保持するmy_sentという変数を定義しよう</h4>
+<h5>(a) &#8217; &#8216;.joiin(my_sent)を使ってリストを文字列に変換してみよう。</h5>
+<pre class="brush:python">&gt;&gt;&gt; ' '.join(my_string.split(' '))
+'My String'
+</pre>
+<h5>(b) split()を使ってできた</h5>
+<pre class="brush:python">&gt;&gt;&gt; my_sent = ['My', 'Sent']
+&gt;&gt;&gt; ' '.join(my_sent)
+'My Sent'
+&gt;&gt;&gt; ' '.join('hoge moge'.split(' '))
+'My Sent'
+</pre>
+<h4>11. リストの連結</h4>
+<pre class="brush:python">&gt;&gt;&gt; phrase1 = ['hoge']
+&gt;&gt;&gt; phrase1 += ['moge']
+&gt;&gt;&gt; phrase2 = ['foo']
+&gt;&gt;&gt; phrase2 += ['bar']
+&gt;&gt;&gt; phrase1 + phrase2
+['hoge', 'moge', 'foo', 'bar']</pre>
+<h5>len(phrase1 + phrase2)とlen(phrase1) + len(phrase2)の違いはなにか。</h5>
+<p>連結した後の長さと、それぞれの長さの加算</p>
+
+<h4>12. NLPと関連あるものはどれか。</h4>
+<ul>
+<li>[&#8216;Monty Python&#8217;][6:12]</li>
+<li>[&#8216;Monty&#8217;, &#8216;Python&#8217;][1]</li>
+</ul>
+<p>?b</p>
+
+<h4>13. sent1[2][2]はなにを表しているだろうか。</h4>
+<p>2要素目の2文字目</p>
+
+<h4>14.  要素のインデックス取得</h4>
+<p>微妙だけど。</p>
+
+<pre class="brush:python">&gt;&gt;&gt; i = 0
+&gt;&gt;&gt; for t in sent3:
+...   if t=='the':
+...     print i
+...   i += 1
+...
+1
+5
+8</pre>
+<h4>15. bから始まる単語の取得</h4>
+<pre class="brush:python">&gt;&gt;&gt; sorted(set([t for t in text5 if t.startswith('b')]))
+['b', 'b-day', 'b/c', 'b4',......</pre>
+<h4>16. range()について</h4>
+<pre class="brush:python">&gt;&gt;&gt; range(10)
+[1,2,3....9]
+&gt;&gt;&gt; range(10,20)
+[10,11,12,...., 20]
+&gt;&gt;&gt; range(10,20,2)
+[10, 12, ..., 18]
+&gt;&gt;&gt; range(20,10,-2)
+[20, 18, ..., 12]</pre>
+<h4>17. text9からtext.9.index()を使って&#8217;sunset&#8217;を含む一文を抜き出す</h4>
+<p>これで良いのかわかりませんが、ひとまずの解答として。</p>
+
+<pre class="brush:python">
+dot_pre = 0 # 直前の'.'の位置
+dot_aft = 0 # 直後の'.'の位置
+found = False # '.'が見つかったかどうか
+i = 0 # 現在位置
+for t in text9:
+  if t=='sunset':
+    found = True
+  if t=='.':
+    if found==True:
+      dot_aft = i
+      break
+    else:
+      dot_pre = i
+  i += 1
+# 'sunset'を含む一文を生成する。
+' '.join([text9[t] for t in range(dot_pre+1, dot_aft+1)])
+# 'CHAPTER I THE TWO POETS OF SAFFRON PARK THE suburb of Saffron Park lay on the sunset side of London , as red and ragged as a cloud of sunset .'
+</pre>
+<h4>18. sent1からsent8までに含まれる語彙を計算</h4>
+<pre class="brush:python">len(set(sent1 + sent2 + sent3 + sent4 + sent5 + sent6 + sent7 + sent8))</pre>
+<h4>19. 以下2行の違いは何か。</h4>
+<pre class="brush:python">sorted(set([w.lower() for w in text1]))
+sorted([w.lower() for w in set(text1)])</pre>
+<h5>sorted(set([w.lower() for w in text1]))</h5>
+<p>小文字のリストを作ってからユニークにしてソート</p>
+
+<h5>sorted([w.lower() for w in set(text1)])</h5>
+<p>ユニークリストから小文字にしてソート
+こちらが大きい。重複をふくんでいるので。</p>
+
+<h4>20. w.isupper()とw.islower()の違いは何か</h4>
+<p>大文字ならTrueと小文字ならTrue</p>
+
+<h4>21. 最後の2単語を取り出すスライス式を書いてみよう。</h4>
+<pre class="brush:python">&gt;&gt;&gt; text2[-2:]
+</pre>
+<h4>21. 4文字の単語のうち、頻度の高い順に取得してみよう。</h4>
+<pre class="brush:python">
+&gt;&gt;&gt; FreqDist([t for t in text4 if len(t)==4]).keys()
+</pre>
+<h4>21. 大文字の単語を一行ずつ表示</h4>
+<pre class="brush:python">
+&gt;&gt;&gt;  for str in [t for t in text6 if t.isupper()]:
+&gt;&gt;&gt;   print str
+</pre>
+<h4>24. 条件にあったものを含むリスト</h4>
+<h5>a: izeで終わる</h5>
+<pre class="brush:python">[t for t in text6 if t.endswith('ize')]</pre>
+<h5>b: zを含む</h5>
+<pre class="brush:python">[t for t in text6 if 'z' in t]</pre>
+<h5>c: ptを含む</h5>
+<pre class="brush:python">[t for t in text6 if 'pt' in t]</pre>
+<h5>d: 先頭大文字あと小文字（＝タイトルケース)</h5>
+<pre class="brush:python">[t for t in text6 if t.isalpha()==True and t==t.title()]</pre>
+<h4>25. listed = [&#8216;she&#8217;, &#8216;sells&#8217;, &#8216;sea&#8217;, &#8216;shells&#8217;, &#8216;by&#8217;, &#8216;the&#8217;, &#8216;sea&#8217;, &#8216;shore&#8217;]</h4>
+<h4 />
+<h5>shではじまる単語</h5>
+<pre class="brush:python">[t for t in listed if t.startswith('sh')]</pre>
+<h5>4文字より大きい単語</h5>
+<pre class="brush:python">[t for t in listed if len(t)&gt;=4]</pre>
+<h4>26. sum([len(w) for w in text1])について</h4>
+<h5>どんな処理？</h5>
+<p>リスト中のすべての単語長の合計</p>
+
+<h5>これをつかって平均はだせる？</h5>
+<pre class="brush:python">
+&gt;&gt;&gt; sum([len(w) for w in text1])/len(text1)
+3.8304111280236488</pre>
+<h4>27. 語彙サイズを返すvocab_size(text)を定義</h4>
+<pre class="brush:python">
+&gt;&gt;&gt; def vocab_size(text):
+...  return len(set(text))
+...
+&gt;&gt;&gt; vocab(text1)
+19317
+</pre>
+<h4>28. percent(word, text)を定義</h4>
+<pre class="brush:python">
+&gt;&gt;&gt; def percent(word, text):
+...  return len([t for t in text if t==word]) / len(text)
+</pre>
+<h4>29. set(sent3) &lt; set(text1)について</h4>
+<h5>実行してみる</h5>
+<pre class="brush:python">True</pre>
+<h5>29. 異なるテキストで実行して何が起こるか</h5>
+<pre class="brush:python">&gt;&gt;&gt; set(sent3) &lt; set(text3)
+True</pre>
+<h5>実用的な応用は何があるか</h5>
+<p>ドキュメント間の語彙数の比較</p>
 
 <ul>
-  <li><a href="http://togetter.com/li/102922">Togetter - 「第１回 にこにこテキストマイニング勉強会 #nicoTextMining #1</a></li>
+  <li><a href="http://www.amazon.co.jp/dp/4873114705">入門 自然言語処理 [大型本]</a></li>
 </ul>
-
-<p>以下、勉強会の資料と私的メモです。</p>
-
-<p><a id="more"></a><a id="more-667"></a></p>
-
-<h3 id="antibayesianhttptwittercomantibayesian--"><a href="http://twitter.com/#!/AntiBayesian">@AntiBayesian</a> : 「テキストマイニングの歩き方」</h3>
-<p>発表資料：<a href="http://www24.atpages.jp/antibayesian/up/src/up0006.pdf">テキストマイニングの歩き方</a></p>
-
-<p>「技術云々ではなく、どのようにテキストマイニングを活かすか」、という今回の勉強会の趣旨に沿った発表内容。ナレッジの自動蓄積のために、Wikiとかを使うのではなく日報メールを解析するというのは面白いですね。情報共有ツールの導入ってほとんどが失敗に終わる気がします。それよりは慣れたフォーマットを活かす方向に考えてみる、と。</p>
-
-<ul>
-  <li>アンケート</li>
-  <li>封書解答で20%の回答率</li>
-  <li>個人情報を求めると10%の回答率</li>
-  <li>言語処理における様々な解析
-    <ul>
-      <li>押さえるべきところ</li>
-      <li>形態素解析</li>
-      <li>構文解析</li>
-    </ul>
-  </li>
-</ul>
-
-<h3 id="toiletlunchhttptwittercomtoiletlunch--"><a href="http://twitter.com/#!/toilet_lunch">@toilet_lunch</a> : 「ゆるふわテキストマイニングをしてみよう」</h3>
-<p>発表資料：
-<a href="http://toilet-lunch.sakura.ne.jp/nicoTextMining01.pdf">ゆるふわテキストマイニングをしてみよう</a></p>
-
-<p>「ゆるふわ」というよりはけっこうガチな内容。私はNLPを少しかじったことがあったので、なんとかひと通りの用語は理解できました。現在の自然言語処理では何ができて、何が問題になるのか、というのがよくわかりました。</p>
-
-<ul>
-  <li>評判分析ツール
-    <ul>
-      <li><a href="http://toilet-lunch.shisobu.in/search.cgi">http://toilet-lunch.shisobu.in/search.cgi</a></li>
-      <li>一日でつくった</li>
-      <li>評価表現（ポジティブ、ネガティブの二種）</li>
-      <li>形態素解析
-        <ul>
-          <li>辞書とマッチさせる</li>
-          <li>活用語幹を用いる</li>
-          <li>単語感情極性対応表</li>
-        </ul>
-      </li>
-      <li>精度問題
-        <ul>
-          <li>ジャンルごとにネガポジが反転する場合も（「薄い」とか）</li>
-        </ul>
-      </li>
-      <li>クリーニング</li>
-      <li>言語の困難さ
-        <ul>
-          <li>否定表現
-            <ul>
-              <li>「わからない訳でもなくない？」</li>
-            </ul>
-          </li>
-          <li>未知語
-            <ul>
-              <li>ヤバい、素で</li>
-            </ul>
-          </li>
-          <li>助詞の省略</li>
-          <li>複合表現</li>
-          <li>表記ゆれ</li>
-          <li>複数評価の混在
-            <ul>
-              <li>一文に含まれる結論が読みにくい</li>
-            </ul>
-          </li>
-        </ul>
-      </li>
-      <li>「テキストマイニング」の定義があいまい
-        <ul>
-          <li>目的によって手法が異なる
-            <ul>
-              <li>目的を決め手手法を選ぶこと。</li>
-            </ul>
-          </li>
-        </ul>
-      </li>
-      <li>QA
-        <ul>
-          <li>名詞より形容詞のほうが未知語になりにくい</li>
-          <li>皮肉とか大変。</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-</ul>
-
-<h3 id="langstathttptwittercomlangstat--"><a href="http://twitter.com/#!/langstat">@langstat</a> ： 「コピー＆ペーストのみで始めるテキストマイニング超入門」</h3>
-
-<div style="width:425px" id="__ss_6973454"><strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/langstat/nicoteki1" title="Nicoteki_1">Nicoteki_1</a></strong><object id="__sse6973454" width="425" height="355"><param name="movie" value="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=nicoteki1-110218081836-phpapp02&amp;stripped_title=nicoteki1&amp;userName=langstat" /><param name="allowFullScreen" value="true" /><param name="allowScriptAccess" value="always" /><embed name="__sse6973454" src="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=nicoteki1-110218081836-phpapp02&amp;stripped_title=nicoteki1&amp;userName=langstat" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="355" /></object>
-<div style="padding:5px 0 12px">View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/langstat">Yuichiro Kobayashi</a>.</div>
-</div>
-<p>自然言語処理における一連の解析を、無料のWebサービスを使ってコピペでやってみよう、というもの。
-これらのツールがひと通り用意されていることに驚き。ただし、すべて統合したものはないようなので、ぜひ欲しいなと思います。（※APIとかあれば良いのですが…)</p>
-
-<ul>
-  <li>無料の解析用テキスト
-    <ul>
-      <li>青空文庫</li>
-      <li>首相のスピーチテキストとかパブリックドメインのもの</li>
-    </ul>
-  </li>
-  <li>用例検索</li>
-  <li>日本語形態素解析
-    <ul>
-      <li>形態素解析
-        <ul>
-          <li><a href="http://cgi.geocities.jp/ydevnet/sample/jlp/sample2/ma_sample.php">日本語形態素解析</a></li>
-          <li><a href="http://www.langrid.org/playground/morphological-analyzer.html">Morphological Analyzer - Language Grid Playground</a>
-            <ul>
-              <li>Mecab/ChaSenとかで試せる</li>
-            </ul>
-          </li>
-        </ul>
-      </li>
-      <li>構文解析
-        <ul>
-          <li><a href="http://www.langrid.org/playground/dependency-parser.html">Dependency Parser - Language Grid Playground</a></li>
-          <li>構文解析器
-            <ul>
-              <li><a href="http://chasen.org/~taku/software/cabocha/">CaboCha</a></li>
-              <li><a href="http://www-lab25.kuee.kyoto-u.ac.jp/nl-resource/knp.html">KNP</a>：格文法
-                <ul>
-                  <li>どちらがよいかは好みの問題</li>
-                </ul>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </li>
-      <li><a href="http://hp.vector.co.jp/authors/VA035840/vba/vbafreq.htm">日本語文章の頻度分析</a>
-        <ul>
-          <li>VBAツール</li>
-          <li>Webサービスではない。</li>
-        </ul>
-      </li>
-      <li><a href="http://aoki2.si.gunma-u.ac.jp/calculator/">多機能 WEB 計算機</a></li>
-    </ul>
-  </li>
-</ul>
-
-<h3 id="gepurohttptwittercomgepuro--nltk"><a href="http://twitter.com/#!/gepuro">@gepuro</a> ： 「初めてのnltk」</h3>
-
-<div style="width:425px" id="__ss_6979340"><strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/gepuro/nltk-for-biginer-6979340" title="Nltk for biginer">Nltk for biginer</a></strong><object id="__sse6979340" width="425" height="355"><param name="movie" value="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=nltkforbiginer-110218204954-phpapp01&amp;stripped_title=nltk-for-biginer-6979340&amp;userName=gepuro" /><param name="allowFullScreen" value="true" /><param name="allowScriptAccess" value="always" /><embed name="__sse6979340" src="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=nltkforbiginer-110218204954-phpapp01&amp;stripped_title=nltk-for-biginer-6979340&amp;userName=gepuro" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="355" /></object>
-<div style="padding:5px 0 12px">View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/gepuro">gepuro</a>.</div>
-</div>
-<p>学部二年生の発表。
-nltkとpython-twitterをつかったテキストマイニング。つまづきにもめげず、テキストマイニングをしてみたようです。Tweetもしたんですけど、挫折も含めて発表するのは、これからはじめてみたい方にとって有益な情報だと思いました。同じつまづきをしないためにも。</p>
-
-<h3 id="bob3bob3httptwittercombob3bob3--"><a href="http://twitter.com/#!/bob3bob3">@bob3bob3</a> ： 「アンケート自由回答のテキストマイニング事例」</h3>
-<p>発表資料：
-  * <a href="http://www.ikic.co.jp/service/pdf/marketing_6.pdf">「楽しい食事」ってどんな食事？
-? Text Mining Studio を用いた自由回答の分析事例 ?</a></p>
-
-<p>テキストマイニングをどう活用して何を達成するのか、というとても具体的な活用事例でした。私の場合、仕事がWebサービスなのでそっちに興味が偏りがちですが、こういう実生活における分析にも興味を頂きました。アンケートという自由回答形式だからこそ得られるものもあるんですね。</p>
-
-<ul>
-  <li>商用テキストマイニングツール
-    * 一番安いワードマイナーでも３０万する。
-    * 野村総研のツールが６割のシェア。
-    * 単語出現頻度分析
-    <ul>
-      <li>表記の違いは辞書つくる
-        <ul>
-          <li>ゴールデンウィークとGWなど</li>
-        </ul>
-      </li>
-      <li>名詞、形容詞、動詞に絞る</li>
-    </ul>
-  </li>
-  <li>特徴語分析
-    <ul>
-      <li>補完類似度</li>
-    </ul>
-  </li>
-  <li>コレスポンデンス分析</li>
-  <li>QA1
-    <ul>
-      <li>コレスポンデンス分析のグルーピングが困難な場合はグルーピングしない</li>
-      <li>今回はうまくいった</li>
-    </ul>
-  </li>
-  <li>QA2
-    <ul>
-      <li>あとで「状況」をグループ化しにくい
-        <ul>
-          <li>アンケートなら質問を工夫する「〜な時はどうですか？」</li>
-          <li>ブログとかあとから集めて分析する場合は難しい。</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li>QA3
-    <ul>
-      <li>女性より男性のほうがアンケートに含まれる単語数が多い傾向
-        <ul>
-          <li>グラフで見ると女性のほうが全体的に上回る（単語出現頻度の分析において）</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li>QA4
-    <ul>
-      <li>ツールのよしあし
-        <ul>
-          <li>TRUE TELLERは完成されているが、機能は限定されている。</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-</ul>
-
-<h3 id="section">関連エントリ</h3>
-<ul>
-  <li><a href="http://d.hatena.ne.jp/hamadakoichi/20110219/p1">第１回 にこにこテキストマイニング勉強会 ( #nicoTextMining #1) に参加してきた - hamadakoichi blog</a></li>
-  <li><a href="http://d.hatena.ne.jp/nokuno/20110220/1298102734">第1回にこにこテキストマイニング勉強会に参加しました #nicotextmining - nokunoの日記</a></li>
-  <li><a href="http://d.hatena.ne.jp/yokkuns/20110219/1298102645">第1回 にこにこテキストマイニング勉強会（#nicoTextMining）に参加してきた - yokkunsの日記</a></li>
-  <li><a href="http://d.hatena.ne.jp/langstat/20110219/p1">にこテキ #1 - コーパスいぢり ?langstatの研究日誌?</a></li>
-</ul>
-
-<p>みなさん日記を書くの早すぎです…勉強会が終わった、と思ったらもうエントリされていましたｗ
-そのスピード感、見習いたいです。</p>
-
-<h3 id="section-1">余談</h3>
-<p>今回からTwitter名刺を用意していきました。Twitterアイコンがプリントされているので、初めてお会いする方もアイコンは見たことあると言って頂けたのが良かったです。勉強会には、会社の名詞よりTwitter名刺が重要ですね。</p>
 
 </div>
   
@@ -828,17 +499,17 @@ nltkとpython-twitterをつかったテキストマイニング。つまづき�
 <aside class="sidebar">
   
     <section id="titles">
-  <a href="http://ReSTARTR.github.io" title="I Will Survive"><img id="logo" src="http://ReSTARTR.github.io/images/portrait.jpg" /></a>
-  <h1 id="site_title"><a href="http://ReSTARTR.github.io" title="I Will Survive">I Will Survive</a></h1>
+  <a href="http://blog.restartr.com" title="I Will Survive"><img id="logo" src="http://blog.restartr.com/images/portrait.jpg" /></a>
+  <h1 id="site_title"><a href="http://blog.restartr.com" title="I Will Survive">I Will Survive</a></h1>
   <h3 id="site_subtitle">An application depelopper&#8217;s blog.</h3>
 </section>
 
 <section id="menu">
   <ul>
-    <li><i class="fa fa-home fa-lg"></i><a href="http://ReSTARTR.github.io"> Home </a></li>
-    <li><i class="fa fa-calendar fa-lg"></i><a href="http://ReSTARTR.github.io/blog/archives/"> Archives </a></li>
-    <li><i class="fa fa-user fa-lg"></i><a href="http://ReSTARTR.github.io/about/"> About </a></li>
-    <li><i class="fa fa-rss fa-lg"></i><a href="http://ReSTARTR.github.io/atom.xml"> Feed </a></li>
+    <li><i class="fa fa-home fa-lg"></i><a href="http://blog.restartr.com"> Home </a></li>
+    <li><i class="fa fa-calendar fa-lg"></i><a href="http://blog.restartr.com/blog/archives/"> Archives </a></li>
+    <li><i class="fa fa-user fa-lg"></i><a href="http://blog.restartr.com/about/"> About </a></li>
+    <li><i class="fa fa-rss fa-lg"></i><a href="http://blog.restartr.com/atom.xml"> Feed </a></li>
   </ul>
 </section>
 
@@ -860,6 +531,8 @@ nltkとpython-twitterをつかったテキストマイニング。つまづき�
   
     <a href="https://twitter.com/ReSTARTR" title="ReSTARTR"><i class="fa fa-twitter fa-2x"></i></a>
   
+
+  
 </section>
 
 
@@ -868,15 +541,11 @@ nltkとpython-twitterをつかったテキストマイニング。つまづき�
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2014/06/28/about-docker-libchan/">Doker謹製ライブラリのlibchanについて調べてみた</a>
+      </li>
+    
+      <li class="post">
         <a href="/2014/05/11/build-rpm-on-docker-container/">Dockerを使って任意のrubyバージョンのrpmを作成する</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2014/04/22/tech-podcast-list/">技術系podcastまとめ</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2014/04/21/golang-memcache-stats-client/">Goでmemcachedのstatsを取得する</a>
       </li>
     
       <li class="post">
@@ -884,12 +553,21 @@ nltkとpython-twitterをつかったテキストマイニング。つまづき�
       </li>
     
       <li class="post">
-        <a href="/2014/04/06/reload-varnish-vcl/">VarnishのVCLを再起動なしに再読み込みする</a>
+        <a href="/2014/04/06/move-from-wordpress-to-octopress/">WordpressからOctopressに移行</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2013/04/26/connect-go-and-python-with-zeromq/">GoとPythonをZeroMQで繋ぐ</a>
       </li>
     
   </ul>
 </section>
-Included file &#8216;asides/category_list.html&#8217; not found in _includes directory
+<section>
+  <h1>Categories</h1>
+  <ul id="categories">
+    <li><a href='/category/docker/'>docker</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
+  </ul>
+</section>
 <section>
   <h1>GitHub Repos</h1>
   <ul id="gh_repos">

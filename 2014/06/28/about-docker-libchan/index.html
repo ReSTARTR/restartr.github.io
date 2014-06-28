@@ -1,0 +1,623 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Doker謹製ライブラリのlibchanについて調べてみた - I Will Survive</title>
+  <meta name="author" content="ReSTARTR">
+  <link rel="author" href="https://plus.google.com/103216164658230535238" />
+  <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
+
+  
+  <meta name="description" content="DockerCon2014で発表されたlibchanについて調べたことをまとめてみます。">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://blog.restartr.com/2014/06/28/about-docker-libchan/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+   <link href="/stylesheets/data-table.css" media="screen, projection" rel="stylesheet" type="text/css" />
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="/javascripts/ender.js"></script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <link href="/atom.xml" rel="alternate" title="I Will Survive" type="application/atom+xml">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+
+<!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href='http://fonts.googleapis.com/css?family=Lato:400,100,100italic,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:200,300,400,500,600,700,900' rel='stylesheet' type='text/css'>
+
+
+	<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$$','$$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-894530-10']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+  <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
+  <style>html{background: url("/images/background.png") no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;}</style>
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+</hgroup>
+
+</header>
+  <!-- <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:blog.restartr.com" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav> -->
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Doker謹製ライブラリのlibchanについて調べてみた</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-06-28T14:44:23+09:00" pubdate data-updated="true">2014-06-28 (Sat)</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>DockerCon2014で発表された<a href="https://github.com/docker/libchan">libchan</a>について調べたことをまとめてみます。</p>
+
+<p>libchanは<a href="https://github.com/docker/libcontainer">libcontainer</a>や<a href="https://github.com/docker/libswarm">libswarm</a>と共に発表されました。
+libswarmはDockerを中心にしたエコシステムにおけるベンダーロックインを回避するためのソリューションであり、libcontainerは<a href="http://d.hatena.ne.jp/mainyaa/20140311/p1">Docker 0.9リリースドキュメント日本語訳: Execution driversとlibcontainer導入 - Happy New World</a>を参照するのがよいでしょう。</p>
+
+<p>では、libchanとは何なのでしょうか。</p>
+
+<p>READMEには<code>like Go channels over the network</code>とあります。ネットワーク上のgo channel?よくかりませんね。。。</p>
+
+<p>README.mdとPROTOCOL.md、いくつかのテストコードをもとに簡単な実装をしてみた結果をまとめます。</p>
+
+<h3 id="libchan">libchanとはなにか</h3>
+
+<ul>
+  <li><a href="https://github.com/docker/libchan/README.md">README</a></li>
+</ul>
+
+<p>libchanは超軽量なネットワークライブラリであり、多様な通信プロトコルの土台となるものです。
+同一プロセス内でも、同一ホストの別プロセス間でも、ネットワークを超えた別ホストの別プロセス間でも双方向通信可能にするための基礎的なAPIを提供しています。
+モダンなmicro-serviesなどRPCやRESTプロトコルにはフィットしない領域で、libchanを使うことが想定されています。</p>
+
+<p>利用例はいまのところlibswarmのみです。というかlibswarmから抽出された汎用的な通信ライブラリだと思います。
+APIが安定してくると他のフレームワーク等への導入などもあるかもしれません。</p>
+
+<p>では、具体的にどうやって双方向通信を可能にしてるのでしょう。</p>
+
+<h3 id="libchan-1">libchanのプロトコル</h3>
+
+<ul>
+  <li><a href="https://github.com/docker/libchan/PROTOCOL.md">PROTOCOL</a></li>
+</ul>
+
+<p>libchanは以下のコンポーネントで構成されています。</p>
+
+<ul>
+  <li>channel</li>
+  <li>session</li>
+  <li>message</li>
+  <li>byte stream</li>
+  <li>nesting</li>
+</ul>
+
+<p>channelとは、並行プログラム間の双方向通信用オブジェクトです。goのchannelに似てるけどそのものではありません。Sender/Receiverがそれぞれ1方向ずつの経路を持つため、ソケットというよりパイプの概念に近いです。</p>
+
+<p>この２つの通信経路がsessionとなり、その間を流れるのがbyte stream。
+で、byte streamにはmessageが乗っかり、messageにはchannelを含めることができるという概念です。</p>
+
+<h3 id="libchan-2">libchanのメッセージ</h3>
+
+<p>メッセージはlibchan.Message。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">type</span> <span class="nx">libchan</span><span class="p">.</span><span class="nx">Message</span> <span class="kd">struct</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">Data</span> <span class="p">[]</span><span class="kt">byte</span> <span class="c1">// メッセージの内容</span>
+</span><span class="line">  <span class="nx">Fd</span> <span class="o">*</span><span class="nx">os</span><span class="p">.</span><span class="nx">File</span>
+</span><span class="line">  <span class="nx">Ret</span> <span class="nx">Sender</span>  <span class="c1">// 受信者が返答するためのchannel</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>このメッセージ型を、各種通信方式に対応したSender/Receiver経由でやりとりすることになります。</p>
+
+<h3 id="section">メッセージの構造化</h3>
+
+<p>メッセージは以下のようにして生成します。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="nx">message</span> <span class="o">:=</span> <span class="nx">libchan</span><span class="p">.</span><span class="nx">Message</span><span class="p">{</span><span class="nx">Data</span><span class="p">:</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&quot;Hello, libchan&quot;</span><span class="p">),</span> <span class="nx">Ret</span><span class="p">:</span> <span class="nx">libchan</span><span class="p">.</span><span class="nx">RetPipe</span><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>で、ただのテキストではなく構造化されたデータも送れます。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kn">import</span> <span class="s">&quot;github.com/docker/libchan/data&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="nx">d</span> <span class="o">:=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">Empty</span><span class="p">().</span><span class="nx">Set</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="p">)</span>
+</span><span class="line"><span class="nx">d</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">)</span> <span class="c1">// &quot;bar&quot;</span>
+</span><span class="line"><span class="nx">d</span><span class="p">.</span><span class="nx">Pretty</span><span class="p">()</span> <span class="c1">// foo=bar</span>
+</span><span class="line"><span class="nx">message</span> <span class="o">:=</span> <span class="nx">libchan</span><span class="p">.</span><span class="nx">Message</span><span class="p">{</span><span class="nx">Data</span><span class="p">:</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">Ret</span><span class="p">:</span> <span class="nx">libchan</span><span class="p">.</span><span class="nx">RetPipe</span><span class="p">))</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>ちなみに、各メソッド(Add,Set,Get,Del)はMessageのポインタをかえさないので、変数を上書きするかメソッドチェインにする必要があります。</p>
+
+<h3 id="section-1">メッセージの送受信</h3>
+
+<p>作成したメッセージををSender経由で送ります。（ここでのSender/Receiverは擬似コードです）</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="nx">sender</span><span class="p">.</span><span class="nx">Send</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">libchan</span><span class="p">.</span><span class="nx">Message</span><span class="p">{</span><span class="nx">Data</span><span class="p">:</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">msg</span><span class="p">)})</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>で、Receiverが受信したメッセージは<code>data.Decode()</code>で<code>map[string][]string</code>に変換できます。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="nx">message</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">receiver</span><span class="p">.</span><span class="nx">Receive</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span><span class="line"><span class="nx">decoded</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">Decode</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">message</span><span class="p">.</span><span class="nx">Data</span><span class="p">))</span>
+</span><span class="line"><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%$v\n&quot;</span><span class="p">,</span> <span class="nx">docoded</span><span class="p">)</span> <span class="c1">// map[string][]string{&quot;foo&quot;:[]string{&quot;bar&quot;}}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="senderreceiver">Sender/Receiver</h3>
+
+<p>実際にメッセージを送受信するのは、Send/Receiverメソッドを持つinterfaceを実装したものを使います。
+定義はだいたいこんなかんじになっています。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">type</span> <span class="nx">Sender</span> <span class="kd">interface</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">Send</span><span class="p">(</span><span class="nx">msg</span> <span class="o">*</span><span class="nx">Message</span><span class="p">)</span> <span class="p">(</span><span class="nx">Receiver</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">Sender</span><span class="p">)</span> <span class="nx">Send</span><span class="p">(</span><span class="nx">msg</span> <span class="o">*</span><span class="nx">libchan</span><span class="p">.</span><span class="nx">Message</span><span class="p">)</span> <span class="p">(</span><span class="nx">libchan</span><span class="p">.</span><span class="nx">Receiver</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="kd">type</span> <span class="nx">Receiver</span> <span class="kd">interface</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">Receiver</span><span class="p">(</span><span class="nx">mode</span> <span class="kt">int</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">Message</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">Receiver</span><span class="p">)</span> <span class="nx">Receive</span><span class="p">(</span><span class="nx">mode</span> <span class="kt">int</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">libchan</span><span class="p">.</span><span class="nx">Message</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>主要な実装は以下</p>
+
+<ul>
+  <li><a href="https://github.com/docker/libchan/blob/master/nop.go">nop</a></li>
+  <li><a href="https://github.com/docker/libchan/blob/master/inmem.go">inmem</a></li>
+  <li><a href="https://github.com/docker/libchan/blob/master/unix">unix</a></li>
+  <li><a href="https://github.com/docker/libchan/blob/master/http2">http2</a></li>
+</ul>
+
+<h3 id="inmem-in-memory-go-channel">inmem (In-memory Go channel)</h3>
+
+<p><a href="https://github.com/docker/libchan/blob/master/inmem_test.go">inmem_test.go</a>を参考に実装してみます。</p>
+
+<p>まずは<code>libchan.Pipe()</code>を使って、receiver/senderを取得します。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="nx">receiver</span><span class="p">,</span> <span class="nx">sender</span> <span class="o">:=</span> <span class="nx">libchan</span><span class="p">.</span><span class="nx">Pipe</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>送信側はgorutine内でsender経由でメッセージを送信して、送信側から受信したメッセージに対してさらに返信します。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">recv</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">sender</span><span class="p">.</span><span class="nx">Send</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">libchan</span><span class="p">.</span><span class="nx">Message</span><span class="p">{</span>
+</span><span class="line">    <span class="nx">Data</span><span class="p">:</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&quot;Hello&quot;</span><span class="p">),</span>
+</span><span class="line">    <span class="nx">Ret</span><span class="p">:</span> <span class="nx">libchan</span><span class="p">.</span><span class="nx">RetPipe</span><span class="p">,</span>
+</span><span class="line">  <span class="p">)</span>
+</span><span class="line">  <span class="nx">msg</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">recv</span><span class="p">.</span><span class="nx">Receive</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c1">// mode=0で自動Close()</span>
+</span><span class="line">  <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">Data</span><span class="p">))</span> <span class="c1">// &quot;World&quot;</span>
+</span><span class="line"><span class="p">}()</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>受信側はreceiver経由でメッセージ受信して、それに対して返信します。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="nx">msg</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">receiver</span><span class="p">.</span><span class="nx">Receive</span><span class="p">(</span><span class="nx">libchan</span><span class="p">.</span><span class="nx">Ret</span><span class="p">)</span>
+</span><span class="line"><span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">Data</span><span class="p">))</span> <span class="c1">// &quot;Hello&quot;</span>
+</span><span class="line"><span class="c1">// msg.Retが返信用のchannelとなっている</span>
+</span><span class="line"><span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">Ret</span><span class="p">.</span><span class="nx">Send</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">libchan</span><span class="p">.</span><span class="nx">Message</span><span class="p">{</span><span class="nx">Data</span><span class="p">:</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&quot;World&quot;</span><span class="p">)})</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="unixhttp2">unix/http2の実装</h3>
+
+<p>それぞれにテストコードがあるので覗いてみるとだいたいのイメージがつかめます。</p>
+
+<ul>
+  <li><a href="https://github.com/docker/libchan/blob/master/unix/unix_test.go">unix/unix_test.go</a></li>
+  <li><a href="https://github.com/docker/libchan/blob/master/http2/listener_test.go">http2/listener_test.go</a></li>
+</ul>
+
+<h2 id="section-2">まとめ</h2>
+
+<p>libchanにおけるchannelとgoのchannel、名前は同じでも別モノです。
+今のところこれといった用途が思いつかないですが、libswarmから派生したものとすると多様なプロトコルの差異を吸収するためのアダプター実装を手助けしてくれるレイヤーと考えるのがよさそうです。</p>
+
+<p>というか、DockerConでちょくちょく言及されていた「マイクロサービス」という概念のほうが興味あります。</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">ReSTARTR</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-06-28T14:44:23+09:00" pubdate data-updated="true">2014-06-28 (Sat)</time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/category/golang/'>golang</a>
+  
+</span>
+
+
+      
+      <style type="text/css">
+  .sharing {
+     clear: both;
+  }
+  .sharing li{
+    display: inline;
+    list-style-type: none;
+    float: left;
+    height: 1em;
+    line-height: 1em;
+    padding: 0 10px 0 0 ;
+    margin: 10px 0;
+  }
+  .sharing ul {
+    margin: 1em 0;
+    padding: 1em 0;
+  }
+</style>
+<div class="sharing">
+  <ul>
+    <li><a href="http://blog.restartr.com/2014/06/28/about-docker-libchan/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+  
+  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2014/06/28/about-docker-libchan/" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2014/06/28/about-docker-libchan/" >Tweet</a></li>
+  
+  
+  <li><div class="fb-like" data-href="http://blog.restartr.com/2014/06/28/about-docker-libchan/" data-layout="button_count" data-action="like" data-show-faces="false" data-share="true"></div><script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1&appId=368671089894710";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script></li>
+  
+  <li><a data-pocket-label="pocket" data-pocket-count="horizontal" class="pocket-btn" data-lang="en"></a><script type="text/javascript">!function(d,i){if(!d.getElementById(i)){var j=d.createElement("script");j.id=i;j.src="https://widgets.getpocket.com/v1/j/btn.js?v=1";var w=d.getElementById(i);d.body.appendChild(j);}}(document,"pocket-btn-js");</script></li>
+  
+  <li><div class="g-plusone" data-size="medium"></div></li>
+  
+  </ul>
+</div>
+
+      
+    </p>
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/2014/05/11/build-rpm-on-docker-container/" title="Previous Post: Dockerを使って任意のrubyバージョンのrpmを作成する">&laquo; Dockerを使って任意のrubyバージョンのrpmを作成する</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section id="titles">
+  <a href="http://blog.restartr.com" title="I Will Survive"><img id="logo" src="http://blog.restartr.com/images/portrait.jpg" /></a>
+  <h1 id="site_title"><a href="http://blog.restartr.com" title="I Will Survive">I Will Survive</a></h1>
+  <h3 id="site_subtitle">An application depelopper's blog.</h3>
+</section>
+
+<section id="menu">
+  <ul>
+    <li><i class="fa fa-home fa-lg"></i><a href="http://blog.restartr.com"> Home </a></li>
+    <li><i class="fa fa-calendar fa-lg"></i><a href="http://blog.restartr.com/blog/archives/"> Archives </a></li>
+    <li><i class="fa fa-user fa-lg"></i><a href="http://blog.restartr.com/about/"> About </a></li>
+    <li><i class="fa fa-rss fa-lg"></i><a href="http://blog.restartr.com/atom.xml"> Feed </a></li>
+  </ul>
+</section>
+
+<section id="social">
+  
+
+  
+
+  
+    <a href="" title="g+#103216164658230535238"><i class="fa fa-google-plus fa-2x"></i></a>
+  
+
+  
+    <a href="https://github.com/ReSTARTR" title="ReSTARTR"><i class="fa fa-github fa-2x"></i></a>
+  
+
+  
+
+  
+    <a href="https://twitter.com/ReSTARTR" title="ReSTARTR"><i class="fa fa-twitter fa-2x"></i></a>
+  
+
+  
+</section>
+
+
+<section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/2014/06/28/about-docker-libchan/">Doker謹製ライブラリのlibchanについて調べてみた</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2014/05/11/build-rpm-on-docker-container/">Dockerを使って任意のrubyバージョンのrpmを作成する</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2014/04/20/vimrc-noexpandtab-in-golang/">vimで特定のファイルタイプだけタブインデントにする方法</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2014/04/06/move-from-wordpress-to-octopress/">WordpressからOctopressに移行</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2013/04/26/connect-go-and-python-with-zeromq/">GoとPythonをZeroMQで繋ぐ</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+  <h1>Categories</h1>
+  <ul id="categories">
+    <li><a href='/category/docker/'>docker</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
+  </ul>
+</section>
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/ReSTARTR">@ReSTARTR</a> on GitHub
+  
+  <script type="text/javascript">
+    $.domReady(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'ReSTARTR',
+            count: 4,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+
+<section class="googleplus">
+  <h1>
+    <a href="https://plus.google.com/103216164658230535238?rel=author">
+      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
+      Google+
+    </a>
+  </h1>
+</section>
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - ReSTARTR -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'ReSTARTR';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://blog.restartr.com/2014/06/28/about-docker-libchan/';
+        var disqus_url = 'http://blog.restartr.com/2014/06/28/about-docker-libchan/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = 'http://' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+  <script type="text/javascript">
+    (function() {
+      var script = document.createElement('script'); script.type = 'text/javascript'; script.async = true;
+      script.src = 'https://apis.google.com/js/plusone.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(script, s);
+    })();
+  </script>
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
