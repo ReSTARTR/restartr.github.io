@@ -4,7 +4,7 @@
   <title><![CDATA[Category: golang | I Will Survive]]></title>
   <link href="http://blog.restartr.com/category/golang/atom.xml" rel="self"/>
   <link href="http://blog.restartr.com/"/>
-  <updated>2014-06-28T15:00:27+09:00</updated>
+  <updated>2014-06-28T20:31:00+09:00</updated>
   <id>http://blog.restartr.com/</id>
   <author>
     <name><![CDATA[ReSTARTR]]></name>
@@ -14,7 +14,7 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Doker謹製ライブラリのlibchanについて調べてみた]]></title>
+    <title type="html"><![CDATA[Docker謹製ライブラリのlibchanについて調べてみた]]></title>
     <link href="http://blog.restartr.com/2014/06/28/about-docker-libchan/"/>
     <updated>2014-06-28T14:44:23+09:00</updated>
     <id>http://blog.restartr.com/2014/06/28/about-docker-libchan</id>
