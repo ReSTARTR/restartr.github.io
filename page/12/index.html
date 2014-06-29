@@ -11,8 +11,7 @@
   <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="今回は、Desire Sのカメラ性能がどの程度なのか、iPhone3GSとデジカメを比較しながらみていきます。 iPhoneもDesire Sどちらもデフォルトのカメラアプリをデフォルトの設定で使用しました。
-あと、Degital Cameraは具体的なモデル名は言及しませんが2年くらい前の所謂” &hellip;">
+  <meta name="description" content="DotCloudにDuoStackが買収されて、DotCloudでもMongoDBが使えるようになりましたし、node.jsも使えるしで、ますますDotCloudが魅力的なものになってきました。 ただし、node.jsはサポートされても、 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -123,7 +122,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/2011/04/28/compare-iphone3gs-to-desire-s-%25e2%2580%2593camera/">Desire SをiPhone3GSと比較してみた ? カメラ編</a></h1>
+      <h1 class="entry-title"><a href="/2011/05/28/access-from-scala-to-mongodb-on-dotcloud/">DotCloudのMongoDBをScalaから使ってみる</a></h1>
     
     
       <p class="meta">
@@ -139,176 +138,237 @@
   
 
 
-<time datetime="2011-04-28T09:00:42+09:00" pubdate data-updated="true">2011-04-28 (Thu)</time>
+<time datetime="2011-05-28T20:00:57+09:00" pubdate data-updated="true">2011-05-28 (Sat)</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>今回は、Desire Sのカメラ性能がどの程度なのか、iPhone3GSとデジカメを比較しながらみていきます。</p>
+  <div class="entry-content"><p>DotCloudにDuoStackが<a href="http://gigaom.com/cloud/exclusive-paas-startups-unite-dotcloud-buys-duostack/">買収され</a>て、DotCloudでもMongoDBが使えるようになりましたし、node.jsも使えるしで、ますますDotCloudが魅力的なものになってきました。</p>
 
-<p>iPhoneもDesire Sどちらもデフォルトのカメラアプリをデフォルトの設定で使用しました。
-あと、Degital Cameraは具体的なモデル名は言及しませんが2年くらい前の所謂”普通のデジカメ”です。</p>
+<p>ただし、node.jsはサポートされても、WebSocketは正式サポートされていないと<a href="http://docs.dotcloud.com/components/nodejs/">公式マニュアル</a>にも書いてありますがWebSocketサポート済みのDuoStack買収によってどう流れるか気になるところです。</p>
 
-<h2 id="desire-s">Desire Sで撮影してみての感想</h2>
+<p>さて今回は、前回作ったものをベースにScalaからMongoDBへアクセスするサンプルをDotCloudで動かすまでを書いておきます。（まぁ、Scalaのコードはオマケみたいなものですけど…）</p>
 
-<p>最近の携帯のカメラってこんなもんなんですかね。あまり携帯カメラ事情に詳しくないのもあって、正直想像以上に綺麗で驚きました。とくに順光の性能が良いです。Desire Sは多少青味が強くでますが、あとから少し補正する前提なら満足度が高いと思いました。</p>
+<p>前回の記事はこちらです。</p>
 
-<p>ただ、夕暮れ以降になるととたんに脆くなり、フォーカスが迷いまくります。iPhone3GSの方が合焦速度は早いくらいです。かつ、合焦したはずが実際はピンぼけってことも。ISOはAUTO/100/200/400/800まであるのですが、日中〜明るめの屋内までがカバー範囲でしょうか。</p>
-
-<p>もちろん、ビンテージカメラ風に加工してくれるアプリを用いた楽しみ方(instagramやpicplzなど)もあると思います。が、私の場合、手軽に撮れるスナップ機として必要最低限の機能を求めており、基本性能を重要視していました。
-使ってみるとiPhone3GSではストレスフルだった起動速度が非常に満足のいくもので、起動?撮影?確認みたいなフローがストレスなく行えます。（あくまでiPhone3GSとの比較であり、最近のスマートフォンなら大体こんな感じなのかもしれません。)</p>
-
-<h2 id="desire-siphone3gs">Desire SとiPhone3GSとの比較撮影サンプル</h2>
-
-<p>Desire Sのフォーマットは5:3と4:3に切り替え可能ですが、今回は5:3のワイドで撮影しました。
-（※というか撮影後に切り替え可能なことに気づいた…orz)</p>
-
-<p>コメントはDesire S中心に書きました。</p>
-
-<h3 id="section">風景その１</h3>
-<p>太陽を背にした順光での比較です。</p>
-
-<h4 id="iphone-3gs">iPhone 3GS</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653782282/" title="001_IP by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5303/5653782282_b4d5cf3d97_z.jpg" width="500" height="375" alt="001_IP" /></a></p>
-
-<h4 id="desire-s-1">Desire S</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653778670/" title="001_DS by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5265/5653778670_5886531d9c_z.jpg" width="500" height="333" alt="001_DS" /></a></p>
-
-<h4 id="degital-camera">Degital Camera</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653775032/" title="001_DC by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5067/5653775032_76f7ac9abf_z.jpg" width="500" height="300" alt="001_DC" /></a></p>
-
-<h3 id="section-1">風景その２</h3>
-<p>左前方に太陽があります。</p>
-
-<h4 id="iphone-3gs-1">iPhone 3GS</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653211387/" title="002_IP by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5262/5653211387_0076831cc3_z.jpg" width="500" height="375" alt="002_IP" /></a></p>
-
-<h4 id="desire-s-2">Desire S</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653208715/" title="002_DS by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5187/5653208715_6d4e0d0523_z.jpg" width="500" height="333" alt="002_DS" /></a></p>
-
-<h4 id="degital-camera-1">Degital Camera</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653204723/" title="002_DC by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5305/5653204723_3c3e7052f2_z.jpg" width="500" height="300" alt="002_DC" /></a></p>
-
-<h3 id="section-2">逆光性能</h3>
-<p>フォーカスはクレーン本体にあわせています。
-Desire Sのカメラのレンズ前面をプラスチックが覆っているせいかフレアが目立ちます。あえて狙うこともできると思いますが。
-暗い部分もディティールも割と残っています。</p>
-
-<h4 id="iphone-3gs-2">iPhone 3GS</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653782540/" title="003_IP by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5226/5653782540_7f2971459f_z.jpg" width="500" height="375" alt="003_IP" /></a></p>
-
-<h4 id="desire-s-3">Desire S</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653778984/" title="003_DS by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5146/5653778984_62109ea1c3_z.jpg" width="500" height="333" alt="003_DS" /></a></p>
-
-<h4 id="degital-camera-2">Degital Camera</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653204925/" title="003_DC by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5062/5653204925_cd2962bae4_z.jpg" width="500" height="300" alt="003_DC" /></a></p>
-
-<h3 id="section-3">ダイナミックレンジ</h3>
-<p>明るい部分から暗い部分までちゃんとつぶれず残っています。</p>
-
-<h4 id="iphone-3gs-3">iPhone 3GS</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653782852/" title="004_IP by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5022/5653782852_0236fd9b22_z.jpg" width="500" height="375" alt="004_IP" /></a></p>
-
-<h4 id="desire-s-4">Desire S</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653209073/" title="004_DS by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5146/5653209073_9c4225cd50_z.jpg" width="500" height="333" alt="004_DS" /></a></p>
-
-<h4 id="degital-camera-3">Degital Camera</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653775946/" title="004_DC by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5188/5653775946_73fa06e8fd_z.jpg" width="500" height="300" alt="004_DC" /></a></p>
-
-<h3 id="section-4">夕日を逆光で撮る</h3>
-<p>これは私が割とよく好んで撮るシーンですが、ちゃんと暗い部分まで残っています。</p>
-
-<h4 id="iphone-3gs-4">iPhone 3GS</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653212703/" title="005_IP by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5066/5653212703_b5c493e234_z.jpg" width="500" height="375" alt="005_IP" /></a></p>
-
-<h4 id="desire-s-5">Desire S</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653209315/" title="005_DS by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5103/5653209315_4d578dc3f6_z.jpg" width="500" height="333" alt="005_DS" /></a></p>
-
-<h4 id="degital-camera-4">Degital Camera</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653776184/" title="005_DC by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5070/5653776184_cf12b0a47a_z.jpg" width="500" height="300" alt="005_DC" /></a></p>
-
-<h3 id="section-5">トワイライト</h3>
-<p>このあたりの時間からDesire Sの挙動が怪しくなります。とくに暗所にノイズが目立つようになりました。</p>
-
-<h4 id="iphone-3gs-5">iPhone 3GS</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653212949/" title="006_IP by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5308/5653212949_bcd0001834_z.jpg" width="500" height="375" alt="006_IP" /></a></p>
-
-<h4 id="desire-s-6">Desire S</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653209585/" title="006_DS by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5068/5653209585_fafbf35f56_z.jpg" width="500" height="333" alt="006_DS" /></a></p>
-
-<h4 id="degital-camera-5">Degital Camera</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653776478/" title="006_DC by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5267/5653776478_d209130e42_z.jpg" width="500" height="300" alt="006_DC" /></a></p>
-
-<h3 id="section-6">ライトアップされた建造物</h3>
-<p>Desire Sの写真、フォーカスあってません…</p>
-
-<h4 id="iphone-3gs-6">iPhone 3GS</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653213723/" title="007_IP by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5223/5653213723_355085e054_z.jpg" width="375" height="500" alt="007_IP" /></a></p>
-
-<h4 id="desire-s-7">Desire S</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653210185/" title="007_DS by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5029/5653210185_1862065604_z.jpg" width="333" height="500" alt="007_DS" /></a></p>
-
-<h4 id="degital-camera-6">Degital Camera</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653206365/" title="007_DC by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5223/5653206365_7aed7efdd2_z.jpg" width="300" height="500" alt="007_DC" /></a></p>
-
-<h3 id="section-7">街灯のある暗がり</h3>
-<p>こちらも、Desire Sの写真はフォーカスあってないです。</p>
-
-<h4 id="iphone-3gs-7">iPhone 3GS</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653214051/" title="008_IP by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5061/5653214051_ec8f359063_z.jpg" width="500" height="375" alt="008_IP" /></a></p>
-
-<h4 id="desire-s-8">Desire S</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653780952/" title="008_DS by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5061/5653780952_74bb8d6c3e_z.jpg" width="500" height="333" alt="008_DS" /></a></p>
-
-<h4 id="degital-camera-7">Degital Camera</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653777348/" title="008_DC by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5263/5653777348_a4328aa334_z.jpg" width="500" height="300" alt="008_DC" /></a></p>
-
-<h3 id="section-8">夜の寺院</h3>
-<p>iPhone3GSよりはDesire Sが色味など幾分かマシ。</p>
-
-<h4 id="iphone-3gs-8">iPhone 3GS</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653213413/" title="011_IP by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5108/5653213413_7d06759434_z.jpg" width="500" height="375" alt="011_IP" /></a></p>
-
-<h4 id="desire-s-9">Desire S</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653209905/" title="011_DS by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5110/5653209905_010d44e046_z.jpg" width="500" height="333" alt="011_DS" /></a></p>
-
-<h4 id="degital-camera-8">Degital Camera</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653207079/" title="011_DC by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5270/5653207079_20d043dc28_z.jpg" width="500" height="300" alt="011_DC" /></a></p>
-
-<h3 id="section-9">街の夜景</h3>
-<p>ここまで暗いと、手前の暗い部分にノイズがのりまくります。</p>
-
-<h4 id="iphone-3gs-9">iPhone 3GS</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653214545/" title="009_IP by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5265/5653214545_67f3c03688_z.jpg" width="500" height="375" alt="009_IP" /></a></p>
-
-<h4 id="desire-s-10">Desire S</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653781294/" title="009_DS by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5270/5653781294_42844e1e51_z.jpg" width="500" height="333" alt="009_DS" /></a></p>
-
-<h4 id="degital-camera-9">Degital Camera</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653777944/" title="009_DC by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5023/5653777944_dc9478b928_z.jpg" width="500" height="300" alt="009_DC" /></a></p>
-
-<h3 id="section-10">ほぼ暗闇の河川沿い</h3>
-<p>肉眼だと”Degital Camera”の写真くらいの明るさなのですが、Desire SもiPhone3GSも街灯以外ほぼまっ暗。ここまでくると携帯カメラには不利すぎるシチュエーションですかね。</p>
-
-<h4 id="iphone-3gs-10">iPhone 3GS</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653214277/" title="010_IP by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5306/5653214277_9cd4145e14_z.jpg" width="500" height="375" alt="010_IP" /></a></p>
-
-<h4 id="desire-s-11">Desire S</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653781498/" title="010_DS by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5143/5653781498_4ededbb142_z.jpg" width="500" height="333" alt="010_DS" /></a></p>
-
-<h4 id="degital-camera-10">Degital Camera</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653207725/" title="010_DC by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5187/5653207725_8f2e979f83_z.jpg" width="500" height="300" alt="010_DC" /></a></p>
-
-<h2 id="section-11">参考リンク</h2>
 <ul>
-  <li><a href="http://pocketnow.com/android/htc-desire-s-review">HTC Desire S Review</a>(簡単なレビューとカメラ・ビデオのサンプルがあります。)</li>
+  <li><a href="http://blog.restartr.com/2011/05/09/sample-sbt-project-for-dotcloud/">ScalaをDotCloudにアップロードするためのsbtサンプル</a></li>
 </ul>
 
-<p>Desire Sのインプレは多分これで終了です。</p>
+<p>ちなみにDotCloudは下記バージョンにて動作しているみたいです（2011.05.28現在)</p>
 
-<p>今後はiOSと比較しながらandroid端末の良さについていろいろ考えてみようと思います。</p>
+<ul>
+  <li>nginx 0.7.65</li>
+  <li>jetty 6.1</li>
+  <li>mongodb 1.8.1</li>
+</ul>
+
+<h3 id="section">作成したサンプルアプリ</h3>
+
+<p>事情により停止する場合があるかもしれませんがご了承を。</p>
+
+<ul>
+  <li><a href="http://samplemongo.ramee.dotcloud.com/">http://samplemongo.ramee.dotcloud.com/</a></li>
+</ul>
+
+<h3 id="dotcloudmongodb">DotCloudにMongoDBサーバーを準備する</h3>
+
+<p>DotCloudのMongoDBマニュアルはこちら</p>
+
+<ul>
+  <li><a href="http://docs.dotcloud.com/components/mongodb/">MongoDB ? DotCloud documentation</a></li>
+</ul>
+
+<p>上記マニュアルにしたがって作成すればMongoDBサーバーを準備できます。
+基本的には、追加したいサーバーを登録して、ユーザーを作成するだけです。</p>
+
+<p>簡単。</p>
+
+<p>今回は”example.mongo”という名前で作成する例を記してありますので、
+それぞれ自分の作成したいアプリ名に読み替えて下さい。</p>
+
+<h4 id="section-1">サーバーを作成</h4>
+
+<p>事前に”dotcloud create example”は実行してあるものとします。
+詳しくはこちらの<a href="http://docs.dotcloud.com/tutorials/firststeps/#id2">マニュアル</a>を見てください。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>dotcloud deploy -t mongo example.mongo
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">&gt; Created <span class="s2">&quot;example.mongo&quot;</span>.
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h4 id="dbidpass">DB情報を確認（ID/PASS）</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>dotcloud info example.mongo
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>deployコマンド実行してから実際に作成されるまで少し時間がかかります。
+すぐにinfoコマンドを実行すると下記エラーがでます。
+※正確に測ってませんが数十秒くらい？</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">&gt; Sat May 28 08:14:43 Error: couldn<span class="err">&#39;</span>t connect to server 127.0.0.1 shell/mongo.js:79
+</span><span class="line">&gt; exception: connect failed
+</span><span class="line">&gt; Connection to mongo.example.dotcloud.com closed.
+</span><span class="line">&gt; Abort.
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>作成完了していれば、下記情報が表示されますので、”mongodb_password: <strong>**</strong>“に記載されたパスワードをメモしておきます。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">cluster: wolverine
+</span><span class="line">config:
+</span><span class="line">    mongodb_password: ******
+</span><span class="line">created_at: 1306570413.6722209
+</span><span class="line">name: example.mongo
+</span><span class="line">namespace: example
+</span><span class="line">ports:
+</span><span class="line">-   name: ssh
+</span><span class="line">    url: ssh://mongodb@mongo.example.dotcloud.com:5906
+</span><span class="line">-   name: mongodb
+</span><span class="line">    url: mongodb://root:******@mongo.example.dotcloud.com:5907
+</span><span class="line">state: running
+</span><span class="line"><span class="nb">type</span>: mongodb
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h4 id="mongodb">MongoDBサーバーへログイン</h4>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>dotcloud run example.mongo mongo
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>infoコマンドで表示されたパスワードを使って、”sampledb”というdbにアプリユーザーを追加します。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">&gt; use sampledb
+</span><span class="line">switched to db sampledb
+</span><span class="line">&gt; db.getSisterDB<span class="o">(</span><span class="s2">&quot;admin&quot;</span><span class="o">)</span>.auth<span class="o">(</span><span class="s2">&quot;root&quot;</span>, <span class="s2">&quot;&lt;infoコマンドで表示されるパスワード&gt;&quot;</span><span class="o">)</span>;
+</span><span class="line">1
+</span><span class="line">&gt; db.addUser<span class="o">(</span><span class="s2">&quot;APPUSER_NAME&quot;</span>, <span class="s2">&quot;APPPUSER_PASS&quot;</span><span class="o">)</span>;
+</span><span class="line"><span class="o">{</span>
+</span><span class="line">     <span class="s2">&quot;user&quot;</span> : <span class="s2">&quot;APPUSER_NAME&quot;</span>,
+</span><span class="line">     <span class="s2">&quot;readOnly&quot;</span> : <span class="nb">false</span>,
+</span><span class="line">     <span class="s2">&quot;pwd&quot;</span> : <span class="s2">&quot;xxxxxxxxxxxxxxxxxxxxxxxxxxxxx&quot;</span>
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">&gt; <span class="nb">exit</span>
+</span><span class="line">bye
+</span><span class="line">Connection to mongo.example.dotcloud.com closed.
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>※とりあえず一旦ログアウトしてますが、別に必須じゃないです。</p>
+
+<h4 id="section-2">再度ログインしてテスト操作してみる</h4>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>dotcloud run example.mongo mongo
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>新規作成したユーザーでDB操作が可能か確認してみます。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="c"># mongo</span>
+</span><span class="line">Warning: Permanently added <span class="s1">&#39;[mongo.example.dotcloud.com]:5906,[174.129.17.131]:5906&#39;</span> <span class="o">(</span>RSA<span class="o">)</span> &gt; to the list of known hosts.
+</span><span class="line">MongoDB shell version: 1.8.1
+</span><span class="line">connecting to: <span class="nb">test</span>
+</span><span class="line">&gt; use sampledb;
+</span><span class="line">switched to db sampledb
+</span><span class="line">&gt; db.auth<span class="o">(</span><span class="s2">&quot;sampleuser&quot;</span>, <span class="s2">&quot;samplepass&quot;</span><span class="o">)</span>;
+</span><span class="line">1
+</span><span class="line">&gt; db.sampledb.save<span class="o">({</span>id:1,name:<span class="s2">&quot;foo&quot;</span><span class="o">})</span>;
+</span><span class="line">&gt; db.sampledb.find<span class="o">()</span>;
+</span><span class="line"><span class="o">{</span> <span class="s2">&quot;_id&quot;</span> : ObjectId<span class="o">(</span><span class="s2">&quot;4de0b033a1fd29eb0e1522fd&quot;</span><span class="o">)</span>, <span class="s2">&quot;id&quot;</span> : 1, <span class="s2">&quot;name&quot;</span> : <span class="s2">&quot;foo&quot;</span> <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>問題なさそうなので、あとはアプリを”dotcloud push”して動かすだけです。</p>
+
+<h3 id="scala">scalaからアクセスするサンプル</h3>
+
+<p>サービス名を「example.samplemongo”として作成する例です。</p>
+
+<p>requirementsはイカのとおり。</p>
+
+<ul>
+  <li>scala 2.9.0</li>
+  <li>sbt 0.7.7</li>
+  <li>jetty 7.3.1.v20110307</li>
+  <li>casbah 2.1.5.0</li>
+</ul>
+
+<p><code>sbt</code>
+で基本ディレクトリを作成したら、下記プロジェクト設定を{root}/project/build/MongoSampleProject.scala”として保存します。</p>
+
+<p>前回の設定クラスをコピーしてきたので、”sbt dot_create”と”sbt dot_push”も一応使えます。</p>
+
+<p>※”example.mongo”の名称は適宜読み替えでお願いします。
+##### MongodbSampleProject.scala</p>
+
+<script src="https://gist.github.com/996769.js?file=MongodbSampleProject.scala"></script>
+
+<p>配置できたら、</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">sbt reload update
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>でライブラリを読み込みます。</p>
+
+<p>あとは下記Servletの実装とweb.xmlを用意したらOK．</p>
+
+<h5 id="mongodbservletscala">MongodbServlet.scala</h5>
+
+<script src="https://gist.github.com/996769.js?file=MonbodbServlet.scala"></script>
+
+<h5 id="webxml">web.xml</h5>
+
+<script src="https://gist.github.com/996769.js?file=web.xml"></script>
+
+<p>できたら、”sbt dot_push”でdotcloudへアップロードされるはずです。</p>
+
+<p>最後に、”http:／／samplemongo.exapmle.dotcloud.com”にアクセスして、フォームからデータ登録ができれば成功です。</p>
+
+<p>RDBMSにくらべてデータ保存・取得までが圧倒的に簡単で、PaaSでもMongoDBはいい感じですね！</p>
 
 </div>
   
@@ -322,7 +382,7 @@ Desire Sのカメラのレンズ前面をプラスチックが覆っているせ
       
   <header>
     
-      <h1 class="entry-title"><a href="/2011/04/27/compare-desire-s-andiphone-3gs-f/">Desire SをiPhone3GSと比較してみた - 外観編</a></h1>
+      <h1 class="entry-title"><a href="/2011/05/09/sample-sbt-project-for-dotcloud/">ScalaをDotCloudにアップロードするためのsbtサンプル</a></h1>
     
     
       <p class="meta">
@@ -338,192 +398,68 @@ Desire Sのカメラのレンズ前面をプラスチックが覆っているせ
   
 
 
-<time datetime="2011-04-27T09:00:30+09:00" pubdate data-updated="true">2011-04-27 (Wed)</time>
+<time datetime="2011-05-09T23:35:43+09:00" pubdate data-updated="true">2011-05-09 (Mon)</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>先日購入したばかりのHTC Desire S。
-今回は基本スペックの確認と、今まで現役使用していたiPhone3GSとの外観の比較をしてみます。</p>
+  <div class="entry-content"><p><a href="http://dotcloud.com/">dotcloud</a>を必要最低限操作するためのactionをsbtに追加してみました。</p>
 
-<h3 id="section">基本スペック</h3>
-<p>各所に公表されているとおりなのでここでは細かく触れませんが、比較するとこんな感じになります。
-Desire S, iPhone3GS, iPhone4, Nexus Sの主要項目(独断と偏見)の比較表になります。</p>
+<p>sbtのアクション自体はじめてなので作法がよくわかってないので、間違っているかも知れませんが。</p>
 
-<table>
-  <thead>
-    <tr>
-      <th style="text-align: left"> </th>
-      <th style="text-align: left">DesireS</th>
-      <th style="text-align: left">iPhone3GS</th>
-      <th style="text-align: left">iPhone4</th>
-      <th style="text-align: left">Nexus S</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="text-align: left">縦幅</td>
-      <td style="text-align: left">115mm</td>
-      <td style="text-align: left">115.5mm</td>
-      <td style="text-align: left">115.2mm</td>
-      <td style="text-align: left">123.9mm</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">横幅</td>
-      <td style="text-align: left">59.8mm</td>
-      <td style="text-align: left">62.1mm</td>
-      <td style="text-align: left">58.6mm</td>
-      <td style="text-align: left">63mm</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">奥行き</td>
-      <td style="text-align: left">11.63mm</td>
-      <td style="text-align: left">12.3mm</td>
-      <td style="text-align: left">9.3mm</td>
-      <td style="text-align: left">10.88mm</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">重量</td>
-      <td style="text-align: left">130g</td>
-      <td style="text-align: left">135g</td>
-      <td style="text-align: left">137g</td>
-      <td style="text-align: left">129g</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">CPU</td>
-      <td style="text-align: left">1.1GHz</td>
-      <td style="text-align: left">600MHz</td>
-      <td style="text-align: left">1GHz</td>
-      <td style="text-align: left">1GHz</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">RAM</td>
-      <td style="text-align: left">768MB</td>
-      <td style="text-align: left">256MB</td>
-      <td style="text-align: left">512MB</td>
-      <td style="text-align: left">512MB</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">背面カメラ</td>
-      <td style="text-align: left">5.0M</td>
-      <td style="text-align: left">3.0M</td>
-      <td style="text-align: left">5.0M</td>
-      <td style="text-align: left">5.0M</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">電池</td>
-      <td style="text-align: left">1450mAh</td>
-      <td style="text-align: left">1219mAh</td>
-      <td style="text-align: left">1420mAh</td>
-      <td style="text-align: left">1500mAh</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">ディスプレイ</td>
-      <td style="text-align: left">3.7</td>
-      <td style="text-align: left">3.5</td>
-      <td style="text-align: left">3.5</td>
-      <td style="text-align: left">4.0</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">解像度</td>
-      <td style="text-align: left">800x480</td>
-      <td style="text-align: left">480x320</td>
-      <td style="text-align: left">960x640</td>
-      <td style="text-align: left">800x480</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">microSD</td>
-      <td style="text-align: left">o</td>
-      <td style="text-align: left">-</td>
-      <td style="text-align: left">-</td>
-      <td style="text-align: left">-</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Wi-Fi</td>
-      <td style="text-align: left">802.11b/g/n</td>
-      <td style="text-align: left">802.11b/g</td>
-      <td style="text-align: left">802.11b/g</td>
-      <td style="text-align: left">802.11b/g/n</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">OS</td>
-      <td style="text-align: left">android2.3.3</td>
-      <td style="text-align: left">iOS</td>
-      <td style="text-align: left">iOS</td>
-      <td style="text-align: left">android2.3.3</td>
-    </tr>
-  </tbody>
-</table>
+<h3 id="section">使い方</h3>
 
-<p>スペックだけみると最後発のDesireSが非常にバランス良く見えます。
-もちろん、OSや諸々の組み合わせによって満足度は変わるので一概には言えないでしょう。</p>
+<p>※scalaファイルは最後に掲載しています。
+とりあえず下記を作成するサービス名に置き換えればOKです。</p>
 
-<p>iPhone3GSが出た当時はそのスペックもかなり魅力的に感じていたのですが、さすがに二年後の現役モデルと比較するとくすんで見えますね…</p>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">  val <span class="nv">dotApplicationName</span> <span class="o">=</span> <span class="s2">&quot;APPNAME&quot;</span>
+</span><span class="line">  val <span class="nv">dotServiceName</span> <span class="o">=</span> dotApplicationName + <span class="s2">&quot;.SERVNAME&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<h3 id="iphone3gs">外観についてiPhone3GSと比較</h3>
+<p>あとは、下記を順に実行すればOK(dot_prepareはdot_pushの前に必ず実行されるので省略可能)</p>
 
-<p>ボタンの位置やサイズ感など、比べてみればみるほどよく似ていることがわかります。</p>
-
-<p>まずは表側。パッと見は同サイズ。
-ディスプレイはDesireSが若干縦長です。</p>
-
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653202925/" title="IMG_4574 by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5185/5653202925_aa51ca6efb_z.jpg" width="500" height="333" alt="IMG_4574" /></a></p>
-
-<p>裏面。こちらも同様の形状をしていて、中心に向かってカーブしているデザイン。
-カメラの位置もほぼ同じですね。</p>
-
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653773818/" title="IMG_4575 by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5147/5653773818_cd430ae2af_z.jpg" width="500" height="333" alt="IMG_4575" /></a></p>
-
-<p>上面。イヤホンジャックと電源ボタンがありますが、こちらも同じ配置です。</p>
-
-<p>ただ、ジャックの口がDesire Sは平面に切られているのに対して、iPhone3GSはカーブに沿って口の形状が加工されています。
-仕上げの細かさで言えばiPhone3GSのほうが上ということでしょうか。</p>
-
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653773240/" title="IMG_4581 by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5107/5653773240_821093e634_z.jpg" width="500" height="333" alt="IMG_4581" /></a></p>
-
-<p>厚みもほぼ同じ。</p>
-
-<p>iPhoneは表面が一直線ですが、DesireSはボディ末端がカーブしています。</p>
-
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653774040/" title="IMG_4585 by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5187/5653774040_22573c28bb_z.jpg" width="500" height="333" alt="IMG_4585" /></a></p>
-
-<p>iPhone 3GSのカバーをつけてみると、少しDesire Sが小さいことがよくわかります。</p>
-
-<p>特に縦のサイズがコンパクトさが際立ちますね。</p>
-
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653203875/" title="Desire S that is wared cover for iPhone3GS by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5307/5653203875_2a1048bd3a_z.jpg" width="500" height="333" alt="Desire S that is wared cover for iPhone3GS" /></a></p>
-
-<p>DesireSはiPhone3GSよりは少し小さいです。
-手に持ってみると、裏面のカーブが大きいDesireSのほうがしっくり手になじむ感じがします。
-ただ、つや消し塗装のユニボディなせいか、サラサラした感じで滑って落としそう。。。</p>
-
-<p>現在はiPhone3GSの黒SIMをつけて使用しています。
-あと、SDカードは最初からSANDISKの8GBが挿入されていました。</p>
-
-<p><a href="http://www.flickr.com/photos/53244662@N04/5653223571/" title="IMG_4590 by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5029/5653223571_8bc82103b3_z.jpg" width="500" height="333" alt="IMG_4590" /></a></p>
-
-<p>ちなみにDesire SにはDesireの保護シートをつけている為サイズが足りていませんがご愛嬌ってことでｗ</p>
-
-<p>次回は、カメラ性能について比較してみようと思います。</p>
-
-<h3 id="section-1">参考リンク:</h3>
 <ul>
-  <li><a href="http://www.htc.com/www/product/desires/overview.html">HTC - Products - HTC Desire S - Overview</a></li>
-  <li>
-    <table>
-      <tbody>
-        <tr>
-          <td><a href="http://www.samsung.com/us/mobile/cell-phones/GT-I9020FSTTMB">Nexus S from Google</a></td>
-          <td>Samsung Nexus&lt;/a&gt;</td>
-        </tr>
-      </tbody>
-    </table>
-  </li>
-  <li><a href="http://www.apple.com/jp/iphone/">アップル - iPhone - 携帯電話、iPod、インターネットデバイスがひとつに。</a></li>
-  <li><a href="http://www.knowyourmobile.com/comparisons/854017/samsung_google_nexus_s_vs_htc_desire_s.html">Samsung Google Nexus S vs HTC Desire S</a></li>
-  <li><a href="http://ja.wikipedia.org/wiki/IPhone">iPhone - Wikipedia</a></li>
+  <li>“sbt dot_create” : サービスの作成</li>
+  <li>“sbt dot_prepare” : リリース用ディレクトリ作成とwarファイルのコピー</li>
+  <li>“sbt dot_push” : dotcloudへのwarファイルpush</li>
+</ul>
+
+<h3 id="dotcloud">dotcloud用に注意すべきこと</h3>
+
+<p>“sbt package”を使用すると、”＜projectName＞-＜scala_ver＞-＜app_ver＞.war”の形式でwarファイルが作成されます。
+が、dotcloudのドキュメントにはこう書いてあるので、”root.war”で作成するのが望ましいです。</p>
+
+<blockquote>
+The java service will make your application available at http://frontend.myapp.dotcloud.com/ if your archive is named root.war or http://frontend.myapp.dotcloud.com/webapp/ if your archive is named webapp.war (../foobar/ if the archive was named foobar.war and so on). So, you can effectively serve multiple web applications with the same java service.
+
+</blockquote>
+<p><a href="http://docs.dotcloud.com/components/java/">Java — DotCloud documentation</a></p>
+
+<p>さらに、”dotcloud push”はwarファイルを含むディレクトリを指定することになり、それ以下がすべて同期されてしまいます。デフォルトだと、”./target/scala_2.8.1/”以下のすべてが。</p>
+
+<p>なので、warのみ格納する”release”ディレクトリを作り、 そこに”root.war”としてひとつだけ存在させておきました。
+順番に書くと、</p>
+
+<ul>
+  <li>sbt packageでtarget/scala_2.8.1/＜projectName＞-＜scala_ver＞-＜app_ver＞.warを生成</li>
+  <li>そのwarファイルをtarget/release/root.warにコピー</li>
+  <li>“dotcloud push ＜dotcloud_appname＞ target/release/” でwarのみアップロード</li>
+</ul>
+
+<p>という方法で対応しました。</p>
+
+<p>以下、サンプルのプロジェクト設定です。</p>
+
+<script src="https://gist.github.com/962534.js?file=RameeProject.scala"></script>
+
+<h3 id="section-1">参考リンク</h3>
+<ul>
+  <li><a href="http://docs.dotcloud.com/cli/">DotCloud command line — DotCloud documentation</a></li>
+  <li><a href="http://code.google.com/p/simple-build-tool/wiki/Process">Process - simple-build-tool - A build tool for Scala - Google Project Hosting</a></li>
 </ul>
 
 </div>
@@ -596,15 +532,15 @@ Desire S, iPhone3GS, iPhone4, Nexus Sの主要項目(独断と偏見)の比較�
       </li>
     
       <li class="post">
+        <a href="/2014/04/22/tech-podcast-list/">技術系podcastまとめ</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2014/04/21/golang-memcache-stats-client/">Goでmemcachedのstatsを取得する</a>
+      </li>
+    
+      <li class="post">
         <a href="/2014/04/20/vimrc-noexpandtab-in-golang/">vimで特定のファイルタイプだけタブインデントにする方法</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2014/04/06/move-from-wordpress-to-octopress/">WordpressからOctopressに移行</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2013/04/26/connect-go-and-python-with-zeromq/">GoとPythonをZeroMQで繋ぐ</a>
       </li>
     
   </ul>
@@ -612,7 +548,7 @@ Desire S, iPhone3GS, iPhone4, Nexus Sの主要項目(独断と偏見)の比較�
 <section>
   <h1>Categories</h1>
   <ul id="categories">
-    <li><a href='/category/docker/'>docker</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
+    <li><a href='/category/docker/'>docker</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
   </ul>
 </section>
 <section>

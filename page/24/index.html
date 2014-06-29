@@ -11,10 +11,9 @@
   <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="タイトルそのまんまです。
-wordpressへのmixiチェックボタンの設置方法はこちら mixiチェックキーの発行方法： ブログにmixiチェックを設置 - F.Ko-Jiの「一秒後は未来」
-wordpress用mixiチェックプラグイン：
-Downloads for takimo&#8217; &hellip;">
+  <meta name="description" content="先日のPHPMatsuriのハッカソンにて作成したXHProfの結果がみれるCustomPanelですが、そのまま公開するにはお恥ずかしい感じだったので、多少マシに改修したものを公開してみます。
+DebugKit, XHProfPanelとは
+CakePHPのDebugKitというプラグインがあり &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -125,7 +124,7 @@ Downloads for takimo&#8217; &hellip;">
       
   <header>
     
-      <h1 class="entry-title"><a href="/2010/09/11/set-button-for-mixi-check-and-tweet-button-on-wordpress/">Wordpressにmixiチェックボタンを設置(公式tweetボタンも)</a></h1>
+      <h1 class="entry-title"><a href="/2010/10/10/the-xhprofpanel-debugkit-custom-panel-cakephp/">CakePHPのDebugKitにプロファイル情報が見れるXHProfPanelを追加</a></h1>
     
     
       <p class="meta">
@@ -141,30 +140,83 @@ Downloads for takimo&#8217; &hellip;">
   
 
 
-<time datetime="2010-09-11T11:11:05+09:00" pubdate data-updated="true">2010-09-11 (Sat)</time>
+<time datetime="2010-10-10T00:59:04+09:00" pubdate data-updated="true">2010-10-10 (Sun)</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>タイトルそのまんまです。</p>
-<p>wordpressへのmixiチェックボタンの設置方法はこちら</p>
-<dl>
-<dt>mixiチェックキーの発行方法： </dt>
-<dt> </dt>
-<dd><a href="http://blog.fkoji.com/2010/09101830.html">ブログにmixiチェックを設置 - F.Ko-Jiの「一秒後は未来」</a></dd>
-<dt>wordpress用mixiチェックプラグイン：</dt>
-<dd><a href="http://github.com/takimo/mixi-check-for-wordpress/downloads">Downloads for takimo&#8217;s mixi-check-for-wordpress - GitHub</a></dd>
-</dl>
-<p>wordpressへのtweetボタンの導入プラグインはこちら</p>
-<dl>
-<dt>wordpress用tweetボタンプラグイン： </dt>
-<dt> </dt>
-<dd><a href="http://wordpress.org/extend/plugins/tweetbutton-for-wordpress/">WordPress ? TweetButton ? WordPress Plugins</a></dd>
-</dl>
-<p>それぞれプラグインをインストールしたら、管理画面で初期設定して、テンプレートをいじるだけ。<br />
-特に問題もなくスムーズに設置できました。</p>
+  <div class="entry-content"><p>先日のPHPMatsuriのハッカソンにて作成したXHProfの結果がみれるCustomPanelですが、そのまま公開するにはお恥ずかしい感じだったので、多少マシに改修したものを公開してみます。</p>
+<h3>DebugKit, XHProfPanelとは</h3>
+<p>CakePHPのDebugKitというプラグインがあり、それを使えばいろんなデバッグ情報がWeb画面上で確認できます。で、これにXHProfというphp拡張を使ってプロファイラ情報を見れるようにしてみました。</p>
+<p>こんな感じです。<br />
+<a href="http://blog.restartr.com/wp-content/uploads/2010/10/256d829a326e5fc745e5659600527bde.png"><img class="alignnone size-full wp-image-390" title="XHProfPanel-screenshot" src="http://blog.restartr.com/wp-content/uploads/2010/10/256d829a326e5fc745e5659600527bde.png" alt="" width="464" height="42" /></a></p>
+<p><a id="more"></a><a id="more-367"></a></p>
+<p>で、パネルを開くとこんな感じに各関数呼び出しごとの負荷情報などを閲覧できます。<br />
+<a href="http://blog.restartr.com/wp-content/uploads/2010/10/f0c2dac263680a94429c57bd5c1e81ff.png"><img class="alignnone size-medium wp-image-399" title="xhprofpanel-opned-screenshot" src="http://blog.restartr.com/wp-content/uploads/2010/10/f0c2dac263680a94429c57bd5c1e81ff-300x170.png" alt="" width="300" height="170" /></a></p>
+<p>さらに、<strong>&#8220;xhprof Result&#8221;</strong>というリンクをクリックすれば、XHProfが用意してくれているビューアを開くこともできます。ビューアではコールグラフも閲覧できます。</p>
+<h3>カスタムパネルの追加方法</h3>
+<blockquote><p>helloworld_controllerにプロファイル実行する、という例で説明します。</p></blockquote>
+<h4>事前準備</h4>
+<p>debugkitはインストール済みとします。入れ方は<br />
+<a href="http://d.hatena.ne.jp/cakephper/20090604/1244112188">超便利なDebugkitを画面キャプチャ付きで解説 - cakephperの日記(CakePHP, MongoDB, Lithium)</a><br />
+を参照してください。</p>
+<p>XHProfのインストールも済ませておきます。</p>
+<pre class="brush">wget http://pecl.php.net/get/xhprof-0.9.2.tgz
+pecl install xhprof-0.9.2.tgz</pre>
+<p>php.iniにも設定追加しておきます。</p>
+<pre class="brush">extension=xhprof.so</pre>
+<p>tgzファイルをtarで解凍した中身のうち、xhprof_html,xhprof_libをビューア用に用意したバーチャルホスト下において、<br />
+別ドメインでアクセスできるようにします。<br />
+cakeのアプリは<strong>cake.localhost</strong>、xhprofビューアは<strong>xhprof.localhost</strong>のような感じです。<br />
+ディレクトリはこんな感じできっています。</p>
+<pre class="brush:c">/var/
+  vhosts/
+    cake/ // cake.localhostのdocument_root
+      app/
+    xhprof/
+      xhprof_html/ // xhprof.localhostのdocument_root
+      xhprof_lib/</pre>
+<h4>ファイル構成</h4>
+<p>下記ファイルを修正もしくは新規作成します。</p>
+<pre class="brush:c">app/
+  controllers/
+    helloworld_controller.php //新規追加
+  plugins/
+    debug_kit/
+      controllers/
+        conmponents/
+          toolbar.php //修正
+      views/
+        elements/
+          xhprof_panel.ctp //新規追加</pre>
+<h4>1.XHProfPanelの追加</h4>
+<blockquote><p>app/plugins/debug_kit/controllers/components/toolbar.php</p></blockquote>
+<p>に下記クラスをコピペで追加。<br />
+<script src="http://gist.github.com/618254.js?file=toolbar.php"></script></p>
+<h4>2.デフォルトパネルにXHProfPanelを追加</h4>
+<blockquote><p>app/plugins/debug_kit/controllers/components/toolbar.php</p></blockquote>
+<p>の既存行（52行目あたり)に下記のように$_defaultPanelsに&#8217;xhprof&#8217;を追加。<br />
+<script src="http://gist.github.com/618254.js?file=toolbar_.php"></script></p>
+<h4>3.controllerの設定にもXHProfPanelを追加</h4>
+<p>下記のようにXhprofPanelへの設定情報も渡します。<br />
+<script src="http://gist.github.com/618254.js?file=helloworld_controller.php"></script></p>
+<h4>4.テンプレートの追加</h4>
+<blockquote><p>app/plugins/debug_kit/views/elements/xhprof_panel.ctp</p></blockquote>
+<p>を下記内容で新規作成します。<br />
+<script src="http://gist.github.com/618254.js?file=xhprof_panel.ctp"></script></p>
+<h4>ソート順の変更</h4>
+<p>デフォルトではwall timeの降順でソートしてあります。<br />
+コントローラでの設定で&#8217;sortBy&#8217;の値を変えれば変更できます。<br />
+(指定しなければ&#8217;wt&#8217;指定となります。)<br />
+設定できるのは<strong>ct, wt, cpu, mu, pmu</strong>の５つ。</p>
+<h4>プロファイル範囲</h4>
+<p>XhprofPanel::__constructからXhprofPanel::beforeRenderまでです。<br />
+結果をみるとLogPanelクラス（DebugKitプラグイン内のクラス）のメソッド呼び出しも含まれていたりするので、<br />
+もう少し適当な範囲にできないか検討したいと思います。</p>
+<h3>余談</h3>
+<p>Githubを有料アカウントにすべきか迷い中です。今回とりあえずgistで公開してみましたが、リポジトリは欲しいような、でも今のところ必要ないような…</p>
 </div>
   
   
@@ -177,7 +229,7 @@ Downloads for takimo&#8217; &hellip;">
       
   <header>
     
-      <h1 class="entry-title"><a href="/2010/09/05/processing-the-file-formatted-tsv/">TSVファイルを処理する</a></h1>
+      <h1 class="entry-title"><a href="/2010/10/03/phpmatsuri-hack-days-by-php-hackers/">PHPMATSURI - PHPハッカー達による一泊二日のハックデイ</a></h1>
     
     
       <p class="meta">
@@ -193,91 +245,73 @@ Downloads for takimo&#8217; &hellip;">
   
 
 
-<time datetime="2010-09-05T18:22:53+09:00" pubdate data-updated="true">2010-09-05 (Sun)</time>
+<time datetime="2010-10-03T20:26:48+09:00" pubdate data-updated="true">2010-10-03 (Sun)</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>Scalaプログラミング入門をざっと読んでから少し間が空いてしまいました。<br />
-第１回Scala座を見たりして刺激もらったのでちょっとScala弄りなど。<br />
-※Scala座については非公式にトゥギャらせてもらっています。：<a href="http://togetter.com/li/47287">第１回Scala座非公式勝手まとめ</a></p>
-<p>ちょっと雰囲気を振り返るため、普段PHPでよくやるTSVファイルの読み込みでテスト。</p>
-<p>foo.tsvの中身はこんな感じ。</p>
-<pre class="brush:c">
-u01,Tokyo
-u02,Osaka
-u03,Nagoya
-u04,Tokyo
-u05,Fukuoka
-u06,Nagoya
-u07,Nagoya
-u08,Shiga
-u09,Hokkaido
-u10,Osaka
-</pre>
-<p>これの転置インデックスを作成したい。</p>
-<p>で、<a href="http://rainyday.blog.so-net.ne.jp/2007-12-01">こちらのブログ記事</a>とかを参考にしたりして、何回か試行錯誤してできたのがこちらのソース。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-<span class="line-number">21</span>
-<span class="line-number">22</span>
-<span class="line-number">23</span>
-</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">import</span> <span class="nn">scala.collection.mutable.HashMap</span>
-</span><span class="line"><span class="k">import</span> <span class="nn">scala.io.Source</span>
-</span><span class="line"><span class="k">import</span> <span class="nn">scala.io.BufferedSource</span>
-</span><span class="line"><span class="k">object</span> <span class="nc">ReadTsv</span>
-</span><span class="line"><span class="o">{</span>
-</span><span class="line">  <span class="k">def</span> <span class="n">main</span><span class="o">(</span> <span class="n">args</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="o">)</span>
-</span><span class="line">  <span class="o">{</span>
-</span><span class="line">    <span class="k">val</span> <span class="n">source</span> <span class="k">=</span> <span class="nc">Source</span><span class="o">.</span><span class="n">fromFile</span><span class="o">(</span> <span class="s">&quot;foo.txt&quot;</span> <span class="o">)</span>
-</span><span class="line">    <span class="k">try</span> <span class="o">{</span>
-</span><span class="line">      <span class="k">var</span> <span class="n">m</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">[</span><span class="kt">String</span>,<span class="kt">List</span><span class="o">[</span><span class="kt">String</span><span class="o">]]</span>
-</span><span class="line">      <span class="k">for</span><span class="o">(</span> <span class="n">line</span> <span class="k">&lt;-</span> <span class="n">source</span><span class="o">.</span><span class="n">getLines</span> <span class="o">)</span> <span class="o">{</span>
-</span><span class="line">        <span class="k">val</span> <span class="n">x</span><span class="k">:</span><span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="n">line</span><span class="o">.</span><span class="n">stripLineEnd</span><span class="o">.</span><span class="n">split</span><span class="o">(</span><span class="s">&quot;,&quot;</span><span class="o">)</span>
-</span><span class="line">        <span class="n">m</span><span class="o">.</span><span class="n">update</span><span class="o">(</span><span class="n">x</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span> <span class="o">,</span> <span class="n">m</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="n">x</span><span class="o">(</span><span class="mi">1</span><span class="o">))</span> <span class="k">match</span> <span class="o">{</span>
-</span><span class="line">          <span class="k">case</span> <span class="nc">Some</span><span class="o">(</span><span class="n">s</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">x</span><span class="o">(</span><span class="mi">0</span><span class="o">)</span> <span class="o">::</span> <span class="n">s</span>
-</span><span class="line">          <span class="k">case</span> <span class="nc">None</span>    <span class="k">=&gt;</span> <span class="nc">List</span><span class="o">(</span> <span class="n">x</span><span class="o">(</span><span class="mi">0</span><span class="o">)</span> <span class="o">)</span>
-</span><span class="line">        <span class="o">})</span>
-</span><span class="line">      <span class="o">}</span>
-</span><span class="line">      <span class="n">println</span><span class="o">(</span> <span class="n">m</span> <span class="o">)</span>
-</span><span class="line">    <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
-</span><span class="line">      <span class="n">source</span><span class="o">.</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">BufferedSource</span><span class="o">].</span><span class="n">close</span>
-</span><span class="line">    <span class="o">}</span>
-</span><span class="line">  <span class="o">}</span>
-</span><span class="line"><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>実行</p>
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>scalac ReadTsv.scala
-</span><span class="line"><span class="nv">$ </span>scala ReadTsv
-</span><span class="line">Map<span class="o">(</span>Shiga -&gt; List<span class="o">(</span>u08<span class="o">)</span>, Nagoya -&gt; List<span class="o">(</span>u07, u06, u03<span class="o">)</span>, Tokyo -&gt; List<span class="o">(</span>u04, u01<span class="o">)</span>, Osaka -&gt; List<span class="o">(</span>u10, u02<span class="o">)</span>, Fukuoka -&gt; List<span class="o">(</span>u05<span class="o">)</span>, Hokkaido -&gt; List<span class="o">(</span>u09<span class="o">))</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>手続き型な感じが色濃い気がするけど、もっと関数型的になるのでしょうか。。<br />
-とりあえずコレクションとパターンマッチの練習にはなりました。</p>
-<p>他人のプログラムを拝見するなどして、もっとScalaの理解を深める必要がありそうです。</p>
+  <div class="entry-content"><p><a title="IMG_2470 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/5046336051/"><img src="http://farm5.static.flickr.com/4154/5046336051_aabef10eb4.jpg" alt="IMG_2470" width="500" height="333" /></a></p>
+<p><a href="http://2010.phpmatsuri.net/"><img class="alignnone size-medium wp-image-341" title="PHPMATSURI" src="http://blog.restartr.com/wp-content/uploads/2010/10/bunner-300x132.jpg" alt="" width="300" height="132" /></a><br />
+10月02日と03日の、一泊二日の<a href="http://2010.phpmatsuri.net/">PHPMASTURI</a>に参加してきました。</p>
+<ul>
+<li>ハッシュタグ: <a href="http://search.twitter.com/search?q=%23phpmatsuri">#phpmatsuri</a></li>
+<li>LTのustream: <a href="http://www.ustream.tv/channel/phpmatsuri">phpmatsuri on USTREAM</a></li>
+</ul>
+<h3>とにかく内容が濃い</h3>
+<ul>
+<li>楽天の吉岡さんによる大人のプログラミングキャンプ</li>
+<li>CakePHP,Symfony,Lithiumのデベロッパーによるセッション</li>
+<li>彼らのライブコーディングを間近に見られる各フレームワークのワークショップ</li>
+<li>スポンサー各社のセッション</li>
+<li>PHPによる開発事例プレゼン大会のJIREI NIGHT</li>
+<li>ZyngaJapanのお二人によるTDDを実体験できるワークショップ</li>
+<li>深夜まで続くハッカソンと、総勢33名による大LT大会</li>
+</ul>
+<p>ざっと並べただけでもこんな感じに、とにかく内容てんこ盛りな二日間でした。</p>
+<p><a id="more"></a><a id="more-335"></a></p>
+<p><a title="IMG_2512 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/5046956568/"><img src="http://farm5.static.flickr.com/4133/5046956568_dd9b08f6eb.jpg" alt="IMG_2512" width="500" height="333" /></a></p>
+<p>まとめるのは得意ではないので、参加した感想を少しばかり。</p>
+<h3>イベントに参加するということがいかに重要であるか</h3>
+<p>最初の吉岡さんのセッションは「この祭りをいかに楽しく有意義に過ごすか」ということを教えていただきました。また、各セッションを聞いたり、たくさんのデベロッパーの方々とコミュニケーションをとるのも非常に有意義でした。<br />
+最後のLT大会では、参加したみなさんの変態ぶりに圧倒されっぱなし。これだけ多くの発表があるとそれぞれに目の付け所が違っているが故にアイデアももらえるし、そこで発表すれば多くの反応をいただくこともできます。参加することで得られるメリットは、参加費用にはかえがたいものがあったと思います。<br />
+最後の締めで@yandoさんが「個人によるイベント」と仰っていて、このイベントは有志のスタッフの方々に支えられている、ことを実感しました。企画・運営をしてくださったスタッフのみなさんには本当に感謝します。<br />
+そして、PHPMATSURIに関わったすべての方に感謝したいと思います。ありがとうございました。</p>
+<p><a title="IMG_2491 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/5046334983/"><img src="http://farm5.static.flickr.com/4086/5046334983_8bd1c1329a.jpg" alt="IMG_2491" width="500" height="333" /></a><br />
+今回のチャレンジをまとめてみます。</p>
+<h3>チャレンジできたこと</h3>
+<ul>
+<li>CakePHP,Symfony2,Lithium各フレームワークの特徴を知る</li>
+<li>プレゼン資料を拙いながらも英語で作成する</li>
+<li>内容に関係なく発表者になる</li>
+<li>動かなかったで終わらせず、動くまでハックする</li>
+</ul>
+<h3>チャレンジできなかったこと</h3>
+<ul>
+<li>各FWデベロッパーの方々とのコミュニケーション</li>
+<li>セッションで質問する(TDDのワークでは質問しましたが)</li>
+<li>ソースコード公開</li>
+<li>Beer Driven Development</li>
+</ul>
+<h3>今後チャレンジしたいこと</h3>
+<ul>
+<li>今回の成果物のソースコード公開する</li>
+<li>英語を聞く力、話す力をつける</li>
+<li>発表の機会を自分でつくる</li>
+</ul>
+<h3>成果：XHProf CustomPanel</h3>
+<p>※詳しい話は別記事にてやります。</p>
+<div id="__ss_5344576" style="width: 425px;"><strong><a title="Php matusri xhprof custompanel" href="http://www.slideshare.net/restartr/php-matusri-xhprofcustompanelpublish">Php matusri xhprof custompanel</a></strong><object id="__sse5344576" classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" width="425" height="355" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,40,0"><param name="allowFullScreen" value="true" /><param name="allowScriptAccess" value="always" /><param name="src" value="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=phpmatusri-xhprofcustompanel-publish-101003011838-phpapp02&amp;stripped_title=php-matusri-xhprofcustompanelpublish&amp;userName=restartr" /><param name="name" value="__sse5344576" /><param name="allowfullscreen" value="true" /><embed id="__sse5344576" type="application/x-shockwave-flash" width="425" height="355" src="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=phpmatusri-xhprofcustompanel-publish-101003011838-phpapp02&amp;stripped_title=php-matusri-xhprofcustompanelpublish&amp;userName=restartr" name="__sse5344576" allowscriptaccess="always" allowfullscreen="true" /></object>
+<div style="padding: 5px 0 12px;">View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/restartr">Re STARTR</a>.</div>
+</div>
+<h3>おまけ</h3>
+<p>途中でレッドブルがふるまわれるというサービスまでありました。当日6時起きだったのに4時まで頑張れたのはレッドブルのおかげかもしれません。<br />
+<a title="IMG_2488 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/5046334797/"><img src="http://farm5.static.flickr.com/4108/5046334797_b3ed8b2f3e.jpg" alt="IMG_2488" width="500" height="333" /></a></p>
+<p>そして、最後にCakePHP開発者のGraham Weldonさんと記念撮影させてもらいました。<br />
+Thanks, Graham!<br />
+<a title="IMG_2514 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/5046335737/"><img src="http://farm5.static.flickr.com/4113/5046335737_4651050be6.jpg" alt="IMG_2514" width="500" height="333" /></a><br />
+#ほとんど会話できなかったのが悔やまれます。会話することを怖がらないことが大事ですね。反省。</p>
 </div>
   
   
@@ -348,15 +382,15 @@ u10,Osaka
       </li>
     
       <li class="post">
+        <a href="/2014/04/22/tech-podcast-list/">技術系podcastまとめ</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2014/04/21/golang-memcache-stats-client/">Goでmemcachedのstatsを取得する</a>
+      </li>
+    
+      <li class="post">
         <a href="/2014/04/20/vimrc-noexpandtab-in-golang/">vimで特定のファイルタイプだけタブインデントにする方法</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2014/04/06/move-from-wordpress-to-octopress/">WordpressからOctopressに移行</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2013/04/26/connect-go-and-python-with-zeromq/">GoとPythonをZeroMQで繋ぐ</a>
       </li>
     
   </ul>
@@ -364,7 +398,7 @@ u10,Osaka
 <section>
   <h1>Categories</h1>
   <ul id="categories">
-    <li><a href='/category/docker/'>docker</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
+    <li><a href='/category/docker/'>docker</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
   </ul>
 </section>
 <section>

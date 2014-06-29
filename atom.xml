@@ -4,7 +4,7 @@
   <title><![CDATA[I Will Survive]]></title>
   <link href="http://blog.restartr.com/atom.xml" rel="self"/>
   <link href="http://blog.restartr.com/"/>
-  <updated>2014-06-28T21:01:27+09:00</updated>
+  <updated>2014-06-29T22:02:48+09:00</updated>
   <id>http://blog.restartr.com/</id>
   <author>
     <name><![CDATA[ReSTARTR]]></name>
@@ -496,6 +496,383 @@ APIが安定してくると他のフレームワーク等への導入なども�
   </entry>
   
   <entry>
+    <title type="html"><![CDATA[技術系podcastまとめ]]></title>
+    <link href="http://blog.restartr.com/2014/04/22/tech-podcast-list/"/>
+    <updated>2014-04-22T23:58:29+09:00</updated>
+    <id>http://blog.restartr.com/2014/04/22/tech-podcast-list</id>
+    <content type="html"><![CDATA[<h3 id="rebuild-podcast">Rebuild Podcast</h3>
+
+<blockquote>
+Rebuild はソフトウェア開発、テクノロジー、ガジェットなどの話題を中心に、ゲストと話すギーク、デベロッパー向けのポッドキャスト番組です。
+</blockquote>
+
+<ul>
+  <li>Hosted by <a href="http://twitter.com/miyagawa">@miyagawa</a></li>
+  <li><a href="http://rebuild.fm/">http://rebuild.fm/</a></li>
+  <li><a href="http://feeds.rebuild.fm/rebuildfm">RSS</a></li>
+  <li><a href="https://itunes.apple.com/jp/podcast/rebuild/id603013428?mt=2">iTunes</a></li>
+</ul>
+
+<h3 id="mosaicfm">mosaic.fm</h3>
+
+<blockquote>
+次世代 Web Podcast Mozaic
+</blockquote>
+
+<ul>
+  <li>Hosted by <a href="https://twitter.com/jxck_">@Jxck_</a></li>
+  <li><a href="http://mozaic.fm/">http://mozaic.fm/</a></li>
+  <li><a href="http://feeds.feedburner.com/mozaicfm">RSS</a></li>
+</ul>
+
+<h3 id="section">だんごゆっけの平和な話</h3>
+
+<blockquote>
+仲良し三十路男二人。Web業界にいるプランナーとエンジニア。それぞれの日常を平和にまとめあげていきます
+</blockquote>
+
+<ul>
+  <li>Hosted by <a href="https://twitter.com/kamadango">@kamadango</a>, <a href="https://twitter.com/yusukebe">@yusukebe</a></li>
+  <li><a href="http://dandy.fm/">http://dandy.fm/</a></li>
+  <li><a href="http://feed.dandy.fm/dandyfm">RSS</a></li>
+  <li><a href="https://itunes.apple.com/jp/podcast/id806076544?mt=2">iTunes</a></li>
+</ul>
+
+<h3 id="section-1">職質テックトーク</h3>
+
+<ul>
+  <li>Hosted by <a href="https://twitter.com/moznion/">@moznion</a></li>
+  <li><a href="http://shock-sheets-tech.tumblr.com/">http://shock-sheets-tech.tumblr.com/</a></li>
+  <li><a href="http://shock-sheets-tech.tumblr.com/rss">RSS</a></li>
+</ul>
+
+<h3 id="backspacefm">backspace.fm</h3>
+
+<blockquote>
+一週間分のテック・ガジェットニュースを配信するポッドキャスト
+</blockquote>
+
+<ul>
+  <li><a href="http://backspace.fm/">http://backspace.fm/</a></li>
+  <li><a href="http://feeds.backspace.fm/backspacefm">RSS</a></li>
+  <li><a href="https://itunes.apple.com/jp/podcast/backspace.fm/id830709730">iTunes</a></li>
+  <li>Hosted by <a href="https://twitter.com/drikin">@drikin</a></li>
+</ul>
+
+<h3 id="code-lunch">CODE LUNCH</h3>
+
+<ul>
+  <li><a href="http://codelunch.fm/">http://codelunch.fm/</a></li>
+  <li><a href="http://codelunch.fm/rss.xml">RSS</a></li>
+  <li>Hosted by <a href="https://twitter.com/h13i32maru">@h13i32maru</a>, <a href="https://twitter.com/iizukak">@iizukak</a></li>
+</ul>
+
+<h3 id="podcast">ジュンク堂書店Podcast</h3>
+
+<blockquote>
+ジュンク堂書店の店頭で行われているトークセッションやイベントなどを配信するポッドキャスト（ベータ版）です。
+</blockquote>
+
+<ul>
+  <li><a href="http://junkudo.seesaa.net/index20.rdf">RSS</a></li>
+  <li><a href="https://itunes.apple.com/jp/podcast/junku-tang-shu-dianpodcast/id398125301">iTunes</a></li>
+</ul>
+
+<h2 id="section-2">海外</h2>
+
+<p>海外では<a href="http://5by5.tv/">5by5</a>がポータルっぽい。</p>
+
+<h3 id="ruby-on-rails-podcast">Ruby on Rails Podcast</h3>
+
+<ul>
+  <li><a href="http://5by5.tv/rubyonrails/147">http://5by5.tv/rubyonrails/147</a></li>
+  <li><a href="http://feeds.5by5.tv/rubyonrails">RSS</a></li>
+  <li><a href="https://itunes.apple.com/us/podcast/ruby-on-rails-podcast/id840890158?mt=2&amp;uo=8&amp;at=11laDR">iTunes</a></li>
+  <li>Hosted by <a href="http://twitter.com/barelyknown">@barelyknown</a></li>
+</ul>
+
+<h3 id="the-changelog">The Changelog</h3>
+
+<blockquote>
+The Changelog covers the intersection of software development and open source. Open source moves fast. Keep up!
+</blockquote>
+
+<ul>
+  <li><a href="http://5by5.tv/changelog/">http://5by5.tv/changelog/</a></li>
+  <li><a href="http://feeds.5by5.tv/changelog">RSS</a></li>
+  <li><a href="https://itunes.apple.com/us/podcast/the-changelog/id341623264?uo=8&amp;at=11laDR">iTunes</a></li>
+</ul>
+
+<h3 id="aws-podcast---listen-and-lean-about-aws">AWS Podcast - Listen and Lean About AWS</h3>
+
+<ul>
+  <li><a href="http://aws.amazon.com/jp/apac/awspodcast/">http://aws.amazon.com/jp/apac/awspodcast/</a></li>
+  <li><a href="http://d1i0y6b5oi739x.cloudfront.net/feed.xml">RSS</a></li>
+  <li><a href="http://itunes.apple.com/sg/podcast/aws-podcast/id526624928">iTunes</a></li>
+</ul>
+
+<h3 id="in-beta">In Beta</h3>
+
+<blockquote>
+In Beta is a talk show about tech culture, making open source software, and how mobile, social, and web apps are changing the world.
+</blockquote>
+
+<ul>
+  <li><a href="http://feeds.5by5.tv/inbeta">http://feeds.5by5.tv/inbeta</a></li>
+  <li><a href="http://feeds.5by5.tv/inbeta">RSS</a></li>
+</ul>
+
+<h3 id="floss">FLOSS</h3>
+
+<blockquote>
+We&#8217;re not talking dentistry here; FLOSS all about Free Libre Open Source Software.
+</blockquote>
+
+<ul>
+  <li><a href="http://twit.tv/floss">http://twit.tv/floss</a></li>
+  <li><a href="http://feeds.twit.tv/floss.xml">RSS</a></li>
+</ul>
+
+<h3 id="tuxradar">TuxRadar</h3>
+
+<blockquote>
+a new TuxRadar podcast all about Linux and free software will be posted here every three weeks for free download
+</blockquote>
+
+<ul>
+  <li><a href="http://www.tuxradar.com/podcast">http://www.tuxradar.com/podcast</a></li>
+  <li><a href="http://www.tuxradar.com/rss">RSS</a></li>
+</ul>
+
+<h3 id="the-news">The News</h3>
+
+<blockquote>
+A daily update on the latest in tech, Apple, gaming, web, and geek culture. It&#8217;s the only news that matters.
+</blockquote>
+
+<ul>
+  <li><a href="http://5by5.tv/news">http://5by5.tv/news</a></li>
+  <li><a href="http://feeds.5by5.tv/news">RSS</a></li>
+  <li><a href="https://itunes.apple.com/us/podcast/the-news/id602266713?mt=2&amp;uo=8&amp;at=11laDR">iTunes</a></li>
+  <li>Hosted by <a href="http://twitter.com/imyke">@imyke</a></li>
+</ul>
+
+<h3 id="sourcetrunk">Sourcetrunk</h3>
+
+<p>デスクトップアプリ紹介中心</p>
+
+<ul>
+  <li><a href="http://www.sourcetrunk.com/">http://www.sourcetrunk.com/</a></li>
+  <li><a href="http://feeds.feedburner.com/sourcetrunk">RSS</a></li>
+  <li><a href="http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewPodcast?id=193827468">iTunes</a></li>
+</ul>
+
+<h3 id="sofrware-engineering-radio">Sofrware Engineering Radio</h3>
+
+<ul>
+  <li><a href="http://www.se-radio.net/">http://www.se-radio.net/</a></li>
+  <li><a href="http://www.se-radio.net/">RSS</a></li>
+</ul>
+
+<h3 id="the-engineering-commons-podcast">The Engineering Commons Podcast</h3>
+
+<blockquote>
+Practical insights for the engineering crowd
+</blockquote>
+
+<ul>
+  <li><a href="http://theengineeringcommons.com/">http://theengineeringcommons.com/</a></li>
+  <li><a href="http://feeds.feedburner.com/TheEngineeringCommonsPodcast">RSS</a></li>
+</ul>
+
+<h2 id="section-3">参考リンク</h2>
+
+<ul>
+  <li><a href="http://weblog.bulknews.net/post/58665793844/tech-podcast-5">オススメ Tech Podcast 5選 - Tatsuhiko Miyagawa’s blog</a></li>
+  <li><a href="http://www.infoq.com/jp/news/2011/09/archcasts">ソフトウェアアーキテクチャ関連ポッドキャストの薦め</a></li>
+  <li><a href="http://overflow-memo.blogspot.jp/2014/01/podcast.html">_overflow: 技術系Podcast・動画ニュースメモ</a></li>
+  <li><a href="http://tunein.com/radio/Technology-g2738/">テクノロジーラジオ - Listen Online</a></li>
+  <li><a href="http://blackshadow.seesaa.net/article/144207109.html">幻影随想: 科学なポッドキャストをまとめて紹介してみる</a></li>
+  <li><a href="https://player.fm/featured/open-source">Best Open Source Podcasts (April, 2014)</a></li>
+</ul>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Goでmemcachedのstatsを取得する]]></title>
+    <link href="http://blog.restartr.com/2014/04/21/golang-memcache-stats-client/"/>
+    <updated>2014-04-21T00:17:33+09:00</updated>
+    <id>http://blog.restartr.com/2014/04/21/golang-memcache-stats-client</id>
+    <content type="html"><![CDATA[<p>YouTubeで使われている<a href="https://github.com/youtube/vitess">vitess</a>の実装をざっと見てたところ、memcachedクライアント実装が簡潔でわかりやすかったので出来る限りラフに実装を写経してみました。</p>
+
+<p>やってることはコマンドラインからアドレスを受け取って、memcachedのstatsを表示するだけです。</p>
+
+<h3 id="section">この写経で学べること</h3>
+
+<ul>
+  <li>flagパッケージを使ったコマンドライン引数の取得</li>
+  <li>netパッケージを使ったネットワーク接続</li>
+  <li>bufioパッケージを使ったストリームの読み出し</li>
+</ul>
+
+<h3 id="main">main()</h3>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+</span><span class="line">	<span class="c1">// 引数読み出し</span>
+</span><span class="line">	<span class="nx">address</span> <span class="o">:=</span> <span class="nx">flag</span><span class="p">.</span><span class="nx">String</span><span class="p">(</span><span class="s">&quot;address&quot;</span><span class="p">,</span> <span class="s">&quot;localhost:11211&quot;</span><span class="p">,</span> <span class="s">&quot;server address&quot;</span><span class="p">)</span>
+</span><span class="line">	<span class="nx">flag</span><span class="p">.</span><span class="nx">Parse</span><span class="p">()</span>
+</span><span class="line">	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;server: %s\n&quot;</span><span class="p">,</span> <span class="o">*</span><span class="nx">address</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">	<span class="c1">// サーバーに接続</span>
+</span><span class="line">	<span class="nx">conn</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">GetConn</span><span class="p">(</span><span class="o">*</span><span class="nx">address</span><span class="p">)</span>
+</span><span class="line">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class="line">		<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%#v&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span><span class="line">		<span class="nx">os</span><span class="p">.</span><span class="nx">Exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span><span class="line">	<span class="p">}</span>
+</span><span class="line">	<span class="k">defer</span> <span class="nx">conn</span><span class="p">.</span><span class="nx">conn</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line">	<span class="c1">// stats読み出し</span>
+</span><span class="line">	<span class="nx">result</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">conn</span><span class="p">.</span><span class="nx">Stats</span><span class="p">()</span>
+</span><span class="line">	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%s&quot;</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="section-1">実行結果</h3>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>go run ./memcache_stats.go --address<span class="o">=</span>localhost:11211
+</span><span class="line">server: localhost:11211
+</span><span class="line">STAT pid 23282
+</span><span class="line">STAT uptime 12425
+</span><span class="line">STAT <span class="nb">time </span>1398007875
+</span><span class="line">STAT version 1.4.4
+</span><span class="line">STAT pointer_size 64
+</span><span class="line">STAT rusage_user 0.335948
+</span><span class="line">STAT rusage_system 0.344947
+</span><span class="line">  :
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="section-2">実装全体</h3>
+
+<div><script src="https://gist.github.com/11116595.js?file=memcache_stats.go"></script>
+<noscript><pre><code>package main                                                                                                                                                                          [32/1268]
+
+// 写経 from: https://github.com/youtube/vitess/blob/master/go/memcache/memcache.go
+//  * エラーハンドリングをできるかぎり省略して実装.
+//  * statsコマンドだけ実装
+
+import (
+        &quot;bufio&quot;
+        &quot;flag&quot;
+        &quot;fmt&quot;
+        &quot;net&quot;
+        &quot;os&quot;
+        &quot;strings&quot;
+)
+
+type Connection struct {
+        conn net.Conn
+        buffered bufio.ReadWriter
+}
+
+func GetConn(address string) (conn *Connection, err error) {
+        nc, err := net.Dial(&quot;tcp&quot;, address)
+        if err != nil {
+                return nil, err
+        }
+        return &amp;Connection{
+                conn: nc,
+                buffered: bufio.ReadWriter{
+                        Reader: bufio.NewReader(nc),
+                        Writer: bufio.NewWriter(nc),
+                },
+        }, err
+}
+
+func (mc *Connection) writestring(s string) {
+        _, err := mc.buffered.WriteString(s);
+        if err!= nil {
+                panic(err)
+        }
+}
+
+func (mc *Connection) readline() string {
+        mc.flush()
+        l, _, _ := mc.buffered.ReadLine()
+        return string(l)
+}
+
+func (mc *Connection) flush() {
+        err := mc.buffered.Flush()
+        if err != nil {
+                panic(err)
+        }
+}
+
+func (mc *Connection) Stats() (result []byte, err error) {
+        mc.writestring(&quot;stats\r\n&quot;)
+        mc.flush()
+        for {
+                l := mc.readline()
+                if strings.HasPrefix(l, &quot;END&quot;) {
+                        break
+                }
+                if strings.Contains(l, &quot;ERROR&quot;) {
+                        panic(&quot;ERROR&quot;)
+                }
+                result = append(result, l...)
+                result = append(result, &#39;\n&#39;)
+        }
+        return result, err
+}
+
+func main() {
+        address := flag.String(&quot;address&quot;, &quot;localhost:11211&quot;, &quot;server address&quot;)
+        flag.Parse()
+        fmt.Printf(&quot;server: %s\n&quot;, *address)
+
+        conn, err := GetConn(*address)
+        if err != nil {
+                fmt.Printf(&quot;%#v&quot;, err)
+                os.Exit(1)
+        }
+        defer conn.conn.Close()
+
+        result, _ := conn.Stats()
+        fmt.Printf(&quot;%s&quot;, result)
+}</code></pre></noscript></div>
+
+]]></content>
+  </entry>
+  
+  <entry>
     <title type="html"><![CDATA[vimで特定のファイルタイプだけタブインデントにする方法]]></title>
     <link href="http://blog.restartr.com/2014/04/20/vimrc-noexpandtab-in-golang/"/>
     <updated>2014-04-20T16:15:21+09:00</updated>
@@ -535,6 +912,89 @@ APIが安定してくると他のフレームワーク等への導入なども�
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
 <p>ちなみに、<code>set expandtab</code>してる状態でタブを入力する場合は<code>Ctrl-v + &lt;tab&gt;</code>でハードタブが入力できます。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[VarnishのVCLを再起動なしに再読み込みする]]></title>
+    <link href="http://blog.restartr.com/2014/04/06/reload-varnish-vcl/"/>
+    <updated>2014-04-06T15:38:08+09:00</updated>
+    <id>http://blog.restartr.com/2014/04/06/reload-varnish-vcl</id>
+    <content type="html"><![CDATA[<p>/etc/varnish/default.vclを書き換えた時、</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">/etc/init.d/varnishd restart
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>ってやってたけど、reloadできることを今更知った。</p>
+
+<h3 id="vcllist-vcl">vcl.list: 現在の読み込んでるVCLの一覧を見る</h3>
+
+<p>CentOSのyumで入れたvarnishはデフォルトでこんなふうになってる</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>varnishadm -T localhost:6082 vcl.list
+</span><span class="line">active        579 boot
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="vclload-vcl">vcl.load: 新規にVCLをロードする</h3>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>varnishadm -T localhost:6082 vcl.load boot-<span class="sb">`</span>date+%Y%m%d%H%M%S<span class="sb">`</span> /etc/varnish/default.vcl
+</span><span class="line">VCL compiled.
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>この時点では利用可能な状態であって、まだ変更は反映されていない</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>varnishadm -T localhost:6082 vcl.list
+</span><span class="line">active        579 boot
+</span><span class="line">available       0 boot-20140406153127
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="vcluse-vcl">vcl.use: ロードしたVCLに切り替える</h3>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>varnishadm -T localhost:6082 vcl.use boot-20140406153127
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>何も表示されないけどちゃんと切り替わっている</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>varnishadm -T localhost:6082 vcl.list
+</span><span class="line">available     526 boot
+</span><span class="line">active         53 boot-20140406153127
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>ちなみに、真ん中の数値はactiveの場合は経過秒数で、availableになると数値が減っていく。
+でも、0になっても居座り続ける。この数値の変化のルールはよくわかってない。</p>
+
+<p>ということで不要な過去のvclは定期的に消さないとずっと残り続けてしまうので注意。</p>
+
+<h3 id="vcldiscard-vcl">vcl.discard: ロード済みvclの破棄</h3>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>varnishadm -T localhost:6082 vcl.discard boot
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>ここでも結果が表示されないけどちゃんと消えている。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>varnishadm -T localhost:6082 vcl.list
+</span><span class="line">available       11 boot-20140406155155
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>本当はinitスクリプト化すると便利なんだろうけど、手動でも良いかなと。</p>
+
+<ul>
+  <li><a href="http://blog.xcir.net/?p=124">Varnishで再起動無しで設定ファイルを適用する方法(reload) » cat /dev/random &gt; /dev/null &amp;</a></li>
+</ul>
 ]]></content>
   </entry>
   
@@ -2050,602 +2510,6 @@ ATNDやZusaar,Partakeなど、様々なサービスがあり、現在も新し�
 <p>で、ソースは以下です。</p>
 
 <script src="https://gist.github.com/1146854.js"> </script>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Varnish勉強会 #tokyovcl に行ってきた]]></title>
-    <link href="http://blog.restartr.com/2011/06/21/go-to-varnish-study-tokyovc/"/>
-    <updated>2011-06-21T23:56:40+09:00</updated>
-    <id>http://blog.restartr.com/2011/06/21/go-to-varnish-study-tokyovc</id>
-    <content type="html"><![CDATA[<p><a href="http://www.flickr.com/photos/53244662@N04/5856931526/" title="IMAG0053 by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5029/5856931526_1119c53a87.jpg" width="500" height="299" alt="IMAG0053" /></a></p>
-
-<p>6/18(土)に開催された<a href="http://atnd.org/events/16681">Varnish勉強会 Tokyo.vcl : ATND</a>に行ってきました。
-初のクックパッドさんオフィス訪問です。</p>
-
-<p>Varnish3のリリースパーティーも兼ねての開催だったようで、ステッカーもいただいてしまいました。
-インフラ屋じゃない上に、Varnish触ったのは前日の晩という超初心者だったので結構不安でしたが、
-ビアバッシュを含め色々な話しが聞けた実りある良い勉強会でした。</p>
-
-<p>主催の@hmskさんをはじめ登壇者の皆様、ならびにビアバッシュで交流してくださった皆様ありがとうございました。</p>
-
-<h3 id="section">雑感</h3>
-<ul>
-  <li>Varnishは画像配信の事例が多い</li>
-  <li>HTTPサーバーの前だけじゃなくてSolrのような内部ネットワーク間の通信にも適用できる。</li>
-  <li>Varnish落ちたときにApacheの負荷を避けるためにSquidが使える。</li>
-  <li>拡張次第でHTTPサーバーにもKVSにも化ける（やりすぎ注意？）。</li>
-  <li>クラウドでの運用はフロンティア。</li>
-  <li>設定ファイルのvclはもはやプログラム</li>
-  <li>ESIの事例なかったけど使いにくいのかな？</li>
-  <li>とりあえず実戦投入して様子見ないとわからないことが多そう。</li>
-  <li>あ、どれだけ高速化したかについての言及がなかったような…</li>
-</ul>
-
-<h2 id="section-1">各発表メモ</h2>
-<p>スライドと、その丸写しみたいな感じのメモをペタペタ。</p>
-
-<h3 id="varnishcache30vupxcir">VarnishCache3.0新機能とVUPの仕方(@xcir)</h3>
-
-<div style="width:425px" id="__ss_8344516"> <strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/xcir/tokyovclvarnishcache30vup" title="tokyo.vcl発表資料（VarnishCache3.0新機能とVUPの仕方）">tokyo.vcl発表資料（VarnishCache3.0新機能とVUPの仕方）</a></strong> <iframe src="http://www.slideshare.net/slideshow/embed_code/8344516" width="425" height="355" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
-<div style="padding:5px 0 12px"> View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/xcir">xcir</a> </div>
-
-</div>
-<ul>
-  <li>ESIでのgzip
-    <ul>
-      <li>ブロックが圧縮されているとESIできなかった(~2）</li>
-      <li>defaultパラメータが改善された</li>
-    </ul>
-  </li>
-  <li>stream support
-    <ul>
-      <li>別のストリームは待機させられる（？</li>
-    </ul>
-  </li>
-</ul>
-
-<h3 id="varnishphji">イカ娘も終わったしVarnishでも使うか(@phji)</h3>
-
-<div style="width:425px" id="__ss_8366215"> <strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/phji/varnishika" title="イカ娘も終わったしVarnishでも使うか">イカ娘も終わったしVarnishでも使うか</a></strong> <iframe src="http://www.slideshare.net/slideshow/embed_code/8366215" width="425" height="355" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
-<div style="padding:5px 0 12px"> View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/phji">Kazutoshi Fujimoto</a> </div>
-
-</div>
-<ul>
-  <li>[RAM8G Xeon 4core SSD256GB ] x 20servers</li>
-  <li>pixiv
-    <ul>
-      <li>nginx -&gt; (consistent hash) -&gt; quid -&gt; nginx -&gt; apache</li>
-      <li>lookupとかかないとキャッシュされないｗ</li>
-    </ul>
-  </li>
-</ul>
-
-<h3 id="twitteryatsvarnishpenguinana">twitter検索(yats)でvarnish使ってみた(@PENGUINANA_)</h3>
-<ul>
-  <li>API 7000M req/month</li>
-  <li>PV 150Mreq/month</li>
-  <li>varnish(vps) -&gt; nginx[ webAPI -&gt; varnish -&gt; Solr ]</li>
-  <li>service : cache + failover</li>
-  <li>Solr: slaveのキャッシュクリアーが重いので、その前面にVarnishをおいている(ラウンドロビンとFailover）</li>
-  <li>autocomplete
-    <ul>
-      <li>キャッシュと相性よさそう</li>
-    </ul>
-  </li>
-</ul>
-
-<h3 id="ec2varnishmirakui">EC2とvarnishで画像配信(@mirakui)</h3>
-
-<div style="width:425px" id="__ss_8352369"> <strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/mirakui/ec2varnish" title="EC2とVarnishで画像配信">EC2とVarnishで画像配信</a></strong> <iframe src="http://www.slideshare.net/slideshow/embed_code/8352369" width="425" height="355" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
-<div style="padding:5px 0 12px"> View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/mirakui">Issei Naruta</a> </div>
-
-</div>
-<ul>
-  <li>失敗談</li>
-  <li>TOFU
-    <ul>
-      <li>アップロード時ではなくオンデマンドでリサイズ</li>
-      <li>akamai（CDN)に7000RPSのうち、ELBには700RPSくる。60%受けるリクエストをキャッシュできればApache負荷軽減できるのでは？
-        <ul>
-          <li>という導入経緯（からの失敗</li>
-        </ul>
-      </li>
-      <li>1st challenge
-        <ul>
-          <li>EC2(M2.XLARGE[17.1GB RAM] + EBS[100GB for swap])</li>
-          <li>300rps</li>
-          <li>結果：オンメモリだけなら順調だけど、あふれてきてOSにSWAPさせたとたんLOADAVERAGEが爆発して死亡。</li>
-        </ul>
-      </li>
-      <li>2nd challenge
-        <ul>
-          <li>EC2(M2.XLARGE[17.1GB RAM] + EBS[100GB for ext3])</li>
-          <li>“file storage”を使っても結局メモリ容量が大量に必要</li>
-        </ul>
-      </li>
-      <li>ec2のxlargeインスタンスには、IO性能「標準」と「高」がある
-        <ul>
-          <li>今回は「標準」を利用して失敗</li>
-          <li>「高」ならうまくいくかも</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li>varnish3
-    <ul>
-      <li>hash director
-        <ul>
-          <li>consistent hashingができるかも？</li>
-          <li>nginxいらずに複数varnish運用ができるかも？</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-</ul>
-
-<h3 id="puppetvarnishsquidar1">Puppetでvarnishもsquidも面倒みる(@ar1)</h3>
-<ul>
-  <li>ふつうはvarnishは落ちるのでLBつかって並列で運用</li>
-  <li>varnishおちるとWebサーバーが負荷かかってしまう
-    <ul>
-      <li>LB -&gt; varnish -&gt; squid -&gt; apache</li>
-      <li>squidどうしでキャッシュを共有できるので、１つSquidおちてもWebサーバーにききにいかずにすむ。</li>
-    </ul>
-  </li>
-  <li>puppet
-    <ul>
-      <li>設定をらくにする</li>
-      <li>cacheのExpire</li>
-      <li>サーバーのぬきさし</li>
-    </ul>
-  </li>
-</ul>
-
-<h3 id="varnishspchidren">楽天でvarnish(@spchidren)</h3>
-<ul>
-  <li>L7 balancingがやりたくてVarnish導入
-    <ul>
-      <li>URLによってWebサーバーのグループを切り替えたい</li>
-    </ul>
-  </li>
-  <li>akamai -&gt; LB -&gt; varnish(RAM24G[malloc18G/hitrate 75%] -&gt; apache(+mod_thumb)</li>
-  <li>LBからVarnishを切り離すのはどうやる？</li>
-  <li>CDNやVarnishのcache clearをどうやるか
-    <ul>
-      <li>画像登録されたときにMQに登録して、必要に応じて消す</li>
-      <li>CDNは常にExpireされない状態にしておける。</li>
-    </ul>
-  </li>
-  <li>ImageMagicおもい
-    <ul>
-      <li>varnishにサムネイルをつくるしくみを組み込んでみれば？（FreeImage)</li>
-      <li>cc_commandでインクルードさせて、C言語でサムネイルつくるしくみをくみこむ</li>
-    </ul>
-  </li>
-  <li>varnishのいくさき
-    <ul>
-      <li>nginxにも近いしredisにもちかづいてきてる</li>
-      <li>どこにいくんでしょ</li>
-    </ul>
-  </li>
-</ul>
-
-<h3 id="tddvclhmsk">TDDでVCL書いてデプロイ(@hmsk)</h3>
-<ul>
-  <li>varnishtest
-    <ul>
-      <li>RSpecぽい書き方できる</li>
-      <li>xxx.vcltestファイルにケースを記述</li>
-    </ul>
-  </li>
-  <li>vmod
-    <ul>
-      <li>vclの設定をC言語っぽく描ける</li>
-      <li>パージや圧縮、エラーなどに使える</li>
-      <li>モバイル端末のリストのチェックにもVCLから外出しできる</li>
-    </ul>
-  </li>
-</ul>
-
-<h2 id="section-2">関連リンク</h2>
-<ul>
-  <li>ATND
-    <ul>
-      <li><a href="http://atnd.org/events/16681">Varnish勉強会 Tokyo.vcl : ATND</a></li>
-    </ul>
-  </li>
-  <li>Ustream
-    <ul>
-      <li><a href="http://www.ustream.tv/recorded/15453305">http://www.ustream.tv/recorded/15453305</a></li>
-      <li><a href="http://www.ustream.tv/recorded/15453834">http://www.ustream.tv/recorded/15453834</a></li>
-    </ul>
-  </li>
-  <li>Togetter
-    <ul>
-      <li><a href="http://togetter.com/li/151585">Togetter - 「第一回 Varnish勉強会 Tokyo.vcl」</a></li>
-    </ul>
-  </li>
-  <li>勉強会レポート
-    <ul>
-      <li><a href="http://d.hatena.ne.jp/hxmasaki/20110620/1308547067">Varnish勉強会 Tokyo.vclを行いました - ククラフト</a></li>
-      <li><a href="http://d.hatena.ne.jp/mirakui/20110619/1308497959">私がクックパッドの画像配信野郎です - 床のトルストイ、ゲイとするとのこと</a></li>
-      <li><a href="http://blog.xcir.net/?p=438">Tokyo.vclでVarnishCache3の新機能とVUPの仕方を話してきました « cat /dev/random &gt; /dev/null &amp;</a></li>
-      <li><a href="http://blog.udzura.jp/2011/06/20/summary-of-tokyo-varnish-study-on-20110618/">東京varnish勉強会(Tokyo.vcl)まとめ «  blog.udzura.jp</a></li>
-    </ul>
-  </li>
-</ul>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[東京から福島へ一泊二日でボランティアに行ってきた]]></title>
-    <link href="http://blog.restartr.com/2011/06/19/volunteer-at-shinchi-fukushima-pref/"/>
-    <updated>2011-06-19T12:03:20+09:00</updated>
-    <id>http://blog.restartr.com/2011/06/19/volunteer-at-shinchi-fukushima-pref</id>
-    <content type="html"><![CDATA[<p><a href="http://www.flickr.com/photos/53244662@N04/5847245836/" title="IMG_5100 by ReSTARTR_y, on Flickr"><img src="http://farm4.static.flickr.com/3538/5847245836_ca37b883fe_z.jpg" width="640" height="427" alt="IMG_5100" /></a></p>
-
-<p>6/11,12の土日を利用して、福島県相馬郡新地町にボランティア活動に行ってきました。</p>
-
-<h2 id="section">活動の経緯</h2>
-
-<p>東日本大震災がおきてから、被災地に対して何かできることを、ということでこれまで募金と献血をやってきました。が、それだけでなく何かできることはないかと常々考えていました。
-仕事柄、ITを利用した貢献も考えたのですが、イマイチ現地の状況がわからない。情報を得ようとしても地域やソースによって様々かつ時間とともに大きく変化しているからです。
-また、社会人とはいうものの土日の時間やお金については結構余裕があるので、じゃあ現地でボランティアをすることで現状を知ることができるのではないか、と考えたのが今回の経緯です。
-その後、被災地の状況に詳しい元同僚に相談し、その子の母親と友人2名を加えた5名で活動をしてきました。</p>
-
-<h3 id="section-1">活動内容</h3>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5846683717/" title="IMG_5090 by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5109/5846683717_604f687639_m.jpg" width="240" height="160" alt="IMG_5090" /></a></p>
-
-<p>津波の被害をうけた民家の瓦礫撤去作業を行いました。
-とはいっても大きな物はあらかた自衛隊が撤去しているので、我々の役目は倒れた木の撤去や、瓦・ガラス等の破片の収集、側溝の泥かきなど、担当した民家の敷地内を綺麗にすること。
-計10名程度で、1日かけて行いましたが、天候が曇りだったこともあって順調に作業をすることができました。</p>
-
-<h2 id="section-2">現地に行ってみて</h2>
-
-<h4 id="section-3">ボランティアセンターすごい</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5822614663/" title="現地到着。まだ受付前。 by ReSTARTR_y, on Flickr"><img src="http://farm3.static.flickr.com/2673/5822614663_ec084f0dfd_m.jpg" width="240" height="144" alt="現地到着。まだ受付前。" /></a></p>
-
-<p>被災地のボランティアセンターもずいぶん落ち着いてきているようです。
-活動に必要な道具（スコップやマスク）だけでなく、水や活動後のアイスコーヒーなどの提供もして頂きました。
-ボランティア活動自体初めてだったのですが、たとえ不慣れであっても、コーディネーターの方々や一緒に活動する方々の力を借りながら活動することは可能であると実感しました。
-現地でボランティアをしたいと考えているけど踏み出せなかった方は、真夏になる前に一度足を運んでみてはいかがでしょう。</p>
-
-<h4 id="section-4">電波悪い</h4>
-<p>SoftBankの黒SIMをDesireSに入れて利用しているのですが、ほぼ繋がりません。
-全然つながらない訳ではないですが、かなり不安定でたまにつながる程度。picplzで写真アップロードしようとしても100%失敗します。
-今回の震災でインターネットが活躍したという話は聞きますが、このような電波状況のままでは欲しい情報も手に入らないでしょう。震災後にこうなったのかもともと電波の弱い地域だったのかわかりませんが、これではインターネットの存在も無意味。</p>
-
-<p>利用した福島県伊達市（福島市の近く）の宿泊施設で、地震を体験したのですが、電波が皆無だったために震源や地震の規模などの情報が全く手に入りませんでした。</p>
-
-<p>これまで、インターネットでほしい情報をいつでもどこでもすぐに手に入れられると思っていただけに、手に入らない状況に出くわすとかなりの不安感を覚えます。
-こうなると、頼れるものはテレビやラジオ、町内放送やご近所ネットワークになってくるでしょう。
-もちろん有線でのインターネットもあるかもしれませんが、緊急時にわざわざPCを起動したりしないでしょう。</p>
-
-<p>そう考えると、インターネットの果たすべき役割はリアルタイムに必要な一次的情報ではなく、その後の情報配信とその整理に注力すべきだと実感しました。</p>
-
-<h4 id="section-5">活動内容と現地で聞いたこと</h4>
-
-<p>一日目は新地町でボランティアを行い、宿泊施設はりょうぜん里山がっこうを利用。
-二日目は里山がっこうの自然体験をさせてもらい、その後温泉街で足湯につかって帰宅。</p>
-
-<ul>
-  <li><a href="http://www.date-satoyama.com/">NPO法人りょうぜん里山がっこう</a></li>
-</ul>
-
-<p>里山がっこうでは、震災後の放射能の影響とその取組みについて色々お話を伺いました。友人のブログにその詳細が書かれていますので、そちらを参照してもらうほうが良いと思います。</p>
-
-<ul>
-  <li><a href="http://agreenqoostar.blog129.fc2.com/blog-entry-604.html">AGREEN　イナカとトカイの橋渡し　 伊達市りょうぜん里山がっこうの「除染」への取り組み</a></li>
-</ul>
-
-<p>1日目の活動レポートもあります。</p>
-
-<ul>
-  <li><a href="http://agreenqoostar.blog129.fc2.com/blog-entry-603.html">AGREEN　イナカとトカイの橋渡し　 新地町ボランティアレポート</a></li>
-</ul>
-
-<h2 id="section-6">ボランティア活動に必要な情報</h2>
-
-<h4 id="section-7">ボランティアバスツアー</h4>
-
-<p>被災地は基本的に交通が整備されていません。
-一人暮らしで車も所有していない自分としては、現地の交通手段がネックになります。
-幸い、「ボランティアバスツアー」というものがあったのでこれを利用することを考えました。</p>
-
-<ul>
-  <li>
-    <table>
-      <tbody>
-        <tr>
-          <td><a href="http://www.pref-f-svc.org/archives/1216">東日本大震災復興支援・新地町で活動する災害ボランティア募集</a></td>
-          <td>福島県災害ボランティアセンター&lt;/a&gt;</td>
-        </tr>
-      </tbody>
-    </table>
-  </li>
-</ul>
-
-<p>これなら一人でも現地に向かうことも可能ですし、そこからはコーディネートしてもらえます。
-結局は、冒頭にも書いたとおり、田舎暮らしのマッチングの仕事の関係で被災地にも詳しい友人に相談した結果、彼女のご家族に福島駅から現地まで車をだして頂けることになり、東京ー福島間は夜行バスを利用して、友人4人とともに活動する結果となったのですが。</p>
-
-<h4 id="twitter">ボランティア情報のTwitterアカウント</h4>
-
-<p>定期的にボランディアバスツアーなどの情報は下記Twitterアカウントをフォローしておけば、チェックすることができます。(他にもあるかもしれませんが私はこちらでチェックしています。）</p>
-
-<ul>
-  <li>
-    <table>
-      <tbody>
-        <tr>
-          <td><a href="http://twitter.com/tominvc">@tominvc</a></td>
-          <td>被災地支援都民ボランティア</td>
-        </tr>
-      </tbody>
-    </table>
-  </li>
-  <li>
-    <table>
-      <tbody>
-        <tr>
-          <td><a href="http://tiwtter.com/tokyovolunteer">@tokyovolunteer</a></td>
-          <td>東京ボランティア・市民活動センター</td>
-        </tr>
-      </tbody>
-    </table>
-  </li>
-  <li>
-    <table>
-      <tbody>
-        <tr>
-          <td><a href="http://twitter.com/Tasukeaijp">@Tasukeaijp</a></td>
-          <td>助けあいジャパン</td>
-        </tr>
-      </tbody>
-    </table>
-  </li>
-</ul>
-
-<p>あとは、健康な体と必要不可欠な装備があれば十分貢献できると思います。</p>
-
-<p>現地で少しばかり写真を撮ってきたのでFrickrにあげておきました。</p>
-
-<object type="text/html" data="http://www.flickr.com/slideShow/index.gne?user_id=53244662@N04&amp;set_id=72157626993269710" width="500" height="500"> </object>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[DotCloudのMongoDBをScalaから使ってみる]]></title>
-    <link href="http://blog.restartr.com/2011/05/28/access-from-scala-to-mongodb-on-dotcloud/"/>
-    <updated>2011-05-28T20:00:57+09:00</updated>
-    <id>http://blog.restartr.com/2011/05/28/access-from-scala-to-mongodb-on-dotcloud</id>
-    <content type="html"><![CDATA[<p>DotCloudにDuoStackが<a href="http://gigaom.com/cloud/exclusive-paas-startups-unite-dotcloud-buys-duostack/">買収され</a>て、DotCloudでもMongoDBが使えるようになりましたし、node.jsも使えるしで、ますますDotCloudが魅力的なものになってきました。</p>
-
-<p>ただし、node.jsはサポートされても、WebSocketは正式サポートされていないと<a href="http://docs.dotcloud.com/components/nodejs/">公式マニュアル</a>にも書いてありますがWebSocketサポート済みのDuoStack買収によってどう流れるか気になるところです。</p>
-
-<p>さて今回は、前回作ったものをベースにScalaからMongoDBへアクセスするサンプルをDotCloudで動かすまでを書いておきます。（まぁ、Scalaのコードはオマケみたいなものですけど…）</p>
-
-<p>前回の記事はこちらです。</p>
-
-<ul>
-  <li><a href="http://blog.restartr.com/2011/05/09/sample-sbt-project-for-dotcloud/">ScalaをDotCloudにアップロードするためのsbtサンプル</a></li>
-</ul>
-
-<p>ちなみにDotCloudは下記バージョンにて動作しているみたいです（2011.05.28現在)</p>
-
-<ul>
-  <li>nginx 0.7.65</li>
-  <li>jetty 6.1</li>
-  <li>mongodb 1.8.1</li>
-</ul>
-
-<h3 id="section">作成したサンプルアプリ</h3>
-
-<p>事情により停止する場合があるかもしれませんがご了承を。</p>
-
-<ul>
-  <li><a href="http://samplemongo.ramee.dotcloud.com/">http://samplemongo.ramee.dotcloud.com/</a></li>
-</ul>
-
-<h3 id="dotcloudmongodb">DotCloudにMongoDBサーバーを準備する</h3>
-
-<p>DotCloudのMongoDBマニュアルはこちら</p>
-
-<ul>
-  <li><a href="http://docs.dotcloud.com/components/mongodb/">MongoDB ? DotCloud documentation</a></li>
-</ul>
-
-<p>上記マニュアルにしたがって作成すればMongoDBサーバーを準備できます。
-基本的には、追加したいサーバーを登録して、ユーザーを作成するだけです。</p>
-
-<p>簡単。</p>
-
-<p>今回は”example.mongo”という名前で作成する例を記してありますので、
-それぞれ自分の作成したいアプリ名に読み替えて下さい。</p>
-
-<h4 id="section-1">サーバーを作成</h4>
-
-<p>事前に”dotcloud create example”は実行してあるものとします。
-詳しくはこちらの<a href="http://docs.dotcloud.com/tutorials/firststeps/#id2">マニュアル</a>を見てください。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>dotcloud deploy -t mongo example.mongo
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">&gt; Created <span class="s2">&quot;example.mongo&quot;</span>.
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h4 id="dbidpass">DB情報を確認（ID/PASS）</h4>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>dotcloud info example.mongo
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>deployコマンド実行してから実際に作成されるまで少し時間がかかります。
-すぐにinfoコマンドを実行すると下記エラーがでます。
-※正確に測ってませんが数十秒くらい？</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">&gt; Sat May 28 08:14:43 Error: couldn<span class="err">&#39;</span>t connect to server 127.0.0.1 shell/mongo.js:79
-</span><span class="line">&gt; exception: connect failed
-</span><span class="line">&gt; Connection to mongo.example.dotcloud.com closed.
-</span><span class="line">&gt; Abort.
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>作成完了していれば、下記情報が表示されますので、”mongodb_password: <strong>**</strong>“に記載されたパスワードをメモしておきます。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">cluster: wolverine
-</span><span class="line">config:
-</span><span class="line">    mongodb_password: ******
-</span><span class="line">created_at: 1306570413.6722209
-</span><span class="line">name: example.mongo
-</span><span class="line">namespace: example
-</span><span class="line">ports:
-</span><span class="line">-   name: ssh
-</span><span class="line">    url: ssh://mongodb@mongo.example.dotcloud.com:5906
-</span><span class="line">-   name: mongodb
-</span><span class="line">    url: mongodb://root:******@mongo.example.dotcloud.com:5907
-</span><span class="line">state: running
-</span><span class="line"><span class="nb">type</span>: mongodb
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h4 id="mongodb">MongoDBサーバーへログイン</h4>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>dotcloud run example.mongo mongo
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>infoコマンドで表示されたパスワードを使って、”sampledb”というdbにアプリユーザーを追加します。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">&gt; use sampledb
-</span><span class="line">switched to db sampledb
-</span><span class="line">&gt; db.getSisterDB<span class="o">(</span><span class="s2">&quot;admin&quot;</span><span class="o">)</span>.auth<span class="o">(</span><span class="s2">&quot;root&quot;</span>, <span class="s2">&quot;&lt;infoコマンドで表示されるパスワード&gt;&quot;</span><span class="o">)</span>;
-</span><span class="line">1
-</span><span class="line">&gt; db.addUser<span class="o">(</span><span class="s2">&quot;APPUSER_NAME&quot;</span>, <span class="s2">&quot;APPPUSER_PASS&quot;</span><span class="o">)</span>;
-</span><span class="line"><span class="o">{</span>
-</span><span class="line">     <span class="s2">&quot;user&quot;</span> : <span class="s2">&quot;APPUSER_NAME&quot;</span>,
-</span><span class="line">     <span class="s2">&quot;readOnly&quot;</span> : <span class="nb">false</span>,
-</span><span class="line">     <span class="s2">&quot;pwd&quot;</span> : <span class="s2">&quot;xxxxxxxxxxxxxxxxxxxxxxxxxxxxx&quot;</span>
-</span><span class="line"><span class="o">}</span>
-</span><span class="line">&gt; <span class="nb">exit</span>
-</span><span class="line">bye
-</span><span class="line">Connection to mongo.example.dotcloud.com closed.
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>※とりあえず一旦ログアウトしてますが、別に必須じゃないです。</p>
-
-<h4 id="section-2">再度ログインしてテスト操作してみる</h4>
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>dotcloud run example.mongo mongo
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>新規作成したユーザーでDB操作が可能か確認してみます。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="c"># mongo</span>
-</span><span class="line">Warning: Permanently added <span class="s1">&#39;[mongo.example.dotcloud.com]:5906,[174.129.17.131]:5906&#39;</span> <span class="o">(</span>RSA<span class="o">)</span> &gt; to the list of known hosts.
-</span><span class="line">MongoDB shell version: 1.8.1
-</span><span class="line">connecting to: <span class="nb">test</span>
-</span><span class="line">&gt; use sampledb;
-</span><span class="line">switched to db sampledb
-</span><span class="line">&gt; db.auth<span class="o">(</span><span class="s2">&quot;sampleuser&quot;</span>, <span class="s2">&quot;samplepass&quot;</span><span class="o">)</span>;
-</span><span class="line">1
-</span><span class="line">&gt; db.sampledb.save<span class="o">({</span>id:1,name:<span class="s2">&quot;foo&quot;</span><span class="o">})</span>;
-</span><span class="line">&gt; db.sampledb.find<span class="o">()</span>;
-</span><span class="line"><span class="o">{</span> <span class="s2">&quot;_id&quot;</span> : ObjectId<span class="o">(</span><span class="s2">&quot;4de0b033a1fd29eb0e1522fd&quot;</span><span class="o">)</span>, <span class="s2">&quot;id&quot;</span> : 1, <span class="s2">&quot;name&quot;</span> : <span class="s2">&quot;foo&quot;</span> <span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>問題なさそうなので、あとはアプリを”dotcloud push”して動かすだけです。</p>
-
-<h3 id="scala">scalaからアクセスするサンプル</h3>
-
-<p>サービス名を「example.samplemongo”として作成する例です。</p>
-
-<p>requirementsはイカのとおり。</p>
-
-<ul>
-  <li>scala 2.9.0</li>
-  <li>sbt 0.7.7</li>
-  <li>jetty 7.3.1.v20110307</li>
-  <li>casbah 2.1.5.0</li>
-</ul>
-
-<p><code>sbt</code>
-で基本ディレクトリを作成したら、下記プロジェクト設定を{root}/project/build/MongoSampleProject.scala”として保存します。</p>
-
-<p>前回の設定クラスをコピーしてきたので、”sbt dot_create”と”sbt dot_push”も一応使えます。</p>
-
-<p>※”example.mongo”の名称は適宜読み替えでお願いします。
-##### MongodbSampleProject.scala</p>
-
-<script src="https://gist.github.com/996769.js?file=MongodbSampleProject.scala"></script>
-
-<p>配置できたら、</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">sbt reload update
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>でライブラリを読み込みます。</p>
-
-<p>あとは下記Servletの実装とweb.xmlを用意したらOK．</p>
-
-<h5 id="mongodbservletscala">MongodbServlet.scala</h5>
-
-<script src="https://gist.github.com/996769.js?file=MonbodbServlet.scala"></script>
-
-<h5 id="webxml">web.xml</h5>
-
-<script src="https://gist.github.com/996769.js?file=web.xml"></script>
-
-<p>できたら、”sbt dot_push”でdotcloudへアップロードされるはずです。</p>
-
-<p>最後に、”http:／／samplemongo.exapmle.dotcloud.com”にアクセスして、フォームからデータ登録ができれば成功です。</p>
-
-<p>RDBMSにくらべてデータ保存・取得までが圧倒的に簡単で、PaaSでもMongoDBはいい感じですね！</p>
 
 ]]></content>
   </entry>

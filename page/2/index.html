@@ -11,12 +11,7 @@
   <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="rubyやpythonなど通常のプログラムを書く場合は、基本的にソフトタブ(2spaces)でインデントされるようにvimを設定しています。 1
-2
-3
-set noexpandtab
-set tabstop=2
-set shiftwidth=2 けれど、Goの場合はインデントはハードタブが通例 &hellip;">
+  <meta name="description" content="Rebuild Podcast Rebuild はソフトウェア開発、テクノロジー、ガジェットなどの話題を中心に、ゲストと話すギーク、デベロッパー向けのポッドキャスト番組です。 Hosted by @miyagawa http://rebuild.fm/ RSS iTunes mosaic.fm &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -127,7 +122,7 @@ set shiftwidth=2 けれど、Goの場合はインデントはハードタブが�
       
   <header>
     
-      <h1 class="entry-title"><a href="/2014/04/20/vimrc-noexpandtab-in-golang/">Vimで特定のファイルタイプだけタブインデントにする方法</a></h1>
+      <h1 class="entry-title"><a href="/2014/04/22/tech-podcast-list/">技術系podcastまとめ</a></h1>
     
     
       <p class="meta">
@@ -143,48 +138,208 @@ set shiftwidth=2 けれど、Goの場合はインデントはハードタブが�
   
 
 
-<time datetime="2014-04-20T16:15:21+09:00" pubdate data-updated="true">2014-04-20 (Sun)</time>
+<time datetime="2014-04-22T23:58:29+09:00" pubdate data-updated="true">2014-04-22 (Tue)</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>rubyやpythonなど通常のプログラムを書く場合は、基本的にソフトタブ(2spaces)でインデントされるようにvimを設定しています。</p>
+  <div class="entry-content"><h3 id="rebuild-podcast">Rebuild Podcast</h3>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class="vim"><span class="line"><span class="k">set</span> <span class="nb">noexpandtab</span>
-</span><span class="line"><span class="k">set</span> <span class="nb">tabstop</span><span class="p">=</span><span class="m">2</span>
-</span><span class="line"><span class="k">set</span> <span class="nb">shiftwidth</span><span class="p">=</span><span class="m">2</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<blockquote>
+Rebuild はソフトウェア開発、テクノロジー、ガジェットなどの話題を中心に、ゲストと話すギーク、デベロッパー向けのポッドキャスト番組です。
+</blockquote>
 
-<p>けれど、Goの場合はインデントはハードタブが通例。</p>
+<ul>
+  <li>Hosted by <a href="http://twitter.com/miyagawa">@miyagawa</a></li>
+  <li><a href="http://rebuild.fm/">http://rebuild.fm/</a></li>
+  <li><a href="http://feeds.rebuild.fm/rebuildfm">RSS</a></li>
+  <li><a href="https://itunes.apple.com/jp/podcast/rebuild/id603013428?mt=2">iTunes</a></li>
+</ul>
 
-<p>なので拡張子が”.go”の場合だけハードタブでインデントするための設定を.vimrcに書いておきます。</p>
+<h3 id="mosaicfm">mosaic.fm</h3>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-</pre></td><td class="code"><pre><code class="vim"><span class="line"><span class="k">if</span> expand<span class="p">(</span><span class="s2">&quot;%:t&quot;</span><span class="p">)</span> <span class="p">=~</span> <span class="s2">&quot;.*\.go&quot;</span>
-</span><span class="line">  <span class="k">set</span> <span class="nb">noexpandtab</span>
-</span><span class="line">  <span class="k">set</span> <span class="nb">tabstop</span><span class="p">=</span><span class="m">4</span>
-</span><span class="line">  <span class="k">set</span> <span class="nb">shiftwidth</span><span class="p">=</span><span class="m">4</span>
-</span><span class="line"><span class="k">endif</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<blockquote>
+次世代 Web Podcast Mozaic
+</blockquote>
 
-<p><code>%:t</code>はディレクトリ含まないファイル名。</p>
+<ul>
+  <li>Hosted by <a href="https://twitter.com/jxck_">@Jxck_</a></li>
+  <li><a href="http://mozaic.fm/">http://mozaic.fm/</a></li>
+  <li><a href="http://feeds.feedburner.com/mozaicfm">RSS</a></li>
+</ul>
 
-<p>autocmd使うほうが良いかも。</p>
+<h3 id="section">だんごゆっけの平和な話</h3>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="vim"><span class="line"><span class="k">au</span> <span class="nb">BufNewFile</span><span class="p">,</span><span class="nb">BufRead</span> *.<span class="k">go</span> <span class="k">set</span> <span class="nb">noexpandtab</span> <span class="nb">tabstop</span><span class="p">=</span><span class="m">4</span> <span class="nb">shiftwidth</span><span class="p">=</span><span class="m">4</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<blockquote>
+仲良し三十路男二人。Web業界にいるプランナーとエンジニア。それぞれの日常を平和にまとめあげていきます
+</blockquote>
 
-<p>ちなみに、<code>set expandtab</code>してる状態でタブを入力する場合は<code>Ctrl-v + &lt;tab&gt;</code>でハードタブが入力できます。</p>
+<ul>
+  <li>Hosted by <a href="https://twitter.com/kamadango">@kamadango</a>, <a href="https://twitter.com/yusukebe">@yusukebe</a></li>
+  <li><a href="http://dandy.fm/">http://dandy.fm/</a></li>
+  <li><a href="http://feed.dandy.fm/dandyfm">RSS</a></li>
+  <li><a href="https://itunes.apple.com/jp/podcast/id806076544?mt=2">iTunes</a></li>
+</ul>
+
+<h3 id="section-1">職質テックトーク</h3>
+
+<ul>
+  <li>Hosted by <a href="https://twitter.com/moznion/">@moznion</a></li>
+  <li><a href="http://shock-sheets-tech.tumblr.com/">http://shock-sheets-tech.tumblr.com/</a></li>
+  <li><a href="http://shock-sheets-tech.tumblr.com/rss">RSS</a></li>
+</ul>
+
+<h3 id="backspacefm">backspace.fm</h3>
+
+<blockquote>
+一週間分のテック・ガジェットニュースを配信するポッドキャスト
+</blockquote>
+
+<ul>
+  <li><a href="http://backspace.fm/">http://backspace.fm/</a></li>
+  <li><a href="http://feeds.backspace.fm/backspacefm">RSS</a></li>
+  <li><a href="https://itunes.apple.com/jp/podcast/backspace.fm/id830709730">iTunes</a></li>
+  <li>Hosted by <a href="https://twitter.com/drikin">@drikin</a></li>
+</ul>
+
+<h3 id="code-lunch">CODE LUNCH</h3>
+
+<ul>
+  <li><a href="http://codelunch.fm/">http://codelunch.fm/</a></li>
+  <li><a href="http://codelunch.fm/rss.xml">RSS</a></li>
+  <li>Hosted by <a href="https://twitter.com/h13i32maru">@h13i32maru</a>, <a href="https://twitter.com/iizukak">@iizukak</a></li>
+</ul>
+
+<h3 id="podcast">ジュンク堂書店Podcast</h3>
+
+<blockquote>
+ジュンク堂書店の店頭で行われているトークセッションやイベントなどを配信するポッドキャスト（ベータ版）です。
+</blockquote>
+
+<ul>
+  <li><a href="http://junkudo.seesaa.net/index20.rdf">RSS</a></li>
+  <li><a href="https://itunes.apple.com/jp/podcast/junku-tang-shu-dianpodcast/id398125301">iTunes</a></li>
+</ul>
+
+<h2 id="section-2">海外</h2>
+
+<p>海外では<a href="http://5by5.tv/">5by5</a>がポータルっぽい。</p>
+
+<h3 id="ruby-on-rails-podcast">Ruby on Rails Podcast</h3>
+
+<ul>
+  <li><a href="http://5by5.tv/rubyonrails/147">http://5by5.tv/rubyonrails/147</a></li>
+  <li><a href="http://feeds.5by5.tv/rubyonrails">RSS</a></li>
+  <li><a href="https://itunes.apple.com/us/podcast/ruby-on-rails-podcast/id840890158?mt=2&amp;uo=8&amp;at=11laDR">iTunes</a></li>
+  <li>Hosted by <a href="http://twitter.com/barelyknown">@barelyknown</a></li>
+</ul>
+
+<h3 id="the-changelog">The Changelog</h3>
+
+<blockquote>
+The Changelog covers the intersection of software development and open source. Open source moves fast. Keep up!
+</blockquote>
+
+<ul>
+  <li><a href="http://5by5.tv/changelog/">http://5by5.tv/changelog/</a></li>
+  <li><a href="http://feeds.5by5.tv/changelog">RSS</a></li>
+  <li><a href="https://itunes.apple.com/us/podcast/the-changelog/id341623264?uo=8&amp;at=11laDR">iTunes</a></li>
+</ul>
+
+<h3 id="aws-podcast---listen-and-lean-about-aws">AWS Podcast - Listen and Lean About AWS</h3>
+
+<ul>
+  <li><a href="http://aws.amazon.com/jp/apac/awspodcast/">http://aws.amazon.com/jp/apac/awspodcast/</a></li>
+  <li><a href="http://d1i0y6b5oi739x.cloudfront.net/feed.xml">RSS</a></li>
+  <li><a href="http://itunes.apple.com/sg/podcast/aws-podcast/id526624928">iTunes</a></li>
+</ul>
+
+<h3 id="in-beta">In Beta</h3>
+
+<blockquote>
+In Beta is a talk show about tech culture, making open source software, and how mobile, social, and web apps are changing the world.
+</blockquote>
+
+<ul>
+  <li><a href="http://feeds.5by5.tv/inbeta">http://feeds.5by5.tv/inbeta</a></li>
+  <li><a href="http://feeds.5by5.tv/inbeta">RSS</a></li>
+</ul>
+
+<h3 id="floss">FLOSS</h3>
+
+<blockquote>
+We&#8217;re not talking dentistry here; FLOSS all about Free Libre Open Source Software.
+</blockquote>
+
+<ul>
+  <li><a href="http://twit.tv/floss">http://twit.tv/floss</a></li>
+  <li><a href="http://feeds.twit.tv/floss.xml">RSS</a></li>
+</ul>
+
+<h3 id="tuxradar">TuxRadar</h3>
+
+<blockquote>
+a new TuxRadar podcast all about Linux and free software will be posted here every three weeks for free download
+</blockquote>
+
+<ul>
+  <li><a href="http://www.tuxradar.com/podcast">http://www.tuxradar.com/podcast</a></li>
+  <li><a href="http://www.tuxradar.com/rss">RSS</a></li>
+</ul>
+
+<h3 id="the-news">The News</h3>
+
+<blockquote>
+A daily update on the latest in tech, Apple, gaming, web, and geek culture. It&#8217;s the only news that matters.
+</blockquote>
+
+<ul>
+  <li><a href="http://5by5.tv/news">http://5by5.tv/news</a></li>
+  <li><a href="http://feeds.5by5.tv/news">RSS</a></li>
+  <li><a href="https://itunes.apple.com/us/podcast/the-news/id602266713?mt=2&amp;uo=8&amp;at=11laDR">iTunes</a></li>
+  <li>Hosted by <a href="http://twitter.com/imyke">@imyke</a></li>
+</ul>
+
+<h3 id="sourcetrunk">Sourcetrunk</h3>
+
+<p>デスクトップアプリ紹介中心</p>
+
+<ul>
+  <li><a href="http://www.sourcetrunk.com/">http://www.sourcetrunk.com/</a></li>
+  <li><a href="http://feeds.feedburner.com/sourcetrunk">RSS</a></li>
+  <li><a href="http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewPodcast?id=193827468">iTunes</a></li>
+</ul>
+
+<h3 id="sofrware-engineering-radio">Sofrware Engineering Radio</h3>
+
+<ul>
+  <li><a href="http://www.se-radio.net/">http://www.se-radio.net/</a></li>
+  <li><a href="http://www.se-radio.net/">RSS</a></li>
+</ul>
+
+<h3 id="the-engineering-commons-podcast">The Engineering Commons Podcast</h3>
+
+<blockquote>
+Practical insights for the engineering crowd
+</blockquote>
+
+<ul>
+  <li><a href="http://theengineeringcommons.com/">http://theengineeringcommons.com/</a></li>
+  <li><a href="http://feeds.feedburner.com/TheEngineeringCommonsPodcast">RSS</a></li>
+</ul>
+
+<h2 id="section-3">参考リンク</h2>
+
+<ul>
+  <li><a href="http://weblog.bulknews.net/post/58665793844/tech-podcast-5">オススメ Tech Podcast 5選 - Tatsuhiko Miyagawa’s blog</a></li>
+  <li><a href="http://www.infoq.com/jp/news/2011/09/archcasts">ソフトウェアアーキテクチャ関連ポッドキャストの薦め</a></li>
+  <li><a href="http://overflow-memo.blogspot.jp/2014/01/podcast.html">_overflow: 技術系Podcast・動画ニュースメモ</a></li>
+  <li><a href="http://tunein.com/radio/Technology-g2738/">テクノロジーラジオ - Listen Online</a></li>
+  <li><a href="http://blackshadow.seesaa.net/article/144207109.html">幻影随想: 科学なポッドキャストをまとめて紹介してみる</a></li>
+  <li><a href="https://player.fm/featured/open-source">Best Open Source Podcasts (April, 2014)</a></li>
+</ul>
 </div>
   
   
@@ -197,7 +352,7 @@ set shiftwidth=2 けれど、Goの場合はインデントはハードタブが�
       
   <header>
     
-      <h1 class="entry-title"><a href="/2014/04/06/move-from-wordpress-to-octopress/">WordpressからOctopressに移行</a></h1>
+      <h1 class="entry-title"><a href="/2014/04/21/golang-memcache-stats-client/">Goでmemcachedのstatsを取得する</a></h1>
     
     
       <p class="meta">
@@ -213,78 +368,179 @@ set shiftwidth=2 けれど、Goの場合はインデントはハードタブが�
   
 
 
-<time datetime="2014-04-06T13:00:00+09:00" pubdate data-updated="true">2014-04-06 (Sun)</time>
+<time datetime="2014-04-21T00:17:33+09:00" pubdate data-updated="true">2014-04-21 (Mon)</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>もともとさくらのレンサバ上でWordpressで構築していたブログを<a href="http://octopress.org/">Octopress</a>に移行してGithub Pagesでホスティングするように切り替え。
-最初は<a href="http://jekyllrb.com/">Jekyll</a>だけでやろうとしてたけど、ブロクとしての機能を見るとOctopressのほうが良さそうだったので途中で方針転換。</p>
+  <div class="entry-content"><p>YouTubeで使われている<a href="https://github.com/youtube/vitess">vitess</a>の実装をざっと見てたところ、memcachedクライアント実装が簡潔でわかりやすかったので出来る限りラフに実装を写経してみました。</p>
 
-<h4 id="section">手順</h4>
+<p>やってることはコマンドラインからアドレスを受け取って、memcachedのstatsを表示するだけです。</p>
 
-<p>詳細な手順は面倒なので割愛するとして、だいたいこんな感じの流れで移行。</p>
-
-<ol>
-  <li>作業用環境にjekyll, jekyll-import, mysql2, sequelをgem install</li>
-  <li>さくらのレンサバ上のMySQLのデータをmysqldumpしてscp</li>
-  <li>dumpデータを作業用環境のMySQLにリストア</li>
-  <li>リストアしたデータから<a href="http://import.jekyllrb.com/docs/wordpress/">jekyll-import</a>を使って記事のmarkdownファイルを吐き出す</li>
-  <li>octopressをcloneして、<code>rake install</code></li>
-  <li>jekyll-importで吐き出されたファイルをoctopressのsource/_posts以下に移動</li>
-  <li><code>rake preview</code>で表示を確認しながら、source/_posts以下のmarkdownファイルをひたすら修正</li>
-  <li>テーマを調整&amp;元記事のURLパスと同一になるように<code>_config.yml</code>に設定</li>
-  <li>githubにpushしてgithub pagesとして公開</li>
-  <li>CNAMEを設定してgithub.ioから元のドメイン(blog.restartr.com)に移行</li>
-</ol>
-
-<p>さくらのレンサバ内からしかWordpressのDBに接続できないのと、レンサバ内でrubyを使うのはなんか面倒事が多そうだったので、環境整備済みなvpsで移行作業。</p>
-
-<p><em>※wordpressのエクスポート機能で吐き出したxmlからmigrateする方法もあるけど今回は不採用</em></p>
-
-<h4 id="wordpress">Wordpressの時のドメイン、パスを同一にするための設定</h4>
-
-<p>wordpressでは<code>/year/month/day/title</code>というpermalinkを設定していたのでそれと同一にするための作業。</p>
+<h3 id="section">この写経で学べること</h3>
 
 <ul>
-  <li>ドメインはgithub pagesのカスタムドメインとCNAME設定で解決</li>
-  <li>パスは<code>_config.yml</code>のpermalinkを<code>/:year/:month/:day/:title</code>にして解決</li>
+  <li>flagパッケージを使ったコマンドライン引数の取得</li>
+  <li>netパッケージを使ったネットワーク接続</li>
+  <li>bufioパッケージを使ったストリームの読み出し</li>
 </ul>
 
-<h4 id="section-1">さくらのレンサバ側の独自ドメイン設定</h4>
+<h3 id="main">main()</h3>
 
-<p>これでハマりました。さくらのドメインの設定で”blog.restartr.com”のCNAMEを設定したのに、DNSへの問い合わせ結果が常にAレコードしか帰ってこなくてかなり悩んでた。
-結論は、さくらのレンサバの設定画面で独自ドメインとして”blog.restartr.com”を登録していて、そっちの設定が邪魔をしていた。</p>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
+</span><span class="line">	<span class="c1">// 引数読み出し</span>
+</span><span class="line">	<span class="nx">address</span> <span class="o">:=</span> <span class="nx">flag</span><span class="p">.</span><span class="nx">String</span><span class="p">(</span><span class="s">&quot;address&quot;</span><span class="p">,</span> <span class="s">&quot;localhost:11211&quot;</span><span class="p">,</span> <span class="s">&quot;server address&quot;</span><span class="p">)</span>
+</span><span class="line">	<span class="nx">flag</span><span class="p">.</span><span class="nx">Parse</span><span class="p">()</span>
+</span><span class="line">	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;server: %s\n&quot;</span><span class="p">,</span> <span class="o">*</span><span class="nx">address</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">	<span class="c1">// サーバーに接続</span>
+</span><span class="line">	<span class="nx">conn</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">GetConn</span><span class="p">(</span><span class="o">*</span><span class="nx">address</span><span class="p">)</span>
+</span><span class="line">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
+</span><span class="line">		<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%#v&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
+</span><span class="line">		<span class="nx">os</span><span class="p">.</span><span class="nx">Exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span><span class="line">	<span class="p">}</span>
+</span><span class="line">	<span class="k">defer</span> <span class="nx">conn</span><span class="p">.</span><span class="nx">conn</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
+</span><span class="line">
+</span><span class="line">	<span class="c1">// stats読み出し</span>
+</span><span class="line">	<span class="nx">result</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">conn</span><span class="p">.</span><span class="nx">Stats</span><span class="p">()</span>
+</span><span class="line">	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%s&quot;</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>さくらのレンサバの独自ドメイン設定をはずして、さくらのドメインのCNAME設定を追加したら無事に解決。</p>
+<h3 id="section-1">実行結果</h3>
 
-<p><em>さくらのレンサバの独自ドメインの解除から、2時間以上反映に時間かかるらしい</em></p>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>go run ./memcache_stats.go --address<span class="o">=</span>localhost:11211
+</span><span class="line">server: localhost:11211
+</span><span class="line">STAT pid 23282
+</span><span class="line">STAT uptime 12425
+</span><span class="line">STAT <span class="nb">time </span>1398007875
+</span><span class="line">STAT version 1.4.4
+</span><span class="line">STAT pointer_size 64
+</span><span class="line">STAT rusage_user 0.335948
+</span><span class="line">STAT rusage_system 0.344947
+</span><span class="line">  :
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<h4 id="post">postデータの修正</h4>
+<h3 id="section-2">実装全体</h3>
 
-<p>jekyll-importを使ってmarkdownを吐き出すところまではすんなりいけたけど、なにより面倒だったのが吐き出したmarkdownを修正する作業。</p>
+<div><script src="https://gist.github.com/11116595.js?file=memcache_stats.go"></script>
+<noscript><pre><code>package main                                                                                                                                                                          [32/1268]
 
-<ul>
-  <li>シンタックスハイライトするために<code>[ccW_python]...[/ccW_python]</code>とか<code>&lt;pre class="brush:pyton"&gt;...&lt;/pre&gt;</code>とか独自タグがある</li>
-  <li>amazonのリンク生成用タグ<code>[tmkm-amazon]123456[/tmkm-amazon]</code>というタグがある</li>
-  <li><code>&lt;p&gt;</code>タグと<code>&lt;br /&gt;</code>タグの嵐</li>
-</ul>
+// 写経 from: https://github.com/youtube/vitess/blob/master/go/memcache/memcache.go
+//  * エラーハンドリングをできるかぎり省略して実装.
+//  * statsコマンドだけ実装
 
-<p>これらの対応のためにいちいち置換するのが非常に大変。<code>[ccW]</code>と<code>[tmkm-amazon]</code>タグは置換できたけど、<code>&lt;pre class="brush:..."&gt;</code>についてはハイライトされないだけで表示上問題なさそうなので無視。
-あとはmarkdownにhtmlが混じってるのが気持ち悪いので<code>&lt;p&gt;</code>と<code>&lt;br /&gt;</code>を置換して行間を調整。</p>
+import (
+        &quot;bufio&quot;
+        &quot;flag&quot;
+        &quot;fmt&quot;
+        &quot;net&quot;
+        &quot;os&quot;
+        &quot;strings&quot;
+)
 
-<p>ドラフト記事をリモートにpushしてなくて別のPCから記事の途中からかけなくて困った…とならないように基本的にVPS上にcloneすることにした。
-これで記事編集のための苦痛を感じる事無く純粋なmarkdownで記事がかけるようになる。</p>
+type Connection struct {
+        conn net.Conn
+        buffered bufio.ReadWriter
+}
 
-<ul>
-  <li>参考にした記事</li>
-  <li><a href="http://hadihariri.com/2013/12/24/migrating-from-wordpress-to-jekyll/">Migrating from WordPress.com to Jekyll – Hadi Hariri</a></li>
-  <li><a href="http://blog.glidenote.com/blog/2011/12/20/how-to-use-custom-domain-on-github-pages/">GitHub PagesでCustom Domainを利用する - Glide Note - グライドノート</a></li>
-  <li>ベースにしたテーマ</li>
-  <li><a href="https://github.com/bijumon/oct2">bijumon/oct2</a></li>
-</ul>
+func GetConn(address string) (conn *Connection, err error) {
+        nc, err := net.Dial(&quot;tcp&quot;, address)
+        if err != nil {
+                return nil, err
+        }
+        return &amp;Connection{
+                conn: nc,
+                buffered: bufio.ReadWriter{
+                        Reader: bufio.NewReader(nc),
+                        Writer: bufio.NewWriter(nc),
+                },
+        }, err
+}
+
+func (mc *Connection) writestring(s string) {
+        _, err := mc.buffered.WriteString(s);
+        if err!= nil {
+                panic(err)
+        }
+}
+
+func (mc *Connection) readline() string {
+        mc.flush()
+        l, _, _ := mc.buffered.ReadLine()
+        return string(l)
+}
+
+func (mc *Connection) flush() {
+        err := mc.buffered.Flush()
+        if err != nil {
+                panic(err)
+        }
+}
+
+func (mc *Connection) Stats() (result []byte, err error) {
+        mc.writestring(&quot;stats\r\n&quot;)
+        mc.flush()
+        for {
+                l := mc.readline()
+                if strings.HasPrefix(l, &quot;END&quot;) {
+                        break
+                }
+                if strings.Contains(l, &quot;ERROR&quot;) {
+                        panic(&quot;ERROR&quot;)
+                }
+                result = append(result, l...)
+                result = append(result, &#39;\n&#39;)
+        }
+        return result, err
+}
+
+func main() {
+        address := flag.String(&quot;address&quot;, &quot;localhost:11211&quot;, &quot;server address&quot;)
+        flag.Parse()
+        fmt.Printf(&quot;server: %s\n&quot;, *address)
+
+        conn, err := GetConn(*address)
+        if err != nil {
+                fmt.Printf(&quot;%#v&quot;, err)
+                os.Exit(1)
+        }
+        defer conn.conn.Close()
+
+        result, _ := conn.Stats()
+        fmt.Printf(&quot;%s&quot;, result)
+}</code></pre></noscript></div>
+
 </div>
   
   
@@ -355,15 +611,15 @@ set shiftwidth=2 けれど、Goの場合はインデントはハードタブが�
       </li>
     
       <li class="post">
+        <a href="/2014/04/22/tech-podcast-list/">技術系podcastまとめ</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2014/04/21/golang-memcache-stats-client/">Goでmemcachedのstatsを取得する</a>
+      </li>
+    
+      <li class="post">
         <a href="/2014/04/20/vimrc-noexpandtab-in-golang/">vimで特定のファイルタイプだけタブインデントにする方法</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2014/04/06/move-from-wordpress-to-octopress/">WordpressからOctopressに移行</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2013/04/26/connect-go-and-python-with-zeromq/">GoとPythonをZeroMQで繋ぐ</a>
       </li>
     
   </ul>
@@ -371,7 +627,7 @@ set shiftwidth=2 けれど、Goの場合はインデントはハードタブが�
 <section>
   <h1>Categories</h1>
   <ul id="categories">
-    <li><a href='/category/docker/'>docker</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
+    <li><a href='/category/docker/'>docker</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
   </ul>
 </section>
 <section>

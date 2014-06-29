@@ -11,9 +11,9 @@
   <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="10月02日と03日の、一泊二日のPHPMASTURIに参加してきました。 ハッシュタグ: #phpmatsuri
-LTのustream: phpmatsuri on USTREAM とにかく内容が濃い 楽天の吉岡さんによる大人のプログラミングキャンプ
-CakePHP,Symfony, &hellip;">
+  <meta name="description" content="この記事は Scala Advent Calendar JP 2010 23 日目(12/29)です。
+前日の @cooldaemon さんがScala Actor + NIOという、ものすごい記事を書いていらっしゃったのでこの流れの中で投稿するのが忍びないくらいです。
+＃ &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -124,7 +124,7 @@ CakePHP,Symfony, &hellip;">
       
   <header>
     
-      <h1 class="entry-title"><a href="/2010/10/03/phpmatsuri-hack-days-by-php-hackers/">PHPMATSURI - PHPハッカー達による一泊二日のハックデイ</a></h1>
+      <h1 class="entry-title"><a href="/2010/12/29/websocket-server-written-in-scala-with-netty/">NettyでWebSocketサーバーを実装する</a></h1>
     
     
       <p class="meta">
@@ -140,73 +140,488 @@ CakePHP,Symfony, &hellip;">
   
 
 
-<time datetime="2010-10-03T20:26:48+09:00" pubdate data-updated="true">2010-10-03 (Sun)</time>
+<time datetime="2010-12-29T18:45:53+09:00" pubdate data-updated="true">2010-12-29 (Wed)</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p><a title="IMG_2470 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/5046336051/"><img src="http://farm5.static.flickr.com/4154/5046336051_aabef10eb4.jpg" alt="IMG_2470" width="500" height="333" /></a></p>
-<p><a href="http://2010.phpmatsuri.net/"><img class="alignnone size-medium wp-image-341" title="PHPMATSURI" src="http://blog.restartr.com/wp-content/uploads/2010/10/bunner-300x132.jpg" alt="" width="300" height="132" /></a><br />
-10月02日と03日の、一泊二日の<a href="http://2010.phpmatsuri.net/">PHPMASTURI</a>に参加してきました。</p>
+  <div class="entry-content"><p>この記事は <a href="http://atnd.org/events/10683">Scala Advent Calendar JP 2010</a> 23 日目(12/29)です。</p>
+<p>前日の <a href="http://twitter.com/cooldaemon">@cooldaemon</a> さんが<a href="http://d.hatena.ne.jp/cooldaemon/20101228">Scala Actor + NIO</a>という、ものすごい記事を書いていらっしゃったのでこの流れの中で投稿するのが忍びないくらいです。<br />
+＃まさか前日にNIOネタがくるとはぁぁぁ…</p>
+<p>さて、今回はNettyを使ってWebSocketサーバーを実装してみました。<br />
+JavaではなくScalaで、です。<br />
+とはいっても、目的はJavaコードをScalaに直す練習も兼ねて、公式サンプルにあるJavaコードをScalaに書きなおしただけですが。<br />
+ご指摘などありましたら謹んでお受けいたします…<br />
+<a id="more"></a><a id="more-465"></a></p>
+<h3>Netty</h3>
 <ul>
-<li>ハッシュタグ: <a href="http://search.twitter.com/search?q=%23phpmatsuri">#phpmatsuri</a></li>
-<li>LTのustream: <a href="http://www.ustream.tv/channel/phpmatsuri">phpmatsuri on USTREAM</a></li>
+<li><a href="http://www.jboss.org/netty/">Netty - the Java NIO Client Server Socket Framework - JBoss Community</a></li>
 </ul>
-<h3>とにかく内容が濃い</h3>
+<p>Nettyの概要はこのへんで。</p>
 <ul>
-<li>楽天の吉岡さんによる大人のプログラミングキャンプ</li>
-<li>CakePHP,Symfony,Lithiumのデベロッパーによるセッション</li>
-<li>彼らのライブコーディングを間近に見られる各フレームワークのワークショップ</li>
-<li>スポンサー各社のセッション</li>
-<li>PHPによる開発事例プレゼン大会のJIREI NIGHT</li>
-<li>ZyngaJapanのお二人によるTDDを実体験できるワークショップ</li>
-<li>深夜まで続くハッカソンと、総勢33名による大LT大会</li>
+<li><a href="http://ameblo.jp/principia-ca/entry-10629939611.html">JavaネットワークアプリケーションフレームワークNettyの紹介｜サイバーエージェント 公式エンジニアブログ</a></li>
 </ul>
-<p>ざっと並べただけでもこんな感じに、とにかく内容てんこ盛りな二日間でした。</p>
-<p><a id="more"></a><a id="more-335"></a></p>
-<p><a title="IMG_2512 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/5046956568/"><img src="http://farm5.static.flickr.com/4133/5046956568_dd9b08f6eb.jpg" alt="IMG_2512" width="500" height="333" /></a></p>
-<p>まとめるのは得意ではないので、参加した感想を少しばかり。</p>
-<h3>イベントに参加するということがいかに重要であるか</h3>
-<p>最初の吉岡さんのセッションは「この祭りをいかに楽しく有意義に過ごすか」ということを教えていただきました。また、各セッションを聞いたり、たくさんのデベロッパーの方々とコミュニケーションをとるのも非常に有意義でした。<br />
-最後のLT大会では、参加したみなさんの変態ぶりに圧倒されっぱなし。これだけ多くの発表があるとそれぞれに目の付け所が違っているが故にアイデアももらえるし、そこで発表すれば多くの反応をいただくこともできます。参加することで得られるメリットは、参加費用にはかえがたいものがあったと思います。<br />
-最後の締めで@yandoさんが「個人によるイベント」と仰っていて、このイベントは有志のスタッフの方々に支えられている、ことを実感しました。企画・運営をしてくださったスタッフのみなさんには本当に感謝します。<br />
-そして、PHPMATSURIに関わったすべての方に感謝したいと思います。ありがとうございました。</p>
-<p><a title="IMG_2491 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/5046334983/"><img src="http://farm5.static.flickr.com/4086/5046334983_8bd1c1329a.jpg" alt="IMG_2491" width="500" height="333" /></a><br />
-今回のチャレンジをまとめてみます。</p>
-<h3>チャレンジできたこと</h3>
+<h3>開発環境</h3>
 <ul>
-<li>CakePHP,Symfony2,Lithium各フレームワークの特徴を知る</li>
-<li>プレゼン資料を拙いながらも英語で作成する</li>
-<li>内容に関係なく発表者になる</li>
-<li>動かなかったで終わらせず、動くまでハックする</li>
+<li>Scala-2.8.0</li>
+<li>Netty-3.2.3.Final</li>
 </ul>
-<h3>チャレンジできなかったこと</h3>
+<h3>Echoサーバー</h3>
+<p>サンプル的にEchoサーバーから書いてみます。</p>
+<h4>やること</h4>
+<ol>
+<li>Echoハンドラを実装</li>
+<li>NioChannelFactoryにスレッドプールを登録</li>
+<li>BootstrapにNioChannelFactoryを登録</li>
+<li>PipelineFactoryにEchoハンドラを登録</li>
+<li>BootstrapにPipelineFactoryを登録</li>
+<li>InetSocketAddressに（ホストと）ポート番号を指定してBootstrapに登録してサービス開始</li>
+</ol>
+<p><a href="https://github.com/ReSTARTR/nettyws/blob/master/src/main/scala/com/restartr/nettyws/EchoServer.scala">EchoServer.scala</a><br />
+まずは起動元から。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">object</span> <span class="nc">EchoServer</span> <span class="o">{</span>
+</span><span class="line">  <span class="nd">@throws</span><span class="o">(</span><span class="n">classOf</span><span class="o">[</span><span class="kt">Exception</span><span class="o">])</span>
+</span><span class="line">  <span class="k">def</span> <span class="n">main</span><span class="o">(</span><span class="n">args</span><span class="k">:</span><span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">])</span> <span class="o">{</span>
+</span><span class="line">    <span class="c1">// サーバーのセットアップ</span>
+</span><span class="line">    <span class="k">val</span> <span class="n">bootstrap</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">ServerBootstrap</span><span class="o">(</span>
+</span><span class="line">      <span class="k">new</span> <span class="nc">NioServerSocketChannelFactory</span><span class="o">(</span>
+</span><span class="line">        <span class="nc">Executors</span><span class="o">.</span><span class="n">newCachedThreadPool</span><span class="o">(),</span> <span class="c1">// bossExecutor</span>
+</span><span class="line">        <span class="nc">Executors</span><span class="o">.</span><span class="n">newCachedThreadPool</span><span class="o">()</span>  <span class="c1">// workerExecutor</span>
+</span><span class="line">      <span class="o">))</span>
+</span><span class="line">
+</span><span class="line">    <span class="n">bootstrap</span><span class="o">.</span><span class="n">setPipelineFactory</span><span class="o">(</span>
+</span><span class="line">      <span class="c1">// リクエストをそのまま返すハンドラを実装して登録</span>
+</span><span class="line">      <span class="k">new</span> <span class="nc">ChannelPipelineFactory</span><span class="o">()</span> <span class="o">{</span>
+</span><span class="line">        <span class="k">def</span> <span class="n">getPipeline</span><span class="o">()</span> <span class="k">=</span> <span class="nc">Channels</span><span class="o">.</span><span class="n">pipeline</span><span class="o">(</span><span class="k">new</span> <span class="nc">EchoServerHandler</span><span class="o">())</span>
+</span><span class="line">      <span class="o">}</span>
+</span><span class="line">    <span class="o">)</span>
+</span><span class="line">
+</span><span class="line">    <span class="c1">// 8080番で待ち受け開始</span>
+</span><span class="line">    <span class="n">bootstrap</span><span class="o">.</span><span class="n">bind</span><span class="o">(</span><span class="k">new</span> <span class="nc">InetSocketAddress</span><span class="o">(</span><span class="mi">8080</span><span class="o">))</span>
+</span><span class="line">  <span class="o">}</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>で、ハンドラ側がこんなかんじ。<br />
+
+SimpleChannelUpstreamHandlerの</p>
 <ul>
-<li>各FWデベロッパーの方々とのコミュニケーション</li>
-<li>セッションで質問する(TDDのワークでは質問しましたが)</li>
-<li>ソースコード公開</li>
-<li>Beer Driven Development</li>
+<li>messageReceived(ctx:ChannelHandlerContext, e:MessageEvent)</li>
+<li>def exceptionCaught(ctx: ChannelHandlerContext, e: ExceptionEvent) </li>
 </ul>
-<h3>今後チャレンジしたいこと</h3>
+<p>をオーバーライドして処理内容を定義すればOK。<br />
+何かを呼び出し元に返すには、&#8221;e.getChannel().write( {レスポンス} )&#8221;で。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">class</span> <span class="nc">EchoServerHandler</span> <span class="k">extends</span> <span class="nc">SimpleChannelUpstreamHandler</span> <span class="o">{</span>
+</span><span class="line">  <span class="k">val</span> <span class="n">logger</span> <span class="k">=</span> <span class="n">java</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="nc">Logger</span><span class="o">.</span><span class="n">getLogger</span><span class="o">(</span><span class="s">&quot;EchoServerHandler&quot;</span><span class="o">)</span>
+</span><span class="line">  <span class="k">val</span> <span class="n">transferredBytes</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">AtomicLong</span><span class="o">()</span>
+</span><span class="line">
+</span><span class="line">  <span class="c1">// そのまま返す</span>
+</span><span class="line">  <span class="k">override</span> <span class="k">def</span> <span class="n">messageReceived</span><span class="o">(</span><span class="n">ctx</span><span class="k">:</span><span class="kt">ChannelHandlerContext</span><span class="o">,</span> <span class="n">e</span><span class="k">:</span><span class="kt">MessageEvent</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">    <span class="n">transferredBytes</span><span class="o">.</span><span class="n">addAndGet</span><span class="o">(</span>
+</span><span class="line">      <span class="n">e</span><span class="o">.</span><span class="n">getMessage</span><span class="o">().</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">ChannelBuffer</span><span class="o">].</span><span class="n">readableBytes</span><span class="o">())</span>
+</span><span class="line">
+</span><span class="line">    <span class="n">println</span><span class="o">(</span><span class="s">&quot;echo_server: message received: &quot;</span> <span class="o">+</span> <span class="n">e</span><span class="o">.</span><span class="n">getMessage</span><span class="o">())</span>
+</span><span class="line">    <span class="c1">// レスポンスを返す</span>
+</span><span class="line">    <span class="n">e</span><span class="o">.</span><span class="n">getChannel</span><span class="o">().</span><span class="n">write</span><span class="o">(</span><span class="n">e</span><span class="o">.</span><span class="n">getMessage</span><span class="o">())</span>
+</span><span class="line">  <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">  <span class="c1">// 例外発生時はここにくる</span>
+</span><span class="line">  <span class="k">override</span> <span class="k">def</span> <span class="n">exceptionCaught</span><span class="o">(</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">ChannelHandlerContext</span><span class="o">,</span> <span class="n">e</span><span class="k">:</span> <span class="kt">ExceptionEvent</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">    <span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="o">(</span><span class="nc">Level</span><span class="o">.</span><span class="nc">WARNING</span><span class="o">,</span>
+</span><span class="line">               <span class="s">&quot;Unexpected exception from downstream.&quot;</span><span class="o">,</span>
+</span><span class="line">               <span class="n">e</span><span class="o">.</span><span class="n">getCause</span><span class="o">())</span>
+</span><span class="line">
+</span><span class="line">    <span class="n">e</span><span class="o">.</span><span class="n">getChannel</span><span class="o">().</span><span class="n">close</span><span class="o">()</span>
+</span><span class="line">  <span class="o">}</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3>WebSocketサーバー</h3>
+<p>本題のWebSocketサーバーです。<br />
+Echoサーバーの応用で、WebSocket用のハンドラを作成して、Bootstrapに登録すれば良い訳です。</p>
+<h4>仕様</h4>
 <ul>
-<li>今回の成果物のソースコード公開する</li>
-<li>英語を聞く力、話す力をつける</li>
-<li>発表の機会を自分でつくる</li>
+<li>WebSocketServer: 起動元</li>
+<li>WebSocketServerHandler: プロトコルハンドラ。肝の部分。</li>
+<li>WebSocketServerPipelineFactory: パイプライン生成。</li>
+<li>WebSocketServeIndexPage: WebSocketクライアント用HTMLの生成</li>
 </ul>
-<h3>成果：XHProf CustomPanel</h3>
-<p>※詳しい話は別記事にてやります。</p>
-<div id="__ss_5344576" style="width: 425px;"><strong><a title="Php matusri xhprof custompanel" href="http://www.slideshare.net/restartr/php-matusri-xhprofcustompanelpublish">Php matusri xhprof custompanel</a></strong><object id="__sse5344576" classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" width="425" height="355" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,40,0"><param name="allowFullScreen" value="true" /><param name="allowScriptAccess" value="always" /><param name="src" value="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=phpmatusri-xhprofcustompanel-publish-101003011838-phpapp02&amp;stripped_title=php-matusri-xhprofcustompanelpublish&amp;userName=restartr" /><param name="name" value="__sse5344576" /><param name="allowfullscreen" value="true" /><embed id="__sse5344576" type="application/x-shockwave-flash" width="425" height="355" src="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=phpmatusri-xhprofcustompanel-publish-101003011838-phpapp02&amp;stripped_title=php-matusri-xhprofcustompanelpublish&amp;userName=restartr" name="__sse5344576" allowscriptaccess="always" allowfullscreen="true" /></object>
-<div style="padding: 5px 0 12px;">View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/restartr">Re STARTR</a>.</div>
-</div>
-<h3>おまけ</h3>
-<p>途中でレッドブルがふるまわれるというサービスまでありました。当日6時起きだったのに4時まで頑張れたのはレッドブルのおかげかもしれません。<br />
-<a title="IMG_2488 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/5046334797/"><img src="http://farm5.static.flickr.com/4108/5046334797_b3ed8b2f3e.jpg" alt="IMG_2488" width="500" height="333" /></a></p>
-<p>そして、最後にCakePHP開発者のGraham Weldonさんと記念撮影させてもらいました。<br />
-Thanks, Graham!<br />
-<a title="IMG_2514 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/5046335737/"><img src="http://farm5.static.flickr.com/4113/5046335737_4651050be6.jpg" alt="IMG_2514" width="500" height="333" /></a><br />
-#ほとんど会話できなかったのが悔やまれます。会話することを怖がらないことが大事ですね。反省。</p>
+<h4>実装</h4>
+<p>すべて書くと冗長なので要所だけ抜き出しました。<br />
+<a href="https://github.com/ReSTARTR/nettyws/tree/master/src/main/scala/com/restartr/nettyws">全ソースはGithubを見てください。</a></p>
+<p><b>WebSocketServerIndexPage.scala</b><br />
+まずはクライアント側はこんな感じで、インプットフォームに入力した文字列をWebSocketサーバーに投げ、結果をdivに追記するだけです。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line">  <span class="k">var</span> <span class="n">socket</span><span class="o">;</span>
+</span><span class="line">  <span class="k">if</span> <span class="o">(</span><span class="n">window</span><span class="o">.</span><span class="nc">WebSocket</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">    <span class="n">socket</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">WebSocket</span><span class="o">(</span> <span class="-Symbol">&#39;ws</span><span class="o">://</span><span class="n">localhost</span><span class="k">:</span><span class="err">8080</span><span class="kt">/uppercase</span><span class="err">&#39;</span> <span class="o">);</span>
+</span><span class="line">    <span class="n">socket</span><span class="o">.</span><span class="n">onmessage</span> <span class="k">=</span> <span class="n">function</span><span class="o">(</span><span class="n">event</span><span class="o">)</span> <span class="o">{</span> <span class="n">log</span><span class="o">(</span><span class="n">event</span><span class="o">.</span><span class="n">data</span><span class="o">)</span> <span class="o">}</span>
+</span><span class="line">    <span class="n">socket</span><span class="o">.</span><span class="n">onopen</span> <span class="k">=</span> <span class="n">function</span><span class="o">(</span><span class="n">event</span><span class="o">)</span> <span class="o">{</span> <span class="n">log</span><span class="o">(</span><span class="-Symbol">&#39;web</span> <span class="n">socket</span> <span class="n">opened</span><span class="err">&#39;</span><span class="o">)</span> <span class="o">}</span>
+</span><span class="line">    <span class="n">socket</span><span class="o">.</span><span class="n">onclose</span> <span class="k">=</span> <span class="n">function</span><span class="o">(</span><span class="n">event</span><span class="o">)</span> <span class="o">{</span> <span class="n">log</span><span class="o">(</span><span class="-Symbol">&#39;web</span> <span class="n">socket</span> <span class="n">closed</span><span class="err">&#39;</span><span class="o">)</span> <span class="o">}</span>
+</span><span class="line">  <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span><span class="line">    <span class="n">alert</span><span class="o">(</span><span class="-Symbol">&#39;your</span> <span class="n">browser</span> <span class="n">does</span> <span class="n">not</span> <span class="n">supported</span> <span class="n">web</span> <span class="n">socket</span><span class="err">&#39;</span><span class="o">)</span>
+</span><span class="line">  <span class="o">}</span>
+</span><span class="line">  <span class="n">function</span> <span class="n">log</span><span class="o">(</span><span class="n">message</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">    <span class="n">p</span> <span class="k">=</span> <span class="n">document</span><span class="o">.</span><span class="n">createElement</span><span class="o">(</span><span class="-Symbol">&#39;p</span><span class="err">&#39;</span><span class="o">);</span>
+</span><span class="line">    <span class="n">p</span><span class="o">.</span><span class="n">innerHTML</span> <span class="k">=</span> <span class="n">message</span>
+</span><span class="line">    <span class="n">document</span><span class="o">.</span><span class="n">getElementById</span><span class="o">(</span><span class="-Symbol">&#39;log</span><span class="err">&#39;</span><span class="o">).</span><span class="n">appendChild</span><span class="o">(</span><span class="n">p</span><span class="o">)</span> <span class="o">;</span>
+</span><span class="line">  <span class="o">}</span>
+</span><span class="line">  <span class="n">function</span> <span class="n">send</span><span class="o">(</span><span class="n">message</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">    <span class="k">if</span> <span class="o">(!</span><span class="n">window</span><span class="o">.</span><span class="nc">WebSocket</span><span class="o">)</span> <span class="o">{</span> <span class="k">return</span><span class="o">;</span> <span class="o">}</span>
+</span><span class="line">    <span class="k">if</span> <span class="o">(</span><span class="n">socket</span><span class="o">.</span><span class="n">readyState</span> <span class="o">==</span> <span class="nc">WebSocket</span><span class="o">.</span><span class="nc">OPEN</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">      <span class="n">socket</span><span class="o">.</span><span class="n">send</span><span class="o">(</span><span class="n">message</span><span class="o">)</span>
+</span><span class="line">    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span><span class="line">      <span class="n">alert</span><span class="o">(</span><span class="-Symbol">&#39;the</span> <span class="n">socket</span> <span class="n">is</span> <span class="n">not</span> <span class="n">open</span><span class="o">.</span><span class="err">&#39;</span><span class="o">)</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">  <span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p><b>WebSocketServer.scala</b><br />
+サーバー起動オブジェクトです。<br />
+HTML/WebSocketを扱うハンドラを登録してポートで待ち受けます。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="c1">// WebSocket用ハンドラを含むPipelineFactoryを登録</span>
+</span><span class="line"><span class="n">bootstrap</span><span class="o">.</span><span class="n">setPipelineFactory</span><span class="o">(</span><span class="k">new</span> <span class="nc">WebSocketServerPipelineFactory</span><span class="o">())</span>
+</span><span class="line">
+</span><span class="line"><span class="c1">// 8080番で待ち受け開始</span>
+</span><span class="line"><span class="n">bootstrap</span><span class="o">.</span><span class="n">bind</span><span class="o">(</span><span class="k">new</span> <span class="nc">InetSocketAddress</span><span class="o">(</span><span class="s">&quot;localhost&quot;</span><span class="o">,</span> <span class="mi">8080</span><span class="o">))</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p><b>WebSocketServerHandler.scala</b><br />
+実装するのは、Echoサーバーと同じく、messageReceived()とexceptionCaught()の２つ。<br />
+処理を分割しているのですこしだけメソッド多めです。<br />
+messageRecieved()で受信内容によって実際のハンドラをHttp/WebSocketのどちらかに切り替えます。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+<span class="line-number">43</span>
+<span class="line-number">44</span>
+<span class="line-number">45</span>
+<span class="line-number">46</span>
+<span class="line-number">47</span>
+<span class="line-number">48</span>
+<span class="line-number">49</span>
+<span class="line-number">50</span>
+<span class="line-number">51</span>
+<span class="line-number">52</span>
+<span class="line-number">53</span>
+<span class="line-number">54</span>
+<span class="line-number">55</span>
+<span class="line-number">56</span>
+<span class="line-number">57</span>
+<span class="line-number">58</span>
+<span class="line-number">59</span>
+<span class="line-number">60</span>
+<span class="line-number">61</span>
+<span class="line-number">62</span>
+<span class="line-number">63</span>
+<span class="line-number">64</span>
+<span class="line-number">65</span>
+<span class="line-number">66</span>
+<span class="line-number">67</span>
+<span class="line-number">68</span>
+<span class="line-number">69</span>
+<span class="line-number">70</span>
+<span class="line-number">71</span>
+<span class="line-number">72</span>
+<span class="line-number">73</span>
+<span class="line-number">74</span>
+<span class="line-number">75</span>
+<span class="line-number">76</span>
+<span class="line-number">77</span>
+<span class="line-number">78</span>
+<span class="line-number">79</span>
+<span class="line-number">80</span>
+<span class="line-number">81</span>
+<span class="line-number">82</span>
+<span class="line-number">83</span>
+<span class="line-number">84</span>
+<span class="line-number">85</span>
+<span class="line-number">86</span>
+<span class="line-number">87</span>
+<span class="line-number">88</span>
+<span class="line-number">89</span>
+<span class="line-number">90</span>
+<span class="line-number">91</span>
+<span class="line-number">92</span>
+<span class="line-number">93</span>
+<span class="line-number">94</span>
+<span class="line-number">95</span>
+<span class="line-number">96</span>
+<span class="line-number">97</span>
+<span class="line-number">98</span>
+<span class="line-number">99</span>
+<span class="line-number">100</span>
+<span class="line-number">101</span>
+<span class="line-number">102</span>
+<span class="line-number">103</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">class</span> <span class="nc">WebSocketServerHandler</span> <span class="k">extends</span> <span class="nc">SimpleChannelUpstreamHandler</span> <span class="o">{</span>
+</span><span class="line">  <span class="k">val</span> <span class="nc">WEBSOCKET_PATH</span> <span class="k">=</span> <span class="s">&quot;/uppercase&quot;</span>
+</span><span class="line">
+</span><span class="line">  <span class="cm">/**</span>
+</span><span class="line"><span class="cm">   * メッセージ受信時の処理</span>
+</span><span class="line"><span class="cm">   *   メッセージの内容によってWebSocketかHttpかハンドラを切り替える</span>
+</span><span class="line"><span class="cm">   */</span>
+</span><span class="line">  <span class="nd">@throws</span><span class="o">(</span><span class="n">classOf</span><span class="o">[</span><span class="kt">Exception</span><span class="o">])</span>
+</span><span class="line">  <span class="k">override</span> <span class="k">def</span> <span class="n">messageReceived</span><span class="o">(</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">ChannelHandlerContext</span><span class="o">,</span> <span class="n">e</span><span class="k">:</span> <span class="kt">MessageEvent</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">    <span class="k">val</span> <span class="n">msg</span><span class="k">:</span><span class="kt">Object</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">getMessage</span><span class="o">()</span>
+</span><span class="line">    <span class="n">msg</span> <span class="k">match</span> <span class="o">{</span>
+</span><span class="line">      <span class="k">case</span> <span class="n">frame</span><span class="k">:</span> <span class="kt">WebSocketFrame</span> <span class="o">=&gt;</span> <span class="o">{</span>
+</span><span class="line">          <span class="n">handleWebSocketFrame</span><span class="o">(</span><span class="n">ctx</span><span class="o">,</span> <span class="n">frame</span><span class="o">)</span>
+</span><span class="line">        <span class="o">}</span>
+</span><span class="line">      <span class="k">case</span> <span class="n">req</span><span class="k">:</span> <span class="kt">HttpRequest</span> <span class="o">=&gt;</span> <span class="o">{</span>
+</span><span class="line">          <span class="n">handleHttpRequest</span><span class="o">(</span><span class="n">ctx</span><span class="o">,</span> <span class="n">req</span><span class="o">)</span>
+</span><span class="line">        <span class="o">}</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">  <span class="o">}</span>
+</span><span class="line">  <span class="cm">/**</span>
+</span><span class="line"><span class="cm">   * HTTPリクエスト時の処理</span>
+</span><span class="line"><span class="cm">   */</span>
+</span><span class="line">  <span class="nd">@throws</span><span class="o">(</span><span class="n">classOf</span><span class="o">[</span><span class="kt">Exception</span><span class="o">])</span>
+</span><span class="line">  <span class="k">def</span> <span class="n">handleHttpRequest</span><span class="o">(</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">ChannelHandlerContext</span><span class="o">,</span> <span class="n">req</span><span class="k">:</span> <span class="kt">HttpRequest</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">    <span class="c1">// DEBUG</span>
+</span><span class="line">    <span class="n">println</span><span class="o">(</span><span class="s">&quot;handleHttpRequest: &quot;</span> <span class="o">+</span> <span class="nc">Thread</span><span class="o">.</span><span class="n">currentThread</span><span class="o">().</span><span class="n">getName</span><span class="o">())</span>
+</span><span class="line">
+</span><span class="line">    <span class="c1">// GETリクエスト以外は処理しない</span>
+</span><span class="line">    <span class="c1">// &quot;/&quot;にきたらWebSocketクライアント用ページを送信</span>
+</span><span class="line">    <span class="c1">// &quot;/uppercase&quot;にきたらリクエスト文字列を大文字に変換して返す</span>
+</span><span class="line">    <span class="k">if</span> <span class="o">(</span><span class="n">req</span><span class="o">.</span><span class="n">getMethod</span><span class="o">()</span> <span class="o">!=</span> <span class="nc">GET</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">      <span class="n">sendHttpResponse</span><span class="o">(</span>
+</span><span class="line">        <span class="n">ctx</span><span class="o">,</span>
+</span><span class="line">        <span class="n">req</span><span class="o">,</span>
+</span><span class="line">        <span class="k">new</span> <span class="nc">DefaultHttpResponse</span><span class="o">(</span><span class="nc">HTTP_1_1</span><span class="o">,</span> <span class="nc">FORBIDDEN</span><span class="o">))</span>
+</span><span class="line">    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">req</span><span class="o">.</span><span class="n">getUri</span><span class="o">().</span><span class="n">equalsIgnoreCase</span><span class="o">(</span><span class="s">&quot;/&quot;</span><span class="o">))</span> <span class="o">{</span>
+</span><span class="line">    	
+</span><span class="line">      <span class="c1">// (中略) デフォルトHTMLの送信</span>
+</span><span class="line">
+</span><span class="line">    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">req</span><span class="o">.</span><span class="n">getUri</span><span class="o">().</span><span class="n">equalsIgnoreCase</span><span class="o">(</span><span class="nc">WEBSOCKET_PATH</span><span class="o">)</span> <span class="o">&amp;&amp;</span>
+</span><span class="line">               <span class="nc">Values</span><span class="o">.</span><span class="nc">UPGRADE</span><span class="o">.</span><span class="n">equalsIgnoreCase</span><span class="o">(</span><span class="n">req</span><span class="o">.</span><span class="n">getHeader</span><span class="o">(</span><span class="nc">Names</span><span class="o">.</span><span class="nc">CONNECTION</span><span class="o">))</span> <span class="o">&amp;&amp;</span>
+</span><span class="line">               <span class="nc">Values</span><span class="o">.</span><span class="nc">WEBSOCKET</span><span class="o">.</span><span class="n">equalsIgnoreCase</span><span class="o">(</span><span class="n">req</span><span class="o">.</span><span class="n">getHeader</span><span class="o">(</span><span class="nc">Names</span><span class="o">.</span><span class="nc">UPGRADE</span><span class="o">)))</span> <span class="o">{</span>
+</span><span class="line">
+</span><span class="line">      <span class="c1">// (中略) WebSocket接続処理</span>
+</span><span class="line">
+</span><span class="line">      <span class="c1">// ハンドラをHTTPからWebSocketに切り替えて、</span>
+</span><span class="line">      <span class="c1">// send the handshake response</span>
+</span><span class="line">      <span class="k">val</span> <span class="n">p</span> <span class="k">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">getChannel</span><span class="o">().</span><span class="n">getPipeline</span><span class="o">()</span>
+</span><span class="line">      <span class="n">p</span><span class="o">.</span><span class="n">remove</span><span class="o">(</span><span class="s">&quot;aggregator&quot;</span><span class="o">)</span>
+</span><span class="line">      <span class="n">p</span><span class="o">.</span><span class="n">replace</span><span class="o">(</span><span class="s">&quot;decoder&quot;</span><span class="o">,</span> <span class="s">&quot;wsdecoder&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="nc">WebSocketFrameDecoder</span><span class="o">())</span>
+</span><span class="line">
+</span><span class="line">      <span class="n">ctx</span><span class="o">.</span><span class="n">getChannel</span><span class="o">().</span><span class="n">write</span><span class="o">(</span><span class="n">res</span><span class="o">)</span>
+</span><span class="line">
+</span><span class="line">      <span class="n">p</span><span class="o">.</span><span class="n">replace</span><span class="o">(</span><span class="s">&quot;encoder&quot;</span><span class="o">,</span> <span class="s">&quot;wsencoder&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="nc">WebSocketFrameEncoder</span><span class="o">())</span>
+</span><span class="line">    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span><span class="line">      <span class="n">sendHttpResponse</span><span class="o">(</span>
+</span><span class="line">        <span class="n">ctx</span><span class="o">,</span> <span class="n">req</span><span class="o">,</span> <span class="k">new</span> <span class="nc">DefaultHttpResponse</span><span class="o">(</span><span class="nc">HTTP_1_1</span><span class="o">,</span> <span class="nc">FORBIDDEN</span><span class="o">))</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">  <span class="o">}</span>
+</span><span class="line">  <span class="cm">/**</span>
+</span><span class="line"><span class="cm">   * WebSocketリクエスト時の処理</span>
+</span><span class="line"><span class="cm">   */</span>
+</span><span class="line">  <span class="nd">@throws</span><span class="o">(</span><span class="n">classOf</span><span class="o">[</span><span class="kt">Exception</span><span class="o">])</span>
+</span><span class="line">  <span class="k">def</span> <span class="n">handleWebSocketFrame</span><span class="o">(</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">ChannelHandlerContext</span><span class="o">,</span> <span class="n">frame</span><span class="k">:</span> <span class="kt">WebSocketFrame</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">    <span class="c1">// 大文字に変換するして、WebSocketFrameにのせてレスポンスを返す。</span>
+</span><span class="line">    <span class="n">ctx</span><span class="o">.</span><span class="n">getChannel</span><span class="o">().</span><span class="n">write</span><span class="o">(</span>
+</span><span class="line">      <span class="k">new</span> <span class="nc">DefaultWebSocketFrame</span><span class="o">(</span>
+</span><span class="line">        <span class="n">frame</span><span class="o">.</span><span class="n">getTextData</span><span class="o">().</span><span class="n">toUpperCase</span><span class="o">))</span>
+</span><span class="line">  <span class="o">}</span>
+</span><span class="line">  <span class="cm">/**</span>
+</span><span class="line"><span class="cm">   * HTTPレスポンスの送信</span>
+</span><span class="line"><span class="cm">   */</span>
+</span><span class="line">  <span class="nd">@throws</span><span class="o">(</span><span class="n">classOf</span><span class="o">[</span><span class="kt">Exception</span><span class="o">])</span>
+</span><span class="line">  <span class="k">def</span> <span class="n">sendHttpResponse</span><span class="o">(</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">ChannelHandlerContext</span><span class="o">,</span> <span class="n">req</span><span class="k">:</span> <span class="kt">HttpRequest</span><span class="o">,</span> <span class="n">res</span><span class="k">:</span> <span class="kt">HttpResponse</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">    <span class="c1">// ステータスコードが200じゃなければエラーページの表示</span>
+</span><span class="line">    <span class="k">if</span> <span class="o">(</span><span class="n">res</span><span class="o">.</span><span class="n">getStatus</span><span class="o">().</span><span class="n">getCode</span><span class="o">()</span> <span class="o">!=</span> <span class="mi">200</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">      <span class="n">res</span><span class="o">.</span><span class="n">setContent</span><span class="o">(</span>
+</span><span class="line">        <span class="nc">ChannelBuffers</span><span class="o">.</span><span class="n">copiedBuffer</span><span class="o">(</span>
+</span><span class="line">          <span class="n">res</span><span class="o">.</span><span class="n">getStatus</span><span class="o">().</span><span class="n">toString</span><span class="o">(),</span> <span class="nc">CharsetUtil</span><span class="o">.</span><span class="nc">UTF_8</span><span class="o">))</span>
+</span><span class="line">      <span class="nc">HttpHeaders</span><span class="o">.</span><span class="n">setContentLength</span><span class="o">(</span><span class="n">res</span><span class="o">,</span> <span class="n">res</span><span class="o">.</span><span class="n">getContent</span><span class="o">().</span><span class="n">readableBytes</span><span class="o">())</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">
+</span><span class="line">    <span class="c1">// keep-aliveでなければ接続を閉じる</span>
+</span><span class="line">    <span class="k">val</span> <span class="n">f</span> <span class="k">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">getChannel</span><span class="o">().</span><span class="n">write</span><span class="o">(</span><span class="n">res</span><span class="o">)</span>
+</span><span class="line">    <span class="k">if</span> <span class="o">(!</span><span class="nc">HttpHeaders</span><span class="o">.</span><span class="n">isKeepAlive</span><span class="o">(</span><span class="n">req</span><span class="o">)</span> <span class="o">||</span> <span class="n">res</span><span class="o">.</span><span class="n">getStatus</span><span class="o">().</span><span class="n">getCode</span><span class="o">()</span> <span class="o">!=</span> <span class="mi">200</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">      <span class="n">f</span><span class="o">.</span><span class="n">addListener</span><span class="o">(</span><span class="nc">ChannelFutureListener</span><span class="o">.</span><span class="nc">CLOSE</span><span class="o">)</span>
+</span><span class="line">    <span class="o">}</span>
+</span><span class="line">  <span class="o">}</span>
+</span><span class="line">  <span class="cm">/**</span>
+</span><span class="line"><span class="cm">   * 例外発生時の処理</span>
+</span><span class="line"><span class="cm">   */</span>
+</span><span class="line">  <span class="nd">@throws</span><span class="o">(</span><span class="n">classOf</span><span class="o">[</span><span class="kt">Exception</span><span class="o">])</span>
+</span><span class="line">  <span class="k">override</span> <span class="k">def</span> <span class="n">exceptionCaught</span><span class="o">(</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">ChannelHandlerContext</span><span class="o">,</span> <span class="n">e</span><span class="k">:</span> <span class="kt">ExceptionEvent</span><span class="o">)</span> <span class="o">{</span>
+</span><span class="line">    <span class="n">println</span><span class="o">(</span><span class="s">&quot;server: exception caught: &quot;</span><span class="o">)</span>
+</span><span class="line">    <span class="n">e</span><span class="o">.</span><span class="n">getCause</span><span class="o">().</span><span class="n">printStackTrace</span><span class="o">()</span>
+</span><span class="line">    <span class="n">e</span><span class="o">.</span><span class="n">getChannel</span><span class="o">().</span><span class="n">close</span><span class="o">()</span>
+</span><span class="line">  <span class="o">}</span>
+</span><span class="line">  <span class="cm">/**</span>
+</span><span class="line"><span class="cm">   * WebSocket接続情報</span>
+</span><span class="line"><span class="cm">   */</span>
+</span><span class="line">  <span class="k">def</span> <span class="n">getWebSocketLocation</span><span class="o">(</span><span class="n">req</span><span class="k">:</span> <span class="kt">HttpRequest</span><span class="o">)</span> <span class="k">=</span>
+</span><span class="line">    <span class="s">&quot;ws://&quot;</span> <span class="o">+</span> <span class="n">req</span><span class="o">.</span><span class="n">getHeader</span><span class="o">(</span><span class="nc">HttpHeaders</span><span class="o">.</span><span class="nc">Names</span><span class="o">.</span><span class="nc">HOST</span><span class="o">)</span> <span class="o">+</span> <span class="nc">WEBSOCKET_PATH</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p><b>WebSocketServerPipelineFactory.scala</b><br />
+パイプラインへの登録を定義します。<br />
+リクエストはDecoderを通り、ハンドラで処理され、Encoderを通って返される、という流れです。<br />
+ここでは初期状態としてHttp用の設定になっていますが、一旦WebSocket通信開始のリクエストを受け取ると、そのあとはWebSocketのDecoder/Encoderに切り替わります。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="o">&lt;</span><span class="n">pre</span> <span class="n">class</span><span class="o">=</span><span class="s">&quot;brush:scala&quot;</span><span class="o">&gt;</span>
+</span><span class="line"><span class="k">class</span> <span class="nc">WebSocketServerPipelineFactory</span> <span class="k">extends</span> <span class="nc">ChannelPipelineFactory</span><span class="o">{</span>
+</span><span class="line">  <span class="nd">@throws</span><span class="o">(</span><span class="n">classOf</span><span class="o">[</span><span class="kt">Exception</span><span class="o">])</span>
+</span><span class="line">  <span class="k">def</span> <span class="n">getPipeline</span><span class="o">()</span><span class="k">:</span> <span class="kt">ChannelPipeline</span> <span class="o">=</span> <span class="o">{</span>
+</span><span class="line">    <span class="k">val</span> <span class="n">pipeline</span> <span class="k">=</span> <span class="nc">Channels</span><span class="o">.</span><span class="n">pipeline</span><span class="o">()</span>
+</span><span class="line">
+</span><span class="line">    <span class="n">pipeline</span><span class="o">.</span><span class="n">addLast</span><span class="o">(</span><span class="s">&quot;decoder&quot;</span>    <span class="o">,</span> <span class="k">new</span> <span class="nc">HttpRequestDecoder</span><span class="o">())</span>
+</span><span class="line">    <span class="n">pipeline</span><span class="o">.</span><span class="n">addLast</span><span class="o">(</span><span class="s">&quot;aggregator&quot;</span> <span class="o">,</span> <span class="k">new</span> <span class="nc">HttpChunkAggregator</span><span class="o">(</span><span class="mi">65536</span><span class="o">))</span>
+</span><span class="line">    <span class="n">pipeline</span><span class="o">.</span><span class="n">addLast</span><span class="o">(</span><span class="s">&quot;encoder&quot;</span>    <span class="o">,</span> <span class="k">new</span> <span class="nc">HttpResponseEncoder</span><span class="o">())</span>
+</span><span class="line">    <span class="n">pipeline</span><span class="o">.</span><span class="n">addLast</span><span class="o">(</span><span class="s">&quot;handler&quot;</span>    <span class="o">,</span> <span class="k">new</span> <span class="nc">WebSocketServerHandler</span><span class="o">())</span>
+</span><span class="line">
+</span><span class="line">    <span class="n">pipeline</span>
+</span><span class="line">  <span class="o">}</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>実際、ブラウザでひらいてみると、Webフォームに入力されている「hello, world」が大文字に変換されてフォーム下部に追記されていきます。<br />
+まぁWebSocketサーバーを実装するだけなら、jetty7を使ったほうがシンプルに早くかけると思います。<br />
+Memcacheプロトコルを話すサービスをつくる場合とかには便利ですね。（messagepack-rpcでもnetty使っているとか。)</p>
+
+<p>参考：</p>
+
+<ul>
+  <li><a href="http://gihyo.jp/dev/feature/01/websocket">Jettyで始めるWebSocket超入門</a></li>
+  <li><a href="http://d.hatena.ne.jp/yuroyoro/20100316/1268735022">Jetty7のWebSocketをScalaから使う - ゆろよろ日記</a></li>
+</ul>
+
+<p>以上、お粗末様でした。。。</p>
+<p># あれ？Scalaあんまり関係ない？？</p>
 </div>
   
   
@@ -219,7 +634,7 @@ Thanks, Graham!<br />
       
   <header>
     
-      <h1 class="entry-title"><a href="/2010/09/19/buy-an-amazon-kindle3/">Amazon Kindle3 Free 3G + Wi-Fiを買ってみた</a></h1>
+      <h1 class="entry-title"><a href="/2010/11/23/scala-erlang-php-and-me/">ScalaとErlangとPHPと私</a></h1>
     
     
       <p class="meta">
@@ -235,41 +650,89 @@ Thanks, Graham!<br />
   
 
 
-<time datetime="2010-09-19T10:48:29+09:00" pubdate data-updated="true">2010-09-19 (Sun)</time>
+<time datetime="2010-11-23T18:57:35+09:00" pubdate data-updated="true">2010-11-23 (Tue)</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p><a title="IMG_2302 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/5003018900/"><img src="http://farm5.static.flickr.com/4087/5003018900_5a22f2eca5.jpg" alt="IMG_2302" width="500" height="333" /></a></p>
-<p>今流行の<a href="http://www.amazon.com/dp/B002FQJT3Q">Amazon Kindle3(3G+Wi-Fi)</a>を買ってみました。<br />
-発売開始の翌日に注文して、２週間程度での受け取りでした。<br />
-Amazon純正のKindle3用レザーカバーも頼んだんですが、そちらだけ先に届いてましたが、やっと本体も届きましたんで、<br />
-軽くレビューでも書いてみます。</p>
-<p><a id="more"></a><a id="more-325"></a><br />
-注文したのがたしか、8/28日。発送の連絡がきたのが9/10なのでその間約二週間。さらに受け取りまでは以下のように、不在による再配達も影響して、長い道のりとなりました。<br />
-<a href="http://www.flickr.com/photos/53244662@N04/5002490605/" title="配達履歴 by ReSTARTR_y, on Flickr"><img src="http://farm5.static.flickr.com/4092/5002490605_3cfe829cef.jpg" width="488" height="500" alt="配達履歴" /></a></p>
-<p>先に受け取ったレザーカバーのときもそうだったんですが、箱が工夫されています。<br />
-ダンボールの箱はガムテープで閉じられているのが普通ですが、お菓子の箱のようにダンボール自体に切り取れる細工がしてあります。<br />
-<a href="http://www.flickr.com/photos/53244662@N04/5002411379/" title="IMG_2285 by ReSTARTR_y, on Flickr"><img src="http://farm5.static.flickr.com/4107/5002411379_a1ab728694_m.jpg" width="240" height="160" alt="IMG_2285" /></a><br />
-<a href="http://www.flickr.com/photos/53244662@N04/5003018636/" title="IMG_2289 by ReSTARTR_y, on Flickr"><img src="http://farm5.static.flickr.com/4131/5003018636_5681651c2c_m.jpg" width="240" height="160" alt="IMG_2289" /></a><br />
-汎用サイズのダンボールでは難しいかもしれませんが、こういう工夫はなんとなく嬉しいです。</p>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5003018740/" title="IMG_2290 by ReSTARTR_y, on Flickr"><img src="http://farm5.static.flickr.com/4154/5003018740_245397caef.jpg" width="500" height="333" alt="IMG_2290" /></a><br />
-箱を開けるとこんなかんじ。<br />
-画面にPC接続の指示が書いてあります。表面にはってあるシートにプリントされているかのように見える程に電子インクは素晴らしいです。</p>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5002411213/" title="IMG_2274 by ReSTARTR_y, on Flickr"><img src="http://farm5.static.flickr.com/4089/5002411213_8cf4392a79.jpg" width="500" height="333" alt="IMG_2274" /></a><br />
-ちなみにレザーカバーはこんなかんじ。</p>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5003018454/" title="IMG_2279 by ReSTARTR_y, on Flickr"><img src="http://farm5.static.flickr.com/4125/5003018454_ba7fc2faf4.jpg" width="500" height="333" alt="IMG_2279" /></a><br />
-Kindle本体とは↑の写真のようなカバーの「フック」にひっかけて固定するようになってます。</p>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5002412019/" title="IMG_2295 by ReSTARTR_y, on Flickr"><img src="http://farm5.static.flickr.com/4126/5002412019_02ef7106de.jpg" width="500" height="333" alt="IMG_2295" /></a><br />
-ということでカバーと本体をくっつけるとこんなかんじになります。<br />
-重量はカバーなしの二倍くらいに重くなったように感じますが、実際に電車内で片手で持っていても腕が疲れないレベルです。</p>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5003019014/" title="IMG_2307 by ReSTARTR_y, on Flickr"><img src="http://farm5.static.flickr.com/4109/5003019014_4b7343171c.jpg" width="333" height="500" alt="IMG_2307" /></a><br />
-Experimentalな機能としてwebkitなブラウザが搭載されています。Twitterを見るとこんな感じになります。<br />
-表示速度ははっきりいって遅いうえに正直見づらいですが、本を呼んでいる最中にTLをチラ見したいときとか役立ちます。</p>
-<p>TwitterへツイートできたりFacebookへShareできたり連携機能があるので、ブラウザが搭載されているのはそれらサービス認証が主な目的だと思います。</p>
-<p>まだ数日しか使っていないですが、かなり便利なシロモノでした。</p>
+  <div class="entry-content"><p>PHPよりScalaが簡単である、という議論に対するふたつのポストがあったので、自分向けにまとめました。</p>
+<ul>
+<li>元記事：<a href="http://wadearnold.com/blog/scala/scala-is-easier-than-php">Wade Arnold ? Scala is easier than PHP</a></li>
+<li>返信：<a href="http://videlalvaro.github.com/2010/11/reply-to-scala-is-easier-than-php.html">Reply to &#8220;Scala is Easier than PHP&#8221;</a></li>
+</ul>
+<h3>概要</h3>
+<p>ざっとこんな感じにまとめてしまいました。</p>
+<ul>
+<li>議論の中心はWebページ生成言語としての言語の比較ではない</li>
+<li>ふたりともWebページ生成ならPHPが優れているという立場にかわりはない</li>
+<li>議論の中心は主にスケーラビリティの確保とプロセス間通信</li>
+<li>元記事のWade ArnoldさんはScala推進派</li>
+<li>返信者のvidelalvaroさんはErlang推進派</li>
+<li>スケーラビリティ確保のためには関数型言語という結論</li>
+<li>ScalaかErlangどちらが簡単か、という議論はない</li>
+</ul>
+<p><a id="more"></a><a id="more-410"></a></p>
+<h3>ScalaがPHPより簡単な理由</h3>
+<p>Wade Arnoldさんが元記事「Scala is easier than PHP」において、マルチコア時代にはScalaが必要だ、みたいなことを書きました。彼はPHP３のころからPHPの開発に関わっていて、最近はZendFrameworkのコミッタをやっていたそうです。<br />
+PHPはいまだに最高の言語であると最初に断っておきつつ、Scalaの技術的な点を整理しておこう、という内容。</p>
+<p>スケーラビリティの確保のためには、PHPのようにたくさんのツールを必要とせずとも、言語仕様的に多くをサポートするScalaが簡単な理由である、と。Scalaへの移行は時間を必要とするが、スケーラビリティには必要な選択であるといっています。</p>
+<blockquote><p>No need for amqp with actors, no beanstalkd with mutable queues, and it’s fast as hell!</p></blockquote>
+<p><em>ActorによってAMQPはいらなくなる。ミュータブルなキューもbeanstalkdなしに。そしてそれはものすごく速い。<br />
+</em></p>
+<h3>PHPの代わりにErlangを使う理由</h3>
+<p>それに対してvidelalvaroさんが「Reply to &#8220;Scala is easier than PHP&#8221;」でコメントをしています。<br />
+おおむねWadeさんの意見に同意で、彼はScalaではなくErlangを推しているようです。</p>
+<p>意見としてはこんな感じでしょうか。</p>
+<ul>
+<li>サーバーのような長時間実行するプログラムにはErlangつかうといい</li>
+<li>スレッド間通信にはErlangをつかうといい</li>
+<li>Webページを生成するだけならPHPをつかうといい</li>
+<li>CPUの全コアを利用したいだけならPHP-FPMをつかうといい</li>
+</ul>
+<h3>スケーラビリティ確保のために必要なもの</h3>
+<p>元記事ではPHPのスケーラビリティ確保のために必要なものをあげ、これらを使うのは大変骨が折れると言っています。</p>
+<blockquote>
+<ul>
+<li>Fantastic at PHP internals</li>
+<li>Amazing at Apache HTTPD and compiling appropriate PHP extensions.</li>
+<li>Nginx</li>
+<li>BigIP ? More than round robin load balancing</li>
+<li>Intimately know how sessions work and probably write your own handlers</li>
+<li>Memcached</li>
+<li>APC</li>
+<li>AMQP</li>
+<li>BeanStalkd</li>
+<li>Code based sharding or at least master/slave logic</li>
+<li>C/C++</li>
+<li>Lots of security! It’s a problem with all dynamic languages.</li>
+<li>Zend Framework.</li>
+</ul>
+</blockquote>
+<p>それに対してScalaはたった５つ。</p>
+<blockquote>
+<ul>
+<li>6 months of scala</li>
+<li>Functional programming</li>
+<li><a onclick="javascript:_gaq.push(['_trackEvent','outbound-article','akkasource.org']);" href="http://akkasource.org/">Akka Framework</a></li>
+<li><a onclick="javascript:_gaq.push(['_trackEvent','outbound-article','liftweb.net']);" href="http://liftweb.net/">Lift Framework</a></li>
+<li>Nginx / Jetty</li>
+</ul>
+</blockquote>
+<p>ツールに頼らずとも言語が機能を備えているから気にすべきところが非常にシンプルになるようです。</p>
+<h3>個人的感想</h3>
+<p>PHPをWebページ生成以外で対決させるのはどうなんだろうと思いつつも、Scalaをどのような場面で使っていけばよいか考える良い機会になりました。<br />
+個人的な話をすると、Scalaは言語仕様を学ぶばかりで実際のプログラムを書くまでには至っていませんし、性能評価もまだやってないので「PHPからScalaに移行すべきだ」、と言い切るには至っていないのが現状です。<br />
+が、Wadeさんは後ほどもっと突っ込んだ記事を書くと冒頭に言っていますし、videlalvaroさんも最後に</p>
+<blockquote><p>if we want to sell functional languages like Erlang or Scala to the PHP programmer then we have to look for more compelling features that may attract them to look into these languages. What I think are those features ?I guess?, should be part of another blog post.</p></blockquote>
+<p>と、ScalaやErlangをPHPerに売り込むための魅力的な点をPOSTしてくれるかも。<br />
+それも楽しみにしておこうと思います。</p>
+<h3>余談</h3>
+<p>最近思うのが、Scalaって言語仕様があまりに多くて、それを学ぶことが楽しいです。<br />
+が、学ぶべき仕様がどこまでなのか見えてこず、さらに、仕様を学ぶこと自体が目的になってきているような気がします。<br />
+ということで(?)そろそろ、実際につくりたいプログラムを書きながら仕様を学ぶ方向にシフトしようと思います。</p>
+<p>※あとPHP-FPMもちゃんと調査・検証したいし、Kestrelのソースも読みたい。</p>
 </div>
   
   
@@ -340,15 +803,15 @@ Experimentalな機能としてwebkitなブラウザが搭載されています�
       </li>
     
       <li class="post">
+        <a href="/2014/04/22/tech-podcast-list/">技術系podcastまとめ</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2014/04/21/golang-memcache-stats-client/">Goでmemcachedのstatsを取得する</a>
+      </li>
+    
+      <li class="post">
         <a href="/2014/04/20/vimrc-noexpandtab-in-golang/">vimで特定のファイルタイプだけタブインデントにする方法</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2014/04/06/move-from-wordpress-to-octopress/">WordpressからOctopressに移行</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2013/04/26/connect-go-and-python-with-zeromq/">GoとPythonをZeroMQで繋ぐ</a>
       </li>
     
   </ul>
@@ -356,7 +819,7 @@ Experimentalな機能としてwebkitなブラウザが搭載されています�
 <section>
   <h1>Categories</h1>
   <ul id="categories">
-    <li><a href='/category/docker/'>docker</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
+    <li><a href='/category/docker/'>docker</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
   </ul>
 </section>
 <section>

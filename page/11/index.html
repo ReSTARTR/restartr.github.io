@@ -11,8 +11,9 @@
   <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="dotcloudを必要最低限操作するためのactionをsbtに追加してみました。 sbtのアクション自体はじめてなので作法がよくわかってないので、間違っているかも知れませんが。 使い方 ※scalaファイルは最後に掲載しています。
-とりあえず下記を作成するサービス名に置き換えればOKです。 1 &hellip;">
+  <meta name="description" content="6/18(土)に開催されたVarnish勉強会 Tokyo.vcl : ATNDに行ってきました。
+初のクックパッドさんオフィス訪問です。 Varnish3のリリースパーティーも兼ねての開催だったようで、ステッカーもいただいてしまいました。
+インフラ屋じゃない上に、 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -123,7 +124,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/2011/05/09/sample-sbt-project-for-dotcloud/">ScalaをDotCloudにアップロードするためのsbtサンプル</a></h1>
+      <h1 class="entry-title"><a href="/2011/06/21/go-to-varnish-study-tokyovc/">Varnish勉強会 #tokyovcl に行ってきた</a></h1>
     
     
       <p class="meta">
@@ -139,68 +140,229 @@
   
 
 
-<time datetime="2011-05-09T23:35:43+09:00" pubdate data-updated="true">2011-05-09 (Mon)</time>
+<time datetime="2011-06-21T23:56:40+09:00" pubdate data-updated="true">2011-06-21 (Tue)</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p><a href="http://dotcloud.com/">dotcloud</a>を必要最低限操作するためのactionをsbtに追加してみました。</p>
+  <div class="entry-content"><p><a href="http://www.flickr.com/photos/53244662@N04/5856931526/" title="IMAG0053 by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5029/5856931526_1119c53a87.jpg" width="500" height="299" alt="IMAG0053" /></a></p>
 
-<p>sbtのアクション自体はじめてなので作法がよくわかってないので、間違っているかも知れませんが。</p>
+<p>6/18(土)に開催された<a href="http://atnd.org/events/16681">Varnish勉強会 Tokyo.vcl : ATND</a>に行ってきました。
+初のクックパッドさんオフィス訪問です。</p>
 
-<h3 id="section">使い方</h3>
+<p>Varnish3のリリースパーティーも兼ねての開催だったようで、ステッカーもいただいてしまいました。
+インフラ屋じゃない上に、Varnish触ったのは前日の晩という超初心者だったので結構不安でしたが、
+ビアバッシュを含め色々な話しが聞けた実りある良い勉強会でした。</p>
 
-<p>※scalaファイルは最後に掲載しています。
-とりあえず下記を作成するサービス名に置き換えればOKです。</p>
+<p>主催の@hmskさんをはじめ登壇者の皆様、ならびにビアバッシュで交流してくださった皆様ありがとうございました。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">  val <span class="nv">dotApplicationName</span> <span class="o">=</span> <span class="s2">&quot;APPNAME&quot;</span>
-</span><span class="line">  val <span class="nv">dotServiceName</span> <span class="o">=</span> dotApplicationName + <span class="s2">&quot;.SERVNAME&quot;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>あとは、下記を順に実行すればOK(dot_prepareはdot_pushの前に必ず実行されるので省略可能)</p>
-
+<h3 id="section">雑感</h3>
 <ul>
-  <li>“sbt dot_create” : サービスの作成</li>
-  <li>“sbt dot_prepare” : リリース用ディレクトリ作成とwarファイルのコピー</li>
-  <li>“sbt dot_push” : dotcloudへのwarファイルpush</li>
+  <li>Varnishは画像配信の事例が多い</li>
+  <li>HTTPサーバーの前だけじゃなくてSolrのような内部ネットワーク間の通信にも適用できる。</li>
+  <li>Varnish落ちたときにApacheの負荷を避けるためにSquidが使える。</li>
+  <li>拡張次第でHTTPサーバーにもKVSにも化ける（やりすぎ注意？）。</li>
+  <li>クラウドでの運用はフロンティア。</li>
+  <li>設定ファイルのvclはもはやプログラム</li>
+  <li>ESIの事例なかったけど使いにくいのかな？</li>
+  <li>とりあえず実戦投入して様子見ないとわからないことが多そう。</li>
+  <li>あ、どれだけ高速化したかについての言及がなかったような…</li>
 </ul>
 
-<h3 id="dotcloud">dotcloud用に注意すべきこと</h3>
+<h2 id="section-1">各発表メモ</h2>
+<p>スライドと、その丸写しみたいな感じのメモをペタペタ。</p>
 
-<p>“sbt package”を使用すると、”＜projectName＞-＜scala_ver＞-＜app_ver＞.war”の形式でwarファイルが作成されます。
-が、dotcloudのドキュメントにはこう書いてあるので、”root.war”で作成するのが望ましいです。</p>
+<h3 id="varnishcache30vupxcir">VarnishCache3.0新機能とVUPの仕方(@xcir)</h3>
 
-<blockquote>
-The java service will make your application available at http://frontend.myapp.dotcloud.com/ if your archive is named root.war or http://frontend.myapp.dotcloud.com/webapp/ if your archive is named webapp.war (../foobar/ if the archive was named foobar.war and so on). So, you can effectively serve multiple web applications with the same java service.
+<div style="width:425px" id="__ss_8344516"> <strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/xcir/tokyovclvarnishcache30vup" title="tokyo.vcl発表資料（VarnishCache3.0新機能とVUPの仕方）">tokyo.vcl発表資料（VarnishCache3.0新機能とVUPの仕方）</a></strong> <iframe src="http://www.slideshare.net/slideshow/embed_code/8344516" width="425" height="355" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
+<div style="padding:5px 0 12px"> View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/xcir">xcir</a> </div>
 
-</blockquote>
-<p><a href="http://docs.dotcloud.com/components/java/">Java — DotCloud documentation</a></p>
-
-<p>さらに、”dotcloud push”はwarファイルを含むディレクトリを指定することになり、それ以下がすべて同期されてしまいます。デフォルトだと、”./target/scala_2.8.1/”以下のすべてが。</p>
-
-<p>なので、warのみ格納する”release”ディレクトリを作り、 そこに”root.war”としてひとつだけ存在させておきました。
-順番に書くと、</p>
-
+</div>
 <ul>
-  <li>sbt packageでtarget/scala_2.8.1/＜projectName＞-＜scala_ver＞-＜app_ver＞.warを生成</li>
-  <li>そのwarファイルをtarget/release/root.warにコピー</li>
-  <li>“dotcloud push ＜dotcloud_appname＞ target/release/” でwarのみアップロード</li>
+  <li>ESIでのgzip
+    <ul>
+      <li>ブロックが圧縮されているとESIできなかった(~2）</li>
+      <li>defaultパラメータが改善された</li>
+    </ul>
+  </li>
+  <li>stream support
+    <ul>
+      <li>別のストリームは待機させられる（？</li>
+    </ul>
+  </li>
 </ul>
 
-<p>という方法で対応しました。</p>
+<h3 id="varnishphji">イカ娘も終わったしVarnishでも使うか(@phji)</h3>
 
-<p>以下、サンプルのプロジェクト設定です。</p>
+<div style="width:425px" id="__ss_8366215"> <strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/phji/varnishika" title="イカ娘も終わったしVarnishでも使うか">イカ娘も終わったしVarnishでも使うか</a></strong> <iframe src="http://www.slideshare.net/slideshow/embed_code/8366215" width="425" height="355" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
+<div style="padding:5px 0 12px"> View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/phji">Kazutoshi Fujimoto</a> </div>
 
-<script src="https://gist.github.com/962534.js?file=RameeProject.scala"></script>
-
-<h3 id="section-1">参考リンク</h3>
+</div>
 <ul>
-  <li><a href="http://docs.dotcloud.com/cli/">DotCloud command line — DotCloud documentation</a></li>
-  <li><a href="http://code.google.com/p/simple-build-tool/wiki/Process">Process - simple-build-tool - A build tool for Scala - Google Project Hosting</a></li>
+  <li>[RAM8G Xeon 4core SSD256GB ] x 20servers</li>
+  <li>pixiv
+    <ul>
+      <li>nginx -&gt; (consistent hash) -&gt; quid -&gt; nginx -&gt; apache</li>
+      <li>lookupとかかないとキャッシュされないｗ</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="twitteryatsvarnishpenguinana">twitter検索(yats)でvarnish使ってみた(@PENGUINANA_)</h3>
+<ul>
+  <li>API 7000M req/month</li>
+  <li>PV 150Mreq/month</li>
+  <li>varnish(vps) -&gt; nginx[ webAPI -&gt; varnish -&gt; Solr ]</li>
+  <li>service : cache + failover</li>
+  <li>Solr: slaveのキャッシュクリアーが重いので、その前面にVarnishをおいている(ラウンドロビンとFailover）</li>
+  <li>autocomplete
+    <ul>
+      <li>キャッシュと相性よさそう</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="ec2varnishmirakui">EC2とvarnishで画像配信(@mirakui)</h3>
+
+<div style="width:425px" id="__ss_8352369"> <strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/mirakui/ec2varnish" title="EC2とVarnishで画像配信">EC2とVarnishで画像配信</a></strong> <iframe src="http://www.slideshare.net/slideshow/embed_code/8352369" width="425" height="355" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
+<div style="padding:5px 0 12px"> View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/mirakui">Issei Naruta</a> </div>
+
+</div>
+<ul>
+  <li>失敗談</li>
+  <li>TOFU
+    <ul>
+      <li>アップロード時ではなくオンデマンドでリサイズ</li>
+      <li>akamai（CDN)に7000RPSのうち、ELBには700RPSくる。60%受けるリクエストをキャッシュできればApache負荷軽減できるのでは？
+        <ul>
+          <li>という導入経緯（からの失敗</li>
+        </ul>
+      </li>
+      <li>1st challenge
+        <ul>
+          <li>EC2(M2.XLARGE[17.1GB RAM] + EBS[100GB for swap])</li>
+          <li>300rps</li>
+          <li>結果：オンメモリだけなら順調だけど、あふれてきてOSにSWAPさせたとたんLOADAVERAGEが爆発して死亡。</li>
+        </ul>
+      </li>
+      <li>2nd challenge
+        <ul>
+          <li>EC2(M2.XLARGE[17.1GB RAM] + EBS[100GB for ext3])</li>
+          <li>“file storage”を使っても結局メモリ容量が大量に必要</li>
+        </ul>
+      </li>
+      <li>ec2のxlargeインスタンスには、IO性能「標準」と「高」がある
+        <ul>
+          <li>今回は「標準」を利用して失敗</li>
+          <li>「高」ならうまくいくかも</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>varnish3
+    <ul>
+      <li>hash director
+        <ul>
+          <li>consistent hashingができるかも？</li>
+          <li>nginxいらずに複数varnish運用ができるかも？</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="puppetvarnishsquidar1">Puppetでvarnishもsquidも面倒みる(@ar1)</h3>
+<ul>
+  <li>ふつうはvarnishは落ちるのでLBつかって並列で運用</li>
+  <li>varnishおちるとWebサーバーが負荷かかってしまう
+    <ul>
+      <li>LB -&gt; varnish -&gt; squid -&gt; apache</li>
+      <li>squidどうしでキャッシュを共有できるので、１つSquidおちてもWebサーバーにききにいかずにすむ。</li>
+    </ul>
+  </li>
+  <li>puppet
+    <ul>
+      <li>設定をらくにする</li>
+      <li>cacheのExpire</li>
+      <li>サーバーのぬきさし</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="varnishspchidren">楽天でvarnish(@spchidren)</h3>
+<ul>
+  <li>L7 balancingがやりたくてVarnish導入
+    <ul>
+      <li>URLによってWebサーバーのグループを切り替えたい</li>
+    </ul>
+  </li>
+  <li>akamai -&gt; LB -&gt; varnish(RAM24G[malloc18G/hitrate 75%] -&gt; apache(+mod_thumb)</li>
+  <li>LBからVarnishを切り離すのはどうやる？</li>
+  <li>CDNやVarnishのcache clearをどうやるか
+    <ul>
+      <li>画像登録されたときにMQに登録して、必要に応じて消す</li>
+      <li>CDNは常にExpireされない状態にしておける。</li>
+    </ul>
+  </li>
+  <li>ImageMagicおもい
+    <ul>
+      <li>varnishにサムネイルをつくるしくみを組み込んでみれば？（FreeImage)</li>
+      <li>cc_commandでインクルードさせて、C言語でサムネイルつくるしくみをくみこむ</li>
+    </ul>
+  </li>
+  <li>varnishのいくさき
+    <ul>
+      <li>nginxにも近いしredisにもちかづいてきてる</li>
+      <li>どこにいくんでしょ</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="tddvclhmsk">TDDでVCL書いてデプロイ(@hmsk)</h3>
+<ul>
+  <li>varnishtest
+    <ul>
+      <li>RSpecぽい書き方できる</li>
+      <li>xxx.vcltestファイルにケースを記述</li>
+    </ul>
+  </li>
+  <li>vmod
+    <ul>
+      <li>vclの設定をC言語っぽく描ける</li>
+      <li>パージや圧縮、エラーなどに使える</li>
+      <li>モバイル端末のリストのチェックにもVCLから外出しできる</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="section-2">関連リンク</h2>
+<ul>
+  <li>ATND
+    <ul>
+      <li><a href="http://atnd.org/events/16681">Varnish勉強会 Tokyo.vcl : ATND</a></li>
+    </ul>
+  </li>
+  <li>Ustream
+    <ul>
+      <li><a href="http://www.ustream.tv/recorded/15453305">http://www.ustream.tv/recorded/15453305</a></li>
+      <li><a href="http://www.ustream.tv/recorded/15453834">http://www.ustream.tv/recorded/15453834</a></li>
+    </ul>
+  </li>
+  <li>Togetter
+    <ul>
+      <li><a href="http://togetter.com/li/151585">Togetter - 「第一回 Varnish勉強会 Tokyo.vcl」</a></li>
+    </ul>
+  </li>
+  <li>勉強会レポート
+    <ul>
+      <li><a href="http://d.hatena.ne.jp/hxmasaki/20110620/1308547067">Varnish勉強会 Tokyo.vclを行いました - ククラフト</a></li>
+      <li><a href="http://d.hatena.ne.jp/mirakui/20110619/1308497959">私がクックパッドの画像配信野郎です - 床のトルストイ、ゲイとするとのこと</a></li>
+      <li><a href="http://blog.xcir.net/?p=438">Tokyo.vclでVarnishCache3の新機能とVUPの仕方を話してきました « cat /dev/random &gt; /dev/null &amp;</a></li>
+      <li><a href="http://blog.udzura.jp/2011/06/20/summary-of-tokyo-varnish-study-on-20110618/">東京varnish勉強会(Tokyo.vcl)まとめ «  blog.udzura.jp</a></li>
+    </ul>
+  </li>
 </ul>
 
 </div>
@@ -215,7 +377,7 @@ The java service will make your application available at http://frontend.myapp.d
       
   <header>
     
-      <h1 class="entry-title"><a href="/2011/05/01/how-to-send-and-receive-softbank-mms-on-sim-free-android/">SIMフリーのandroid端末でSoftBankのMMSを受信する方法</a></h1>
+      <h1 class="entry-title"><a href="/2011/06/19/volunteer-at-shinchi-fukushima-pref/">東京から福島へ一泊二日でボランティアに行ってきた</a></h1>
     
     
       <p class="meta">
@@ -231,117 +393,141 @@ The java service will make your application available at http://frontend.myapp.d
   
 
 
-<time datetime="2011-05-01T22:18:15+09:00" pubdate data-updated="true">2011-05-01 (Sun)</time>
+<time datetime="2011-06-19T12:03:20+09:00" pubdate data-updated="true">2011-06-19 (Sun)</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>Desire SでS!メールを受信しようと、apnの設定をしてみたのですが、全く送受信が成功しませんでした。
-いろいろ調査していたところ、SoftBankメールのアプリのバージョンが原因だと判明しました。
-古いバージョンをインストールすれば問題ないようです。</p>
+  <div class="entry-content"><p><a href="http://www.flickr.com/photos/53244662@N04/5847245836/" title="IMG_5100 by ReSTARTR_y, on Flickr"><img src="http://farm4.static.flickr.com/3538/5847245836_ca37b883fe_z.jpg" width="640" height="427" alt="IMG_5100" /></a></p>
 
-<p>SoftBankメールを送受信するための手順を下記に記しておきます。</p>
+<p>6/11,12の土日を利用して、福島県相馬郡新地町にボランティア活動に行ってきました。</p>
 
-<h3 id="apn">1.apn設定</h3>
+<h2 id="section">活動の経緯</h2>
 
-<table>
-  <thead>
-    <tr>
-      <th style="text-align: left">項目名</th>
-      <th style="text-align: left">設定値</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="text-align: left">名前</td>
-      <td style="text-align: left">＜任意＞</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">APN</td>
-      <td style="text-align: left">smile.world</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">プロキシ</td>
-      <td style="text-align: left">＜未設定＞</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">ポート</td>
-      <td style="text-align: left">＜未設定＞</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">ユーザー名</td>
-      <td style="text-align: left">dna1trop</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">パスワード</td>
-      <td style="text-align: left">so2t3k3m2a</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">MMSC</td>
-      <td style="text-align: left">http://mms/</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">MMSプロキシ</td>
-      <td style="text-align: left">smilemms.softbank.ne.jp</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">MMSポート</td>
-      <td style="text-align: left">8080</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">MCC</td>
-      <td style="text-align: left">440</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">MNC</td>
-      <td style="text-align: left">20</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">認証タイプ</td>
-      <td style="text-align: left">＜未設定&gt;</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">APNタイプ</td>
-      <td style="text-align: left">＜未設定＞</td>
-    </tr>
-  </tbody>
-</table>
+<p>東日本大震災がおきてから、被災地に対して何かできることを、ということでこれまで募金と献血をやってきました。が、それだけでなく何かできることはないかと常々考えていました。
+仕事柄、ITを利用した貢献も考えたのですが、イマイチ現地の状況がわからない。情報を得ようとしても地域やソースによって様々かつ時間とともに大きく変化しているからです。
+また、社会人とはいうものの土日の時間やお金については結構余裕があるので、じゃあ現地でボランティアをすることで現状を知ることができるのではないか、と考えたのが今回の経緯です。
+その後、被災地の状況に詳しい元同僚に相談し、その子の母親と友人2名を加えた5名で活動をしてきました。</p>
 
-<p>※こちらを参考にしました。</p>
+<h3 id="section-1">活動内容</h3>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5846683717/" title="IMG_5090 by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5109/5846683717_604f687639_m.jpg" width="240" height="160" alt="IMG_5090" /></a></p>
+
+<p>津波の被害をうけた民家の瓦礫撤去作業を行いました。
+とはいっても大きな物はあらかた自衛隊が撤去しているので、我々の役目は倒れた木の撤去や、瓦・ガラス等の破片の収集、側溝の泥かきなど、担当した民家の敷地内を綺麗にすること。
+計10名程度で、1日かけて行いましたが、天候が曇りだったこともあって順調に作業をすることができました。</p>
+
+<h2 id="section-2">現地に行ってみて</h2>
+
+<h4 id="section-3">ボランティアセンターすごい</h4>
+<p><a href="http://www.flickr.com/photos/53244662@N04/5822614663/" title="現地到着。まだ受付前。 by ReSTARTR_y, on Flickr"><img src="http://farm3.static.flickr.com/2673/5822614663_ec084f0dfd_m.jpg" width="240" height="144" alt="現地到着。まだ受付前。" /></a></p>
+
+<p>被災地のボランティアセンターもずいぶん落ち着いてきているようです。
+活動に必要な道具（スコップやマスク）だけでなく、水や活動後のアイスコーヒーなどの提供もして頂きました。
+ボランティア活動自体初めてだったのですが、たとえ不慣れであっても、コーディネーターの方々や一緒に活動する方々の力を借りながら活動することは可能であると実感しました。
+現地でボランティアをしたいと考えているけど踏み出せなかった方は、真夏になる前に一度足を運んでみてはいかがでしょう。</p>
+
+<h4 id="section-4">電波悪い</h4>
+<p>SoftBankの黒SIMをDesireSに入れて利用しているのですが、ほぼ繋がりません。
+全然つながらない訳ではないですが、かなり不安定でたまにつながる程度。picplzで写真アップロードしようとしても100%失敗します。
+今回の震災でインターネットが活躍したという話は聞きますが、このような電波状況のままでは欲しい情報も手に入らないでしょう。震災後にこうなったのかもともと電波の弱い地域だったのかわかりませんが、これではインターネットの存在も無意味。</p>
+
+<p>利用した福島県伊達市（福島市の近く）の宿泊施設で、地震を体験したのですが、電波が皆無だったために震源や地震の規模などの情報が全く手に入りませんでした。</p>
+
+<p>これまで、インターネットでほしい情報をいつでもどこでもすぐに手に入れられると思っていただけに、手に入らない状況に出くわすとかなりの不安感を覚えます。
+こうなると、頼れるものはテレビやラジオ、町内放送やご近所ネットワークになってくるでしょう。
+もちろん有線でのインターネットもあるかもしれませんが、緊急時にわざわざPCを起動したりしないでしょう。</p>
+
+<p>そう考えると、インターネットの果たすべき役割はリアルタイムに必要な一次的情報ではなく、その後の情報配信とその整理に注力すべきだと実感しました。</p>
+
+<h4 id="section-5">活動内容と現地で聞いたこと</h4>
+
+<p>一日目は新地町でボランティアを行い、宿泊施設はりょうぜん里山がっこうを利用。
+二日目は里山がっこうの自然体験をさせてもらい、その後温泉街で足湯につかって帰宅。</p>
+
+<ul>
+  <li><a href="http://www.date-satoyama.com/">NPO法人りょうぜん里山がっこう</a></li>
+</ul>
+
+<p>里山がっこうでは、震災後の放射能の影響とその取組みについて色々お話を伺いました。友人のブログにその詳細が書かれていますので、そちらを参照してもらうほうが良いと思います。</p>
+
+<ul>
+  <li><a href="http://agreenqoostar.blog129.fc2.com/blog-entry-604.html">AGREEN　イナカとトカイの橋渡し　 伊達市りょうぜん里山がっこうの「除染」への取り組み</a></li>
+</ul>
+
+<p>1日目の活動レポートもあります。</p>
+
+<ul>
+  <li><a href="http://agreenqoostar.blog129.fc2.com/blog-entry-603.html">AGREEN　イナカとトカイの橋渡し　 新地町ボランティアレポート</a></li>
+</ul>
+
+<h2 id="section-6">ボランティア活動に必要な情報</h2>
+
+<h4 id="section-7">ボランティアバスツアー</h4>
+
+<p>被災地は基本的に交通が整備されていません。
+一人暮らしで車も所有していない自分としては、現地の交通手段がネックになります。
+幸い、「ボランティアバスツアー」というものがあったのでこれを利用することを考えました。</p>
 
 <ul>
   <li>
     <table>
       <tbody>
         <tr>
-          <td><a href="http://blog.yukinishijima.net/android/android-dev-phone-1-%E3%81%A7mms%E3%82%92%E4%BD%BF%E3%81%88%E3%82%8B%E3%82%88%E3%81%86%E3%81%AB%E3%81%99%E3%82%8B%E3%81%BE%E3%81%A7%E3%81%AE%E9%81%93%E3%81%AE%E3%82%8A">Android Dev Phone 1 でMMSを使えるようにするまでの道のり </a></td>
-          <td> Yuki Nishijima Blog&lt;/a&gt;</td>
+          <td><a href="http://www.pref-f-svc.org/archives/1216">東日本大震災復興支援・新地町で活動する災害ボランティア募集</a></td>
+          <td>福島県災害ボランティアセンター&lt;/a&gt;</td>
         </tr>
       </tbody>
     </table>
   </li>
 </ul>
 
-<h3 id="softbank">2.SoftBankメールをインストール</h3>
+<p>これなら一人でも現地に向かうことも可能ですし、そこからはコーディネートしてもらえます。
+結局は、冒頭にも書いたとおり、田舎暮らしのマッチングの仕事の関係で被災地にも詳しい友人に相談した結果、彼女のご家族に福島駅から現地まで車をだして頂けることになり、東京ー福島間は夜行バスを利用して、友人4人とともに活動する結果となったのですが。</p>
 
-<p>最新版(2011.05.01時点でv2.1)の<a href="https://market.android.com/details?id=jp.softbank.mb.mail">SoftBankメール</a>では送受信に失敗します。</p>
+<h4 id="twitter">ボランティア情報のTwitterアカウント</h4>
 
-<p>なので、下記ブログ記事よりv1.6の古いバージョンをダウンロード＆インストールします。
-※既にAndroidマーケットから最新版をダウンロードしている場合は、そちらを先にアンインストールしておく必要があります。</p>
+<p>定期的にボランディアバスツアーなどの情報は下記Twitterアカウントをフォローしておけば、チェックすることができます。(他にもあるかもしれませんが私はこちらでチェックしています。）</p>
 
 <ul>
-  <li><a href="http://gadgetordiary.wordpress.com/2011/04/13/softbank%E3%83%A1%E3%83%BC%E3%83%AB%E3%82%A2%E3%83%97%E3%83%AA1-6%E3%82%92%E5%86%8D%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB/">Softbankメールアプリ1.6を再インストール « デジタルガジェッター日記</a></li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><a href="http://twitter.com/tominvc">@tominvc</a></td>
+          <td>被災地支援都民ボランティア</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><a href="http://tiwtter.com/tokyovolunteer">@tokyovolunteer</a></td>
+          <td>東京ボランティア・市民活動センター</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td><a href="http://twitter.com/Tasukeaijp">@Tasukeaijp</a></td>
+          <td>助けあいジャパン</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
 </ul>
 
-<p>端末のブラウザからダウンロードしてインストールするか、android-sdkの入っているPCから
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="bash"><span class="line">adb install jp.softbank.mb.mail-1.6.apk
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
-でインストールできます。</p>
+<p>あとは、健康な体と必要不可欠な装備があれば十分貢献できると思います。</p>
 
-<p>あとは、アプリを起動すればメールの閲覧や送信が自由にできます。</p>
+<p>現地で少しばかり写真を撮ってきたのでFrickrにあげておきました。</p>
+
+<object type="text/html" data="http://www.flickr.com/slideShow/index.gne?user_id=53244662@N04&amp;set_id=72157626993269710" width="500" height="500"> </object>
 
 </div>
   
@@ -413,15 +599,15 @@ The java service will make your application available at http://frontend.myapp.d
       </li>
     
       <li class="post">
+        <a href="/2014/04/22/tech-podcast-list/">技術系podcastまとめ</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2014/04/21/golang-memcache-stats-client/">Goでmemcachedのstatsを取得する</a>
+      </li>
+    
+      <li class="post">
         <a href="/2014/04/20/vimrc-noexpandtab-in-golang/">vimで特定のファイルタイプだけタブインデントにする方法</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2014/04/06/move-from-wordpress-to-octopress/">WordpressからOctopressに移行</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2013/04/26/connect-go-and-python-with-zeromq/">GoとPythonをZeroMQで繋ぐ</a>
       </li>
     
   </ul>
@@ -429,7 +615,7 @@ The java service will make your application available at http://frontend.myapp.d
 <section>
   <h1>Categories</h1>
   <ul id="categories">
-    <li><a href='/category/docker/'>docker</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
+    <li><a href='/category/docker/'>docker</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
   </ul>
 </section>
 <section>

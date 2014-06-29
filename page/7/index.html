@@ -11,10 +11,7 @@
   <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="イベント管理サービスについて
-勉強会などでよく利用されるのが、イベント管理サービス。 ATNDやZusaar,Partakeなど、様々なサービスがあり、現在も新しいものが生まれている状況。
-今や勉強会を開催する上で必須のサービスとなっていますよね。
-ですが、 &hellip;">
+  <meta name="description" content="ふと思い立って、イベントの登録者数の推移が見れるEventStatsをConnpassにも対応させました。 EventStats - イベントの統計情報が見れます ConnpassのAPIはイベントの参加者リストまでは取得できませんが、イベント検索はほぼatnd準拠。 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -125,7 +122,7 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/2011/12/10/eventstats/">イベントの参加人数の遷移が見れるサービス『EventStats』を作りました。 #atnd #zusaar #partake</a></h1>
+      <h1 class="entry-title"><a href="/2012/12/22/eventstats-support-connpass/">EventStatsをConnpassに対応させました</a></h1>
     
     
       <p class="meta">
@@ -141,53 +138,27 @@
   
 
 
-<time datetime="2011-12-10T18:58:51+09:00" pubdate data-updated="true">2011-12-10 (Sat)</time>
+<time datetime="2012-12-22T22:54:54+09:00" pubdate data-updated="true">2012-12-22 (Sat)</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><h3>イベント管理サービスについて</h3>
-<p>勉強会などでよく利用されるのが、イベント管理サービス。
+  <div class="entry-content"><p>ふと思い立って、イベントの登録者数の推移が見れるEventStatsをConnpassにも対応させました。</p>
 
-ATNDやZusaar,Partakeなど、様々なサービスがあり、現在も新しいものが生まれている状況。</p>
-<p>今や勉強会を開催する上で必須のサービスとなっていますよね。</p>
-<p>ですが、主催者や参加者にとってそれらのサービスで閲覧できるのは『今どのような状況か』ということだけです。それまでどのように参加者が増えてきたのか、その後も参加者が増えそうか、ということまでは見ることができません。</p>
-<p>「今」ではなく「過去」を知りたい。(by @ReSTARTR)</p>
-<p>ということで作りました。</p>
-<h3>イベントごとに登録数、補欠数、枠数を記録するサービス「EventStats｣</h3>
 <ul>
-<li><a href="http://eventstats.restartr.com">EventStats - イベントの統計情報が見れます</a></li>
+  <li><a href="http://eventstats.restartr.com">EventStats - イベントの統計情報が見れます</a></li>
 </ul>
-<p>簡単にいうと<a href="http://klout.com">Klout</a>の勉強会バージョン（のとっかかり）です。
 
-このサービスを使えば、登録数と枠数の推移を時系列のチャートで確認することができます。
+<p><a href="http://connpass.com/about/api/">ConnpassのAPI</a>はイベントの参加者リストまでは取得できませんが、イベント検索はほぼatnd準拠。なので追加したコード量はわずかでした。</p>
 
-5分おきに各イベント管理サービスの情報を取得して蓄積し、情報を表示しているだけのシンプルなサービスです。
+<p>作った当初は何かいろいろやってたくさんの人に使ってもらえるWebサービスにしたかったれけど、結局は参加者数の推移を見る以外に何の取り柄もないままです。</p>
 
-<em>(※ SVGベースのチャートのため、androidでは2.4/3.0以降でないと見れません)</em></p>
-<p>あと、2011年11月頭くらいからデータ蓄積開始したのでそれ以前のイベントの履歴は見れない場合があるのと、Partakeの枠数が0人なのも蓄積ミスです。</p>
-<h3>使い方</h3>
-<ol>
-<li><a href="javascript:(function(){s=window.location.href.split('/');type='';if(s[2]=='atnd.org'&amp;&amp;s[3]=='events')type='atnd';else if(s[2]=='www.zusaar.com'&amp;&amp;s[3]=='event')type='zusaar';else if(s[2]=='partake.in'&amp;&amp;s[3]=='events')type='partake';else return false; window.location.href=['http://eventstats.restartr.com/events/'+type,s[4]].join('/');})();">ブックマークレット</a>をブラウザに登録する</li>
-<li>履歴を知りたいイベント管理サービスの詳細ページに移動する</li>
-<li>ブックマークレットを実行する</li>
-</ol>
-<h3>技術的なこと</h3>
-<p>とりあえずHeroku上でScalaのUnfilteredを使って動かしています。
+<h5 id="section">余談</h5>
 
-技術的な話しは追々。</p>
-<h3>今後どう料理するか</h3>
-<p>実はMA7の締切りぎりぎりに公開してました。（証拠↓）</p>
-<p><a href="https://ma7.mashupaward.jp/works/478?locale=ja">https://ma7.mashupaward.jp/works/478?locale=ja</a></p>
-<p>が、リソースが足りてないさくらのVPSで動かしていたので、公開したことはとくにアナウンスとかしてませんでした。（MA7には当然のごとく選考漏れでしたが。）で、それからHerokuへの移行を進めつつ機能の修正などをやってたという訳です。</p>
-<p>今後は蓄積したデータをもとに、勉強会運営や勉強会への参加の助けとなる数値を加えていければいいなと。
+<p>このWebサービス、クローラーはPython、WebサイトはScalaで書いていて、一年近く前に書いたコードなのでちょっとだけ時間かかりました。仕事で使っているpythonに比べて、シンタックスを見るのも数ヶ月ぶりなScalaは何をやっているか思い出すのにもひと苦労です。もっとScalaにも取り組みたいのですが…</p>
 
-実はテストとか負荷試験とかあんまりできてないのであまりイジメないでください^^;</p>
-<ul>
-<li><a href="http://eventstats.restartr.com">EventStats - イベントの統計情報が見れます</a></li>
-</ul>
 </div>
   
   
@@ -200,7 +171,7 @@ ATNDやZusaar,Partakeなど、様々なサービスがあり、現在も新し�
       
   <header>
     
-      <h1 class="entry-title"><a href="/2011/12/02/dropped-out/">（もうすぐ）退職します。</a></h1>
+      <h1 class="entry-title"><a href="/2012/03/25/python-script-for-moving-from-movabletype-to-tumblr/">はてなダイアリーからTumblrへデータ移行するpythonスクリプト</a></h1>
     
     
       <p class="meta">
@@ -216,59 +187,103 @@ ATNDやZusaar,Partakeなど、様々なサービスがあり、現在も新し�
   
 
 
-<time datetime="2011-12-02T21:27:57+09:00" pubdate data-updated="true">2011-12-02 (Fri)</time>
+<time datetime="2012-03-25T02:30:19+09:00" pubdate data-updated="true">2012-03-25 (Sun)</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>私事ですが現職の会社を退職することになり、本日無事に最終出社を終えてきました。</p>
+  <div class="entry-content"><p>どうも。もうすぐ入社３ヶ月が経って試用期間が終わろうとしている状況な僕です。</p>
 
-<p>退職日は年明けですが、これから有給消化期間に入ります。</p>
+<p>すっかり停滞気味のブログですが保守も兼ねて投稿を。</p>
 
-<p>ということで記念碑的に退職エントリを書いておこうと思います。</p>
+<h3 id="deldeltumblr">はてダから<del>はてブロ</del>Tumblrへ</h3>
 
-<p>有益な退職エントリをご希望の方は下記まとめに移動することをオススメします。</p>
+<p>とあるブログをはてなダイアリーで書いていたのですが、Tumblrへブログのデータを移行したいという要求が出てきました。ということでpythonで移行スクリプトを書いてみました。</p>
+
+<h3 id="section">ソースコード</h3>
+
+<p>例によってGitHubにて公開しておきます。</p>
 
 <ul>
-  <li><a href="http://matome.naver.jp/odai/2128832350940033301">「退職しました」ブログエントリのまとめ - NAVER まとめ</a></li>
-  <li><a href="http://matome.naver.jp/odai/2132023611765736801">「退職しました。」系エントリーに学びが多い件 - NAVER まとめ</a></li>
+  <li><a href="https://github.com/ReSTARTR/mt2tumblr">https://github.com/ReSTARTR/mt2tumblr</a></li>
 </ul>
 
-<h3 id="section">現職のはなし</h3>
+<p>python2.6以外はテストしてません( ｰ`дｰ´)ｷﾘｯ</p>
 
-<p>現職では、2006年に新卒入社してから約5年半、某ポータルサイトの開発全般を担当してました。</p>
+<h3 id="section-1">使い方</h3>
 
-<p>1年に1回部署異動が発生するくらい頻繁に体制変更があったおかげで様々な経験をさせてもらい、「自分がやりたいこと」を見つけるにはとても良い環境だったと思います。</p>
+<p>oauth2に依存しているので、実行前にインストールしておいてください。</p>
 
-<p>入社してすぐ営業研修で外回りとか経験した後、データ入稿まわりを担当。その後1年間で二度のサイトリニューアルプロジェクトを経験。1年間のサイト運用期間を経て、今担当しているログシステムの開発をやりました。</p>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="n">pip</span> <span class="n">install</span> <span class="n">oauth2</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>入社から数年はPHP+RDBMSを中心としたWebアプリ開発に従事してましたが、ここ1年くらいはログシステムをHadoop/Hiveにリプレースする担当をやってました。年を経るごとにインフラに近づいていってる感じです。</p>
+<p>使い方はREADMEどおりです。いつもどおりのテキトー英文です。</p>
 
-<h3 id="section-1">技術的知見が広がるシロモノ</h3>
+<ol>
+  <li>はてなダイアリーの管理画面から”管理 &gt; インポート/エクスポート”でMovableType形式のファイルをダウンロード</li>
+  <li>ダウンロードしたファイルをresourcesディレクトリに配置</li>
+  <li>tumblrにアプリケーションを登録( <a href="http://www.tumblr.com/oauth/apps">http://www.tumblr.com/oauth/apps</a> )</li>
+  <li>consumer_keyとconsumer_secretを入手</li>
+  <li>config.pyを編集する</li>
+</ol>
 
-<p>Hadoopって技術的には上から下まで幅広い知識とか素養が必要なんですよね。</p>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="n">CONSUMER_KEY</span> <span class="o">=</span> <span class="s">&#39;&lt;consumer_key&gt;&#39;</span>
+</span><span class="line"><span class="n">CONSUMER_SECRET</span> <span class="o">=</span> <span class="s">&#39;&lt;consumer_secret&gt;&#39;</span>
+</span><span class="line"><span class="n">BASE_HOSTNAME</span> <span class="o">=</span> <span class="s">&#39;&lt;your_tumblr_url&gt;&#39;</span> <span class="c"># &#39;&lt;your-id&gt;.tumblr.com&#39;のように&quot;http://&quot;は抜きで。</span>
+</span><span class="line"><span class="n">PARSE_FILE_PATH</span> <span class="o">=</span> <span class="s">&#39;path/to/movable_type_data.txt&#39;</span>
+</span><span class="line"><span class="n">POST_STATE</span> <span class="o">=</span> <span class="s">&#39;publish&#39;</span> <span class="c"># 動作テストしたいなら&#39;draft&#39;にすると良いです。</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>実際のクラスタ構築はインフラチームの担当でしたが、それに至るまでの導入実験とかは自分でもひと通り経験していて、それにを肌で実感していくうちにもっとシステム全般に関わりたいと思うようになりました。現職ではアプリケーションとそれを載せるインフラの担当が明確に分かれていました。そのおかげで我々はアプリケーションの開発に専念できるのですが、一方でインフラにはどうしても疎くなりがちでした。(現在社内ではその垣根を改善する動きが出てきているので今後はもっと良い体制に変わっていくと思います)</p>
+<p>実行する</p>
 
-<p>そういう意味でHadoopは「技術の交差点」なんだと思います。非常に低いレイヤーからアルゴリズムまでがごっちゃごちゃに混ざったおもちゃ箱のような。それまでPHPのステートレスなシングルスレッド内であれこれするだけしたが、そこでは得られなかったものに興味関心が広がっていきました。Hadoopで実際何を実現するかはさておき、それをひと通り経験することで技術者として一歩前にすすむことができるし、その中でさらに深堀りしたいものを見つけることのできるシロモノだったと思います。</p>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">python run.py
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<ul>
+  <li>まずはファイルの内容を読み込んで、日時、カテゴリ、タイトルが表示されるので問題ないか確認</li>
+</ul>
 
-<h3 id="section-2">オープンソースコミュニティ</h3>
+<p>OAuth認証する。</p>
 
-<p>ここ1年ほどは社外のカンファレンスや勉強会へも平日休日問わずよく参加してたのですが、上司にもそれついてよく理解して頂き、本当自分の動きたいようにさせてもらえたことは有難い限りです。</p>
+<ul>
+  <li>下記のようにURLが表示されるのでブラウザでアクセス。</li>
+</ul>
 
-<p>外の世界は自分が想像している以上でした。勉強会で発表を聴いたり懇親会で話しをさせていただいたりすることで、自分の足りないところが嫌でも見えてきました。現職に限らず今後どのように成長したいのか、について改めて考えるきっかけにもなりました。</p>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="nb">open</span> <span class="ow">in</span> <span class="n">browser</span><span class="p">:</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">tumblr</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">oauth</span><span class="o">/</span><span class="n">authorize</span><span class="err">?</span><span class="n">oauth_token</span><span class="o">=</span><span class="p">{</span><span class="n">OAUTH_TOKEN</span><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="n">oauth_verifier</span><span class="p">:</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>今はちょっとメンタル的な問題もあって勉強会参加は自粛していますが、年明け以降にまた少しづつ参加させていただこうと思ってます。</p>
+<ul>
+  <li>リダイレクト先のURLに含まれる”oauth_verifier”の値をコピーしてターミナルにペースト。
+    <ul>
+      <li>リダイレクト先は404になりますが、oauth_verifierが欲しいだけなのでそれで問題なしです。</li>
+    </ul>
+  </li>
+</ul>
 
-<h3 id="section-3">さいごに</h3>
+<p>これで、Tumblerへのインポートが始まります。</p>
 
-<p>年明けまでは旅行とか帰省とかしてゆっくり静養しつつ、技術的な取り組みも継続していこうと思います。暇を見つけて開発しているものもあるのですが、それも近々公開できると思います。あと、次の会社も決まっているのですが今後の話しはまたあらためて別の機会に。</p>
+<p>(ﾟдﾟ)ｳﾏｰ</p>
 
-<p>（このブログの読者に現職の方がどれくらいいるのかわかりませんが）とにかく現職で関わった皆様には本当に大変お世話になりました。改めて御礼もうしあげます。</p>
+<h3 id="section-2">注意事項</h3>
 
-<p>約5年半、どうもありがとうございました。</p>
+<ul>
+  <li>APIの呼び出し回数の制限に引っかかるかもしれませんがそのへんのエラー制御はできていません。</li>
+  <li>MovableType形式のデータをTumblrに移行するスクリプトとしてつくっていますが、実際にははてなダイアリーからMovableType形式でエクスポートしたデータでしかテストしていません。それ以外で動くかは保証できません…</li>
+  <li>投稿時間はJSTからGMTに変換してます。不要なら適当に編集してください。</li>
+</ul>
 
 </div>
   
@@ -340,15 +355,15 @@ ATNDやZusaar,Partakeなど、様々なサービスがあり、現在も新し�
       </li>
     
       <li class="post">
+        <a href="/2014/04/22/tech-podcast-list/">技術系podcastまとめ</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2014/04/21/golang-memcache-stats-client/">Goでmemcachedのstatsを取得する</a>
+      </li>
+    
+      <li class="post">
         <a href="/2014/04/20/vimrc-noexpandtab-in-golang/">vimで特定のファイルタイプだけタブインデントにする方法</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2014/04/06/move-from-wordpress-to-octopress/">WordpressからOctopressに移行</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2013/04/26/connect-go-and-python-with-zeromq/">GoとPythonをZeroMQで繋ぐ</a>
       </li>
     
   </ul>
@@ -356,7 +371,7 @@ ATNDやZusaar,Partakeなど、様々なサービスがあり、現在も新し�
 <section>
   <h1>Categories</h1>
   <ul id="categories">
-    <li><a href='/category/docker/'>docker</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
+    <li><a href='/category/docker/'>docker</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
   </ul>
 </section>
 <section>
