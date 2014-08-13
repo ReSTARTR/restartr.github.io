@@ -4,7 +4,7 @@
   <title><![CDATA[I Will Survive]]></title>
   <link href="http://blog.restartr.com/atom.xml" rel="self"/>
   <link href="http://blog.restartr.com/"/>
-  <updated>2014-08-14T00:12:43+09:00</updated>
+  <updated>2014-08-14T00:42:58+09:00</updated>
   <id>http://blog.restartr.com/</id>
   <author>
     <name><![CDATA[ReSTARTR]]></name>
@@ -102,7 +102,7 @@
 <span class="line-number">7</span>
 <span class="line-number">8</span>
 <span class="line-number">9</span>
-</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">type</span> <span class="nx">MyType</span> <span class="p">{</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">type</span> <span class="nx">MyType</span> <span class="kd">struct</span> <span class="p">{</span>
 </span><span class="line">  <span class="nx">A</span> <span class="kt">string</span>
 </span><span class="line">  <span class="nx">FooBar</span> <span class="kt">string</span>
 </span><span class="line"><span class="p">}</span>
@@ -126,7 +126,7 @@
 <span class="line-number">7</span>
 <span class="line-number">8</span>
 <span class="line-number">9</span>
-</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">type</span> <span class="nx">MyType</span> <span class="p">{</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">type</span> <span class="nx">MyType</span> <span class="kd">struct</span> <span class="p">{</span>
 </span><span class="line">  <span class="nx">A</span> <span class="kt">string</span> <span class="s">`json:&quot;a&quot;`</span>
 </span><span class="line">  <span class="nx">FooBar</span> <span class="kt">string</span> <span class="s">`json:&quot;foo_bar&quot;`</span>
 </span><span class="line"><span class="p">}</span>
@@ -153,7 +153,7 @@
 <span class="line-number">6</span>
 <span class="line-number">7</span>
 <span class="line-number">8</span>
-</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">type</span> <span class="nx">MyType</span> <span class="p">{</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">type</span> <span class="nx">MyType</span> <span class="kd">struct</span> <span class="p">{</span>
 </span><span class="line">  <span class="nx">A</span> <span class="kt">string</span>
 </span><span class="line">  <span class="nx">FooBar</span> <span class="kt">string</span>
 </span><span class="line"><span class="p">}</span>

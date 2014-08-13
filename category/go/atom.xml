@@ -4,7 +4,7 @@
   <title><![CDATA[Category: go | I Will Survive]]></title>
   <link href="http://blog.restartr.com/category/go/atom.xml" rel="self"/>
   <link href="http://blog.restartr.com/"/>
-  <updated>2014-08-14T00:12:43+09:00</updated>
+  <updated>2014-08-14T00:42:58+09:00</updated>
   <id>http://blog.restartr.com/</id>
   <author>
     <name><![CDATA[ReSTARTR]]></name>
@@ -81,7 +81,7 @@ my_type.go:10: struct field tag `foo:1` not compatible with reflect.StructTag.Ge
 <p>json.Marshalは構造体からJSON文字列への変換する関数です。</p>
 
 <p>```go
-type MyType {
+type MyType struct {
   A string
   FooBar string
 }</p>
@@ -97,7 +97,7 @@ fmt.Printf(“%s\n”, string(b))
 <p>ここで構造体のタグ機能をつかって、フィールド名のアノテーションを書くことで、任意のフィールド名でJSONが生成できます。</p>
 
 <p>```go
-type MyType {
+type MyType struct {
   A string <code>json:"a"</code>
   FooBar string <code>json:"foo_bar"</code>
 }</p>
@@ -117,7 +117,7 @@ fmt.Printf(“%s\n”, string(b))
 <p>まずはタグなしのパターン</p>
 
 <p>```
-type MyType {
+type MyType struct {
   A string
   FooBar string
 }</p>
