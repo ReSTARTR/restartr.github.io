@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: go | I Will Survive]]></title>
+  <link href="http://blog.restartr.com/category/go/atom.xml" rel="self"/>
+  <link href="http://blog.restartr.com/"/>
+  <updated>2014-08-14T00:09:46+09:00</updated>
+  <id>http://blog.restartr.com/</id>
+  <author>
+    <name><![CDATA[ReSTARTR]]></name>
+    <email><![CDATA[yoshida.masaki+restartr@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Goのjson.Marshal/Unmarshalの仕様を整理してみる]]></title>
+    <link href="http://blog.restartr.com/2014/08/13/golang-json-marshal-unmarshal/"/>
+    <updated>2014-08-13T00:02:42+09:00</updated>
+    <id>http://blog.restartr.com/2014/08/13/golang-json-marshal-unmarshal</id>
+    <content type="html"><![CDATA[<h3 id="tldr">TL;DR</h3>
+
+<ul>
+  <li>goの構造体につけるタグは、フォーマットが不正だと読み込まれない(当然)</li>
+  <li>json.Marshalは、構造体のjsonタグがあればその値をキーとしてJSON文字列を生成する</li>
+  <li>json.Unmarshalは、構造体のjsonタグがあればその値を対応するフィールドにマッピングする
+    <ul>
+      <li>jsonタグがなければ、完全一致もしくはcase-insensitiveなフィールドにマッピングする</li>
+    </ul>
+  </li>
+</ul>
+
+<p>では、ひとつづつ確認していきます。</p>
+
+<h3 id="go">goの構造体につけるタグは、フォーマットが不正だと読み込まれない(当然)</h3>
+
+<p>goの構造体にはタグの機能があって、型の後に特定のフォーマットでアノテーションが記述できます</p>
+
+<p><code>go
+type MyType struct {
+  Hoge string `foo:"1" bar:"2"`
+}
+</code></p>
+
+<p><code>key:"value"</code>をスペース区切りで複数かけます。
+で、アクセスするにはリフレクションを使います。</p>
+
+<p><code>go
+t := reflect.TypeOf(MyType{})
+tagFoo := t.Field(0).Get("foo")
+tagBar := t.Field(0).Get("bar")
+fmt.Printf("foo=%s, bar=%s\n", tagFoo, tagBar)
+// foo=1, bar=2
+</code></p>
+
+<p>タグのフォーマットが不正な場合は、値が空になります。コンパイルエラーにはなりません。</p>
+
+<p><code>go
+type MyType struct {
+  Hoge string `foo:1`
+}
+t := reflect.TypeOf(MyType{})
+tagFoo := t.Field(0).Get("foo")
+fmt.Printf("foo=%#v\n", tagFoo)
+// foo=""
+</code></p>
+
+<p>このエラーをコンパイルする前に検知するには、<code>go vet</code>コマンドが使えます。</p>
+
+<p><code>bash
+$ go vet my_type.go
+my_type.go:10: struct field tag `foo:1` not compatible with reflect.StructTag.Get
+</code></p>
+
+<p>できれば<code>go compile</code>実行したときに自動的にチェックしてほしいところですが…</p>
+
+<p>で、jsonパッケージのMarshal/Unmarshalは、このタグを使ってアノテーションを記述することができます。</p>
+
+<h3 id="jsonmarshaljsonjson">json.Marshalは、構造体のjsonタグがあればその値をキーとしてJSON文字列を生成する</h3>
+
+<p>json.Marshalは構造体からJSON文字列への変換する関数です。</p>
+
+<p>```go
+type MyType {
+  A string
+  FooBar string
+}</p>
+
+<p>mt := MyType{“aaaa”, “baz”}
+b, _ := json.Marshal(mt)
+fmt.Printf(“%s\n”, string(b))
+// {“A”:”aaaa”,”FooBar”:”baz”}
+```</p>
+
+<p>普通にやると、フィールド名がそのままJSONのキーになります。</p>
+
+<p>ここで構造体のタグ機能をつかって、フィールド名のアノテーションを書くことで、任意のフィールド名でJSONが生成できます。</p>
+
+<p>```go
+type MyType {
+  A string <code>json:"a"</code>
+  FooBar string <code>json:"foo_bar"</code>
+}</p>
+
+<p>mt := MyType{“aaaa”, “baz”}
+b, _ := json.Marshal(mt)
+fmt.Printf(“%s\n”, string(b))
+// {“a”:”aaaa”,”foo_bar”:”baz”}
+```</p>
+
+<p>アノテーション指定した”a”がJSONのキーとして使用されていることが確認できます。</p>
+
+<h3 id="jsonunmarshaljson">json.Unmarshalは、構造体のjsonタグがあればその値を対応するフィールドにマッピングする</h3>
+
+<p>json.UnmarshalはJSON文字列から構造体へ変換する関数です。</p>
+
+<p>まずはタグなしのパターン</p>
+
+<p>```
+type MyType {
+  A string
+  FooBar string
+}</p>
+
+<p>var mt MyType
+json.Unarshal([]byte(<code>{"A":"aaa", "FooBar":"baz"}</code>, &amp;mt)
+fmt.Printf(“%#v\n”, mt) // main.MyType{A:”aaaa”,FooBar:”baz”}
+```</p>
+
+<p>JSONのフィールド名がsnake_caseのパターン</p>
+
+<p><code>
+var mt MyType
+json.Unarshal([]byte(`{"a":"aaa","foo_bar":"baz"}`, &amp;mt)
+fmt.Printf("%#v\n", mt) // main.MyType{A:"aaaa", FooBar:""}
+</code></p>
+
+<p>ここで「ん？」となるわけです。タグによるアノテーションがないのになぜ小文字のフィールドがちゃんと読み込まれているのか…と。</p>
+
+<p>この仕様、json.Unmarshalのgodocにちゃんと書いてあります。</p>
+
+<p><a href="http://golang.org/pkg/encoding/json/#Unmarshal">func Unmarshal</a></p>
+
+<blockquote>
+  <p>To unmarshal JSON into a struct, Unmarshal matches incoming object keys to the keys used by Marshal (either the struct field name or its tag), preferring an exact match but also accepting a case-insensitive match.</p>
+</blockquote>
+
+<p>どうやら、json.Unmarshalは、JSONに含まれるキーと完全一致か、case-insensitiveに一致する構造体のフィールドにマッピングする仕様となっているようです。もちろん、snake_caseなJSONのキーはアノテーションがないとマッピングされず無視されます。（構造体のフィールドとしてsnale_caseが存在しない限りは)</p>
+
+<h3 id="section">経緯</h3>
+
+<p>先日、<a href="http://connpass.com/event/7914/">ヒカルのGO! hikarie.go #2</a>で<a href="https://twitter.com/yosuke_furukawa">@yosuke_furukawa</a>さんによるGoでJSON APIを書いてみるというハンズオンを体験してきました。</p>
+
+<ul>
+  <li><a href="https://github.com/yosuke-furukawa/golang-study">yosuke-furukawa/golang-study</a></li>
+</ul>
+
+<p>そこで、アノテーションをつけた構造体を使ってUnmarshalした時に、書いたコードがこれです。</p>
+
+<p><code>go
+type User struct {
+  Name string `json:name`
+}
+user := User{"restartr"}
+b, _ := json.Marshal(user)
+fmt.Printf("%s\n", string(b)) // {"Name":"restartr"}
+</code></p>
+
+<p>小文字で出力してほしいのに、アノテーションが効かない…となったわけです。
+他の参加者が<code>json:"name"</code>でないといけないことに気づいて、この件は一件落着。</p>
+
+<p>だったのですが、もう少し詳しく調べると上に整理したような仕様が見えてきたというわけです。</p>
+
+<p><code>go
+type User struct {
+  Name string `json:name` // 実際は無視されている
+}
+var user User
+json.Unmarshal([]byte(`{"name":"restartr"}`, &amp;user)
+fmt.Printf("%s\n", user) // main.User{Name:"restartr"}
+</code></p>
+
+<p>実はこの時書いた<code>json:name</code>というアノテーションは不正なフォーマットとして無視されていて、たまたまUser.Nameというフィールドにcase-insensitiveでUnmarshalした時にマッピングができていたにすぎなかったようです。</p>
+
+<p>とまぁそんな感じでJSONの取り扱いについて正しい知識を得られたのですが、一人でやってた時には気づかなかった疑問とか知識として不足している点に気付けるので、ハンズオン形式も良いものですね。</p>
+]]></content>
+  </entry>
+  
+</feed>

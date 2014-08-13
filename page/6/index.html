@@ -11,7 +11,7 @@
   <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="※2013/04/04 更新:会社名を公開しました 3月末付でKauli株式会社を退職しました。 4月1日だと嘘っぽくなるかなと思い、1日ずらしてのご報告です。 2012年01月入社なので、1年3ヶ月という短い間でしたが、これまでで最も充実した1年だったように思います。 &hellip;">
+  <meta name="description" content="pytestを使い始めました。 pytest: helps you write better programs まだまだ機能は把握しきれていませんが、良いと思ったことは3つ。 テストがコケた箇所のコードがレポート内容に表示される テスト対象を初期化したものの受け渡し方をスマートにできる &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -122,6 +122,211 @@
       
   <header>
     
+      <h1 class="entry-title"><a href="/2013/04/05/my-first-pytest/">Pythonのテストにpytestを使ってみた</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-05T21:00:24+09:00" pubdate data-updated="true">2013-04-05 (Fri)</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>pytestを使い始めました。</p>
+
+<ul>
+  <li><a href="http://pytest.org/latest/">pytest: helps you write better programs</a></li>
+</ul>
+
+<p>まだまだ機能は把握しきれていませんが、良いと思ったことは3つ。</p>
+
+<ol>
+  <li>テストがコケた箇所のコードがレポート内容に表示される</li>
+  <li>テスト対象を初期化したものの受け渡し方をスマートにできる</li>
+  <li>pytest.vimがなかなか使える</li>
+</ol>
+
+<h3 id="section">1.テストがコケた箇所のコードがレポート内容に表示される</h3>
+
+<p>これが巷でよく聞く一番のメリットかとは思いますが、コケたときの情報が全然違います。
+pytestはかなり詳細に表示してくれるので、レポートの内容だけでどこをどう直せば良いか把握できます。</p>
+
+<h4 id="unittest-v">unittestの実行結果(-vオプション付き)</h4>
+
+<p><a href="http://www.flickr.com/photos/53244662@N04/8621946368/" title="unittest by ReSTARTR_y, on Flickr"><img src="http://farm9.staticflickr.com/8523/8621946368_d7bc9a450d_z.jpg" width="640" height="220" alt="unittest" /></a></p>
+
+<h4 id="pytest-v">pytestの実行結果(-vオプション付き)</h4>
+
+<p><a href="http://www.flickr.com/photos/53244662@N04/8620844529/" title="pytest by ReSTARTR_y, on Flickr"><img src="http://farm9.staticflickr.com/8244/8620844529_ce66ff7f9c_z.jpg" width="640" height="401" alt="pytest" /></a></p>
+
+<p>文字列比較の場合は差分表示してくれたりするので便利です。</p>
+
+<h3 id="section-1">2. テスト対象を初期化したものの受け渡し方をスマートにできる</h3>
+
+<p>これが結構良い感じだと思いました。</p>
+
+<p>かなり単純なクラスを対象にして例を書きます。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="c"># -*- coding: utf-8 -*-</span>
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">Hoge</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">v</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">v</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h4 id="pythonunittest">python同梱のunittestで書く</h4>
+
+<p>こんな感じで、self.hogeを使ってテスト対象を受け渡します。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="c"># -*- coding: utf-8 -*-</span>
+</span><span class="line"><span class="kn">from</span> <span class="nn">hoge</span> <span class="kn">import</span> <span class="n">Hoge</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">unittest</span>
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">TestHoge1</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">hoge</span> <span class="o">=</span> <span class="n">Hoge</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">test_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">assertIsInstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hoge</span><span class="p">,</span> <span class="n">Hoge</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">test_val</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hoge</span><span class="o">.</span><span class="n">val</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">hoge</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s">&#39;hoge&#39;</span><span class="p">)</span>
+</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hoge</span><span class="o">.</span><span class="n">val</span><span class="p">,</span> <span class="s">&#39;hige&#39;</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line"><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+</span><span class="line">    <span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>pytestで書くとこんな感じになります。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="c"># -*- coding: utf-8 -*-</span>
+</span><span class="line"><span class="kn">from</span> <span class="nn">hoge</span> <span class="kn">import</span> <span class="n">Hoge</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">pytest</span>
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">TestHoge1</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">pytest_funcarg__hoge</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
+</span><span class="line">        <span class="k">return</span> <span class="n">Hoge</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">test_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hoge</span><span class="p">):</span>
+</span><span class="line">        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">hoge</span><span class="p">,</span> <span class="n">Hoge</span><span class="p">)</span>
+</span><span class="line">
+</span><span class="line">    <span class="k">def</span> <span class="nf">test_val</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hoge</span><span class="p">):</span>
+</span><span class="line">        <span class="k">assert</span> <span class="n">hoge</span><span class="o">.</span><span class="n">val</span> <span class="o">==</span> <span class="mi">1</span>
+</span><span class="line">
+</span><span class="line">        <span class="n">hoge</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s">&#39;hoge&#39;</span><span class="p">)</span>
+</span><span class="line">        <span class="k">assert</span> <span class="n">hoge</span><span class="o">.</span><span class="n">val</span> <span class="o">==</span> <span class="s">&#39;hige&#39;</span>
+</span><span class="line">
+</span><span class="line"><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+</span><span class="line">    <span class="n">pytest</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>何が良いかっていうと、各テストメソッドで必要な初期化済みHogeインスタンスを、pytest_funcarg__hoge()で作って渡してやることができます。pytest_funcarg__NAMEを定義すれば、各テストメソッドでNAMEとして引数にとることができるわけです。(<a href="http://pytest.org/latest-ja/funcargs.html">テスト関数 (funcargs) にオブジェクトを注入</a>)</p>
+
+<p>unittest.TestCaseのsetUpを使う場合、self.hogeに一旦入れてやらないといけないし、各テストメソッドではself.hogeでアクセスする必要も出てきます。</p>
+
+<p>見た目が簡潔になるのはとても良いことです。</p>
+
+<h3 id="pytestvim">3. pytest.vimがなかなか使える</h3>
+
+<p>vimのプラグインにpytest.vimっていうのがありました。
+これもなかなか使い勝手が良いです。</p>
+
+<p>詳しくは下記動画を御覧ください。</p>
+
+<ul>
+  <li><a href="http://vimeo.com/19774046"> pytest.vim 0.0.5 on Vimeo </a></li>
+</ul>
+
+<p>pytestの概要は以下スライドにて。</p>
+
+<iframe src="http://www.slideshare.net/slideshow/embed_code/14006990" width="427" height="356" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC;border-width:1px 1px 0;margin-bottom:5px" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen=""> </iframe>
+<div style="margin-bottom:5px"> <strong> <a href="http://www.slideshare.net/pfctdayelise/funcargs-other-fun-with-pytest" title="Funcargs &amp; other fun with pytest" target="_blank">Funcargs &amp; other fun with pytest</a> </strong> from <strong><a href="http://www.slideshare.net/pfctdayelise" target="_blank">Brianna Laugher</a></strong> </div>
+<p>他の機能は触りながらおいおい掴んでいければなと。</p>
+
+</div>
+  
+  
+
+
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/2013/04/02/retirement201303/">Kauli株式会社を退職しました</a></h1>
     
     
@@ -200,93 +405,6 @@
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2013/04/01/uml-for-programmer/">プログラマーにとっての『UMLっぽい何か』</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-04-01T20:12:54+09:00" pubdate data-updated="true">2013-04-01 (Mon)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>わりと普遍的な話題だったので便乗です。</p>
-
-<p><a href="http://nekoya.github.com/blog/2013/04/01/useful-uml/"> UMLも捨てたもんじゃない - nekoya press </a></p>
-
-<blockquote>
-<ul>
-<li>UMLは設計の技法ではない</li>
-<li>頭の中を整理するため、あるいは人と共有する際の表現技法である</li>
-</ul>
-</blockquote>
-<p>とか、</p>
-
-<blockquote>UMLの厳密な書式ルールには全くこだわりはなく、大まかなイメージだけ伝われば、細かい部分は口頭でフォローすれば十分だと考えていています。そういう意味ではUMLを正しく使っているとは言えないのかも知れませんが、それはそれでいいんじゃないのと。
-
-</blockquote>
-
-<p>は、まったくもって同意見で、「UML」という”なんだか面倒くさそうなイメージ”を捨てて、コードを整理もしくは伝達する補足的なものとして扱うことが大事だと思います。UMLを本を読んできっちり勉強する必要もなくて、英会話が完璧な文法に則る必要がないのと基本的に同じだと思います。</p>
-
-<p>所謂SEが用いるUMLではなくプログラマーにとってのUMLは、もっとくだけたもので良いのです。</p>
-
-<h4 id="section">いつやるか</h4>
-<p>どのフェーズでこの図の作成にとりかかるかが問題になると思いますが、自分の場合は以下の場合に作成を試みることが多いです。</p>
-
-<p>（主にクラス図作成の場合を想定しています。）</p>
-
-<p><strong>1. プロトタイプ的に作り始めたコードが、ある程度育ってきて全体が見えづらいと感じた時</strong></p>
-
-<p>これは自分のために作成するもの。なのでUMLのルールに準拠する必要はありませんので、どちらかといえば書き捨て型といえます。</p>
-
-<p>（※ドキュメントの無いコードを読む場合も書き捨て型で作成します。）</p>
-
-<p>そして、この図をもとに設計を見なおしたりします。</p>
-
-<p><strong>2. 自分が作ったコードを他の誰かが読む時</strong></p>
-
-<p>これは他人のために作成するもの。すでに設計が固まった段階のコードを追いかける上での補足情報になります。</p>
-
-<p>完全にUML準拠する必要はないでしょうが、ある程度は従ったほうが余計な誤解もなくなるかもしれません。1である程度整理ができているのでこの段階での作成は非常にそれ程苦ではないはずです。</p>
-
-<p>どちらの場合もコードありきで、後追いでの図形作成になります。注意すべきなのは、図にすべての情報を詰め込むわけではなく、必要最低限の情報に留めることで図をシンプルに保つことは必要です。</p>
-
-<p>とまぁ、これくらいシンプルなルールであれば、普段の開発フローに取り入れることはさほど大きなコストではないと考えます。多くの人はこれくらいのことはやっているんじゃないかとは思いますが、先のブログでも書かれている通り表立って議論されることはあまりないように感じます。</p>
-
-<h4 id="section-1">図を描くためのツール</h4>
-<p>図形作成のためにいちいち<a href="http://astah.change-vision.com/ja/index.html">astah*</a>やExcel()のようなアプリケーションを立ち上げるのは面倒ですよね。</p>
-
-<p><a href="https://drive.google.com">Google Drive</a>の「図形描画」や「プレゼンテーション」がオススメです。きっちりUML準拠の図を作成するわけではないので、クラス図(もどき)ならこれで十分ですし、共有も簡単です。シーケンス図はちょっと書きづらいかもしれませんが、そんな時はノートやホワイトボードに書いたものを写真に撮って適当な場所で共有すればOKでしょう。</p>
-
-<p>ところで、オブジェクト指向の場合ではなく、（純粋）関数型の場合はどうなのでしょうかね。数式？</p>
-
-</div>
-  
-  
-
-
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/page/7/">&larr; Older</a>
@@ -342,6 +460,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2014/08/13/golang-json-marshal-unmarshal/">Goのjson.Marshal/Unmarshalの仕様を整理してみる</a>
+      </li>
+    
+      <li class="post">
         <a href="/2014/06/28/about-docker-libchan/">Docker謹製ライブラリのlibchanについて調べてみた</a>
       </li>
     
@@ -357,16 +479,12 @@
         <a href="/2014/04/21/golang-memcache-stats-client/">Goでmemcachedのstatsを取得する</a>
       </li>
     
-      <li class="post">
-        <a href="/2014/04/20/vimrc-noexpandtab-in-golang/">vimで特定のファイルタイプだけタブインデントにする方法</a>
-      </li>
-    
   </ul>
 </section>
 <section>
   <h1>Categories</h1>
   <ul id="categories">
-    <li><a href='/category/docker/'>docker</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
+    <li><a href='/category/docker/'>docker</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/go/'>go</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
   </ul>
 </section>
 <section>
