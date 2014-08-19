@@ -11,9 +11,7 @@
   <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="Hadoop conference japan 2011に参加してきました。 Hadoop Conference Japan 2011 - Eventbrite 今回の個人的トピック AWSがHBaseサポート予定
-DremelはHadoopの補完的位置づけ
-DSLとしてのAsakusaの魅力 &hellip;">
+  <meta name="description" content="ここ２，３日、ScalaからMongoDBへのアクセスのため、CasbahとSalatをお試し中です。 もともとはAkkaを弄ってたんですが、Akkaに含まれるPersistent(MongoDBなどNoSQLへの接続用)がなくなるらしいので、別のがないかなー、と寄り道したのがきっかけです。 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -118,6 +116,249 @@ DSLとしてのAsakusaの魅力 &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2011/03/07/access-to-mongodb-in-scala-with-casbah/">ScalaからMongoDBへアクセスする - Casbah編</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-03-07T08:45:28+09:00" pubdate data-updated="true">2011-03-07 (Mon)</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>ここ２，３日、ScalaからMongoDBへのアクセスのため、CasbahとSalatをお試し中です。</p>
+
+<p>もともとはAkkaを弄ってたんですが、Akkaに含まれるPersistent(MongoDBなどNoSQLへの接続用)がなくなるらしいので、別のがないかなー、と寄り道したのがきっかけです。</p>
+
+<h3>Casbah</h3>
+<p>MongoDBを開発している10gen謹製Scalaライブラリです。
+Scala製のドライバは他にもLiftの<a href="http://www.assembla.com/wiki/show/liftweb/MongoDB">MongoDB</a>や、Liftと組み合わせて使う<a href="http://engineering.foursquare.com/2011/01/21/rogue-a-type-safe-scala-dsl-for-querying-mongodb/">Rogue</a>、mongo-java-driverのラッパーの<a href="http://github.com/alaz/mongo-scala-driver">mongo-scala-driver</a>などがあります。
+一覧は以下に掲載されています。</p>
+
+<p><a href="http://github.com/alaz/mongo-scala-driver">Java Language Center - MongoDB</a></p>
+
+<p>Rogueについては、Fungoingのbibrostさんのブログが詳しいのでそちらをご覧ください。</p>
+
+<p><a href="http://fungoing.blogspot.com/2011/02/liftscala-dslroguemongodb.html">Fungoing Labs: Lift用Scala DSL”Rogue”を使ってMongoDBにアクセス（１）〜概要編〜</a></p>
+
+<p>なぜ、LiftのMongoDBなりRogueなりを使わなかったかというと、フレームワークに依存したくなかったからです。単体で動作するものが使いたいのです。なので、Casbahを選択しました。
+が、Casbahだけだと、複雑なレコードを作成するのには少々面倒なところがあります。ORマッパーが欲しくなるのです。その解決策となるSalatがあります。今回はCasbahのまとめにとどめ、Salatについては後日改めてまとめようと思います。</p>
+
+<blockquote>
+※追記※
+Salat編を書きました。
+<a href="http://blog.restartr.com/2011/03/09/access-to-mongodb-in-scala-with-salat/">ScalaからMongoDBへアクセスする ? Salat編</a>
+</blockquote>
+<p>では、Casbahの使い方について見ていきます。</p>
+
+<p><a id="more"></a><a id="more-722"></a></p>
+
+<h3>インストール</h3>
+<p>sbtの設定はこんな感じです。
+project/build/SalatTestProject.scala
+<script src="https://gist.github.com/857260.js?file=SalatTestProject.scala"></script></p>
+
+<p>そしたら、sbtプロンプトでreload, updateをします。</p>
+
+<p>これで、project/lib_managed/scala_2.x.x/compile以下にjarファイルが読み込まれるはず。</p>
+
+<h3>CasbahでMongoDBへアクセス</h3>
+<p>目次は以下の通りです。</p>
+
+<ul>
+<li>MongoDBObjectの作成</li>
+<li>ドキュメントの検索</li>
+<li>ドキュメントのJOIN</li>
+<li>ListObjectの生成</li>
+<li>クエリの構築</li>
+<li>クエリの構築(DSLを利用)</li>
+</ul>
+<h4>MongoDBObjectの作成</h4>
+<p>Casbahでは、MongoDB上のドキュメントをMongoDBObjectとして取り扱います。</p>
+
+<p>MongoDBObjectをインスタンス化する、もしくはMongoDBObjectBuilderで逐次フィールドを定義するかのどちらかになります。
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="scala"><span class="line"><span class="c1">// MongoDBObjectをインスタンス化</span>
+</span><span class="line"><span class="k">val</span> <span class="n">user</span> <span class="k">=</span> <span class="nc">MongoDBObject</span><span class="o">(</span><span class="s">&quot;id&quot;</span><span class="o">-&gt;</span><span class="mi">1</span><span class="o">,</span> <span class="s">&quot;name&quot;</span><span class="o">-&gt;</span><span class="s">&quot;me&quot;</span><span class="o">)</span>
+</span><span class="line"><span class="n">println</span><span class="o">(</span><span class="n">user</span><span class="o">)</span> <span class="c1">// { &quot;id&quot; : 1 , &quot;name&quot; : &quot;me&quot;}</span>
+</span><span class="line">
+</span><span class="line"><span class="c1">// MongoDBObjectBuilderで逐次フィールド定義</span>
+</span><span class="line"><span class="k">val</span> <span class="n">builder</span> <span class="k">=</span> <span class="nc">MongoDBObject</span><span class="o">.</span><span class="n">newBuilder</span>
+</span><span class="line"><span class="n">builder</span> <span class="o">+=</span> <span class="s">&quot;id&quot;</span><span class="o">-&gt;</span><span class="mi">2</span>
+</span><span class="line"><span class="n">builder</span> <span class="o">+=</span> <span class="s">&quot;name&quot;</span><span class="o">-&gt;</span><span class="s">&quot;you&quot;</span>
+</span><span class="line"><span class="k">val</span> <span class="n">user2</span> <span class="k">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">result</span> <span class="c1">// これでMongoDBObjectができる</span>
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
+
+<p>できたら、これをMongoDBに保存します。</p>
+
+<p>まずはコレクションのインスタンス取得から。
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="scala"><span class="line"><span class="k">val</span> <span class="n">conn</span> <span class="k">=</span> <span class="nc">MongoConnection</span><span class="o">()</span>
+</span><span class="line"><span class="c1">// MongoConnection(&quot;localhost&quot;, 27017)でホストおよびポート指定が可能</span>
+</span><span class="line"><span class="k">val</span> <span class="n">db</span> <span class="k">=</span> <span class="n">conn</span><span class="o">(</span><span class="s">&quot;casbah_test&quot;</span><span class="o">)</span>
+</span><span class="line"><span class="k">val</span> <span class="n">collection</span> <span class="k">=</span> <span class="n">db</span><span class="o">(</span><span class="s">&quot;sample&quot;</span><span class="o">)</span>
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
+下記のように１行にまとめてもでもOKです。
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="scala"><span class="line"><span class="k">val</span> <span class="n">collection</span> <span class="k">=</span> <span class="nc">MongoConnection</span><span class="o">()(</span><span class="s">&quot;casbah_test&quot;</span><span class="o">)(</span><span class="s">&quot;sample&quot;</span><span class="o">)</span>
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
+
+<p>で、コレクションに保存します。「+=」を使うだけと、とてもシンプルな操作になっています。
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="scala"><span class="line"><span class="n">collection</span> <span class="o">+=</span> <span class="n">user</span> <span class="c1">// { &quot;_id&quot; : ObjectId(&quot;4d7385ebf21423dcecb4c578&quot;), &quot;id&quot; : 1, &quot;name&quot; : &quot;me&quot; }</span>
+</span><span class="line"><span class="n">collection</span> <span class="o">+=</span> <span class="n">user2</span> <span class="c1">// { &quot;_id&quot; : ObjectId(&quot;4d7385ebf21423dcedb4c578&quot;), &quot;id&quot; : 2, &quot;name&quot; : &quot;you&quot; }</span>
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
+
+<h4>ドキュメントの検索</h4>
+<p>保存したドキュメントを全件取得します。mongodbのコンソールでいう、db.collection.find()にあたる操作です。
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="scala"><span class="line"><span class="n">collection</span><span class="o">.</span><span class="n">find</span><span class="o">().</span><span class="n">foreach</span> <span class="o">{</span> <span class="n">println</span><span class="o">(</span><span class="k">_</span><span class="o">)</span> <span class="o">}</span>
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
+
+<h4>ドキュメントのJOIN</h4>
+<p>MongoDBでJoinはできないので、アプリ側で対処する場合に使うんでしょうかね。</p>
+
+<p>やり方は、MongoDBObjectを「++」でつなぐだけ。簡単です。
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="scala"><span class="line"><span class="k">val</span> <span class="n">identity</span> <span class="k">=</span> <span class="nc">MongoDBObject</span><span class="o">(</span><span class="s">&quot;name&quot;</span><span class="o">-&gt;</span><span class="s">&quot;me&quot;</span><span class="o">,</span> <span class="s">&quot;age&quot;</span><span class="o">-&gt;</span><span class="mi">27</span><span class="o">)</span>
+</span><span class="line"><span class="k">val</span> <span class="n">address</span> <span class="k">=</span> <span class="nc">MongoDBObject</span><span class="o">(</span><span class="s">&quot;country&quot;</span><span class="o">-&gt;</span><span class="s">&quot;Japan&quot;</span><span class="o">,</span> <span class="s">&quot;prefecture&quot;</span><span class="o">-&gt;</span><span class="s">&quot;Tokyo&quot;</span><span class="o">)</span>
+</span><span class="line"><span class="k">val</span> <span class="n">user</span> <span class="k">=</span> <span class="n">identity</span> <span class="o">++</span> <span class="n">address</span>
+</span><span class="line"><span class="n">println</span><span class="o">(</span><span class="n">user</span><span class="o">)</span> <span class="c1">// { &quot;age&quot; : 27 , &quot;country&quot; : &quot;Japan&quot; , &quot;prefecture&quot; : &quot;Tokyo&quot; , &quot;name&quot; : &quot;me&quot;}</span>
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
+
+<h4>ListObjectの生成</h4>
+<p>List(javascriptでいうArrayのこと)はMongoDBListでつくります。
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="scala"><span class="line"><span class="k">val</span> <span class="n">users1</span> <span class="k">=</span> <span class="nc">MongoDBList</span><span class="o">(</span>
+</span><span class="line">  <span class="nc">MongoDBObject</span><span class="o">(</span><span class="s">&quot;name&quot;</span><span class="o">-&gt;</span><span class="s">&quot;me&quot;</span><span class="o">),</span>
+</span><span class="line">  <span class="nc">MongoDBObject</span><span class="o">(</span><span class="s">&quot;name&quot;</span><span class="o">-&gt;</span><span class="s">&quot;you&quot;</span><span class="o">))</span>
+</span><span class="line"><span class="n">println</span><span class="o">(</span><span class="n">users1</span><span class="o">)</span> <span class="c1">// [ { &quot;name&quot; : &quot;me&quot;} , { &quot;name&quot; : &quot;you&quot;}]</span>
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
+当然ですが、Listの要素（MongoDBListの引数は）MongoDBObjectだけでなく、文字列や数値もOKです。</p>
+
+<p>でListの場合もBuilder経由で作成が可能です。
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="scala"><span class="line"><span class="k">val</span> <span class="n">users</span> <span class="k">=</span> <span class="nc">MongoDBList</span><span class="o">.</span><span class="n">newBuilder</span>
+</span><span class="line"><span class="k">val</span> <span class="n">user1</span> <span class="k">=</span> <span class="nc">MongoDBObject</span><span class="o">(</span><span class="s">&quot;name&quot;</span><span class="o">-&gt;</span><span class="s">&quot;me&quot;</span><span class="o">)</span>
+</span><span class="line"><span class="k">val</span> <span class="n">user2</span> <span class="k">=</span> <span class="nc">MongoDBObject</span><span class="o">(</span><span class="s">&quot;name&quot;</span><span class="o">-&gt;</span><span class="s">&quot;you&quot;</span><span class="o">)</span>
+</span><span class="line"><span class="n">users</span> <span class="o">+=</span> <span class="n">user1</span>
+</span><span class="line"><span class="n">users</span> <span class="o">+=</span> <span class="n">user2</span>
+</span><span class="line"><span class="n">println</span><span class="o">(</span><span class="n">users</span><span class="o">.</span><span class="n">result</span><span class="o">)</span> <span class="c1">// [ { &quot;name&quot; : &quot;me&quot;} , { &quot;name&quot; : &quot;you&quot;}]</span>
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
+
+<h4>クエリの構築</h4>
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="c1">// 取得条件を指定</span>
+</span><span class="line"><span class="k">val</span> <span class="n">condition</span> <span class="k">=</span> <span class="nc">MongoDBObject</span><span class="o">(</span><span class="s">&quot;name&quot;</span><span class="o">-&gt;</span><span class="s">&quot;me&quot;</span><span class="o">)</span>
+</span><span class="line"><span class="n">collection</span><span class="o">.</span><span class="n">find</span><span class="o">(</span><span class="n">condition</span><span class="o">).</span><span class="n">foreach</span><span class="o">(</span> <span class="n">println</span> <span class="o">)</span>
+</span><span class="line">
+</span><span class="line"><span class="c1">// 取得フィールドを限定</span>
+</span><span class="line"><span class="k">val</span> <span class="n">fields</span> <span class="k">=</span> <span class="nc">MongoDBObject</span><span class="o">(</span><span class="s">&quot;id&quot;</span><span class="o">-&gt;</span><span class="mi">1</span><span class="o">)</span>
+</span><span class="line"><span class="n">collection</span><span class="o">.</span><span class="n">find</span><span class="o">(</span><span class="n">condition</span><span class="o">,</span> <span class="n">fields</span><span class="o">).</span><span class="n">foreach</span><span class="o">(</span> <span class="n">println</span> <span class="o">)</span>
+</span><span class="line">
+</span><span class="line"><span class="c1">// 条件の指定をせずに取得フィールドのみ限定する場合</span>
+</span><span class="line"><span class="k">val</span> <span class="n">conditionEmpty</span> <span class="k">=</span> <span class="nc">MongoDBObject</span><span class="o">.</span><span class="n">empty</span>
+</span><span class="line"><span class="n">collection</span><span class="o">.</span><span class="n">find</span><span class="o">(</span><span class="n">conditionEmpty</span><span class="o">,</span> <span class="n">fields</span><span class="o">).</span><span class="n">foreach</span><span class="o">(</span> <span class="n">println</span> <span class="o">)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h4>クエリの構築(DSLを利用)</h4>
+<p>$exists, $gt, $ltなど、以下にあるものはDSLとして使えるらしいです。</p>
+
+<ul>
+<li><a href="http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-ConditionalOperators">Advanced Queries - MongoDB</a></li>
+</ul>
+<p>findの引数にDSLを使って記述します。複数条件を組み合わせる場合は「++」でつなげます。
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="scala"><span class="line"><span class="n">collection</span><span class="o">.</span><span class="n">find</span><span class="o">(</span> <span class="s">&quot;name&quot;</span> <span class="nc">$exists</span> <span class="kc">true</span> <span class="o">).</span><span class="n">foreach</span><span class="o">{</span> <span class="n">println</span> <span class="o">}</span>
+</span><span class="line">
+</span><span class="line"><span class="c1">// 組み合わせる場合は&quot;++&quot;でつなげる</span>
+</span><span class="line"><span class="n">collection</span><span class="o">.</span><span class="n">find</span><span class="o">(</span> <span class="o">(</span><span class="s">&quot;name&quot;</span> <span class="nc">$exists</span> <span class="kc">true</span><span class="o">)</span> <span class="o">++</span> <span class="o">(</span><span class="s">&quot;age&quot;</span> <span class="nc">$gte</span> <span class="mi">20</span> <span class="nc">$lt</span> <span class="mi">30</span> <span class="o">)</span> <span class="o">).</span><span class="n">foreach</span><span class="o">{</span> <span class="n">println</span> <span class="o">}</span>
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
+『(“age” $gte 20) ++ (“age” $lt 30)』と書かなくても、『(“age” $gte 20 $lt 30 ) 』とかけるので記述量がへって良いですね。</p>
+
+<p>あと、追加ですけど、１ドキュメントのみ取得したい時はfindOneが使えます。
+&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
+<span class="line-number">2</span>
+&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="scala"><span class="line"><span class="k">val</span> <span class="n">obj</span> <span class="k">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">findOne</span><span class="o">().</span><span class="n">get</span> <span class="c1">// Option[DBObject]からDBObjectを取り出すためにgetを呼ぶ</span>
+</span><span class="line"><span class="n">println</span><span class="o">(</span><span class="n">obj</span><span class="o">(</span><span class="s">&quot;name&quot;</span><span class="o">))</span> <span class="c1">//me</span>
+</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
+
+<p>以上、かんたんにSasbahの使い方についてまとめてみました。</p>
+
+<h3>関連リンク</h3>
+<ul>
+<li><a href="https://github.com/mongodb/casbah">GitHub</a></li>
+<li><a href="http://api.mongodb.org/scala/casbah/2.0.2/tutorial.html">Casbahチュートリアル</a></li>
+<li><a href="http://api.mongodb.org/scala/casbah/2.0.2/scaladoc/">ScalaDoc (casbah-core v2.0.2)</a></li>
+</ul>
+<p>ちなみに、細切れで説明した上記サンプルプログラムの全体を以下に掲載しておきます。</p>
+
+<p>※convertObjectTypeメソッドの中身については現在検証中です(；・∀・)
+<script src="https://gist.github.com/857260.js?file=CasbahSample.scala"></script></p>
+
+</div>
+  
+  
+
+
+
+
+    </article>
   
   
     <article>
@@ -543,285 +784,6 @@ DSLとしてのAsakusaの魅力 &hellip;">
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2011/02/20/attended-nicotextmining-1st/">第一回 にこにこテキストマイニングに参加してきた #nicoTextMining</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-02-20T09:30:52+09:00" pubdate data-updated="true">2011-02-20 (Sun)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>第一回 にこにこテキストマイニングに参加してきました。</p>
-
-<ul>
-  <li><a href="http://atnd.org/events/12264">第1回 にこにこテキストマイニング勉強会</a></li>
-</ul>
-
-<p>主催は@NLP_PRMさんと@toilet_luhchさん。会場はオラクル青山センターさん。
-懇親会と二次会にも参加させていただき、皆様の豊富な知識に圧倒されて参りました。精進しようと思います。いろいろな話しをありがとうございました。</p>
-
-<p>当日の内容はTogetterにまとめられています。</p>
-
-<ul>
-  <li><a href="http://togetter.com/li/102922">Togetter - 「第１回 にこにこテキストマイニング勉強会 #nicoTextMining #1</a></li>
-</ul>
-
-<p>以下、勉強会の資料と私的メモです。</p>
-
-<p><a id="more"></a><a id="more-667"></a></p>
-
-<h3 id="antibayesianhttptwittercomantibayesian--"><a href="http://twitter.com/#!/AntiBayesian">@AntiBayesian</a> : 「テキストマイニングの歩き方」</h3>
-<p>発表資料：<a href="http://www24.atpages.jp/antibayesian/up/src/up0006.pdf">テキストマイニングの歩き方</a></p>
-
-<p>「技術云々ではなく、どのようにテキストマイニングを活かすか」、という今回の勉強会の趣旨に沿った発表内容。ナレッジの自動蓄積のために、Wikiとかを使うのではなく日報メールを解析するというのは面白いですね。情報共有ツールの導入ってほとんどが失敗に終わる気がします。それよりは慣れたフォーマットを活かす方向に考えてみる、と。</p>
-
-<ul>
-  <li>アンケート</li>
-  <li>封書解答で20%の回答率</li>
-  <li>個人情報を求めると10%の回答率</li>
-  <li>言語処理における様々な解析
-    <ul>
-      <li>押さえるべきところ</li>
-      <li>形態素解析</li>
-      <li>構文解析</li>
-    </ul>
-  </li>
-</ul>
-
-<h3 id="toiletlunchhttptwittercomtoiletlunch--"><a href="http://twitter.com/#!/toilet_lunch">@toilet_lunch</a> : 「ゆるふわテキストマイニングをしてみよう」</h3>
-<p>発表資料：
-<a href="http://toilet-lunch.sakura.ne.jp/nicoTextMining01.pdf">ゆるふわテキストマイニングをしてみよう</a></p>
-
-<p>「ゆるふわ」というよりはけっこうガチな内容。私はNLPを少しかじったことがあったので、なんとかひと通りの用語は理解できました。現在の自然言語処理では何ができて、何が問題になるのか、というのがよくわかりました。</p>
-
-<ul>
-  <li>評判分析ツール
-    <ul>
-      <li><a href="http://toilet-lunch.shisobu.in/search.cgi">http://toilet-lunch.shisobu.in/search.cgi</a></li>
-      <li>一日でつくった</li>
-      <li>評価表現（ポジティブ、ネガティブの二種）</li>
-      <li>形態素解析
-        <ul>
-          <li>辞書とマッチさせる</li>
-          <li>活用語幹を用いる</li>
-          <li>単語感情極性対応表</li>
-        </ul>
-      </li>
-      <li>精度問題
-        <ul>
-          <li>ジャンルごとにネガポジが反転する場合も（「薄い」とか）</li>
-        </ul>
-      </li>
-      <li>クリーニング</li>
-      <li>言語の困難さ
-        <ul>
-          <li>否定表現
-            <ul>
-              <li>「わからない訳でもなくない？」</li>
-            </ul>
-          </li>
-          <li>未知語
-            <ul>
-              <li>ヤバい、素で</li>
-            </ul>
-          </li>
-          <li>助詞の省略</li>
-          <li>複合表現</li>
-          <li>表記ゆれ</li>
-          <li>複数評価の混在
-            <ul>
-              <li>一文に含まれる結論が読みにくい</li>
-            </ul>
-          </li>
-        </ul>
-      </li>
-      <li>「テキストマイニング」の定義があいまい
-        <ul>
-          <li>目的によって手法が異なる
-            <ul>
-              <li>目的を決め手手法を選ぶこと。</li>
-            </ul>
-          </li>
-        </ul>
-      </li>
-      <li>QA
-        <ul>
-          <li>名詞より形容詞のほうが未知語になりにくい</li>
-          <li>皮肉とか大変。</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-</ul>
-
-<h3 id="langstathttptwittercomlangstat--"><a href="http://twitter.com/#!/langstat">@langstat</a> ： 「コピー＆ペーストのみで始めるテキストマイニング超入門」</h3>
-
-<div style="width:425px" id="__ss_6973454"><strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/langstat/nicoteki1" title="Nicoteki_1">Nicoteki_1</a></strong><object id="__sse6973454" width="425" height="355"><param name="movie" value="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=nicoteki1-110218081836-phpapp02&amp;stripped_title=nicoteki1&amp;userName=langstat" /><param name="allowFullScreen" value="true" /><param name="allowScriptAccess" value="always" /><embed name="__sse6973454" src="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=nicoteki1-110218081836-phpapp02&amp;stripped_title=nicoteki1&amp;userName=langstat" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="355" /></object>
-<div style="padding:5px 0 12px">View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/langstat">Yuichiro Kobayashi</a>.</div>
-</div>
-<p>自然言語処理における一連の解析を、無料のWebサービスを使ってコピペでやってみよう、というもの。
-これらのツールがひと通り用意されていることに驚き。ただし、すべて統合したものはないようなので、ぜひ欲しいなと思います。（※APIとかあれば良いのですが…)</p>
-
-<ul>
-  <li>無料の解析用テキスト
-    <ul>
-      <li>青空文庫</li>
-      <li>首相のスピーチテキストとかパブリックドメインのもの</li>
-    </ul>
-  </li>
-  <li>用例検索</li>
-  <li>日本語形態素解析
-    <ul>
-      <li>形態素解析
-        <ul>
-          <li><a href="http://cgi.geocities.jp/ydevnet/sample/jlp/sample2/ma_sample.php">日本語形態素解析</a></li>
-          <li><a href="http://www.langrid.org/playground/morphological-analyzer.html">Morphological Analyzer - Language Grid Playground</a>
-            <ul>
-              <li>Mecab/ChaSenとかで試せる</li>
-            </ul>
-          </li>
-        </ul>
-      </li>
-      <li>構文解析
-        <ul>
-          <li><a href="http://www.langrid.org/playground/dependency-parser.html">Dependency Parser - Language Grid Playground</a></li>
-          <li>構文解析器
-            <ul>
-              <li><a href="http://chasen.org/~taku/software/cabocha/">CaboCha</a></li>
-              <li><a href="http://www-lab25.kuee.kyoto-u.ac.jp/nl-resource/knp.html">KNP</a>：格文法
-                <ul>
-                  <li>どちらがよいかは好みの問題</li>
-                </ul>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </li>
-      <li><a href="http://hp.vector.co.jp/authors/VA035840/vba/vbafreq.htm">日本語文章の頻度分析</a>
-        <ul>
-          <li>VBAツール</li>
-          <li>Webサービスではない。</li>
-        </ul>
-      </li>
-      <li><a href="http://aoki2.si.gunma-u.ac.jp/calculator/">多機能 WEB 計算機</a></li>
-    </ul>
-  </li>
-</ul>
-
-<h3 id="gepurohttptwittercomgepuro--nltk"><a href="http://twitter.com/#!/gepuro">@gepuro</a> ： 「初めてのnltk」</h3>
-
-<div style="width:425px" id="__ss_6979340"><strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/gepuro/nltk-for-biginer-6979340" title="Nltk for biginer">Nltk for biginer</a></strong><object id="__sse6979340" width="425" height="355"><param name="movie" value="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=nltkforbiginer-110218204954-phpapp01&amp;stripped_title=nltk-for-biginer-6979340&amp;userName=gepuro" /><param name="allowFullScreen" value="true" /><param name="allowScriptAccess" value="always" /><embed name="__sse6979340" src="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=nltkforbiginer-110218204954-phpapp01&amp;stripped_title=nltk-for-biginer-6979340&amp;userName=gepuro" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="355" /></object>
-<div style="padding:5px 0 12px">View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/gepuro">gepuro</a>.</div>
-</div>
-<p>学部二年生の発表。
-nltkとpython-twitterをつかったテキストマイニング。つまづきにもめげず、テキストマイニングをしてみたようです。Tweetもしたんですけど、挫折も含めて発表するのは、これからはじめてみたい方にとって有益な情報だと思いました。同じつまづきをしないためにも。</p>
-
-<h3 id="bob3bob3httptwittercombob3bob3--"><a href="http://twitter.com/#!/bob3bob3">@bob3bob3</a> ： 「アンケート自由回答のテキストマイニング事例」</h3>
-<p>発表資料：
-  * <a href="http://www.ikic.co.jp/service/pdf/marketing_6.pdf">「楽しい食事」ってどんな食事？
-? Text Mining Studio を用いた自由回答の分析事例 ?</a></p>
-
-<p>テキストマイニングをどう活用して何を達成するのか、というとても具体的な活用事例でした。私の場合、仕事がWebサービスなのでそっちに興味が偏りがちですが、こういう実生活における分析にも興味を頂きました。アンケートという自由回答形式だからこそ得られるものもあるんですね。</p>
-
-<ul>
-  <li>商用テキストマイニングツール
-    * 一番安いワードマイナーでも３０万する。
-    * 野村総研のツールが６割のシェア。
-    * 単語出現頻度分析
-    <ul>
-      <li>表記の違いは辞書つくる
-        <ul>
-          <li>ゴールデンウィークとGWなど</li>
-        </ul>
-      </li>
-      <li>名詞、形容詞、動詞に絞る</li>
-    </ul>
-  </li>
-  <li>特徴語分析
-    <ul>
-      <li>補完類似度</li>
-    </ul>
-  </li>
-  <li>コレスポンデンス分析</li>
-  <li>QA1
-    <ul>
-      <li>コレスポンデンス分析のグルーピングが困難な場合はグルーピングしない</li>
-      <li>今回はうまくいった</li>
-    </ul>
-  </li>
-  <li>QA2
-    <ul>
-      <li>あとで「状況」をグループ化しにくい
-        <ul>
-          <li>アンケートなら質問を工夫する「〜な時はどうですか？」</li>
-          <li>ブログとかあとから集めて分析する場合は難しい。</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li>QA3
-    <ul>
-      <li>女性より男性のほうがアンケートに含まれる単語数が多い傾向
-        <ul>
-          <li>グラフで見ると女性のほうが全体的に上回る（単語出現頻度の分析において）</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li>QA4
-    <ul>
-      <li>ツールのよしあし
-        <ul>
-          <li>TRUE TELLERは完成されているが、機能は限定されている。</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-</ul>
-
-<h3 id="section">関連エントリ</h3>
-<ul>
-  <li><a href="http://d.hatena.ne.jp/hamadakoichi/20110219/p1">第１回 にこにこテキストマイニング勉強会 ( #nicoTextMining #1) に参加してきた - hamadakoichi blog</a></li>
-  <li><a href="http://d.hatena.ne.jp/nokuno/20110220/1298102734">第1回にこにこテキストマイニング勉強会に参加しました #nicotextmining - nokunoの日記</a></li>
-  <li><a href="http://d.hatena.ne.jp/yokkuns/20110219/1298102645">第1回 にこにこテキストマイニング勉強会（#nicoTextMining）に参加してきた - yokkunsの日記</a></li>
-  <li><a href="http://d.hatena.ne.jp/langstat/20110219/p1">にこテキ #1 - コーパスいぢり ?langstatの研究日誌?</a></li>
-</ul>
-
-<p>みなさん日記を書くの早すぎです…勉強会が終わった、と思ったらもうエントリされていましたｗ
-そのスピード感、見習いたいです。</p>
-
-<h3 id="section-1">余談</h3>
-<p>今回からTwitter名刺を用意していきました。Twitterアイコンがプリントされているので、初めてお会いする方もアイコンは見たことあると言って頂けたのが良かったです。勉強会には、会社の名詞よりTwitter名刺が重要ですね。</p>
-
-</div>
-  
-  
-
-
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/page/19/">&larr; Older</a>
@@ -877,6 +839,10 @@ nltkとpython-twitterをつかったテキストマイニング。つまづき�
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2014/08/20/microservices-architecture/">InfoQ eMAG: Microservicesを少し読んだまとめと感想</a>
+      </li>
+    
+      <li class="post">
         <a href="/2014/08/13/golang-json-marshal-unmarshal/">Goのjson.Marshal/Unmarshalの仕様を整理してみる</a>
       </li>
     
@@ -892,16 +858,12 @@ nltkとpython-twitterをつかったテキストマイニング。つまづき�
         <a href="/2014/04/22/tech-podcast-list/">技術系podcastまとめ</a>
       </li>
     
-      <li class="post">
-        <a href="/2014/04/21/golang-memcache-stats-client/">Goでmemcachedのstatsを取得する</a>
-      </li>
-    
   </ul>
 </section>
 <section>
   <h1>Categories</h1>
   <ul id="categories">
-    <li><a href='/category/docker/'>docker</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/go/'>go</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
+    <li><a href='/category/architecture/'>architecture</a></li><li><a href='/category/docker/'>docker</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/go/'>go</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
   </ul>
 </section>
 <section>
