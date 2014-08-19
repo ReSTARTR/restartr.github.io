@@ -11,7 +11,20 @@
   <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="pytestを使い始めました。 pytest: helps you write better programs まだまだ機能は把握しきれていませんが、良いと思ったことは3つ。 テストがコケた箇所のコードがレポート内容に表示される テスト対象を初期化したものの受け渡し方をスマートにできる &hellip;">
+  <meta name="description" content="ハマったので。 1
+2
+3
+4
+5
+6
+7
+a = 2
+double = lambda x: x*a
+double(4) # 8 (=4*2)
+double(10) # 20 (=10*3)
+a = 3
+double(4) # 12 # WTF?
+double(10) # 30 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -116,6 +129,201 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2013/04/17/bind-a-variable-to-closure-in-python/">Pythonのクロージャに変数を束縛する方法</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-17T22:19:14+09:00" pubdate data-updated="true">2013-04-17 (Wed)</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>ハマったので。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="n">a</span> <span class="o">=</span> <span class="mi">2</span>
+</span><span class="line"><span class="n">double</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">*</span><span class="n">a</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>  <span class="c"># 8 (=4*2)</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="c"># 20 (=10*3)</span>
+</span><span class="line"><span class="n">a</span> <span class="o">=</span> <span class="mi">3</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>  <span class="c"># 12 # WTF?</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="c"># 30</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>doubleというクロージャ内の変数aを、クロージャ宣言時のaで束縛したいのです。</p>
+
+<p>対応は２つ。</p>
+
+<ol>
+  <li>lambdaのデフォルト引数で束縛する</li>
+  <li>functools.partialで束縛する</li>
+</ol>
+
+<h3 id="lambda">1. lambdaのデフォルト引数で束縛する</h3>
+
+<p>参考：<a href="http://stackoverflow.com/questions/10452770/python-lambdas-binding-to-local-values">closures - Python lambda’s binding to local values - Stack Overflow</a></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="n">a</span> <span class="o">=</span> <span class="mi">2</span>
+</span><span class="line"><span class="n">double</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">a</span><span class="p">:</span> <span class="n">x</span><span class="o">*</span><span class="n">y</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>  <span class="c"># 8 (=4*2)</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="c"># 20 (=10*3)</span>
+</span><span class="line"><span class="n">a</span> <span class="o">=</span> <span class="mi">3</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>  <span class="c"># 12 (=4*2)</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="c"># 30 (=10*2)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="functoolspartial">2. functools.partialで束縛する</h3>
+
+<p>やってることは1と同じなのですが、一応動くよねということで。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+</span><span class="line"><span class="n">a</span> <span class="o">=</span> <span class="mi">2</span>
+</span><span class="line"><span class="n">double</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="bp">None</span><span class="p">:</span> <span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">a</span><span class="p">)</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="c"># 8 (=8*2)</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="c"># 30 (=10*2)</span>
+</span><span class="line"><span class="n">a</span> <span class="o">=</span> <span class="mi">3</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>  <span class="c"># 12 (=4*2)</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="c"># 30 (=10*2)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="section">そもそも変数上書きしなければ良いんじゃない？</h3>
+
+<p>普段は変数の上書きは基本的にやりません。なので変数の束縛とかあまり意識してませんでした。</p>
+
+<p>今回、プロジェクトオイラーを解くにあたって、素数ジェネレータをつくろうとした結果、ハマったのでした。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">ifilter</span><span class="p">,</span> <span class="n">count</span>
+</span><span class="line"><span class="k">def</span> <span class="nf">gen_primes</span><span class="p">():</span>
+</span><span class="line">    <span class="n">it</span> <span class="o">=</span> <span class="n">count</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>  <span class="c"># [2, 3, 4, ...]</span>
+</span><span class="line">    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+</span><span class="line">        <span class="n">v</span> <span class="o">=</span> <span class="n">it</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+</span><span class="line">        <span class="k">yield</span> <span class="n">v</span>
+</span><span class="line">        <span class="n">it</span> <span class="o">=</span> <span class="n">ifilter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">v</span><span class="p">:</span> <span class="n">x</span> <span class="o">%</span> <span class="n">y</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">it</span><span class="p">)</span>
+</span><span class="line">        <span class="c"># 当初は以下のようにしていた</span>
+</span><span class="line">        <span class="c"># これだと次のループ時のifilter内でvの値が変わってしまう</span>
+</span><span class="line">        <span class="c"># it = ifilter(lambda x: x % v &gt; 0, it)</span>
+</span><span class="line"><span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">gen_primes</span><span class="p">():</span>
+</span><span class="line">    <span class="k">print</span> <span class="n">v</span>
+</span><span class="line">    <span class="k">if</span> <span class="n">v</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">:</span>
+</span><span class="line">        <span class="k">break</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="functoolspartial-1">余談1: functools.partialの使いどころ</h3>
+<p>ちょくちょく<a href="http://docs.python.jp/2.7/library/functools.html#functools.partial">functools.partial</a>使ってましたが、そんなの使わなくてもlambdaで事足りますね。今更気づきました…</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="n">mul</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span>
+</span><span class="line"><span class="n">mul</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>  <span class="c"># 6</span>
+</span><span class="line"><span class="c"># lambda</span>
+</span><span class="line"><span class="n">double</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">:</span> <span class="n">mul</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>  <span class="c"># 6</span>
+</span><span class="line"><span class="c"># functools.partial</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">functools</span>
+</span><span class="line"><span class="n">double</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">mul</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>  <span class="c"># 6</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>こうなると、functools.partialの使いどころが難しいですね。
+戻り値がpartialオブジェクトなので、あとで引数とかが参照できることくらいでしょうか…</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">f</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">:</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">f</span>
+</span><span class="line"><span class="o">&lt;</span><span class="n">functools</span><span class="o">.</span><span class="n">partial</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x1092b2ec0</span><span class="o">&gt;</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">f</span><span class="o">.</span><span class="n">args</span>
+</span><span class="line"><span class="p">()</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">f</span><span class="o">.</span><span class="n">keywords</span>
+</span><span class="line"><span class="p">{</span><span class="s">&#39;b&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">f</span><span class="o">.</span><span class="n">func</span>
+</span><span class="line"><span class="o">&lt;</span><span class="n">function</span> <span class="o">&lt;</span><span class="k">lambda</span><span class="o">&gt;</span> <span class="n">at</span> <span class="mh">0x1092eab18</span><span class="o">&gt;</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">f</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,)</span>  <span class="c"># 引数を後から上書きはできない</span>
+</span><span class="line"><span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
+</span><span class="line">  <span class="n">File</span> <span class="s">&quot;&lt;stdin&gt;&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">1</span><span class="p">,</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+</span><span class="line"><span class="ne">TypeError</span><span class="p">:</span> <span class="n">readonly</span> <span class="n">attribute</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+</div>
+  
+  
+
+
+
+
+    </article>
   
   
     <article>
@@ -322,89 +530,6 @@ pytestはかなり詳細に表示してくれるので、レポートの内容�
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2013/04/02/retirement201303/">Kauli株式会社を退職しました</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-04-02T22:45:29+09:00" pubdate data-updated="true">2013-04-02 (Tue)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><a href="http://www.flickr.com/photos/53244662@N04/8599680561/" title="Cleanup my keyboard by ReSTARTR_y, on Flickr"><img src="http://farm9.staticflickr.com/8106/8599680561_da30653690.jpg" width="500" height="333" alt="Cleanup my keyboard" /></a></p>
-
-<p><em>※2013/04/04 更新:会社名を公開しました</em></p>
-
-<p>3月末付で<a href="http://kau.li">Kauli株式会社</a>を退職しました。</p>
-
-<p>4月1日だと嘘っぽくなるかなと思い、1日ずらしてのご報告です。</p>
-
-<p>2012年01月入社なので、1年3ヶ月という短い間でしたが、これまでで最も充実した1年だったように思います。</p>
-
-<p>大規模な広告配信という技術的に非常に挑戦しがいのある分野で、非常に技術力の高いエンジニアと共にPythonプログラマーとして充実した日々を過ごさせてもらいました。</p>
-
-<p>「大規模なトラフィックを直に感じながらアプリケーション開発に取り組みたい」という希望を胸に入った会社で、</p>
-
-<ul>
-  <li>データストアの検証(結果的にRedisを採用)</li>
-  <li>合計数十台自作サーバーの組立(参考：<a href="https://gist.github.com/nekoya/3749146" title="Kauli自作サーバ組み立てマニュアル" target="_blank">Kauli自作サーバ組み立てマニュアル</a>)</li>
-  <li>開発部総出でデータセンターでサーバーラッキング</li>
-  <li>某社SOAP APIに難儀</li>
-  <li>開発のベースをgithubに移行</li>
-  <li>nginx + Python(werkzeug+uWSGI) + Redisによる広告配信システムの開発</li>
-  <li>アプリケーションのパフォーマンスチューニング</li>
-</ul>
-
-<p>等々、これまでにない経験を1年ちょっとという短い期間に経験できました。</p>
-
-<p>正直離れるのが勿体無いとも思うのですが、キャリアの見直しをしたかったとか諸々の理由により、退職することを決意しました。</p>
-
-<p>同僚の方々には大変お世話になりました。どうもありがとうございました。</p>
-
-<p>転職先はまだ決まっていないので、転職活動を進めつつ、じっくり勉強しておきたかったことに１つずつ取り組んでいこうかという感じです。</p>
-
-<p>良い会社があればぜひ<a href="https://twitter.com/restartr">@ReSTARTR</a>にご紹介ください＞＜</p>
-
-<p>…</p>
-
-<p>なお、Kauli株式会社は継続してエンジニアを募集中のようですので、</p>
-
-<p>大規模広告配信システムをPythonで開発したい方々は下記からぜひぜひご応募を。</p>
-
-<ul>
-  <li><b><a href="http://kau.li/jp/pages/recruit">Kauli - 採用情報</a></b></li>
-</ul>
-
-<p>それでは。</p>
-
-</div>
-  
-  
-
-
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/page/7/">&larr; Older</a>
@@ -460,6 +585,10 @@ pytestはかなり詳細に表示してくれるので、レポートの内容�
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2014/08/17/microservices-architecture/">InfoQ eMAG: Microservicesを少し読んでみたまとめと感想</a>
+      </li>
+    
+      <li class="post">
         <a href="/2014/08/13/golang-json-marshal-unmarshal/">Goのjson.Marshal/Unmarshalの仕様を整理してみる</a>
       </li>
     
@@ -475,16 +604,12 @@ pytestはかなり詳細に表示してくれるので、レポートの内容�
         <a href="/2014/04/22/tech-podcast-list/">技術系podcastまとめ</a>
       </li>
     
-      <li class="post">
-        <a href="/2014/04/21/golang-memcache-stats-client/">Goでmemcachedのstatsを取得する</a>
-      </li>
-    
   </ul>
 </section>
 <section>
   <h1>Categories</h1>
   <ul id="categories">
-    <li><a href='/category/docker/'>docker</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/go/'>go</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
+    <li><a href='/category/architecture/'>architecture</a></li><li><a href='/category/docker/'>docker</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/go/'>go</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
   </ul>
 </section>
 <section>
