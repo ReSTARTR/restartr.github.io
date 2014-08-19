@@ -11,8 +11,7 @@
   <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="もともとさくらのレンサバ上でWordpressで構築していたブログをOctopressに移行してGithub Pagesでホスティングするように切り替え。
-最初はJekyllだけでやろうとしてたけど、ブロクとしての機能を見るとOctopressのほうが良さそうだったので途中で方針転換。 手順 &hellip;">
+  <meta name="description" content="最近Rubyでプロジェクトオイラーを解きながらRubyに慣れようとしてるのですが、ちょっと飽きてきたので息抜きにGoを書いたりしています。 ついでにZeroMQも試してみたかったので、GoとPythonをZeroMQで繋いでみました。 構成はこんな感じで、Python(かGo)clientを起動し &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -117,108 +116,6 @@
     <div id="content">
       <div class="blog-index">
   
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2014/04/06/move-from-wordpress-to-octopress/">WordpressからOctopressに移行</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-04-06T13:00:00+09:00" pubdate data-updated="true">2014-04-06 (Sun)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>もともとさくらのレンサバ上でWordpressで構築していたブログを<a href="http://octopress.org/">Octopress</a>に移行してGithub Pagesでホスティングするように切り替え。
-最初は<a href="http://jekyllrb.com/">Jekyll</a>だけでやろうとしてたけど、ブロクとしての機能を見るとOctopressのほうが良さそうだったので途中で方針転換。</p>
-
-<h4 id="section">手順</h4>
-
-<p>詳細な手順は面倒なので割愛するとして、だいたいこんな感じの流れで移行。</p>
-
-<ol>
-  <li>作業用環境にjekyll, jekyll-import, mysql2, sequelをgem install</li>
-  <li>さくらのレンサバ上のMySQLのデータをmysqldumpしてscp</li>
-  <li>dumpデータを作業用環境のMySQLにリストア</li>
-  <li>リストアしたデータから<a href="http://import.jekyllrb.com/docs/wordpress/">jekyll-import</a>を使って記事のmarkdownファイルを吐き出す</li>
-  <li>octopressをcloneして、<code>rake install</code></li>
-  <li>jekyll-importで吐き出されたファイルをoctopressのsource/_posts以下に移動</li>
-  <li><code>rake preview</code>で表示を確認しながら、source/_posts以下のmarkdownファイルをひたすら修正</li>
-  <li>テーマを調整&amp;元記事のURLパスと同一になるように<code>_config.yml</code>に設定</li>
-  <li>githubにpushしてgithub pagesとして公開</li>
-  <li>CNAMEを設定してgithub.ioから元のドメイン(blog.restartr.com)に移行</li>
-</ol>
-
-<p>さくらのレンサバ内からしかWordpressのDBに接続できないのと、レンサバ内でrubyを使うのはなんか面倒事が多そうだったので、環境整備済みなvpsで移行作業。</p>
-
-<p><em>※wordpressのエクスポート機能で吐き出したxmlからmigrateする方法もあるけど今回は不採用</em></p>
-
-<h4 id="wordpress">Wordpressの時のドメイン、パスを同一にするための設定</h4>
-
-<p>wordpressでは<code>/year/month/day/title</code>というpermalinkを設定していたのでそれと同一にするための作業。</p>
-
-<ul>
-  <li>ドメインはgithub pagesのカスタムドメインとCNAME設定で解決</li>
-  <li>パスは<code>_config.yml</code>のpermalinkを<code>/:year/:month/:day/:title</code>にして解決</li>
-</ul>
-
-<h4 id="section-1">さくらのレンサバ側の独自ドメイン設定</h4>
-
-<p>これでハマりました。さくらのドメインの設定で”blog.restartr.com”のCNAMEを設定したのに、DNSへの問い合わせ結果が常にAレコードしか帰ってこなくてかなり悩んでた。
-結論は、さくらのレンサバの設定画面で独自ドメインとして”blog.restartr.com”を登録していて、そっちの設定が邪魔をしていた。</p>
-
-<p>さくらのレンサバの独自ドメイン設定をはずして、さくらのドメインのCNAME設定を追加したら無事に解決。</p>
-
-<p><em>さくらのレンサバの独自ドメインの解除から、2時間以上反映に時間かかるらしい</em></p>
-
-<h4 id="post">postデータの修正</h4>
-
-<p>jekyll-importを使ってmarkdownを吐き出すところまではすんなりいけたけど、なにより面倒だったのが吐き出したmarkdownを修正する作業。</p>
-
-<ul>
-  <li>シンタックスハイライトするために<code>[ccW_python]...[/ccW_python]</code>とか<code>&lt;pre class="brush:pyton"&gt;...&lt;/pre&gt;</code>とか独自タグがある</li>
-  <li>amazonのリンク生成用タグ<code>[tmkm-amazon]123456[/tmkm-amazon]</code>というタグがある</li>
-  <li><code>&lt;p&gt;</code>タグと<code>&lt;br /&gt;</code>タグの嵐</li>
-</ul>
-
-<p>これらの対応のためにいちいち置換するのが非常に大変。<code>[ccW]</code>と<code>[tmkm-amazon]</code>タグは置換できたけど、<code>&lt;pre class="brush:..."&gt;</code>についてはハイライトされないだけで表示上問題なさそうなので無視。
-あとはmarkdownにhtmlが混じってるのが気持ち悪いので<code>&lt;p&gt;</code>と<code>&lt;br /&gt;</code>を置換して行間を調整。</p>
-
-<p>ドラフト記事をリモートにpushしてなくて別のPCから記事の途中からかけなくて困った…とならないように基本的にVPS上にcloneすることにした。
-これで記事編集のための苦痛を感じる事無く純粋なmarkdownで記事がかけるようになる。</p>
-
-<ul>
-  <li>参考にした記事</li>
-  <li><a href="http://hadihariri.com/2013/12/24/migrating-from-wordpress-to-jekyll/">Migrating from WordPress.com to Jekyll – Hadi Hariri</a></li>
-  <li><a href="http://blog.glidenote.com/blog/2011/12/20/how-to-use-custom-domain-on-github-pages/">GitHub PagesでCustom Domainを利用する - Glide Note - グライドノート</a></li>
-  <li>ベースにしたテーマ</li>
-  <li><a href="https://github.com/bijumon/oct2">bijumon/oct2</a></li>
-</ul>
-</div>
-  
-  
-
-
-
-
-    </article>
   
   
     <article>
@@ -360,6 +257,201 @@
 
     </article>
   
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2013/04/17/bind-a-variable-to-closure-in-python/">Pythonのクロージャに変数を束縛する方法</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-17T22:19:14+09:00" pubdate data-updated="true">2013-04-17 (Wed)</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>ハマったので。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="n">a</span> <span class="o">=</span> <span class="mi">2</span>
+</span><span class="line"><span class="n">double</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">*</span><span class="n">a</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>  <span class="c"># 8 (=4*2)</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="c"># 20 (=10*3)</span>
+</span><span class="line"><span class="n">a</span> <span class="o">=</span> <span class="mi">3</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>  <span class="c"># 12 # WTF?</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="c"># 30</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>doubleというクロージャ内の変数aを、クロージャ宣言時のaで束縛したいのです。</p>
+
+<p>対応は２つ。</p>
+
+<ol>
+  <li>lambdaのデフォルト引数で束縛する</li>
+  <li>functools.partialで束縛する</li>
+</ol>
+
+<h3 id="lambda">1. lambdaのデフォルト引数で束縛する</h3>
+
+<p>参考：<a href="http://stackoverflow.com/questions/10452770/python-lambdas-binding-to-local-values">closures - Python lambda’s binding to local values - Stack Overflow</a></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="n">a</span> <span class="o">=</span> <span class="mi">2</span>
+</span><span class="line"><span class="n">double</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">a</span><span class="p">:</span> <span class="n">x</span><span class="o">*</span><span class="n">y</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>  <span class="c"># 8 (=4*2)</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="c"># 20 (=10*3)</span>
+</span><span class="line"><span class="n">a</span> <span class="o">=</span> <span class="mi">3</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>  <span class="c"># 12 (=4*2)</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="c"># 30 (=10*2)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="functoolspartial">2. functools.partialで束縛する</h3>
+
+<p>やってることは1と同じなのですが、一応動くよねということで。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+</span><span class="line"><span class="n">a</span> <span class="o">=</span> <span class="mi">2</span>
+</span><span class="line"><span class="n">double</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="bp">None</span><span class="p">:</span> <span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">a</span><span class="p">)</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span> <span class="c"># 8 (=8*2)</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="c"># 30 (=10*2)</span>
+</span><span class="line"><span class="n">a</span> <span class="o">=</span> <span class="mi">3</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>  <span class="c"># 12 (=4*2)</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="c"># 30 (=10*2)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="section">そもそも変数上書きしなければ良いんじゃない？</h3>
+
+<p>普段は変数の上書きは基本的にやりません。なので変数の束縛とかあまり意識してませんでした。</p>
+
+<p>今回、プロジェクトオイラーを解くにあたって、素数ジェネレータをつくろうとした結果、ハマったのでした。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">ifilter</span><span class="p">,</span> <span class="n">count</span>
+</span><span class="line"><span class="k">def</span> <span class="nf">gen_primes</span><span class="p">():</span>
+</span><span class="line">    <span class="n">it</span> <span class="o">=</span> <span class="n">count</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>  <span class="c"># [2, 3, 4, ...]</span>
+</span><span class="line">    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
+</span><span class="line">        <span class="n">v</span> <span class="o">=</span> <span class="n">it</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+</span><span class="line">        <span class="k">yield</span> <span class="n">v</span>
+</span><span class="line">        <span class="n">it</span> <span class="o">=</span> <span class="n">ifilter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">v</span><span class="p">:</span> <span class="n">x</span> <span class="o">%</span> <span class="n">y</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">it</span><span class="p">)</span>
+</span><span class="line">        <span class="c"># 当初は以下のようにしていた</span>
+</span><span class="line">        <span class="c"># これだと次のループ時のifilter内でvの値が変わってしまう</span>
+</span><span class="line">        <span class="c"># it = ifilter(lambda x: x % v &gt; 0, it)</span>
+</span><span class="line"><span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">gen_primes</span><span class="p">():</span>
+</span><span class="line">    <span class="k">print</span> <span class="n">v</span>
+</span><span class="line">    <span class="k">if</span> <span class="n">v</span> <span class="o">&gt;</span> <span class="mi">100</span><span class="p">:</span>
+</span><span class="line">        <span class="k">break</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="functoolspartial-1">余談1: functools.partialの使いどころ</h3>
+<p>ちょくちょく<a href="http://docs.python.jp/2.7/library/functools.html#functools.partial">functools.partial</a>使ってましたが、そんなの使わなくてもlambdaで事足りますね。今更気づきました…</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="n">mul</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">a</span> <span class="o">*</span> <span class="n">b</span>
+</span><span class="line"><span class="n">mul</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>  <span class="c"># 6</span>
+</span><span class="line"><span class="c"># lambda</span>
+</span><span class="line"><span class="n">double</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">2</span><span class="p">:</span> <span class="n">mul</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">)</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>  <span class="c"># 6</span>
+</span><span class="line"><span class="c"># functools.partial</span>
+</span><span class="line"><span class="kn">import</span> <span class="nn">functools</span>
+</span><span class="line"><span class="n">double</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="n">mul</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+</span><span class="line"><span class="n">double</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>  <span class="c"># 6</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>こうなると、functools.partialの使いどころが難しいですね。
+戻り値がpartialオブジェクトなので、あとで引数とかが参照できることくらいでしょうか…</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">f</span> <span class="o">=</span> <span class="n">functools</span><span class="o">.</span><span class="n">partial</span><span class="p">(</span><span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">:</span><span class="n">a</span><span class="o">+</span><span class="n">b</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">f</span>
+</span><span class="line"><span class="o">&lt;</span><span class="n">functools</span><span class="o">.</span><span class="n">partial</span> <span class="nb">object</span> <span class="n">at</span> <span class="mh">0x1092b2ec0</span><span class="o">&gt;</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">f</span><span class="o">.</span><span class="n">args</span>
+</span><span class="line"><span class="p">()</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">f</span><span class="o">.</span><span class="n">keywords</span>
+</span><span class="line"><span class="p">{</span><span class="s">&#39;b&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">}</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">f</span><span class="o">.</span><span class="n">func</span>
+</span><span class="line"><span class="o">&lt;</span><span class="n">function</span> <span class="o">&lt;</span><span class="k">lambda</span><span class="o">&gt;</span> <span class="n">at</span> <span class="mh">0x1092eab18</span><span class="o">&gt;</span>
+</span><span class="line"><span class="o">&gt;&gt;&gt;</span> <span class="n">f</span><span class="o">.</span><span class="n">args</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,)</span>  <span class="c"># 引数を後から上書きはできない</span>
+</span><span class="line"><span class="n">Traceback</span> <span class="p">(</span><span class="n">most</span> <span class="n">recent</span> <span class="n">call</span> <span class="n">last</span><span class="p">):</span>
+</span><span class="line">  <span class="n">File</span> <span class="s">&quot;&lt;stdin&gt;&quot;</span><span class="p">,</span> <span class="n">line</span> <span class="mi">1</span><span class="p">,</span> <span class="ow">in</span> <span class="o">&lt;</span><span class="n">module</span><span class="o">&gt;</span>
+</span><span class="line"><span class="ne">TypeError</span><span class="p">:</span> <span class="n">readonly</span> <span class="n">attribute</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+</div>
+  
+  
+
+
+
+
+    </article>
+  
   <div class="pagination">
     
       <a class="prev" href="/page/6/">&larr; Older</a>
@@ -415,10 +507,6 @@
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/2014/08/17/microservices-architecture/">InfoQ eMAG: Microservicesを少し読んだまとめと感想</a>
-      </li>
-    
-      <li class="post">
         <a href="/2014/08/13/golang-json-marshal-unmarshal/">Goのjson.Marshal/Unmarshalの仕様を整理してみる</a>
       </li>
     
@@ -434,12 +522,16 @@
         <a href="/2014/04/22/tech-podcast-list/">技術系podcastまとめ</a>
       </li>
     
+      <li class="post">
+        <a href="/2014/04/21/golang-memcache-stats-client/">Goでmemcachedのstatsを取得する</a>
+      </li>
+    
   </ul>
 </section>
 <section>
   <h1>Categories</h1>
   <ul id="categories">
-    <li><a href='/category/architecture/'>architecture</a></li><li><a href='/category/docker/'>docker</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/go/'>go</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
+    <li><a href='/category/docker/'>docker</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/go/'>go</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
   </ul>
 </section>
 <section>

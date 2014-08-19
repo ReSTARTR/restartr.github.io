@@ -11,8 +11,7 @@
   <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="DockerCon2014で発表されたlibchanについて調べたことをまとめてみます。 libchanはlibcontainerやlibswarmと共に発表されました。
-libswarmはDockerを中心にしたエコシステムにおけるベンダーロックインを回避するためのソリューションであり、 &hellip;">
+  <meta name="description" content="CentOSを使ってて不便なのがruby2系のインストール。 rbenvやruby-buildを使うかソースからインストールするのですが、この場合、環境を構築するたびにビルドすることになり時間もかかるし大変面倒です。 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -117,256 +116,6 @@ libswarmはDockerを中心にしたエコシステムにおけるベンダーロ
     <div id="content">
       <div class="blog-index">
   
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2014/06/28/about-docker-libchan/">Docker謹製ライブラリのlibchanについて調べてみた</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-06-28T14:44:23+09:00" pubdate data-updated="true">2014-06-28 (Sat)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>DockerCon2014で発表された<a href="https://github.com/docker/libchan">libchan</a>について調べたことをまとめてみます。</p>
-
-<p>libchanは<a href="https://github.com/docker/libcontainer">libcontainer</a>や<a href="https://github.com/docker/libswarm">libswarm</a>と共に発表されました。
-libswarmはDockerを中心にしたエコシステムにおけるベンダーロックインを回避するためのソリューションであり、libcontainerは<a href="http://d.hatena.ne.jp/mainyaa/20140311/p1">Docker 0.9リリースドキュメント日本語訳: Execution driversとlibcontainer導入 - Happy New World</a>を参照するのがよいでしょう。</p>
-
-<p>では、libchanとは何なのでしょうか。</p>
-
-<p>READMEには<code>like Go channels over the network</code>とあります。ネットワーク上のgo channel?よくかりませんね。。。</p>
-
-<p>README.mdとPROTOCOL.md、いくつかのテストコードをもとに簡単な実装をしてみた結果をまとめます。</p>
-
-<h3 id="libchan">libchanとはなにか</h3>
-
-<ul>
-  <li><a href="https://github.com/docker/libchan/README.md">README</a></li>
-</ul>
-
-<p>libchanは超軽量なネットワークライブラリであり、多様な通信プロトコルの土台となるものです。
-同一プロセス内でも、同一ホストの別プロセス間でも、ネットワークを超えた別ホストの別プロセス間でも双方向通信可能にするための基礎的なAPIを提供しています。
-モダンなmicro-serviesなどRPCやRESTプロトコルにはフィットしない領域で、libchanを使うことが想定されています。</p>
-
-<p>利用例はいまのところlibswarmのみです。というかlibswarmから抽出された汎用的な通信ライブラリだと思います。
-APIが安定してくると他のフレームワーク等への導入などもあるかもしれません。</p>
-
-<p>では、具体的にどうやって双方向通信を可能にしてるのでしょう。</p>
-
-<h3 id="libchan-1">libchanのプロトコル</h3>
-
-<ul>
-  <li><a href="https://github.com/docker/libchan/PROTOCOL.md">PROTOCOL</a></li>
-</ul>
-
-<p>libchanは以下のコンポーネントで構成されています。</p>
-
-<ul>
-  <li>channel</li>
-  <li>session</li>
-  <li>message</li>
-  <li>byte stream</li>
-  <li>nesting</li>
-</ul>
-
-<p>channelとは、並行プログラム間の双方向通信用オブジェクトです。goのchannelに似てるけどそのものではありません。Sender/Receiverがそれぞれ1方向ずつの経路を持つため、ソケットというよりパイプの概念に近いです。</p>
-
-<p>この２つの通信経路がsessionとなり、その間を流れるのがbyte stream。
-で、byte streamにはmessageが乗っかり、messageにはchannelを含めることができるという概念です。</p>
-
-<h3 id="libchan-2">libchanのメッセージ</h3>
-
-<p>メッセージはlibchan.Message。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">type</span> <span class="nx">libchan</span><span class="p">.</span><span class="nx">Message</span> <span class="kd">struct</span> <span class="p">{</span>
-</span><span class="line">  <span class="nx">Data</span> <span class="p">[]</span><span class="kt">byte</span> <span class="c1">// メッセージの内容</span>
-</span><span class="line">  <span class="nx">Fd</span> <span class="o">*</span><span class="nx">os</span><span class="p">.</span><span class="nx">File</span>
-</span><span class="line">  <span class="nx">Ret</span> <span class="nx">Sender</span>  <span class="c1">// 受信者が返答するためのchannel</span>
-</span><span class="line"><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>このメッセージ型を、各種通信方式に対応したSender/Receiver経由でやりとりすることになります。</p>
-
-<h3 id="section">メッセージの構造化</h3>
-
-<p>メッセージは以下のようにして生成します。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="nx">message</span> <span class="o">:=</span> <span class="nx">libchan</span><span class="p">.</span><span class="nx">Message</span><span class="p">{</span><span class="nx">Data</span><span class="p">:</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&quot;Hello, libchan&quot;</span><span class="p">),</span> <span class="nx">Ret</span><span class="p">:</span> <span class="nx">libchan</span><span class="p">.</span><span class="nx">RetPipe</span><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>で、ただのテキストではなく構造化されたデータも送れます。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kn">import</span> <span class="s">&quot;github.com/docker/libchan/data&quot;</span>
-</span><span class="line">
-</span><span class="line"><span class="nx">d</span> <span class="o">:=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">Empty</span><span class="p">().</span><span class="nx">Set</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">,</span> <span class="s">&quot;bar&quot;</span><span class="p">)</span>
-</span><span class="line"><span class="nx">d</span><span class="p">.</span><span class="nx">Get</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">)</span> <span class="c1">// &quot;bar&quot;</span>
-</span><span class="line"><span class="nx">d</span><span class="p">.</span><span class="nx">Pretty</span><span class="p">()</span> <span class="c1">// foo=bar</span>
-</span><span class="line"><span class="nx">message</span> <span class="o">:=</span> <span class="nx">libchan</span><span class="p">.</span><span class="nx">Message</span><span class="p">{</span><span class="nx">Data</span><span class="p">:</span> <span class="nx">d</span><span class="p">,</span> <span class="nx">Ret</span><span class="p">:</span> <span class="nx">libchan</span><span class="p">.</span><span class="nx">RetPipe</span><span class="p">))</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>ちなみに、各メソッド(Add,Set,Get,Del)はMessageのポインタをかえさないので、変数を上書きするかメソッドチェインにする必要があります。</p>
-
-<h3 id="section-1">メッセージの送受信</h3>
-
-<p>作成したメッセージををSender経由で送ります。（ここでのSender/Receiverは擬似コードです）</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="nx">sender</span><span class="p">.</span><span class="nx">Send</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">libchan</span><span class="p">.</span><span class="nx">Message</span><span class="p">{</span><span class="nx">Data</span><span class="p">:</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="nx">msg</span><span class="p">)})</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>で、Receiverが受信したメッセージは<code>data.Decode()</code>で<code>map[string][]string</code>に変換できます。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="nx">message</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">receiver</span><span class="p">.</span><span class="nx">Receive</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-</span><span class="line"><span class="nx">decoded</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">Decode</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">message</span><span class="p">.</span><span class="nx">Data</span><span class="p">))</span>
-</span><span class="line"><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%$v\n&quot;</span><span class="p">,</span> <span class="nx">docoded</span><span class="p">)</span> <span class="c1">// map[string][]string{&quot;foo&quot;:[]string{&quot;bar&quot;}}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h3 id="senderreceiver">Sender/Receiver</h3>
-
-<p>実際にメッセージを送受信するのは、Send/Receiverメソッドを持つinterfaceを実装したものを使います。
-定義はだいたいこんなかんじになっています。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">type</span> <span class="nx">Sender</span> <span class="kd">interface</span> <span class="p">{</span>
-</span><span class="line">  <span class="nx">Send</span><span class="p">(</span><span class="nx">msg</span> <span class="o">*</span><span class="nx">Message</span><span class="p">)</span> <span class="p">(</span><span class="nx">Receiver</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
-</span><span class="line"><span class="p">}</span>
-</span><span class="line">
-</span><span class="line"><span class="kd">func</span> <span class="p">(</span><span class="nx">s</span> <span class="o">*</span><span class="nx">Sender</span><span class="p">)</span> <span class="nx">Send</span><span class="p">(</span><span class="nx">msg</span> <span class="o">*</span><span class="nx">libchan</span><span class="p">.</span><span class="nx">Message</span><span class="p">)</span> <span class="p">(</span><span class="nx">libchan</span><span class="p">.</span><span class="nx">Receiver</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line"><span class="kd">type</span> <span class="nx">Receiver</span> <span class="kd">interface</span> <span class="p">{</span>
-</span><span class="line">  <span class="nx">Receiver</span><span class="p">(</span><span class="nx">mode</span> <span class="kt">int</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">Message</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
-</span><span class="line"><span class="p">}</span>
-</span><span class="line">
-</span><span class="line"><span class="kd">func</span> <span class="p">(</span><span class="nx">r</span> <span class="o">*</span><span class="nx">Receiver</span><span class="p">)</span> <span class="nx">Receive</span><span class="p">(</span><span class="nx">mode</span> <span class="kt">int</span><span class="p">)</span> <span class="p">(</span><span class="o">*</span><span class="nx">libchan</span><span class="p">.</span><span class="nx">Message</span><span class="p">,</span> <span class="kt">error</span><span class="p">)</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>主要な実装は以下</p>
-
-<ul>
-  <li><a href="https://github.com/docker/libchan/blob/master/nop.go">nop</a></li>
-  <li><a href="https://github.com/docker/libchan/blob/master/inmem.go">inmem</a></li>
-  <li><a href="https://github.com/docker/libchan/blob/master/unix">unix</a></li>
-  <li><a href="https://github.com/docker/libchan/blob/master/http2">http2</a></li>
-</ul>
-
-<h3 id="inmem-in-memory-go-channel">inmem (In-memory Go channel)</h3>
-
-<p><a href="https://github.com/docker/libchan/blob/master/inmem_test.go">inmem_test.go</a>を参考に実装してみます。</p>
-
-<p>まずは<code>libchan.Pipe()</code>を使って、receiver/senderを取得します。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="nx">receiver</span><span class="p">,</span> <span class="nx">sender</span> <span class="o">:=</span> <span class="nx">libchan</span><span class="p">.</span><span class="nx">Pipe</span><span class="p">()</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>送信側はgorutine内でsender経由でメッセージを送信して、送信側から受信したメッセージに対してさらに返信します。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="k">go</span> <span class="kd">func</span><span class="p">()</span> <span class="p">{</span>
-</span><span class="line">  <span class="nx">recv</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">sender</span><span class="p">.</span><span class="nx">Send</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">libchan</span><span class="p">.</span><span class="nx">Message</span><span class="p">{</span>
-</span><span class="line">    <span class="nx">Data</span><span class="p">:</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&quot;Hello&quot;</span><span class="p">),</span>
-</span><span class="line">    <span class="nx">Ret</span><span class="p">:</span> <span class="nx">libchan</span><span class="p">.</span><span class="nx">RetPipe</span><span class="p">,</span>
-</span><span class="line">  <span class="p">)</span>
-</span><span class="line">  <span class="nx">msg</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">recv</span><span class="p">.</span><span class="nx">Receive</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c1">// mode=0で自動Close()</span>
-</span><span class="line">  <span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">Data</span><span class="p">))</span> <span class="c1">// &quot;World&quot;</span>
-</span><span class="line"><span class="p">}()</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>受信側はreceiver経由でメッセージ受信して、それに対して返信します。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="nx">msg</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">receiver</span><span class="p">.</span><span class="nx">Receive</span><span class="p">(</span><span class="nx">libchan</span><span class="p">.</span><span class="nx">Ret</span><span class="p">)</span>
-</span><span class="line"><span class="nx">fmt</span><span class="p">.</span><span class="nx">Println</span><span class="p">(</span><span class="nb">string</span><span class="p">(</span><span class="nx">msg</span><span class="p">.</span><span class="nx">Data</span><span class="p">))</span> <span class="c1">// &quot;Hello&quot;</span>
-</span><span class="line"><span class="c1">// msg.Retが返信用のchannelとなっている</span>
-</span><span class="line"><span class="nx">_</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">msg</span><span class="p">.</span><span class="nx">Ret</span><span class="p">.</span><span class="nx">Send</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">libchan</span><span class="p">.</span><span class="nx">Message</span><span class="p">{</span><span class="nx">Data</span><span class="p">:</span> <span class="p">[]</span><span class="nb">byte</span><span class="p">(</span><span class="s">&quot;World&quot;</span><span class="p">)})</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h3 id="unixhttp2">unix/http2の実装</h3>
-
-<p>それぞれにテストコードがあるので覗いてみるとだいたいのイメージがつかめます。</p>
-
-<ul>
-  <li><a href="https://github.com/docker/libchan/blob/master/unix/unix_test.go">unix/unix_test.go</a></li>
-  <li><a href="https://github.com/docker/libchan/blob/master/http2/listener_test.go">http2/listener_test.go</a></li>
-</ul>
-
-<h2 id="section-2">まとめ</h2>
-
-<p>libchanにおけるchannelとgoのchannel、名前は同じでも別モノです。
-今のところこれといった用途が思いつかないですが、libswarmから派生したものとすると多様なプロトコルの差異を吸収するためのアダプター実装を手助けしてくれるレイヤーと考えるのがよさそうです。</p>
-
-<p>というか、DockerConでちょくちょく言及されていた「マイクロサービス」という概念のほうが興味あります。</p>
-
-<h2 id="section-3">追記</h2>
-
-<blockquote class="twitter-tweet" lang="ja"><p>そういえば書き忘れてたけど、アプリケーションが成長する過程においてlibchanの統一的なインターフェースによって比較的容易にスケールできるんだよ、ってことをDockerConのキーノートでいってたような。。。あとでみかえそう。</p>&mdash; Masaki YOSHIDA (@ReSTARTR) <a href="https://twitter.com/ReSTARTR/statuses/482775493511376896">2014, 6月 28</a></blockquote>
-<script async="" src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
-
-<p>ということに気づき、再度キーノートを見返してました。libchanについては以下動画の30:45あたりからどうぞ。</p>
-
-<iframe width="640" height="360" src="//www.youtube.com/embed/_DOXBVrlW78" frameborder="0" allowfullscreen=""></iframe>
-</div>
-  
-  
-
-
-
-
-    </article>
   
   
     <article>
@@ -658,6 +407,238 @@ APIが安定してくると他のフレームワーク等への導入なども�
 
     </article>
   
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2014/04/22/tech-podcast-list/">技術系podcastまとめ</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-04-22T23:58:29+09:00" pubdate data-updated="true">2014-04-22 (Tue)</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h3 id="rebuild-podcast">Rebuild Podcast</h3>
+
+<blockquote>
+Rebuild はソフトウェア開発、テクノロジー、ガジェットなどの話題を中心に、ゲストと話すギーク、デベロッパー向けのポッドキャスト番組です。
+</blockquote>
+
+<ul>
+  <li>Hosted by <a href="http://twitter.com/miyagawa">@miyagawa</a></li>
+  <li><a href="http://rebuild.fm/">http://rebuild.fm/</a></li>
+  <li><a href="http://feeds.rebuild.fm/rebuildfm">RSS</a></li>
+  <li><a href="https://itunes.apple.com/jp/podcast/rebuild/id603013428?mt=2">iTunes</a></li>
+</ul>
+
+<h3 id="mosaicfm">mosaic.fm</h3>
+
+<blockquote>
+次世代 Web Podcast Mozaic
+</blockquote>
+
+<ul>
+  <li>Hosted by <a href="https://twitter.com/jxck_">@Jxck_</a></li>
+  <li><a href="http://mozaic.fm/">http://mozaic.fm/</a></li>
+  <li><a href="http://feeds.feedburner.com/mozaicfm">RSS</a></li>
+</ul>
+
+<h3 id="section">だんごゆっけの平和な話</h3>
+
+<blockquote>
+仲良し三十路男二人。Web業界にいるプランナーとエンジニア。それぞれの日常を平和にまとめあげていきます
+</blockquote>
+
+<ul>
+  <li>Hosted by <a href="https://twitter.com/kamadango">@kamadango</a>, <a href="https://twitter.com/yusukebe">@yusukebe</a></li>
+  <li><a href="http://dandy.fm/">http://dandy.fm/</a></li>
+  <li><a href="http://feed.dandy.fm/dandyfm">RSS</a></li>
+  <li><a href="https://itunes.apple.com/jp/podcast/id806076544?mt=2">iTunes</a></li>
+</ul>
+
+<h3 id="section-1">職質テックトーク</h3>
+
+<ul>
+  <li>Hosted by <a href="https://twitter.com/moznion/">@moznion</a></li>
+  <li><a href="http://shock-sheets-tech.tumblr.com/">http://shock-sheets-tech.tumblr.com/</a></li>
+  <li><a href="http://shock-sheets-tech.tumblr.com/rss">RSS</a></li>
+</ul>
+
+<h3 id="backspacefm">backspace.fm</h3>
+
+<blockquote>
+一週間分のテック・ガジェットニュースを配信するポッドキャスト
+</blockquote>
+
+<ul>
+  <li><a href="http://backspace.fm/">http://backspace.fm/</a></li>
+  <li><a href="http://feeds.backspace.fm/backspacefm">RSS</a></li>
+  <li><a href="https://itunes.apple.com/jp/podcast/backspace.fm/id830709730">iTunes</a></li>
+  <li>Hosted by <a href="https://twitter.com/drikin">@drikin</a></li>
+</ul>
+
+<h3 id="code-lunch">CODE LUNCH</h3>
+
+<ul>
+  <li><a href="http://codelunch.fm/">http://codelunch.fm/</a></li>
+  <li><a href="http://codelunch.fm/rss.xml">RSS</a></li>
+  <li>Hosted by <a href="https://twitter.com/h13i32maru">@h13i32maru</a>, <a href="https://twitter.com/iizukak">@iizukak</a></li>
+</ul>
+
+<h3 id="podcast">ジュンク堂書店Podcast</h3>
+
+<blockquote>
+ジュンク堂書店の店頭で行われているトークセッションやイベントなどを配信するポッドキャスト（ベータ版）です。
+</blockquote>
+
+<ul>
+  <li><a href="http://junkudo.seesaa.net/index20.rdf">RSS</a></li>
+  <li><a href="https://itunes.apple.com/jp/podcast/junku-tang-shu-dianpodcast/id398125301">iTunes</a></li>
+</ul>
+
+<h2 id="section-2">海外</h2>
+
+<p>海外では<a href="http://5by5.tv/">5by5</a>がポータルっぽい。</p>
+
+<h3 id="ruby-on-rails-podcast">Ruby on Rails Podcast</h3>
+
+<ul>
+  <li><a href="http://5by5.tv/rubyonrails/147">http://5by5.tv/rubyonrails/147</a></li>
+  <li><a href="http://feeds.5by5.tv/rubyonrails">RSS</a></li>
+  <li><a href="https://itunes.apple.com/us/podcast/ruby-on-rails-podcast/id840890158?mt=2&amp;uo=8&amp;at=11laDR">iTunes</a></li>
+  <li>Hosted by <a href="http://twitter.com/barelyknown">@barelyknown</a></li>
+</ul>
+
+<h3 id="the-changelog">The Changelog</h3>
+
+<blockquote>
+The Changelog covers the intersection of software development and open source. Open source moves fast. Keep up!
+</blockquote>
+
+<ul>
+  <li><a href="http://5by5.tv/changelog/">http://5by5.tv/changelog/</a></li>
+  <li><a href="http://feeds.5by5.tv/changelog">RSS</a></li>
+  <li><a href="https://itunes.apple.com/us/podcast/the-changelog/id341623264?uo=8&amp;at=11laDR">iTunes</a></li>
+</ul>
+
+<h3 id="aws-podcast---listen-and-lean-about-aws">AWS Podcast - Listen and Lean About AWS</h3>
+
+<ul>
+  <li><a href="http://aws.amazon.com/jp/apac/awspodcast/">http://aws.amazon.com/jp/apac/awspodcast/</a></li>
+  <li><a href="http://d1i0y6b5oi739x.cloudfront.net/feed.xml">RSS</a></li>
+  <li><a href="http://itunes.apple.com/sg/podcast/aws-podcast/id526624928">iTunes</a></li>
+</ul>
+
+<h3 id="in-beta">In Beta</h3>
+
+<blockquote>
+In Beta is a talk show about tech culture, making open source software, and how mobile, social, and web apps are changing the world.
+</blockquote>
+
+<ul>
+  <li><a href="http://feeds.5by5.tv/inbeta">http://feeds.5by5.tv/inbeta</a></li>
+  <li><a href="http://feeds.5by5.tv/inbeta">RSS</a></li>
+</ul>
+
+<h3 id="floss">FLOSS</h3>
+
+<blockquote>
+We&#8217;re not talking dentistry here; FLOSS all about Free Libre Open Source Software.
+</blockquote>
+
+<ul>
+  <li><a href="http://twit.tv/floss">http://twit.tv/floss</a></li>
+  <li><a href="http://feeds.twit.tv/floss.xml">RSS</a></li>
+</ul>
+
+<h3 id="tuxradar">TuxRadar</h3>
+
+<blockquote>
+a new TuxRadar podcast all about Linux and free software will be posted here every three weeks for free download
+</blockquote>
+
+<ul>
+  <li><a href="http://www.tuxradar.com/podcast">http://www.tuxradar.com/podcast</a></li>
+  <li><a href="http://www.tuxradar.com/rss">RSS</a></li>
+</ul>
+
+<h3 id="the-news">The News</h3>
+
+<blockquote>
+A daily update on the latest in tech, Apple, gaming, web, and geek culture. It&#8217;s the only news that matters.
+</blockquote>
+
+<ul>
+  <li><a href="http://5by5.tv/news">http://5by5.tv/news</a></li>
+  <li><a href="http://feeds.5by5.tv/news">RSS</a></li>
+  <li><a href="https://itunes.apple.com/us/podcast/the-news/id602266713?mt=2&amp;uo=8&amp;at=11laDR">iTunes</a></li>
+  <li>Hosted by <a href="http://twitter.com/imyke">@imyke</a></li>
+</ul>
+
+<h3 id="sourcetrunk">Sourcetrunk</h3>
+
+<p>デスクトップアプリ紹介中心</p>
+
+<ul>
+  <li><a href="http://www.sourcetrunk.com/">http://www.sourcetrunk.com/</a></li>
+  <li><a href="http://feeds.feedburner.com/sourcetrunk">RSS</a></li>
+  <li><a href="http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewPodcast?id=193827468">iTunes</a></li>
+</ul>
+
+<h3 id="sofrware-engineering-radio">Sofrware Engineering Radio</h3>
+
+<ul>
+  <li><a href="http://www.se-radio.net/">http://www.se-radio.net/</a></li>
+  <li><a href="http://www.se-radio.net/">RSS</a></li>
+</ul>
+
+<h3 id="the-engineering-commons-podcast">The Engineering Commons Podcast</h3>
+
+<blockquote>
+Practical insights for the engineering crowd
+</blockquote>
+
+<ul>
+  <li><a href="http://theengineeringcommons.com/">http://theengineeringcommons.com/</a></li>
+  <li><a href="http://feeds.feedburner.com/TheEngineeringCommonsPodcast">RSS</a></li>
+</ul>
+
+<h2 id="section-3">参考リンク</h2>
+
+<ul>
+  <li><a href="http://weblog.bulknews.net/post/58665793844/tech-podcast-5">オススメ Tech Podcast 5選 - Tatsuhiko Miyagawa’s blog</a></li>
+  <li><a href="http://www.infoq.com/jp/news/2011/09/archcasts">ソフトウェアアーキテクチャ関連ポッドキャストの薦め</a></li>
+  <li><a href="http://overflow-memo.blogspot.jp/2014/01/podcast.html">_overflow: 技術系Podcast・動画ニュースメモ</a></li>
+  <li><a href="http://tunein.com/radio/Technology-g2738/">テクノロジーラジオ - Listen Online</a></li>
+  <li><a href="http://blackshadow.seesaa.net/article/144207109.html">幻影随想: 科学なポッドキャストをまとめて紹介してみる</a></li>
+  <li><a href="https://player.fm/featured/open-source">Best Open Source Podcasts (April, 2014)</a></li>
+</ul>
+</div>
+  
+  
+
+
+
+
+    </article>
+  
   <div class="pagination">
     
       <a class="prev" href="/page/3/">&larr; Older</a>
@@ -713,10 +694,6 @@ APIが安定してくると他のフレームワーク等への導入なども�
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/2014/08/17/microservices-architecture/">InfoQ eMAG: Microservicesを少し読んだまとめと感想</a>
-      </li>
-    
-      <li class="post">
         <a href="/2014/08/13/golang-json-marshal-unmarshal/">Goのjson.Marshal/Unmarshalの仕様を整理してみる</a>
       </li>
     
@@ -732,12 +709,16 @@ APIが安定してくると他のフレームワーク等への導入なども�
         <a href="/2014/04/22/tech-podcast-list/">技術系podcastまとめ</a>
       </li>
     
+      <li class="post">
+        <a href="/2014/04/21/golang-memcache-stats-client/">Goでmemcachedのstatsを取得する</a>
+      </li>
+    
   </ul>
 </section>
 <section>
   <h1>Categories</h1>
   <ul id="categories">
-    <li><a href='/category/architecture/'>architecture</a></li><li><a href='/category/docker/'>docker</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/go/'>go</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
+    <li><a href='/category/docker/'>docker</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/go/'>go</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
   </ul>
 </section>
 <section>
