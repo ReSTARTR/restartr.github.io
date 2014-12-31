@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: book | I Will Survive]]></title>
+  <link href="http://blog.restartr.com/category/book/atom.xml" rel="self"/>
+  <link href="http://blog.restartr.com/"/>
+  <updated>2014-12-31T20:58:45+09:00</updated>
+  <id>http://blog.restartr.com/</id>
+  <author>
+    <name><![CDATA[ReSTARTR]]></name>
+    <email><![CDATA[yoshida.masaki+restartr@gmail.com]]></email>
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[2014年に購入した技術書]]></title>
+    <link href="http://blog.restartr.com/2014/12/31/books-2014/"/>
+    <updated>2014-12-31T20:22:02+09:00</updated>
+    <id>http://blog.restartr.com/2014/12/31/books-2014</id>
+    <content type="html"><![CDATA[<p>投稿数を稼ぐべく、とりあえず今年購入した（であろう）本をリストアップしつつ、今年の振り返りでも。</p>
+
+<p>購入しただけで読めてないものや、途中のものもありますが、技術書なんてリファレンスなので全部読む必要もないわけで(言い訳)。
+一度手放した本とか角川祭りとかでKindleストアでの購入が増えた年でした。Kindle3からPaperwhiteにアップデートしたのも大きい。
+仕事上フロントエンド以外の広範囲を取り扱う機会が増えたため、読んだ本もわりと多岐にわたってます。</p>
+
+<p>世の中的には、Immutable Infrastractureが一段落して、Docker, Golang, Microservicesなんかがバズワード化してました。</p>
+
+<p>とくにGolangは日本語書籍は増えてないものの、Go製プロダクトが大量発生している状況は当分継続しそう。なので、いろんなRuby/Python/Perl/PHPなどLL製プロダクトのリプレースが進んでいくのでは。新しい流行としてはGolangにつづいてRust, Elixrあたりがじわじわ来るんじゃないでしょうかね。</p>
+
+<p>インフラ周りでいうと、コンテナ化、マルチクラウド、モニタリングまわりが大きく変化しそうです。</p>
+
+<p>では、購入した書籍一覧です。購入日時はよくわからないので購入順には並んでません。(すべてアフィ無しリンクです)</p>
+
+<h3 id="section">プログラミング</h3>
+
+<ul>
+  <li><a href="http://www.amazon.co.jp/gp/product/B0096BYG7C">Practical Object-Oriented Design in Ruby</a></li>
+  <li><a href="http://www.amazon.co.jp/gp/product/B00HUEG8LE">Build Awesome Command-Line Applications in Ruby 2</a></li>
+  <li><a href="http://www.manning.com/ketelsen/">Go in Action</a></li>
+  <li><a href="http://tatsu-zine.com/books/naruhounix">なるほどUnixプロセス ― Rubyで学ぶUnixの基礎</a></li>
+  <li>(未読) <a href="http://www.jstorimer.com/products/working-with-tcp-sockets">Working With TCP Sockets</a></li>
+  <li>(未読) <a href="http://www.amazon.co.jp/dp/4756136494">プログラミング作法</a></li>
+</ul>
+
+<h3 id="section-1">アーキテクチャ</h3>
+
+<ul>
+  <li><a href="http://www.amazon.co.jp/gp/product/B00GRKD6XU">エリック・エヴァンスのドメイン駆動設計</a></li>
+  <li><a href="http://shop.oreilly.com/product/0636920033158.do">Building Microservices</a></li>
+</ul>
+
+<h3 id="section-2">ミドルウェア</h3>
+
+<ul>
+  <li><a href="http://www.amazon.co.jp/gp/product/B00HSC64P8">Redis入門　インメモリKVSによる高速データ管理</a></li>
+  <li><a href="http://www.manning.com/grainger/">Solr in Action</a></li>
+  <li><a href="http://shop.oreilly.com/product/0636920026136.do">ZeroMQ</a></li>
+  <li><a href="http://www.amazon.co.jp/gp/product/B00J4KDYZU">高速スケーラブル検索エンジン　ElasticSearch Server</a></li>
+</ul>
+
+<h3 id="section-3">インフラ</h3>
+
+<ul>
+  <li><a href="http://www.amazon.co.jp/dp/4873116767/">ハイパフォーマンス ブラウザネットワーキング</a></li>
+  <li><a href="http://www.amazon.co.jp/gp/product/B00FLYU9T2">Systems Performance: Enterprise and the Cloud </a></li>
+  <li><a href="http://www.amazon.co.jp/dp/477416500X">Chef実践入門 ~コードによるインフラ構成の自動化 </a></li>
+  <li><a href="http://www.amazon.co.jp/gp/product/B00LRROTI4">The Docker Book: Containerization is the new virtualization </a></li>
+  <li><a href="http://www.amazon.co.jp/dp/B00JWM4W2E">Docker入門 Immutable Infrastructureを実現する</a></li>
+</ul>
+
+<h3 id="section-4">読み物</h3>
+
+<ul>
+  <li><a href="http://www.amazon.co.jp/gp/product/B00OJVMK5O">How Google Works </a></li>
+  <li><a href="http://www.amazon.co.jp/dp/4274068471">Coders at Work プログラミングの技をめぐる探求</a></li>
+  <li><a href="http://www.amazon.co.jp/dp/4873114713">言語設計者たちが考えること</a></li>
+  <li>(未読) <a href="http://www.amazon.co.jp/gp/product/B00MIFE3BC">アカマイ　知られざるインターネットの巨人</a></li>
+  <li>(未読) <a href="http://www.amazon.co.jp/dp/4274064069">UNIXという考え方―その設計思想と哲学</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

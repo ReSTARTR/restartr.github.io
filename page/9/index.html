@@ -11,8 +11,7 @@
   <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="今月頭にブログ書きましたが、EventStatsという勉強会の参加者の推移が見れるサービスを公開しました。 EventStats - イベントの統計情報が見れます まぁ自分が欲しかっただけなんですけど、使ってみて頂ければ幸いです。
-今回はそのサービスの構成とかについて書いてみます。 アジェンダ &hellip;">
+  <meta name="description" content="どうも。もうすぐ入社３ヶ月が経って試用期間が終わろうとしている状況な僕です。 すっかり停滞気味のブログですが保守も兼ねて投稿を。 はてダからはてブロTumblrへ とあるブログをはてなダイアリーで書いていたのですが、Tumblrへブログのデータを移行したいという要求が出てきました。 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -117,6 +116,134 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2012/03/25/python-script-for-moving-from-movabletype-to-tumblr/">はてなダイアリーからTumblrへデータ移行するpythonスクリプト</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2012-03-25T02:30:19+09:00" pubdate data-updated="true">2012-03-25 (Sun)</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>どうも。もうすぐ入社３ヶ月が経って試用期間が終わろうとしている状況な僕です。</p>
+
+<p>すっかり停滞気味のブログですが保守も兼ねて投稿を。</p>
+
+<h3 id="deldeltumblr">はてダから<del>はてブロ</del>Tumblrへ</h3>
+
+<p>とあるブログをはてなダイアリーで書いていたのですが、Tumblrへブログのデータを移行したいという要求が出てきました。ということでpythonで移行スクリプトを書いてみました。</p>
+
+<h3 id="section">ソースコード</h3>
+
+<p>例によってGitHubにて公開しておきます。</p>
+
+<ul>
+  <li><a href="https://github.com/ReSTARTR/mt2tumblr">https://github.com/ReSTARTR/mt2tumblr</a></li>
+</ul>
+
+<p>python2.6以外はテストしてません( ｰ`дｰ´)ｷﾘｯ</p>
+
+<h3 id="section-1">使い方</h3>
+
+<p>oauth2に依存しているので、実行前にインストールしておいてください。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="n">pip</span> <span class="n">install</span> <span class="n">oauth2</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>使い方はREADMEどおりです。いつもどおりのテキトー英文です。</p>
+
+<ol>
+  <li>はてなダイアリーの管理画面から”管理 &gt; インポート/エクスポート”でMovableType形式のファイルをダウンロード</li>
+  <li>ダウンロードしたファイルをresourcesディレクトリに配置</li>
+  <li>tumblrにアプリケーションを登録( <a href="http://www.tumblr.com/oauth/apps">http://www.tumblr.com/oauth/apps</a> )</li>
+  <li>consumer_keyとconsumer_secretを入手</li>
+  <li>config.pyを編集する</li>
+</ol>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="n">CONSUMER_KEY</span> <span class="o">=</span> <span class="s">&#39;&lt;consumer_key&gt;&#39;</span>
+</span><span class="line"><span class="n">CONSUMER_SECRET</span> <span class="o">=</span> <span class="s">&#39;&lt;consumer_secret&gt;&#39;</span>
+</span><span class="line"><span class="n">BASE_HOSTNAME</span> <span class="o">=</span> <span class="s">&#39;&lt;your_tumblr_url&gt;&#39;</span> <span class="c"># &#39;&lt;your-id&gt;.tumblr.com&#39;のように&quot;http://&quot;は抜きで。</span>
+</span><span class="line"><span class="n">PARSE_FILE_PATH</span> <span class="o">=</span> <span class="s">&#39;path/to/movable_type_data.txt&#39;</span>
+</span><span class="line"><span class="n">POST_STATE</span> <span class="o">=</span> <span class="s">&#39;publish&#39;</span> <span class="c"># 動作テストしたいなら&#39;draft&#39;にすると良いです。</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>実行する</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">python run.py
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<ul>
+  <li>まずはファイルの内容を読み込んで、日時、カテゴリ、タイトルが表示されるので問題ないか確認</li>
+</ul>
+
+<p>OAuth認証する。</p>
+
+<ul>
+  <li>下記のようにURLが表示されるのでブラウザでアクセス。</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="nb">open</span> <span class="ow">in</span> <span class="n">browser</span><span class="p">:</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">tumblr</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">oauth</span><span class="o">/</span><span class="n">authorize</span><span class="err">?</span><span class="n">oauth_token</span><span class="o">=</span><span class="p">{</span><span class="n">OAUTH_TOKEN</span><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="n">oauth_verifier</span><span class="p">:</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<ul>
+  <li>リダイレクト先のURLに含まれる”oauth_verifier”の値をコピーしてターミナルにペースト。
+    <ul>
+      <li>リダイレクト先は404になりますが、oauth_verifierが欲しいだけなのでそれで問題なしです。</li>
+    </ul>
+  </li>
+</ul>
+
+<p>これで、Tumblerへのインポートが始まります。</p>
+
+<p>(ﾟдﾟ)ｳﾏｰ</p>
+
+<h3 id="section-2">注意事項</h3>
+
+<ul>
+  <li>APIの呼び出し回数の制限に引っかかるかもしれませんがそのへんのエラー制御はできていません。</li>
+  <li>MovableType形式のデータをTumblrに移行するスクリプトとしてつくっていますが、実際にははてなダイアリーからMovableType形式でエクスポートしたデータでしかテストしていません。それ以外で動くかは保証できません…</li>
+  <li>投稿時間はJSTからGMTに変換してます。不要なら適当に編集してください。</li>
+</ul>
+
+</div>
+  
+  
+
+
+
+
+    </article>
   
   
     <article>
@@ -370,83 +497,6 @@ atndとの違い
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2011/12/10/eventstats/">イベントの参加人数の遷移が見れるサービス『EventStats』を作りました。 #atnd #zusaar #partake</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-12-10T18:58:51+09:00" pubdate data-updated="true">2011-12-10 (Sat)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h3>イベント管理サービスについて</h3>
-<p>勉強会などでよく利用されるのが、イベント管理サービス。
-
-ATNDやZusaar,Partakeなど、様々なサービスがあり、現在も新しいものが生まれている状況。</p>
-<p>今や勉強会を開催する上で必須のサービスとなっていますよね。</p>
-<p>ですが、主催者や参加者にとってそれらのサービスで閲覧できるのは『今どのような状況か』ということだけです。それまでどのように参加者が増えてきたのか、その後も参加者が増えそうか、ということまでは見ることができません。</p>
-<p>「今」ではなく「過去」を知りたい。(by @ReSTARTR)</p>
-<p>ということで作りました。</p>
-<h3>イベントごとに登録数、補欠数、枠数を記録するサービス「EventStats｣</h3>
-<ul>
-<li><a href="http://eventstats.restartr.com">EventStats - イベントの統計情報が見れます</a></li>
-</ul>
-<p>簡単にいうと<a href="http://klout.com">Klout</a>の勉強会バージョン（のとっかかり）です。
-
-このサービスを使えば、登録数と枠数の推移を時系列のチャートで確認することができます。
-
-5分おきに各イベント管理サービスの情報を取得して蓄積し、情報を表示しているだけのシンプルなサービスです。
-
-<em>(※ SVGベースのチャートのため、androidでは2.4/3.0以降でないと見れません)</em></p>
-<p>あと、2011年11月頭くらいからデータ蓄積開始したのでそれ以前のイベントの履歴は見れない場合があるのと、Partakeの枠数が0人なのも蓄積ミスです。</p>
-<h3>使い方</h3>
-<ol>
-<li><a href="javascript:(function(){s=window.location.href.split('/');type='';if(s[2]=='atnd.org'&amp;&amp;s[3]=='events')type='atnd';else if(s[2]=='www.zusaar.com'&amp;&amp;s[3]=='event')type='zusaar';else if(s[2]=='partake.in'&amp;&amp;s[3]=='events')type='partake';else return false; window.location.href=['http://eventstats.restartr.com/events/'+type,s[4]].join('/');})();">ブックマークレット</a>をブラウザに登録する</li>
-<li>履歴を知りたいイベント管理サービスの詳細ページに移動する</li>
-<li>ブックマークレットを実行する</li>
-</ol>
-<h3>技術的なこと</h3>
-<p>とりあえずHeroku上でScalaのUnfilteredを使って動かしています。
-
-技術的な話しは追々。</p>
-<h3>今後どう料理するか</h3>
-<p>実はMA7の締切りぎりぎりに公開してました。（証拠↓）</p>
-<p><a href="https://ma7.mashupaward.jp/works/478?locale=ja">https://ma7.mashupaward.jp/works/478?locale=ja</a></p>
-<p>が、リソースが足りてないさくらのVPSで動かしていたので、公開したことはとくにアナウンスとかしてませんでした。（MA7には当然のごとく選考漏れでしたが。）で、それからHerokuへの移行を進めつつ機能の修正などをやってたという訳です。</p>
-<p>今後は蓄積したデータをもとに、勉強会運営や勉強会への参加の助けとなる数値を加えていければいいなと。
-
-実はテストとか負荷試験とかあんまりできてないのであまりイジメないでください^^;</p>
-<ul>
-<li><a href="http://eventstats.restartr.com">EventStats - イベントの統計情報が見れます</a></li>
-</ul>
-</div>
-  
-  
-
-
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/page/10/">&larr; Older</a>
@@ -502,6 +552,10 @@ ATNDやZusaar,Partakeなど、様々なサービスがあり、現在も新し�
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2014/12/31/books-2014/">2014年に購入した技術書</a>
+      </li>
+    
+      <li class="post">
         <a href="/2014/08/20/microservices-architecture/">InfoQ eMAG: Microservicesを少し読んだまとめと感想</a>
       </li>
     
@@ -517,16 +571,12 @@ ATNDやZusaar,Partakeなど、様々なサービスがあり、現在も新し�
         <a href="/2014/05/11/build-rpm-on-docker-container/">Dockerを使って任意のrubyバージョンのrpmを作成する</a>
       </li>
     
-      <li class="post">
-        <a href="/2014/04/22/tech-podcast-list/">技術系podcastまとめ</a>
-      </li>
-    
   </ul>
 </section>
 <section>
   <h1>Categories</h1>
   <ul id="categories">
-    <li><a href='/category/architecture/'>architecture</a></li><li><a href='/category/docker/'>docker</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/go/'>go</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
+    <li><a href='/category/architecture/'>architecture</a></li><li><a href='/category/book/'>book</a></li><li><a href='/category/docker/'>docker</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/go/'>go</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
   </ul>
 </section>
 <section>

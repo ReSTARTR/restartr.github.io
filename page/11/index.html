@@ -11,8 +11,7 @@
   <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="2011.08.31 kmizushimaさんから頂いたコメントを元に、下記の記述を修正＆追記しました。 Twitterのutil-evalの一時ファイル生成について AkkaのConfigファイルのパース手法について
-&lt;/em&gt; TwitterのOAuthの鍵やDB接続情報など、 &hellip;">
+  <meta name="description" content="第二回 #Playframework 勉強会 in Tokyo #play_ja 第一回は大阪開催だったのとそもそも開催を知らなくて参加できませんでしたが、第二回は有難いことに休日に東京で開催されたので行ってきました。運営の皆様、参加者の皆様、懇親会でお話させて頂いた皆様、 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -117,6 +116,88 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2011/10/10/play-framework-study-in-tokyo/">第二回 #Playframework 勉強会 in Tokyo #play_ja に行ってきた</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-10-10T15:59:13+09:00" pubdate data-updated="true">2011-10-10 (Mon)</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><ul>
+  <li><a href="http://atnd.org/events/19107">第二回 #Playframework 勉強会 in Tokyo #play_ja</a></li>
+</ul>
+
+<p><a href="http://atnd.org/events/17724">第一回</a>は大阪開催だったのとそもそも開催を知らなくて参加できませんでしたが、第二回は有難いことに休日に東京で開催されたので行ってきました。運営の皆様、参加者の皆様、懇親会でお話させて頂いた皆様、どうも有難うございました。</p>
+
+<h3 id="section">勉強会のまとめ記事</h3>
+
+<p>下記ブログにありますのでそちらをどうぞ。</p>
+
+<ul>
+  <li><a href="http://d.hatena.ne.jp/ikeike443/20111009/p1">第二回 Playframework 勉強会 in Tokyo やりました #play_ja - 複雑系スパゲティソース(はてな版)</a></li>
+  <li>まとめ記事へのリンクが最後にあります。</li>
+  <li><a href="http://ponta027.blogspot.com/2011/10/playframework.html">Playframework勉強会#2まとめ（スライド）</a></li>
+  <li>発表資料をまとめてあります。</li>
+</ul>
+
+<p>なのでここでは、全体的な話しではなく関心の強いところに関してのみ書こうと思います。</p>
+
+<p>ただの感想文です。</p>
+
+<h3 id="play">Play!の今とこれから</h3>
+
+<p>Play!がどのような分野で使われ、どのように変化していくのかが今の大きな関心事であり、今回の参加理由でした。</p>
+
+<p>今回の発表を聞いていると、Java界隈の救世主（候補）的な位置づけとして期待されているという段階なのでしょう。</p>
+
+<p>主催者の@<a href="https://twitter.com/ikeike443">ikeike443</a>さんの会社のシャノンさんでは実際業務でPlay!を使われていたり、@<a href="https://twitter.com/genki_">genki_</a>さんは今まさに<a href="http://harp.ruru.ne.jp/sol/play/play2.pdf">SI案件で業務アプリケーションにPlay!を導入しようとしている</a>ところだそうで。</p>
+
+<h3 id="play2x">Play!2.x系による変化</h3>
+
+<p>ただ、Play!が今後2.x系でScalaベースでの開発に切り替わるので、それによって今の勢いがどう変わっていくのでしょうか。JavaベースのPlay!1.xにScalaユーザーを引き込むのと、ScalaベースのPlay!2.xにJavaユーザーを引きこむのでは、大きく状況が変わってくると思います。自分はScalaユーザーなのでこの動きは非常に嬉しいですが、もしかしたら勢いが減速してしまうのではとちょっと不安になったり。</p>
+
+<p>（プラグインのサポートがどちらか一方の言語に限定されていて、結局導入を見送るなんてこともあると思います。）</p>
+
+<h3 id="play-1">Play!の外部環境</h3>
+
+<p>とはいえ、外部環境としてはPlay!のサポートPassSがちょくちょく出てきているので当分は勢いが衰えることはないと思います。単体でサーバーとして動作させることが可能なだけでなく、war化も可能なのでTomcatやJettyに載っけることができる環境なら動かせてしまいます。とくに@<a href="http://twitter.com/hagikuratakeshi">hagikuratakeshi</a>さんや@<a href="https://twitter.com/mitsuhiro">mitsuhiro</a>さんが取り上げていたようにHerokuのPlay!サポートによって趣味プログラミングとして手を出しやすくなってますし。</p>
+
+<h3 id="scalaplay">ScalaのフレームワークとしてのPlay!</h3>
+
+<p>Scala界隈ではUnfilteredやBlueEyesのような積極的にScalaの機能を利用したFWが注目されています。（少なくとも私のTwitterのTL上では…)ただし、日本語ベースのScalaのフレームワークのリファレンスや関連記事はまだまだ少ないのが現状です。</p>
+
+<p>Play!の場合は翻訳も積極的に行われていますし、勉強会に100人近く参加するような日本のPlay!コミュニティの存在は正直無視できないと思います。今後のPlay!界隈の動向に注目です。</p>
+
+</div>
+  
+  
+
+
+
+
+    </article>
   
   
     <article>
@@ -369,191 +450,6 @@
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2011/08/16/3-things-that-i-was-in-trouble-using-squeryl/">ScalaのORMapperのSquerylを試してみてハマった３つのこと</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-08-16T08:00:15+09:00" pubdate data-updated="true">2011-08-16 (Tue)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>ScalaのORMとしてSquerylってのがあります。</p>
-
-<ul>
-<li><a href="http://squeryl.org/index.html">Squeryl - A Scala ORM for SQL Databases</a></li>
-</ul>
-<p>使い方は上記リンク先を見ればだいたいわかります。</p>
-
-<p>あと、<a href="http://twitter.com/jugyo">@jugyo</a>さんのブログに導入あたりはまとまっていますし、つまづいたらGoogleGroupで検索すれば何か見つかるかもしれません。</p>
-
-<ul>
-<li><a href="http://blog.twiwt.org/e/f34763"> Twiwt:Blog / jugyo : squeryl を試す </a></li>
-<li><a href="http://blog.twiwt.org/e/7e40ce">Twiwt:Blog / jugyo : Squeryl の使い方 - セットアップ, モデルの定義, テーブル作成</a></li>
-<li><a href="https://groups.google.com/group/squeryl/about"> Squeryl | Google Groups </a></li>
-</ul>
-<p>さて、今回はTwitterっぽいものを想定して機能を試してみたのですが、３つほどハマったところを記しておきます。</p>
-
-<p>環境はScala2.9.0.1、Sbt0.7.7、MySQL5.5、Squeryl0.9.4です。</p>
-
-<p>ソースはgistに登録。それを本文末尾にも掲載しておきました。</p>
-
-<h3>１．プライマリーキーの指定での嵌りどころ</h3>
-<p>1つのカラムがPKとなるテーブルスキーマの場合、org.squeryl.KeyedEntity[T]を継承して使います。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">class</span> <span class="nc">Users</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">text</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">KeyedEntity</span><span class="o">[</span><span class="kt">Long</span><span class="o">]</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>KeyedEntityにはidというフィールドが用意されていて、継承時に型を指定することで、PKの型に適用させることができます。今回の場合であればLong型のPK「id」ということになります。</p>
-
-<p>ただし、この場合、PKはautoincrementedになってしまいます。</p>
-
-<p>コード的には下記のようにKeyedEntity[T]を使わずSchema継承時に定義するのと同等になるわけです。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">class</span> <span class="nc">Users</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">text</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span>
-</span><span class="line">
-</span><span class="line"><span class="k">class</span> <span class="nc">Db</span> <span class="k">extends</span> <span class="nc">Schema</span> <span class="o">{</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">val</span> <span class="n">users</span> <span class="k">=</span> <span class="n">table</span><span class="o">[</span><span class="kt">User</span><span class="o">](</span><span class="s">&quot;users&quot;</span><span class="o">)</span>
-</span><span class="line">
-</span><span class="line">  <span class="n">on</span><span class="o">(</span><span class="n">users</span><span class="o">)(</span><span class="n">u</span> <span class="k">=&gt;</span> <span class="n">declare</span><span class="o">(</span>
-</span><span class="line">
-</span><span class="line">    <span class="n">u</span><span class="o">.</span><span class="n">id</span> <span class="n">is</span> <span class="o">(</span><span class="n">primaryKey</span><span class="o">,</span> <span class="n">autoincremented</span><span class="o">))</span>
-</span><span class="line">
-</span><span class="line"><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>これは結構困ります。そんな場合はSchemaを継承するときに定義を上書きすればOK。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">class</span> <span class="nc">Users</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">text</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">KeyedEntity</span><span class="o">[</span><span class="kt">Long</span><span class="o">]</span>
-</span><span class="line">
-</span><span class="line"><span class="k">class</span> <span class="nc">Db</span> <span class="k">extends</span> <span class="nc">Schema</span> <span class="o">{</span>
-</span><span class="line">
-</span><span class="line">  <span class="k">val</span> <span class="n">users</span> <span class="k">=</span> <span class="n">table</span><span class="o">[</span><span class="kt">User</span><span class="o">](</span><span class="s">&quot;users&quot;</span><span class="o">)</span>
-</span><span class="line">
-</span><span class="line">  <span class="n">on</span><span class="o">(</span><span class="n">users</span><span class="o">)(</span><span class="n">u</span> <span class="k">=&gt;</span> <span class="n">declare</span><span class="o">(</span>
-</span><span class="line">
-</span><span class="line">    <span class="n">u</span><span class="o">.</span><span class="n">id</span> <span class="n">is</span> <span class="o">(</span><span class="n">primaryKey</span><span class="o">))</span>
-</span><span class="line">
-</span><span class="line"><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>これはSquerylのGoogleGroupに書いてました。</p>
-
-<ul>
-<li><a href="https://groups.google.com/forum/#!topic/squeryl/BTrKBwikMqs">how to cancel &#8220;autoincremented&#8221; from KeyedEntity[T]</a></li>
-</ul>
-<h3>２．DDLのカラムの順番の嵌りどころ</h3>
-<p>Db.printDdlを実行した時にカラムの順番が予測できません。</p>
-
-<p>PKが最初にくるのかと思えばそうでもないみたい。ここは細かく追ってないですが、これもGoogleGroupに答えがありました。</p>
-
-<ul>
-<li><a href="https://groups.google.com/forum/#!topic/squeryl/ZwiDf5Q-IUI">CREATE TABLE columns in order of constructor arguments</a></li>
-</ul>
-<p>答えとしては、org.squeryl.internals.DatabaseAdapter:: writeCreateTableあたりをorverrideしてなんとかしてくれとのこと。</p>
-
-<p><a href="https://github.com/max-l/Squeryl/blob/master/src/main/scala/org/squeryl/internals/DatabaseAdapter.scala#L255">https://github.com/max-l/Squeryl/blob/master/src/main/scala/org/squeryl/internals/DatabaseAdapter.scala#L255</a></p>
-
-<p>なんか良い方法はないの…</p>
-
-<p>とりあえず、printDdlした結果をコピーして、順番だけ書き換えて、手動で直接DBにクエリ発行すればなんとかなるでしょう。</p>
-
-<h3>３．外部キーの利用でのはまりどころ</h3>
-<p>２つのテーブルにRelationを設定してからDb.createした際、外部キーが設定されない問題がありました。</p>
-
-<p>MySQLは5.5を使っているので外部キーに対応していない訳でもないです。</p>
-
-<p>問題はAdapterの選定にありました。</p>
-
-<p>org.squeryl.adapter.MySQLAdapter</p>
-
-<p>をつかっていたのですが、</p>
-
-<p>org.squeryl.adapter.MySQLInnoDBAdapter</p>
-
-<p>を使えばOKでした。</p>
-
-<p>根本の原因は、org.squeryl.adapter.MySQLAdapterに</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">override</span> <span class="k">def</span> <span class="n">supportsForeignKeyConstraints</span> <span class="k">=</span> <span class="kc">false</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>と定義してあり、一方のorg.squeryl.adapter.MySQLInnoDBAdapterには</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">override</span> <span class="k">def</span> <span class="n">supportsForeignKeyConstraints</span> <span class="k">=</span> <span class="kc">true</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>と定義してあります。</p>
-
-<p>この値がtrueになっていないとForeignKeyの制約がDDLに含まれなくなってしまうので注意です。</p>
-
-<p><a href="https://github.com/max-l/Squeryl/blob/master/src/main/scala/org/squeryl/adapters/MySQLAdapter.scala#L75">Docコメントにも書いてある</a>ので注意です。</p>
-
-<p>以上、Squerylを弄ってみて嵌ったことをまとめてみました。</p>
-
-<h3>Squerylの使用感</h3>
-<p>ちょっと前にTwitterのStreamAPIのデータをMySQLに格納するためにSquerylを使ったのと今回少し弄ってみただけなのでまだまだ知らないことだらけです。他にも機能的はたくさん用意されていると思いますし、APIも割となじみやすいので複雑すぎないテーブル定義の場合には積極的にSquerylを使っていこうと思います。</p>
-
-<p><em>※ドキュメントや本体のソースを追いかけたりしながら使い方を学ぶのは非常に楽しいです:)</em></p>
-
-<p>で、ソースは以下です。</p>
-
-<script src="https://gist.github.com/1146854.js"> </script>
-
-</div>
-  
-  
-
-
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/page/12/">&larr; Older</a>
@@ -609,6 +505,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2014/12/31/books-2014/">2014年に購入した技術書</a>
+      </li>
+    
+      <li class="post">
         <a href="/2014/08/20/microservices-architecture/">InfoQ eMAG: Microservicesを少し読んだまとめと感想</a>
       </li>
     
@@ -624,16 +524,12 @@
         <a href="/2014/05/11/build-rpm-on-docker-container/">Dockerを使って任意のrubyバージョンのrpmを作成する</a>
       </li>
     
-      <li class="post">
-        <a href="/2014/04/22/tech-podcast-list/">技術系podcastまとめ</a>
-      </li>
-    
   </ul>
 </section>
 <section>
   <h1>Categories</h1>
   <ul id="categories">
-    <li><a href='/category/architecture/'>architecture</a></li><li><a href='/category/docker/'>docker</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/go/'>go</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
+    <li><a href='/category/architecture/'>architecture</a></li><li><a href='/category/book/'>book</a></li><li><a href='/category/docker/'>docker</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/go/'>go</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
   </ul>
 </section>
 <section>
