@@ -4,7 +4,7 @@
   <title><![CDATA[I Will Survive]]></title>
   <link href="http://blog.restartr.com/atom.xml" rel="self"/>
   <link href="http://blog.restartr.com/"/>
-  <updated>2014-12-31T20:58:45+09:00</updated>
+  <updated>2014-12-31T21:01:33+09:00</updated>
   <id>http://blog.restartr.com/</id>
   <author>
     <name><![CDATA[ReSTARTR]]></name>
@@ -26,7 +26,7 @@
 
 <p>世の中的には、Immutable Infrastractureが一段落して、Docker, Golang, Microservicesなんかがバズワード化してました。</p>
 
-<p>とくにGolangは日本語書籍は増えてないものの、Go製プロダクトが大量発生している状況は当分継続しそう。なので、いろんなRuby/Python/Perl/PHPなどLL製プロダクトのリプレースが進んでいくのでは。新しい流行としてはGolangにつづいてRust, Elixrあたりがじわじわ来るんじゃないでしょうかね。</p>
+<p>とくにGolangは日本語書籍は増えてないものの、Go製プロダクトが大量発生している状況は当分継続しそう。なので、いろんなRuby/Python/Perl/PHPなどLL製プロダクトのリプレースが進んでいくのでは。新しい流行としてはGolangにつづいてRust, Clojure, Elixrあたりがじわじわ来るんじゃないでしょうかね。</p>
 
 <p>インフラ周りでいうと、コンテナ化、マルチクラウド、モニタリングまわりが大きく変化しそうです。</p>
 
