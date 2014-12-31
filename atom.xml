@@ -4,7 +4,7 @@
   <title><![CDATA[I Will Survive]]></title>
   <link href="http://blog.restartr.com/atom.xml" rel="self"/>
   <link href="http://blog.restartr.com/"/>
-  <updated>2014-12-31T21:01:33+09:00</updated>
+  <updated>2014-12-31T21:13:02+09:00</updated>
   <id>http://blog.restartr.com/</id>
   <author>
     <name><![CDATA[ReSTARTR]]></name>
@@ -38,6 +38,7 @@
   <li><a href="http://www.amazon.co.jp/gp/product/B0096BYG7C">Practical Object-Oriented Design in Ruby</a></li>
   <li><a href="http://www.amazon.co.jp/gp/product/B00HUEG8LE">Build Awesome Command-Line Applications in Ruby 2</a></li>
   <li><a href="http://www.manning.com/ketelsen/">Go in Action</a></li>
+  <li><a href="http://www.amazon.co.jp/dp/B00MLUGZIS/">すごいErlangゆかいに学ぼう！</a></li>
   <li><a href="http://tatsu-zine.com/books/naruhounix">なるほどUnixプロセス ― Rubyで学ぶUnixの基礎</a></li>
   <li>(未読) <a href="http://www.jstorimer.com/products/working-with-tcp-sockets">Working With TCP Sockets</a></li>
   <li>(未読) <a href="http://www.amazon.co.jp/dp/4756136494">プログラミング作法</a></li>
