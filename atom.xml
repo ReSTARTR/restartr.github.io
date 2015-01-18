@@ -4,7 +4,7 @@
   <title><![CDATA[I Will Survive]]></title>
   <link href="http://blog.restartr.com/atom.xml" rel="self"/>
   <link href="http://blog.restartr.com/"/>
-  <updated>2014-12-31T21:13:02+09:00</updated>
+  <updated>2015-01-18T14:30:57+09:00</updated>
   <id>http://blog.restartr.com/</id>
   <author>
     <name><![CDATA[ReSTARTR]]></name>
@@ -12,6 +12,84 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Peek - Railsアプリのプロファイリングツール]]></title>
+    <link href="http://blog.restartr.com/2015/01/18/peek-for-profiling-rails-app/"/>
+    <updated>2015-01-18T13:26:53+09:00</updated>
+    <id>http://blog.restartr.com/2015/01/18/peek-for-profiling-rails-app</id>
+    <content type="html"><![CDATA[<p><a href="https://github.com/peek/peek">Peek</a>という、Railsアプリケーションに組み込めるプロファイリングツール（群）があります。
+<a href="https://github.com/blog/1252-how-we-keep-github-fast">How we keep Github fast</a>でも言及されているツールです。(2012年なので少し古いですが。)</p>
+
+<h3 id="section">プロファイリングツールと適正</h3>
+
+<p>プロファイリング用のツールはたくさんあって、時間がかかる特定の処理を改善するために使うものもあれば、常時記録して特異な変化を監視するものもあります。</p>
+
+<p>今回は後者寄りの要件であり、これに見合うものとしてPeekを取り上げました。</p>
+
+<p>Railsでこれ以外のツールとしては、<a href="https://github.com/MiniProfiler/rack-mini-profiler">rack-mini-profiler</a>や<a href="https://github.com/newrelic/rpm">newrelic/rpm</a>などがあり、それらについて今回の要件と照合してみました。</p>
+
+<h4 id="newrelic-rpm">newrelic rpm</h4>
+
+<p>newrelicのサービス上で結果が確認出来るだけではなく、<a href="https://github.com/newrelic/rpm#developer-mode">デベロッパーモード</a>の場合に”/newrelic”にアクセスするとリクエストごとのプロファイル結果が見れます。
+ただ、別途”/newrelic”のURLを開く必要があり、パフォーマンスチェックを忘れがちになる可能性があります。</p>
+
+<h4 id="rack-mini-profiler">rack-mini-profiler</h4>
+
+<p>トータルの処理時間は画面隅に表示されるけれど、個々の処理時間については画面隅のボックスをクリックして詳細を開かないといけません。</p>
+
+<h4 id="peek">peek</h4>
+
+<p>Peekは適切な粒度で常に目に入れることができるツールであり、常用するのにちょうど良いのでは、という印象です。</p>
+
+<p>先のGihtubのブログでは”Mission controll bar”いう、スタッフがプロダクション環境でも常にパフォーマンスを確認できる仕組みが整えられています。</p>
+
+<h3 id="peek-1">Peekのしくみ</h3>
+
+<p>しくみは以下ブログ記事が詳しいです。</p>
+
+<ul>
+  <li><a href="http://r7kamura.hatenablog.com/entry/2014/09/24/004607">Railsの性能測定用プラグイン peek/peek - ✘╹◡╹✘</a></li>
+</ul>
+
+<p>リクエストごとにIDを発行し、そのリクエストごとに各種計測値をデータストア（ファイル、Redis、Memcached等）に保存。
+ページ表示後に別リクエスト(“/peek/…“)として非同期で計測値を取得して、画面の要素を置換する、というしくみ。</p>
+
+<h3 id="peek-2">Peekの拡張</h3>
+
+<p>Peek自体はプラットフォームを提供するだけで、実際の個々の値を記録したりするのはそのプラグイン。</p>
+
+<p>対応しているのは<a href="https://github.com/peek/peek#available-peek-views">Available Peek views</a>
+に記載されています。仮にほしいものが見つからなかったとしても、わりと手軽に追加できるような仕組みになっています。</p>
+
+<p>ということでmemcached用のプラグインをつくりました。</p>
+
+<ul>
+  <li><a href="https://github.com/ReSTARTR/peek-memcached">peek-memcached</a></li>
+</ul>
+
+<p><a href="https://github.com/evan/memcached">evan/memcached</a>という、cで実装されたruby用memcachedクライアントがあって、それを使ったmemcachedアクセスを記録するプラグインです。</p>
+
+<p>このプラグインでは<code>Memcached#get</code><code>Memcached#set</code>メソッドにモンキーパッチあてて、回数と時間を記録しています。</p>
+
+<ul>
+  <li>呼び出し回数(calls)</li>
+  <li>総処理時間(duration)</li>
+</ul>
+
+<p>に加えて、下記も記録できるようになっています。</p>
+
+<ul>
+  <li>キャッシュヒット数(Get[HIT])</li>
+  <li>キャッシュミス数(Get[MISS])</li>
+  <li>キャッシュ更新数(Set)</li>
+</ul>
+
+<h3 id="peek-3">Peekの惜しいところ</h3>
+
+<p>要素が増えるとブラウザの横幅に収まりきらなくなって、折り返し＆はみ出します。本当に必要な要素に絞る抑止力にはなりますが、もう少しコンパクトに収められるとよりよいかな、と。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[2014年に購入した技術書]]></title>
@@ -2427,61 +2505,6 @@ ATNDやZusaar,Partakeなど、様々なサービスがあり、現在も新し�
 <ul>
 <li><a href="http://eventstats.restartr.com">EventStats - イベントの統計情報が見れます</a></li>
 </ul>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[（もうすぐ）退職します。]]></title>
-    <link href="http://blog.restartr.com/2011/12/02/dropped-out/"/>
-    <updated>2011-12-02T21:27:57+09:00</updated>
-    <id>http://blog.restartr.com/2011/12/02/dropped-out</id>
-    <content type="html"><![CDATA[<p>私事ですが現職の会社を退職することになり、本日無事に最終出社を終えてきました。</p>
-
-<p>退職日は年明けですが、これから有給消化期間に入ります。</p>
-
-<p>ということで記念碑的に退職エントリを書いておこうと思います。</p>
-
-<p>有益な退職エントリをご希望の方は下記まとめに移動することをオススメします。</p>
-
-<ul>
-  <li><a href="http://matome.naver.jp/odai/2128832350940033301">「退職しました」ブログエントリのまとめ - NAVER まとめ</a></li>
-  <li><a href="http://matome.naver.jp/odai/2132023611765736801">「退職しました。」系エントリーに学びが多い件 - NAVER まとめ</a></li>
-</ul>
-
-<h3 id="section">現職のはなし</h3>
-
-<p>現職では、2006年に新卒入社してから約5年半、某ポータルサイトの開発全般を担当してました。</p>
-
-<p>1年に1回部署異動が発生するくらい頻繁に体制変更があったおかげで様々な経験をさせてもらい、「自分がやりたいこと」を見つけるにはとても良い環境だったと思います。</p>
-
-<p>入社してすぐ営業研修で外回りとか経験した後、データ入稿まわりを担当。その後1年間で二度のサイトリニューアルプロジェクトを経験。1年間のサイト運用期間を経て、今担当しているログシステムの開発をやりました。</p>
-
-<p>入社から数年はPHP+RDBMSを中心としたWebアプリ開発に従事してましたが、ここ1年くらいはログシステムをHadoop/Hiveにリプレースする担当をやってました。年を経るごとにインフラに近づいていってる感じです。</p>
-
-<h3 id="section-1">技術的知見が広がるシロモノ</h3>
-
-<p>Hadoopって技術的には上から下まで幅広い知識とか素養が必要なんですよね。</p>
-
-<p>実際のクラスタ構築はインフラチームの担当でしたが、それに至るまでの導入実験とかは自分でもひと通り経験していて、それにを肌で実感していくうちにもっとシステム全般に関わりたいと思うようになりました。現職ではアプリケーションとそれを載せるインフラの担当が明確に分かれていました。そのおかげで我々はアプリケーションの開発に専念できるのですが、一方でインフラにはどうしても疎くなりがちでした。(現在社内ではその垣根を改善する動きが出てきているので今後はもっと良い体制に変わっていくと思います)</p>
-
-<p>そういう意味でHadoopは「技術の交差点」なんだと思います。非常に低いレイヤーからアルゴリズムまでがごっちゃごちゃに混ざったおもちゃ箱のような。それまでPHPのステートレスなシングルスレッド内であれこれするだけしたが、そこでは得られなかったものに興味関心が広がっていきました。Hadoopで実際何を実現するかはさておき、それをひと通り経験することで技術者として一歩前にすすむことができるし、その中でさらに深堀りしたいものを見つけることのできるシロモノだったと思います。</p>
-
-<h3 id="section-2">オープンソースコミュニティ</h3>
-
-<p>ここ1年ほどは社外のカンファレンスや勉強会へも平日休日問わずよく参加してたのですが、上司にもそれついてよく理解して頂き、本当自分の動きたいようにさせてもらえたことは有難い限りです。</p>
-
-<p>外の世界は自分が想像している以上でした。勉強会で発表を聴いたり懇親会で話しをさせていただいたりすることで、自分の足りないところが嫌でも見えてきました。現職に限らず今後どのように成長したいのか、について改めて考えるきっかけにもなりました。</p>
-
-<p>今はちょっとメンタル的な問題もあって勉強会参加は自粛していますが、年明け以降にまた少しづつ参加させていただこうと思ってます。</p>
-
-<h3 id="section-3">さいごに</h3>
-
-<p>年明けまでは旅行とか帰省とかしてゆっくり静養しつつ、技術的な取り組みも継続していこうと思います。暇を見つけて開発しているものもあるのですが、それも近々公開できると思います。あと、次の会社も決まっているのですが今後の話しはまたあらためて別の機会に。</p>
-
-<p>（このブログの読者に現職の方がどれくらいいるのかわかりませんが）とにかく現職で関わった皆様には本当に大変お世話になりました。改めて御礼もうしあげます。</p>
-
-<p>約5年半、どうもありがとうございました。</p>
-
 ]]></content>
   </entry>
   

@@ -11,9 +11,9 @@
   <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="10月02日と03日の、一泊二日のPHPMASTURIに参加してきました。 ハッシュタグ: #phpmatsuri
-LTのustream: phpmatsuri on USTREAM とにかく内容が濃い 楽天の吉岡さんによる大人のプログラミングキャンプ
-CakePHP,Symfony, &hellip;">
+  <meta name="description" content="先日のPHPMatsuriのハッカソンにて作成したXHProfの結果がみれるCustomPanelですが、そのまま公開するにはお恥ずかしい感じだったので、多少マシに改修したものを公開してみます。
+DebugKit, XHProfPanelとは
+CakePHPのDebugKitというプラグインがあり &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -124,6 +124,113 @@ CakePHP,Symfony, &hellip;">
       
   <header>
     
+      <h1 class="entry-title"><a href="/2010/10/10/the-xhprofpanel-debugkit-custom-panel-cakephp/">CakePHPのDebugKitにプロファイル情報が見れるXHProfPanelを追加</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-10-10T00:59:04+09:00" pubdate data-updated="true">2010-10-10 (Sun)</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>先日のPHPMatsuriのハッカソンにて作成したXHProfの結果がみれるCustomPanelですが、そのまま公開するにはお恥ずかしい感じだったので、多少マシに改修したものを公開してみます。</p>
+<h3>DebugKit, XHProfPanelとは</h3>
+<p>CakePHPのDebugKitというプラグインがあり、それを使えばいろんなデバッグ情報がWeb画面上で確認できます。で、これにXHProfというphp拡張を使ってプロファイラ情報を見れるようにしてみました。</p>
+<p>こんな感じです。<br />
+<a href="http://blog.restartr.com/wp-content/uploads/2010/10/256d829a326e5fc745e5659600527bde.png"><img class="alignnone size-full wp-image-390" title="XHProfPanel-screenshot" src="http://blog.restartr.com/wp-content/uploads/2010/10/256d829a326e5fc745e5659600527bde.png" alt="" width="464" height="42" /></a></p>
+<p><a id="more"></a><a id="more-367"></a></p>
+<p>で、パネルを開くとこんな感じに各関数呼び出しごとの負荷情報などを閲覧できます。<br />
+<a href="http://blog.restartr.com/wp-content/uploads/2010/10/f0c2dac263680a94429c57bd5c1e81ff.png"><img class="alignnone size-medium wp-image-399" title="xhprofpanel-opned-screenshot" src="http://blog.restartr.com/wp-content/uploads/2010/10/f0c2dac263680a94429c57bd5c1e81ff-300x170.png" alt="" width="300" height="170" /></a></p>
+<p>さらに、<strong>&#8220;xhprof Result&#8221;</strong>というリンクをクリックすれば、XHProfが用意してくれているビューアを開くこともできます。ビューアではコールグラフも閲覧できます。</p>
+<h3>カスタムパネルの追加方法</h3>
+<blockquote><p>helloworld_controllerにプロファイル実行する、という例で説明します。</p></blockquote>
+<h4>事前準備</h4>
+<p>debugkitはインストール済みとします。入れ方は<br />
+<a href="http://d.hatena.ne.jp/cakephper/20090604/1244112188">超便利なDebugkitを画面キャプチャ付きで解説 - cakephperの日記(CakePHP, MongoDB, Lithium)</a><br />
+を参照してください。</p>
+<p>XHProfのインストールも済ませておきます。</p>
+<pre class="brush">wget http://pecl.php.net/get/xhprof-0.9.2.tgz
+pecl install xhprof-0.9.2.tgz</pre>
+<p>php.iniにも設定追加しておきます。</p>
+<pre class="brush">extension=xhprof.so</pre>
+<p>tgzファイルをtarで解凍した中身のうち、xhprof_html,xhprof_libをビューア用に用意したバーチャルホスト下において、<br />
+別ドメインでアクセスできるようにします。<br />
+cakeのアプリは<strong>cake.localhost</strong>、xhprofビューアは<strong>xhprof.localhost</strong>のような感じです。<br />
+ディレクトリはこんな感じできっています。</p>
+<pre class="brush:c">/var/
+  vhosts/
+    cake/ // cake.localhostのdocument_root
+      app/
+    xhprof/
+      xhprof_html/ // xhprof.localhostのdocument_root
+      xhprof_lib/</pre>
+<h4>ファイル構成</h4>
+<p>下記ファイルを修正もしくは新規作成します。</p>
+<pre class="brush:c">app/
+  controllers/
+    helloworld_controller.php //新規追加
+  plugins/
+    debug_kit/
+      controllers/
+        conmponents/
+          toolbar.php //修正
+      views/
+        elements/
+          xhprof_panel.ctp //新規追加</pre>
+<h4>1.XHProfPanelの追加</h4>
+<blockquote><p>app/plugins/debug_kit/controllers/components/toolbar.php</p></blockquote>
+<p>に下記クラスをコピペで追加。<br />
+<script src="http://gist.github.com/618254.js?file=toolbar.php"></script></p>
+<h4>2.デフォルトパネルにXHProfPanelを追加</h4>
+<blockquote><p>app/plugins/debug_kit/controllers/components/toolbar.php</p></blockquote>
+<p>の既存行（52行目あたり)に下記のように$_defaultPanelsに&#8217;xhprof&#8217;を追加。<br />
+<script src="http://gist.github.com/618254.js?file=toolbar_.php"></script></p>
+<h4>3.controllerの設定にもXHProfPanelを追加</h4>
+<p>下記のようにXhprofPanelへの設定情報も渡します。<br />
+<script src="http://gist.github.com/618254.js?file=helloworld_controller.php"></script></p>
+<h4>4.テンプレートの追加</h4>
+<blockquote><p>app/plugins/debug_kit/views/elements/xhprof_panel.ctp</p></blockquote>
+<p>を下記内容で新規作成します。<br />
+<script src="http://gist.github.com/618254.js?file=xhprof_panel.ctp"></script></p>
+<h4>ソート順の変更</h4>
+<p>デフォルトではwall timeの降順でソートしてあります。<br />
+コントローラでの設定で&#8217;sortBy&#8217;の値を変えれば変更できます。<br />
+(指定しなければ&#8217;wt&#8217;指定となります。)<br />
+設定できるのは<strong>ct, wt, cpu, mu, pmu</strong>の５つ。</p>
+<h4>プロファイル範囲</h4>
+<p>XhprofPanel::__constructからXhprofPanel::beforeRenderまでです。<br />
+結果をみるとLogPanelクラス（DebugKitプラグイン内のクラス）のメソッド呼び出しも含まれていたりするので、<br />
+もう少し適当な範囲にできないか検討したいと思います。</p>
+<h3>余談</h3>
+<p>Githubを有料アカウントにすべきか迷い中です。今回とりあえずgistで公開してみましたが、リポジトリは欲しいような、でも今のところ必要ないような…</p>
+</div>
+  
+  
+
+
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/2010/10/03/phpmatsuri-hack-days-by-php-hackers/">PHPMATSURI - PHPハッカー達による一泊二日のハックデイ</a></h1>
     
     
@@ -216,71 +323,6 @@ Thanks, Graham!<br />
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2010/09/19/buy-an-amazon-kindle3/">Amazon Kindle3 Free 3G + Wi-Fiを買ってみた</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2010-09-19T10:48:29+09:00" pubdate data-updated="true">2010-09-19 (Sun)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><a title="IMG_2302 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/5003018900/"><img src="http://farm5.static.flickr.com/4087/5003018900_5a22f2eca5.jpg" alt="IMG_2302" width="500" height="333" /></a></p>
-<p>今流行の<a href="http://www.amazon.com/dp/B002FQJT3Q">Amazon Kindle3(3G+Wi-Fi)</a>を買ってみました。<br />
-発売開始の翌日に注文して、２週間程度での受け取りでした。<br />
-Amazon純正のKindle3用レザーカバーも頼んだんですが、そちらだけ先に届いてましたが、やっと本体も届きましたんで、<br />
-軽くレビューでも書いてみます。</p>
-<p><a id="more"></a><a id="more-325"></a><br />
-注文したのがたしか、8/28日。発送の連絡がきたのが9/10なのでその間約二週間。さらに受け取りまでは以下のように、不在による再配達も影響して、長い道のりとなりました。<br />
-<a href="http://www.flickr.com/photos/53244662@N04/5002490605/" title="配達履歴 by ReSTARTR_y, on Flickr"><img src="http://farm5.static.flickr.com/4092/5002490605_3cfe829cef.jpg" width="488" height="500" alt="配達履歴" /></a></p>
-<p>先に受け取ったレザーカバーのときもそうだったんですが、箱が工夫されています。<br />
-ダンボールの箱はガムテープで閉じられているのが普通ですが、お菓子の箱のようにダンボール自体に切り取れる細工がしてあります。<br />
-<a href="http://www.flickr.com/photos/53244662@N04/5002411379/" title="IMG_2285 by ReSTARTR_y, on Flickr"><img src="http://farm5.static.flickr.com/4107/5002411379_a1ab728694_m.jpg" width="240" height="160" alt="IMG_2285" /></a><br />
-<a href="http://www.flickr.com/photos/53244662@N04/5003018636/" title="IMG_2289 by ReSTARTR_y, on Flickr"><img src="http://farm5.static.flickr.com/4131/5003018636_5681651c2c_m.jpg" width="240" height="160" alt="IMG_2289" /></a><br />
-汎用サイズのダンボールでは難しいかもしれませんが、こういう工夫はなんとなく嬉しいです。</p>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5003018740/" title="IMG_2290 by ReSTARTR_y, on Flickr"><img src="http://farm5.static.flickr.com/4154/5003018740_245397caef.jpg" width="500" height="333" alt="IMG_2290" /></a><br />
-箱を開けるとこんなかんじ。<br />
-画面にPC接続の指示が書いてあります。表面にはってあるシートにプリントされているかのように見える程に電子インクは素晴らしいです。</p>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5002411213/" title="IMG_2274 by ReSTARTR_y, on Flickr"><img src="http://farm5.static.flickr.com/4089/5002411213_8cf4392a79.jpg" width="500" height="333" alt="IMG_2274" /></a><br />
-ちなみにレザーカバーはこんなかんじ。</p>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5003018454/" title="IMG_2279 by ReSTARTR_y, on Flickr"><img src="http://farm5.static.flickr.com/4125/5003018454_ba7fc2faf4.jpg" width="500" height="333" alt="IMG_2279" /></a><br />
-Kindle本体とは↑の写真のようなカバーの「フック」にひっかけて固定するようになってます。</p>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5002412019/" title="IMG_2295 by ReSTARTR_y, on Flickr"><img src="http://farm5.static.flickr.com/4126/5002412019_02ef7106de.jpg" width="500" height="333" alt="IMG_2295" /></a><br />
-ということでカバーと本体をくっつけるとこんなかんじになります。<br />
-重量はカバーなしの二倍くらいに重くなったように感じますが、実際に電車内で片手で持っていても腕が疲れないレベルです。</p>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5003019014/" title="IMG_2307 by ReSTARTR_y, on Flickr"><img src="http://farm5.static.flickr.com/4109/5003019014_4b7343171c.jpg" width="333" height="500" alt="IMG_2307" /></a><br />
-Experimentalな機能としてwebkitなブラウザが搭載されています。Twitterを見るとこんな感じになります。<br />
-表示速度ははっきりいって遅いうえに正直見づらいですが、本を呼んでいる最中にTLをチラ見したいときとか役立ちます。</p>
-<p>TwitterへツイートできたりFacebookへShareできたり連携機能があるので、ブラウザが搭載されているのはそれらサービス認証が主な目的だと思います。</p>
-<p>まだ数日しか使っていないですが、かなり便利なシロモノでした。</p>
-</div>
-  
-  
-
-
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/page/27/">&larr; Older</a>
@@ -336,6 +378,10 @@ Experimentalな機能としてwebkitなブラウザが搭載されています�
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2015/01/18/peek-for-profiling-rails-app/">Peek - Railsアプリのプロファイリングツール</a>
+      </li>
+    
+      <li class="post">
         <a href="/2014/12/31/books-2014/">2014年に購入した技術書</a>
       </li>
     
@@ -349,10 +395,6 @@ Experimentalな機能としてwebkitなブラウザが搭載されています�
     
       <li class="post">
         <a href="/2014/06/28/about-docker-libchan/">Docker謹製ライブラリのlibchanについて調べてみた</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2014/05/11/build-rpm-on-docker-container/">Dockerを使って任意のrubyバージョンのrpmを作成する</a>
       </li>
     
   </ul>
@@ -411,7 +453,7 @@ Experimentalな機能としてwebkitなブラウザが搭載されています�
     </div>
   </div>
   <footer role="contentinfo"><p>
-  Copyright &copy; 2014 - ReSTARTR -
+  Copyright &copy; 2015 - ReSTARTR -
   <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
 </p>
 

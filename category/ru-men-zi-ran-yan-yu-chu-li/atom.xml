@@ -4,7 +4,7 @@
   <title><![CDATA[Category: 入門 自然言語処理 | I Will Survive]]></title>
   <link href="http://blog.restartr.com/category/ru-men-zi-ran-yan-yu-chu-li/atom.xml" rel="self"/>
   <link href="http://blog.restartr.com/"/>
-  <updated>2014-12-31T21:13:02+09:00</updated>
+  <updated>2015-01-18T14:30:57+09:00</updated>
   <id>http://blog.restartr.com/</id>
   <author>
     <name><![CDATA[ReSTARTR]]></name>
@@ -242,7 +242,7 @@ sorted([w.lower() for w in set(text1)])</pre>
 <h5>d: 先頭大文字あと小文字（＝タイトルケース)</h5>
 <pre class="brush:python">[t for t in text6 if t.isalpha()==True and t==t.title()]</pre>
 <h4>25. listed = ['she', 'sells', 'sea', 'shells', 'by', 'the', 'sea', 'shore']</h4>
-<h4 />
+<h4></h4>
 <h5>shではじまる単語</h5>
 <pre class="brush:python">[t for t in listed if t.startswith('sh')]</pre>
 <h5>4文字より大きい単語</h5>
