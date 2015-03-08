@@ -4,7 +4,7 @@
   <title><![CDATA[I Will Survive]]></title>
   <link href="http://blog.restartr.com/atom.xml" rel="self"/>
   <link href="http://blog.restartr.com/"/>
-  <updated>2015-01-18T14:34:33+09:00</updated>
+  <updated>2015-03-09T01:46:39+09:00</updated>
   <id>http://blog.restartr.com/</id>
   <author>
     <name><![CDATA[ReSTARTR]]></name>
@@ -12,6 +12,172 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[DockerとWeaveを使って1台のマシンでConsulを複数動かしてみる]]></title>
+    <link href="http://blog.restartr.com/2015/03/09/consul-cluster-with-docker/"/>
+    <updated>2015-03-09T00:22:13+09:00</updated>
+    <id>http://blog.restartr.com/2015/03/09/consul-cluster-with-docker</id>
+    <content type="html"><![CDATA[<p>軽くConsulを試してみたくて、でもVagrantで複数台仮想マシンを立ち上げるのはちょっと気が重い…ということでUbuntu14.10 on MacBookAirにDockerコンテナを複数立ち上げてクラスタを構築してみるテストをしました。</p>
+
+<p>Dockerfileとか簡単な動かし方(を適当英語で書いたもの)をgithubにあげてあります</p>
+
+<ul>
+  <li><a href="https://github.com/ReSTARTR/test-consul-with-docker">ReSTARTR/test-consul-with-docker</a></li>
+</ul>
+
+<p>Docker内のプロセスがLISTENするポートに対してコンテナ外から接続する場合、<code>-p</code>でホストのポートにひもづけるか、<code>--link</code>でコンテナ同士をつなぐのが最も手軽な方法です。が、consulは複数のポート（HTTP API用、DNS用、ゴシッププロトコル用等）を使うため、この手軽な方法でクラスタを構築することができません。</p>
+
+<p>Dockerコンテナの接続パターンとしてはいくつかあって、deeeetさんのブログ記事に詳しく書かれています。</p>
+
+<ul>
+  <li><a href="http://deeeet.com/writing/2014/12/01/docker-link-pattern/">Dockerコンテナ接続パターン (2014年冬) | SOTA</a></li>
+</ul>
+
+<p>今回は手元のMacBook Airだけで完結させたかったので、weaveを使ったコンテナ間ネットワークを利用することにしました。</p>
+
+<h3 id="weave">weave</h3>
+
+<ul>
+  <li><a href="http://zettio.github.io/weave/">weave  | weave, the Docker network</a></li>
+</ul>
+
+<p>dockerコンテナ間の内部ネットワークを構築するものです。詳しくはjacopenさんのSlideShareを。</p>
+
+<ul>
+  <li><a href="http://www.slideshare.net/jacopen/weave-40871981">Weaveを試してみた</a></li>
+</ul>
+
+<p>使い方はとても簡単で、weaveコンテナをCIDRブロック指定で立ち上げて、weaveコマンド経由でdockerコマンドを実行するだけ。
+これならVagrantのような仮想マシンのためにメモリとディスク容量を割く必要もなくなります。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo weave launch
+</span><span class="line"><span class="nv">$ </span>sudo weave start 10.0.0.1/24 weaver
+</span><span class="line"><span class="nv">$ </span>sudo docker ps
+</span><span class="line">CONTAINER ID        IMAGE                COMMAND                CREATED             STATUS              PORTS                                            NAMES
+</span><span class="line">2eda921c011e        zettio/weave:0.9.0   <span class="err">&quot;</span>/home/weave/weaver    31 seconds ago      Up 30 seconds       0.0.0.0:6783-&gt;6783/tcp, 0.0.0.0:6783-&gt;6783/udp   weave
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>これだけで仮想ネットワークができあがります。ホストOSで必要なポートは6783だけです。</p>
+
+<p>あとはweaveコマンドにIPを指定しつつdockerコマンドのオプションを付けて起動すればOK。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ C</span><span class="o">=</span><span class="k">$(</span>sudo weave run 10.0.0.1/24 -it ubuntu<span class="k">)</span>
+</span><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec</span> <span class="nv">$C</span> -it /bin/bash
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>ただ、さくらVPSのCentOS6では動きませんでした。面倒なので深く追ってません。。。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo /usr/local/bin/weave launch
+</span><span class="line">WARNING: Linux kernel version 3.5 or newer is required <span class="o">(</span>you have 2.6<span class="o">)</span>
+</span><span class="line">ERROR: ip utility, iproute2-ss091226 does not support network namespaces.
+</span><span class="line">       Please install iproute2-ss111010 or later.
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="consul">consul</h3>
+
+<ul>
+  <li><a href="https://www.consul.io/">consul</a></li>
+</ul>
+
+<p>Hashicorp謹製クラスタのオーケストレーションツール。今更説明する必要もないと思うので詳細は省略します。
+consul（と周辺ツールのconsul-templateやenvconsul)を使えば複数のホスト間で設定を共有できる、というのを試すのが今回の目的でしたが、とりあえず複数のconsulを動かすところまでを書きます。</p>
+
+<h3 id="consul-1">consulを起動してクラスタを構築する</h3>
+
+<p>weaveネットワークに接続したコンテナを4台立ち上げて、consul1, consul2をserverとして、consul3, consul4をclientとして起動します。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo weave run 10.0.0.1/24 -it -v <span class="k">$(</span><span class="nb">pwd</span> -P<span class="k">)</span>:/opt --name<span class="o">=</span>consul1 restartr/consul-ready
+</span><span class="line"><span class="nv">$ </span>sudo weave run 10.0.0.2/24 -it -v <span class="k">$(</span><span class="nb">pwd</span> -P<span class="k">)</span>:/opt --name<span class="o">=</span>consul2 restartr/consul-ready
+</span><span class="line"><span class="nv">$ </span>sudo weave run 10.0.0.3/24 -it -v <span class="k">$(</span><span class="nb">pwd</span> -P<span class="k">)</span>:/opt --name<span class="o">=</span>consul3 restartr/consul-ready
+</span><span class="line"><span class="nv">$ </span>sudo weave run 10.0.0.4/24 -it -v <span class="k">$(</span><span class="nb">pwd</span> -P<span class="k">)</span>:/opt --name<span class="o">=</span>consul4 restartr/consul-ready
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>あとはconsul agentを順に起動するだけ。</p>
+
+<p>ここで注意するのが<code>-bind</code>オプション。
+これを指定しないとdockerデフォルトのeth0のでクラスタにjoinすることになってしまい、このネットワークは他のコンテナとつながっていないためにクラスタ構築に失敗します。
+必ず<code>weave run 10.0.0.X/24</code>で指定したIPにbindしておきましょう。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec</span> -d consul1 consul agent -server -data-dir<span class="o">=</span>/tmp/consul -bootstrap-expect 1 -bind 10.0.0.1
+</span><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec</span> -d consul2 consul agent -server -data-dir<span class="o">=</span>/tmp/consul -config-dir<span class="o">=</span>/opt/consul.d/web.json -bind 10.0.0.2
+</span><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec</span> -d consul3 consul agent -data-dir<span class="o">=</span>/tmp/consul -config-dir<span class="o">=</span>/opt/consul.d/web.json -bind 10.0.0.3
+</span><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec</span> -d consul4 consul agent -data-dir<span class="o">=</span>/tmp/consul -config-dir<span class="o">=</span>/opt/consul.d/web.json -bind 10.0.0.4
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>で、先に起動したconsul1に対して残りのコンテナ内のconsul agentをjoinさせていきます。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec </span>consul2 consul join 10.0.0.1
+</span><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec </span>consul3 consul join 10.0.0.1
+</span><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec </span>consul4 consul join 10.0.0.1
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>と、<code>consul members</code>でjoinしている一覧が見えるようになります。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec </span>consul1 consul members
+</span><span class="line">Node          Address        Status  Type    Build  Protocol
+</span><span class="line">725dca3980ea  10.0.0.1:8301  alive   server  0.5.0  2
+</span><span class="line">f82001d6a7b4  10.0.0.2:8301  alive   server  0.5.0  2
+</span><span class="line">dcf304f77fdf  10.0.0.3:8301  alive   client  0.5.0  2
+</span><span class="line">3be672bd18b1  10.0.0.4:8301  alive   client  0.5.0  2
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>クラスタから離れるときは<code>consul leave</code>です。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec </span>consul4 consul leave
+</span><span class="line">Graceful leave <span class="nb">complete</span>
+</span><span class="line">
+</span><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec </span>consul1 consul members
+</span><span class="line">Node          Address        Status  Type    Build  Protocol
+</span><span class="line">dcf304f77fdf  10.0.0.3:8301  alive   client  0.5.0  2
+</span><span class="line">3be672bd18b1  10.0.0.4:8301  left    client  0.5.0  2       <span class="c"># &lt;- Statusが&#39;alive&#39;から&#39;left&#39;に変わる</span>
+</span><span class="line">725dca3980ea  10.0.0.1:8301  alive   server  0.5.0  2
+</span><span class="line">f82001d6a7b4  10.0.0.2:8301  alive   server  0.5.0  2
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>という感じで、複数のマシンをいじってる感じがまったくしないくらい<code>weave</code> &amp; <code>docker exec</code>は便利です。
+weaveがプロダクション環境で使えるか、という点については未知ですが。</p>
+
+<p>次回（があれば）consulを使った設定の管理について試したメモを書きたいと思います。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Peek - Railsアプリのプロファイリングツール]]></title>
@@ -2456,54 +2622,6 @@ atndとの違い
 
 <ul>
   <li><a href="http://eventstats.restartr.com">EventStats - イベントの統計情報が見れます</a></li>
-</ul>
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[イベントの参加人数の遷移が見れるサービス『EventStats』を作りました。 #atnd #zusaar #partake]]></title>
-    <link href="http://blog.restartr.com/2011/12/10/eventstats/"/>
-    <updated>2011-12-10T18:58:51+09:00</updated>
-    <id>http://blog.restartr.com/2011/12/10/eventstats</id>
-    <content type="html"><![CDATA[<h3>イベント管理サービスについて</h3>
-<p>勉強会などでよく利用されるのが、イベント管理サービス。
-
-ATNDやZusaar,Partakeなど、様々なサービスがあり、現在も新しいものが生まれている状況。</p>
-<p>今や勉強会を開催する上で必須のサービスとなっていますよね。</p>
-<p>ですが、主催者や参加者にとってそれらのサービスで閲覧できるのは『今どのような状況か』ということだけです。それまでどのように参加者が増えてきたのか、その後も参加者が増えそうか、ということまでは見ることができません。</p>
-<p>「今」ではなく「過去」を知りたい。(by @ReSTARTR)</p>
-<p>ということで作りました。</p>
-<h3>イベントごとに登録数、補欠数、枠数を記録するサービス「EventStats｣</h3>
-<ul>
-<li><a href="http://eventstats.restartr.com">EventStats - イベントの統計情報が見れます</a></li>
-</ul>
-<p>簡単にいうと<a href="http://klout.com">Klout</a>の勉強会バージョン（のとっかかり）です。
-
-このサービスを使えば、登録数と枠数の推移を時系列のチャートで確認することができます。
-
-5分おきに各イベント管理サービスの情報を取得して蓄積し、情報を表示しているだけのシンプルなサービスです。
-
-<em>(※ SVGベースのチャートのため、androidでは2.4/3.0以降でないと見れません)</em></p>
-<p>あと、2011年11月頭くらいからデータ蓄積開始したのでそれ以前のイベントの履歴は見れない場合があるのと、Partakeの枠数が0人なのも蓄積ミスです。</p>
-<h3>使い方</h3>
-<ol>
-<li><a href="javascript:(function(){s=window.location.href.split('/');type='';if(s[2]=='atnd.org'&amp;&amp;s[3]=='events')type='atnd';else if(s[2]=='www.zusaar.com'&amp;&amp;s[3]=='event')type='zusaar';else if(s[2]=='partake.in'&amp;&amp;s[3]=='events')type='partake';else return false; window.location.href=['http://eventstats.restartr.com/events/'+type,s[4]].join('/');})();">ブックマークレット</a>をブラウザに登録する</li>
-<li>履歴を知りたいイベント管理サービスの詳細ページに移動する</li>
-<li>ブックマークレットを実行する</li>
-</ol>
-<h3>技術的なこと</h3>
-<p>とりあえずHeroku上でScalaのUnfilteredを使って動かしています。
-
-技術的な話しは追々。</p>
-<h3>今後どう料理するか</h3>
-<p>実はMA7の締切りぎりぎりに公開してました。（証拠↓）</p>
-<p><a href="https://ma7.mashupaward.jp/works/478?locale=ja">https://ma7.mashupaward.jp/works/478?locale=ja</a></p>
-<p>が、リソースが足りてないさくらのVPSで動かしていたので、公開したことはとくにアナウンスとかしてませんでした。（MA7には当然のごとく選考漏れでしたが。）で、それからHerokuへの移行を進めつつ機能の修正などをやってたという訳です。</p>
-<p>今後は蓄積したデータをもとに、勉強会運営や勉強会への参加の助けとなる数値を加えていければいいなと。
-
-実はテストとか負荷試験とかあんまりできてないのであまりイジメないでください^^;</p>
-<ul>
-<li><a href="http://eventstats.restartr.com">EventStats - イベントの統計情報が見れます</a></li>
 </ul>
 ]]></content>
   </entry>

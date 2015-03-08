@@ -11,8 +11,7 @@
   <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="Peekという、Railsアプリケーションに組み込めるプロファイリングツール（群）があります。
-How we keep Github fastでも言及されているツールです。(2012年なので少し古いですが。) プロファイリングツールと適正 プロファイリング用のツールはたくさんあって、 &hellip;">
+  <meta name="description" content="軽くConsulを試してみたくて、でもVagrantで複数台仮想マシンを立ち上げるのはちょっと気が重い…ということでUbuntu14.10 on MacBookAirにDockerコンテナを複数立ち上げてクラスタを構築してみるテストをしました。 Dockerfileとか簡単な動かし方( &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -123,6 +122,201 @@ How we keep Github fastでも言及されているツールです。(2012年な�
       
   <header>
     
+      <h1 class="entry-title"><a href="/2015/03/09/consul-cluster-with-docker/">DockerとWeaveを使って1台のマシンでConsulを複数動かしてみる</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-03-09T00:22:13+09:00" pubdate data-updated="true">2015-03-09 (Mon)</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>軽くConsulを試してみたくて、でもVagrantで複数台仮想マシンを立ち上げるのはちょっと気が重い…ということでUbuntu14.10 on MacBookAirにDockerコンテナを複数立ち上げてクラスタを構築してみるテストをしました。</p>
+
+<p>Dockerfileとか簡単な動かし方(を適当英語で書いたもの)をgithubにあげてあります</p>
+
+<ul>
+  <li><a href="https://github.com/ReSTARTR/test-consul-with-docker">ReSTARTR/test-consul-with-docker</a></li>
+</ul>
+
+<p>Docker内のプロセスがLISTENするポートに対してコンテナ外から接続する場合、<code>-p</code>でホストのポートにひもづけるか、<code>--link</code>でコンテナ同士をつなぐのが最も手軽な方法です。が、consulは複数のポート（HTTP API用、DNS用、ゴシッププロトコル用等）を使うため、この手軽な方法でクラスタを構築することができません。</p>
+
+<p>Dockerコンテナの接続パターンとしてはいくつかあって、deeeetさんのブログ記事に詳しく書かれています。</p>
+
+<ul>
+  <li><a href="http://deeeet.com/writing/2014/12/01/docker-link-pattern/">Dockerコンテナ接続パターン (2014年冬) | SOTA</a></li>
+</ul>
+
+<p>今回は手元のMacBook Airだけで完結させたかったので、weaveを使ったコンテナ間ネットワークを利用することにしました。</p>
+
+<h3 id="weave">weave</h3>
+
+<ul>
+  <li><a href="http://zettio.github.io/weave/">weave  | weave, the Docker network</a></li>
+</ul>
+
+<p>dockerコンテナ間の内部ネットワークを構築するものです。詳しくはjacopenさんのSlideShareを。</p>
+
+<ul>
+  <li><a href="http://www.slideshare.net/jacopen/weave-40871981">Weaveを試してみた</a></li>
+</ul>
+
+<p>使い方はとても簡単で、weaveコンテナをCIDRブロック指定で立ち上げて、weaveコマンド経由でdockerコマンドを実行するだけ。
+これならVagrantのような仮想マシンのためにメモリとディスク容量を割く必要もなくなります。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo weave launch
+</span><span class="line"><span class="nv">$ </span>sudo weave start 10.0.0.1/24 weaver
+</span><span class="line"><span class="nv">$ </span>sudo docker ps
+</span><span class="line">CONTAINER ID        IMAGE                COMMAND                CREATED             STATUS              PORTS                                            NAMES
+</span><span class="line">2eda921c011e        zettio/weave:0.9.0   <span class="err">&quot;</span>/home/weave/weaver    31 seconds ago      Up 30 seconds       0.0.0.0:6783-&gt;6783/tcp, 0.0.0.0:6783-&gt;6783/udp   weave
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>これだけで仮想ネットワークができあがります。ホストOSで必要なポートは6783だけです。</p>
+
+<p>あとはweaveコマンドにIPを指定しつつdockerコマンドのオプションを付けて起動すればOK。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ C</span><span class="o">=</span><span class="k">$(</span>sudo weave run 10.0.0.1/24 -it ubuntu<span class="k">)</span>
+</span><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec</span> <span class="nv">$C</span> -it /bin/bash
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>ただ、さくらVPSのCentOS6では動きませんでした。面倒なので深く追ってません。。。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo /usr/local/bin/weave launch
+</span><span class="line">WARNING: Linux kernel version 3.5 or newer is required <span class="o">(</span>you have 2.6<span class="o">)</span>
+</span><span class="line">ERROR: ip utility, iproute2-ss091226 does not support network namespaces.
+</span><span class="line">       Please install iproute2-ss111010 or later.
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="consul">consul</h3>
+
+<ul>
+  <li><a href="https://www.consul.io/">consul</a></li>
+</ul>
+
+<p>Hashicorp謹製クラスタのオーケストレーションツール。今更説明する必要もないと思うので詳細は省略します。
+consul（と周辺ツールのconsul-templateやenvconsul)を使えば複数のホスト間で設定を共有できる、というのを試すのが今回の目的でしたが、とりあえず複数のconsulを動かすところまでを書きます。</p>
+
+<h3 id="consul-1">consulを起動してクラスタを構築する</h3>
+
+<p>weaveネットワークに接続したコンテナを4台立ち上げて、consul1, consul2をserverとして、consul3, consul4をclientとして起動します。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo weave run 10.0.0.1/24 -it -v <span class="k">$(</span><span class="nb">pwd</span> -P<span class="k">)</span>:/opt --name<span class="o">=</span>consul1 restartr/consul-ready
+</span><span class="line"><span class="nv">$ </span>sudo weave run 10.0.0.2/24 -it -v <span class="k">$(</span><span class="nb">pwd</span> -P<span class="k">)</span>:/opt --name<span class="o">=</span>consul2 restartr/consul-ready
+</span><span class="line"><span class="nv">$ </span>sudo weave run 10.0.0.3/24 -it -v <span class="k">$(</span><span class="nb">pwd</span> -P<span class="k">)</span>:/opt --name<span class="o">=</span>consul3 restartr/consul-ready
+</span><span class="line"><span class="nv">$ </span>sudo weave run 10.0.0.4/24 -it -v <span class="k">$(</span><span class="nb">pwd</span> -P<span class="k">)</span>:/opt --name<span class="o">=</span>consul4 restartr/consul-ready
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>あとはconsul agentを順に起動するだけ。</p>
+
+<p>ここで注意するのが<code>-bind</code>オプション。
+これを指定しないとdockerデフォルトのeth0のでクラスタにjoinすることになってしまい、このネットワークは他のコンテナとつながっていないためにクラスタ構築に失敗します。
+必ず<code>weave run 10.0.0.X/24</code>で指定したIPにbindしておきましょう。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec</span> -d consul1 consul agent -server -data-dir<span class="o">=</span>/tmp/consul -bootstrap-expect 1 -bind 10.0.0.1
+</span><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec</span> -d consul2 consul agent -server -data-dir<span class="o">=</span>/tmp/consul -config-dir<span class="o">=</span>/opt/consul.d/web.json -bind 10.0.0.2
+</span><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec</span> -d consul3 consul agent -data-dir<span class="o">=</span>/tmp/consul -config-dir<span class="o">=</span>/opt/consul.d/web.json -bind 10.0.0.3
+</span><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec</span> -d consul4 consul agent -data-dir<span class="o">=</span>/tmp/consul -config-dir<span class="o">=</span>/opt/consul.d/web.json -bind 10.0.0.4
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>で、先に起動したconsul1に対して残りのコンテナ内のconsul agentをjoinさせていきます。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec </span>consul2 consul join 10.0.0.1
+</span><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec </span>consul3 consul join 10.0.0.1
+</span><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec </span>consul4 consul join 10.0.0.1
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>と、<code>consul members</code>でjoinしている一覧が見えるようになります。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec </span>consul1 consul members
+</span><span class="line">Node          Address        Status  Type    Build  Protocol
+</span><span class="line">725dca3980ea  10.0.0.1:8301  alive   server  0.5.0  2
+</span><span class="line">f82001d6a7b4  10.0.0.2:8301  alive   server  0.5.0  2
+</span><span class="line">dcf304f77fdf  10.0.0.3:8301  alive   client  0.5.0  2
+</span><span class="line">3be672bd18b1  10.0.0.4:8301  alive   client  0.5.0  2
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>クラスタから離れるときは<code>consul leave</code>です。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec </span>consul4 consul leave
+</span><span class="line">Graceful leave <span class="nb">complete</span>
+</span><span class="line">
+</span><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec </span>consul1 consul members
+</span><span class="line">Node          Address        Status  Type    Build  Protocol
+</span><span class="line">dcf304f77fdf  10.0.0.3:8301  alive   client  0.5.0  2
+</span><span class="line">3be672bd18b1  10.0.0.4:8301  left    client  0.5.0  2       <span class="c"># &lt;- Statusが&#39;alive&#39;から&#39;left&#39;に変わる</span>
+</span><span class="line">725dca3980ea  10.0.0.1:8301  alive   server  0.5.0  2
+</span><span class="line">f82001d6a7b4  10.0.0.2:8301  alive   server  0.5.0  2
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>という感じで、複数のマシンをいじってる感じがまったくしないくらい<code>weave</code> &amp; <code>docker exec</code>は便利です。
+weaveがプロダクション環境で使えるか、という点については未知ですが。</p>
+
+<p>次回（があれば）consulを使った設定の管理について試したメモを書きたいと思います。</p>
+</div>
+  
+  
+
+
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/2015/01/18/peek-for-profiling-rails-app/">Peek - Railsアプリのプロファイリングツール</a></h1>
     
     
@@ -225,105 +419,6 @@ How we keep Github fastでも言及されているツールです。(2012年な�
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2014/12/31/books-2014/">2014年に購入した技術書</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-12-31T20:22:02+09:00" pubdate data-updated="true">2014-12-31 (Wed)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>投稿数を稼ぐべく、とりあえず今年購入した（であろう）本をリストアップしつつ、今年の振り返りでも。</p>
-
-<p>購入しただけで読めてないものや、途中のものもありますが、技術書なんてリファレンスなので全部読む必要もないわけで(言い訳)。
-一度手放した本とか角川祭りとかでKindleストアでの購入が増えた年でした。Kindle3からPaperwhiteにアップデートしたのも大きい。
-仕事上フロントエンド以外の広範囲を取り扱う機会が増えたため、読んだ本もわりと多岐にわたってます。</p>
-
-<p>世の中的には、Immutable Infrastractureが一段落して、Docker, Golang, Microservicesなんかがバズワード化してました。</p>
-
-<p>とくにGolangは日本語書籍は増えてないものの、Go製プロダクトが大量発生している状況は当分継続しそう。なので、いろんなRuby/Python/Perl/PHPなどLL製プロダクトのリプレースが進んでいくのでは。新しい流行としてはGolangにつづいてRust, Clojure, Elixrあたりがじわじわ来るんじゃないでしょうかね。</p>
-
-<p>インフラ周りでいうと、コンテナ化、マルチクラウド、モニタリングまわりが大きく変化しそうです。</p>
-
-<p>では、購入した書籍一覧です。購入日時はよくわからないので購入順には並んでません。(すべてアフィ無しリンクです)</p>
-
-<h3 id="section">プログラミング</h3>
-
-<ul>
-  <li><a href="http://www.amazon.co.jp/gp/product/B0096BYG7C">Practical Object-Oriented Design in Ruby</a></li>
-  <li><a href="http://www.amazon.co.jp/gp/product/B00HUEG8LE">Build Awesome Command-Line Applications in Ruby 2</a></li>
-  <li><a href="http://www.manning.com/ketelsen/">Go in Action</a></li>
-  <li><a href="http://www.amazon.co.jp/dp/B00MLUGZIS/">すごいErlangゆかいに学ぼう！</a></li>
-  <li><a href="http://tatsu-zine.com/books/naruhounix">なるほどUnixプロセス ― Rubyで学ぶUnixの基礎</a></li>
-  <li>(未読) <a href="http://www.jstorimer.com/products/working-with-tcp-sockets">Working With TCP Sockets</a></li>
-  <li>(未読) <a href="http://www.amazon.co.jp/dp/4756136494">プログラミング作法</a></li>
-</ul>
-
-<h3 id="section-1">アーキテクチャ</h3>
-
-<ul>
-  <li><a href="http://www.amazon.co.jp/gp/product/B00GRKD6XU">エリック・エヴァンスのドメイン駆動設計</a></li>
-  <li><a href="http://shop.oreilly.com/product/0636920033158.do">Building Microservices</a></li>
-</ul>
-
-<h3 id="section-2">ミドルウェア</h3>
-
-<ul>
-  <li><a href="http://www.amazon.co.jp/gp/product/B00HSC64P8">Redis入門　インメモリKVSによる高速データ管理</a></li>
-  <li><a href="http://www.manning.com/grainger/">Solr in Action</a></li>
-  <li><a href="http://shop.oreilly.com/product/0636920026136.do">ZeroMQ</a></li>
-  <li><a href="http://www.amazon.co.jp/gp/product/B00J4KDYZU">高速スケーラブル検索エンジン　ElasticSearch Server</a></li>
-</ul>
-
-<h3 id="section-3">インフラ</h3>
-
-<ul>
-  <li><a href="http://www.amazon.co.jp/dp/4873116767/">ハイパフォーマンス ブラウザネットワーキング</a></li>
-  <li><a href="http://www.amazon.co.jp/gp/product/B00FLYU9T2">Systems Performance: Enterprise and the Cloud </a></li>
-  <li><a href="http://www.amazon.co.jp/dp/477416500X">Chef実践入門 ~コードによるインフラ構成の自動化 </a></li>
-  <li><a href="http://www.amazon.co.jp/gp/product/B00LRROTI4">The Docker Book: Containerization is the new virtualization </a></li>
-  <li><a href="http://www.amazon.co.jp/dp/B00JWM4W2E">Docker入門 Immutable Infrastructureを実現する</a></li>
-</ul>
-
-<h3 id="section-4">読み物</h3>
-
-<ul>
-  <li><a href="http://www.amazon.co.jp/gp/product/B00OJVMK5O">How Google Works </a></li>
-  <li><a href="http://www.amazon.co.jp/dp/4274068471">Coders at Work プログラミングの技をめぐる探求</a></li>
-  <li><a href="http://www.amazon.co.jp/dp/4873114713">言語設計者たちが考えること</a></li>
-  <li>(未読) <a href="http://www.amazon.co.jp/gp/product/B00MIFE3BC">アカマイ　知られざるインターネットの巨人</a></li>
-  <li>(未読) <a href="http://www.amazon.co.jp/dp/4274064069">UNIXという考え方―その設計思想と哲学</a></li>
-</ul>
-
-</div>
-  
-  
-
-
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/page/2/">&larr; Older</a>
@@ -377,6 +472,10 @@ How we keep Github fastでも言及されているツールです。(2012年な�
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2015/03/09/consul-cluster-with-docker/">DockerとWeaveを使って1台のマシンでConsulを複数動かしてみる</a>
+      </li>
+    
+      <li class="post">
         <a href="/2015/01/18/peek-for-profiling-rails-app/">Peek - Railsアプリのプロファイリングツール</a>
       </li>
     
@@ -392,16 +491,12 @@ How we keep Github fastでも言及されているツールです。(2012年な�
         <a href="/2014/08/13/golang-json-marshal-unmarshal/">Goのjson.Marshal/Unmarshalの仕様を整理してみる</a>
       </li>
     
-      <li class="post">
-        <a href="/2014/06/28/about-docker-libchan/">Docker謹製ライブラリのlibchanについて調べてみた</a>
-      </li>
-    
   </ul>
 </section>
 <section>
   <h1>Categories</h1>
   <ul id="categories">
-    <li><a href='/category/architecture/'>architecture</a></li><li><a href='/category/docker/'>docker</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/go/'>go</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/ruby/'>ruby</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
+    <li><a href='/category/architecture/'>architecture</a></li><li><a href='/category/docker/'>Docker</a></li><li><a href='/category/docker/'>docker</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/go/'>go</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/ruby/'>ruby</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
   </ul>
 </section>
 <section>

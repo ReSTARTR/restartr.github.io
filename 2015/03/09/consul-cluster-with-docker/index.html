@@ -5,14 +5,13 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>VarnishのVCLを再起動なしに再読み込みする - I Will Survive</title>
+  <title>DockerとWeaveを使って1台のマシンでConsulを複数動かしてみる - I Will Survive</title>
   <meta name="author" content="ReSTARTR">
   <link rel="author" href="https://plus.google.com/103216164658230535238" />
   <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="/etc/varnish/default.vclを書き換えた時、 1
-/etc/init.d/varnishd restart ってやってたけど、reloadできることを今更知った。 vcl.list: 現在の読み込んでるVCLの一覧を見る &hellip;">
+  <meta name="description" content="軽くConsulを試してみたくて、でもVagrantで複数台仮想マシンを立ち上げるのはちょっと気が重い…ということでUbuntu14.10 on MacBookAirにDockerコンテナを複数立ち上げてクラスタを構築してみるテストをしました。">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -21,7 +20,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://blog.restartr.com/2014/04/06/reload-varnish-vcl/">
+  <link rel="canonical" href="http://blog.restartr.com/2015/03/09/consul-cluster-with-docker/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
    <link href="/stylesheets/data-table.css" media="screen, projection" rel="stylesheet" type="text/css" />
@@ -120,7 +119,7 @@
   
   <header>
     
-      <h1 class="entry-title">VarnishのVCLを再起動なしに再読み込みする</h1>
+      <h1 class="entry-title">DockerとWeaveを使って1台のマシンでConsulを複数動かしてみる</h1>
       
       <style type="text/css">
   .sharing {
@@ -142,12 +141,12 @@
 </style>
 <div class="sharing">
   <ul>
-    <li><a href="http://blog.restartr.com/2014/04/06/reload-varnish-vcl/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+    <li><a href="http://blog.restartr.com/2015/03/09/consul-cluster-with-docker/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
   
-  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2014/04/06/reload-varnish-vcl/" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2014/04/06/reload-varnish-vcl/" >Tweet</a></li>
+  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2015/03/09/consul-cluster-with-docker/" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2015/03/09/consul-cluster-with-docker/" >Tweet</a></li>
   
   
-  <li><div class="fb-like" data-href="http://blog.restartr.com/2014/04/06/reload-varnish-vcl/" data-layout="button_count" data-action="like" data-show-faces="false" data-share="true"></div><script>(function(d, s, id) {
+  <li><div class="fb-like" data-href="http://blog.restartr.com/2015/03/09/consul-cluster-with-docker/" data-layout="button_count" data-action="like" data-show-faces="false" data-share="true"></div><script>(function(d, s, id) {
   var js, fjs = d.getElementsByTagName(s)[0];
   if (d.getElementById(id)) return;
   js = d.createElement(s); js.id = id;
@@ -178,88 +177,171 @@
   
 
 
-<time datetime="2014-04-06T15:38:08+09:00" pubdate data-updated="true">2014-04-06 (Sun)</time>
+<time datetime="2015-03-09T00:22:13+09:00" pubdate data-updated="true">2015-03-09 (Mon)</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>/etc/varnish/default.vclを書き換えた時、</p>
+<div class="entry-content"><p>軽くConsulを試してみたくて、でもVagrantで複数台仮想マシンを立ち上げるのはちょっと気が重い…ということでUbuntu14.10 on MacBookAirにDockerコンテナを複数立ち上げてクラスタを構築してみるテストをしました。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">/etc/init.d/varnishd restart
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>ってやってたけど、reloadできることを今更知った。</p>
-
-<h3 id="vcllist-vcl">vcl.list: 現在の読み込んでるVCLの一覧を見る</h3>
-
-<p>CentOSのyumで入れたvarnishはデフォルトでこんなふうになってる</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>varnishadm -T localhost:6082 vcl.list
-</span><span class="line">active        579 boot
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h3 id="vclload-vcl">vcl.load: 新規にVCLをロードする</h3>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>varnishadm -T localhost:6082 vcl.load boot-<span class="sb">`</span>date+%Y%m%d%H%M%S<span class="sb">`</span> /etc/varnish/default.vcl
-</span><span class="line">VCL compiled.
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>この時点では利用可能な状態であって、まだ変更は反映されていない</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>varnishadm -T localhost:6082 vcl.list
-</span><span class="line">active        579 boot
-</span><span class="line">available       0 boot-20140406153127
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h3 id="vcluse-vcl">vcl.use: ロードしたVCLに切り替える</h3>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>varnishadm -T localhost:6082 vcl.use boot-20140406153127
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>何も表示されないけどちゃんと切り替わっている</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>varnishadm -T localhost:6082 vcl.list
-</span><span class="line">available     526 boot
-</span><span class="line">active         53 boot-20140406153127
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>ちなみに、真ん中の数値はactiveの場合は経過秒数で、availableになると数値が減っていく。
-でも、0になっても居座り続ける。この数値の変化のルールはよくわかってない。</p>
-
-<p>ということで不要な過去のvclは定期的に消さないとずっと残り続けてしまうので注意。</p>
-
-<h3 id="vcldiscard-vcl">vcl.discard: ロード済みvclの破棄</h3>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>varnishadm -T localhost:6082 vcl.discard boot
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>ここでも結果が表示されないけどちゃんと消えている。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>varnishadm -T localhost:6082 vcl.list
-</span><span class="line">available       11 boot-20140406155155
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>本当はinitスクリプト化すると便利なんだろうけど、手動でも良いかなと。</p>
+<p>Dockerfileとか簡単な動かし方(を適当英語で書いたもの)をgithubにあげてあります</p>
 
 <ul>
-  <li><a href="http://blog.xcir.net/?p=124">Varnishで再起動無しで設定ファイルを適用する方法(reload) » cat /dev/random &gt; /dev/null &amp;</a></li>
+  <li><a href="https://github.com/ReSTARTR/test-consul-with-docker">ReSTARTR/test-consul-with-docker</a></li>
 </ul>
+
+<p>Docker内のプロセスがLISTENするポートに対してコンテナ外から接続する場合、<code>-p</code>でホストのポートにひもづけるか、<code>--link</code>でコンテナ同士をつなぐのが最も手軽な方法です。が、consulは複数のポート（HTTP API用、DNS用、ゴシッププロトコル用等）を使うため、この手軽な方法でクラスタを構築することができません。</p>
+
+<p>Dockerコンテナの接続パターンとしてはいくつかあって、deeeetさんのブログ記事に詳しく書かれています。</p>
+
+<ul>
+  <li><a href="http://deeeet.com/writing/2014/12/01/docker-link-pattern/">Dockerコンテナ接続パターン (2014年冬) | SOTA</a></li>
+</ul>
+
+<p>今回は手元のMacBook Airだけで完結させたかったので、weaveを使ったコンテナ間ネットワークを利用することにしました。</p>
+
+<h3 id="weave">weave</h3>
+
+<ul>
+  <li><a href="http://zettio.github.io/weave/">weave  | weave, the Docker network</a></li>
+</ul>
+
+<p>dockerコンテナ間の内部ネットワークを構築するものです。詳しくはjacopenさんのSlideShareを。</p>
+
+<ul>
+  <li><a href="http://www.slideshare.net/jacopen/weave-40871981">Weaveを試してみた</a></li>
+</ul>
+
+<p>使い方はとても簡単で、weaveコンテナをCIDRブロック指定で立ち上げて、weaveコマンド経由でdockerコマンドを実行するだけ。
+これならVagrantのような仮想マシンのためにメモリとディスク容量を割く必要もなくなります。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo weave launch
+</span><span class="line"><span class="nv">$ </span>sudo weave start 10.0.0.1/24 weaver
+</span><span class="line"><span class="nv">$ </span>sudo docker ps
+</span><span class="line">CONTAINER ID        IMAGE                COMMAND                CREATED             STATUS              PORTS                                            NAMES
+</span><span class="line">2eda921c011e        zettio/weave:0.9.0   <span class="err">&quot;</span>/home/weave/weaver    31 seconds ago      Up 30 seconds       0.0.0.0:6783-&gt;6783/tcp, 0.0.0.0:6783-&gt;6783/udp   weave
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>これだけで仮想ネットワークができあがります。ホストOSで必要なポートは6783だけです。</p>
+
+<p>あとはweaveコマンドにIPを指定しつつdockerコマンドのオプションを付けて起動すればOK。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ C</span><span class="o">=</span><span class="k">$(</span>sudo weave run 10.0.0.1/24 -it ubuntu<span class="k">)</span>
+</span><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec</span> <span class="nv">$C</span> -it /bin/bash
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>ただ、さくらVPSのCentOS6では動きませんでした。面倒なので深く追ってません。。。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo /usr/local/bin/weave launch
+</span><span class="line">WARNING: Linux kernel version 3.5 or newer is required <span class="o">(</span>you have 2.6<span class="o">)</span>
+</span><span class="line">ERROR: ip utility, iproute2-ss091226 does not support network namespaces.
+</span><span class="line">       Please install iproute2-ss111010 or later.
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="consul">consul</h3>
+
+<ul>
+  <li><a href="https://www.consul.io/">consul</a></li>
+</ul>
+
+<p>Hashicorp謹製クラスタのオーケストレーションツール。今更説明する必要もないと思うので詳細は省略します。
+consul（と周辺ツールのconsul-templateやenvconsul)を使えば複数のホスト間で設定を共有できる、というのを試すのが今回の目的でしたが、とりあえず複数のconsulを動かすところまでを書きます。</p>
+
+<h3 id="consul-1">consulを起動してクラスタを構築する</h3>
+
+<p>weaveネットワークに接続したコンテナを4台立ち上げて、consul1, consul2をserverとして、consul3, consul4をclientとして起動します。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo weave run 10.0.0.1/24 -it -v <span class="k">$(</span><span class="nb">pwd</span> -P<span class="k">)</span>:/opt --name<span class="o">=</span>consul1 restartr/consul-ready
+</span><span class="line"><span class="nv">$ </span>sudo weave run 10.0.0.2/24 -it -v <span class="k">$(</span><span class="nb">pwd</span> -P<span class="k">)</span>:/opt --name<span class="o">=</span>consul2 restartr/consul-ready
+</span><span class="line"><span class="nv">$ </span>sudo weave run 10.0.0.3/24 -it -v <span class="k">$(</span><span class="nb">pwd</span> -P<span class="k">)</span>:/opt --name<span class="o">=</span>consul3 restartr/consul-ready
+</span><span class="line"><span class="nv">$ </span>sudo weave run 10.0.0.4/24 -it -v <span class="k">$(</span><span class="nb">pwd</span> -P<span class="k">)</span>:/opt --name<span class="o">=</span>consul4 restartr/consul-ready
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>あとはconsul agentを順に起動するだけ。</p>
+
+<p>ここで注意するのが<code>-bind</code>オプション。
+これを指定しないとdockerデフォルトのeth0のでクラスタにjoinすることになってしまい、このネットワークは他のコンテナとつながっていないためにクラスタ構築に失敗します。
+必ず<code>weave run 10.0.0.X/24</code>で指定したIPにbindしておきましょう。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec</span> -d consul1 consul agent -server -data-dir<span class="o">=</span>/tmp/consul -bootstrap-expect 1 -bind 10.0.0.1
+</span><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec</span> -d consul2 consul agent -server -data-dir<span class="o">=</span>/tmp/consul -config-dir<span class="o">=</span>/opt/consul.d/web.json -bind 10.0.0.2
+</span><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec</span> -d consul3 consul agent -data-dir<span class="o">=</span>/tmp/consul -config-dir<span class="o">=</span>/opt/consul.d/web.json -bind 10.0.0.3
+</span><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec</span> -d consul4 consul agent -data-dir<span class="o">=</span>/tmp/consul -config-dir<span class="o">=</span>/opt/consul.d/web.json -bind 10.0.0.4
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>で、先に起動したconsul1に対して残りのコンテナ内のconsul agentをjoinさせていきます。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec </span>consul2 consul join 10.0.0.1
+</span><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec </span>consul3 consul join 10.0.0.1
+</span><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec </span>consul4 consul join 10.0.0.1
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>と、<code>consul members</code>でjoinしている一覧が見えるようになります。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec </span>consul1 consul members
+</span><span class="line">Node          Address        Status  Type    Build  Protocol
+</span><span class="line">725dca3980ea  10.0.0.1:8301  alive   server  0.5.0  2
+</span><span class="line">f82001d6a7b4  10.0.0.2:8301  alive   server  0.5.0  2
+</span><span class="line">dcf304f77fdf  10.0.0.3:8301  alive   client  0.5.0  2
+</span><span class="line">3be672bd18b1  10.0.0.4:8301  alive   client  0.5.0  2
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>クラスタから離れるときは<code>consul leave</code>です。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec </span>consul4 consul leave
+</span><span class="line">Graceful leave <span class="nb">complete</span>
+</span><span class="line">
+</span><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec </span>consul1 consul members
+</span><span class="line">Node          Address        Status  Type    Build  Protocol
+</span><span class="line">dcf304f77fdf  10.0.0.3:8301  alive   client  0.5.0  2
+</span><span class="line">3be672bd18b1  10.0.0.4:8301  left    client  0.5.0  2       <span class="c"># &lt;- Statusが&#39;alive&#39;から&#39;left&#39;に変わる</span>
+</span><span class="line">725dca3980ea  10.0.0.1:8301  alive   server  0.5.0  2
+</span><span class="line">f82001d6a7b4  10.0.0.2:8301  alive   server  0.5.0  2
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>という感じで、複数のマシンをいじってる感じがまったくしないくらい<code>weave</code> &amp; <code>docker exec</code>は便利です。
+weaveがプロダクション環境で使えるか、という点については未知ですが。</p>
+
+<p>次回（があれば）consulを使った設定の管理について試したメモを書きたいと思います。</p>
 </div>
 
 
@@ -285,12 +367,12 @@
 </style>
 <div class="sharing">
   <ul>
-    <li><a href="http://blog.restartr.com/2014/04/06/reload-varnish-vcl/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+    <li><a href="http://blog.restartr.com/2015/03/09/consul-cluster-with-docker/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
   
-  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2014/04/06/reload-varnish-vcl/" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2014/04/06/reload-varnish-vcl/" >Tweet</a></li>
+  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2015/03/09/consul-cluster-with-docker/" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2015/03/09/consul-cluster-with-docker/" >Tweet</a></li>
   
   
-  <li><div class="fb-like" data-href="http://blog.restartr.com/2014/04/06/reload-varnish-vcl/" data-layout="button_count" data-action="like" data-show-faces="false" data-share="true"></div><script>(function(d, s, id) {
+  <li><div class="fb-like" data-href="http://blog.restartr.com/2015/03/09/consul-cluster-with-docker/" data-layout="button_count" data-action="like" data-show-faces="false" data-share="true"></div><script>(function(d, s, id) {
   var js, fjs = d.getElementsByTagName(s)[0];
   if (d.getElementById(id)) return;
   js = d.createElement(s); js.id = id;
@@ -327,12 +409,12 @@
   
 
 
-<time datetime="2014-04-06T15:38:08+09:00" pubdate data-updated="true">2014-04-06 (Sun)</time>
+<time datetime="2015-03-09T00:22:13+09:00" pubdate data-updated="true">2015-03-09 (Mon)</time>
       
 
 <span class="categories">
   
-    <a class='category' href='/category/varnish/'>varnish</a>
+    <a class='category' href='/category/docker/'>Docker</a>
   
 </span>
 
@@ -341,10 +423,8 @@
     <hr />
     <p class="meta">
       
-        <a class="basic-alignment left" href="/2014/04/06/move-from-wordpress-to-octopress/" title="Previous Post: WordpressからOctopressに移行">&laquo; WordpressからOctopressに移行</a>
+        <a class="basic-alignment left" href="/2015/01/18/peek-for-profiling-rails-app/" title="Previous Post: Peek - Railsアプリのプロファイリングツール">&laquo; Peek - Railsアプリのプロファイリングツール</a>
       
-      
-        <a class="basic-alignment right" href="/2014/04/20/vimrc-noexpandtab-in-golang/" title="Next Post: vimで特定のファイルタイプだけタブインデントにする方法">vimで特定のファイルタイプだけタブインデントにする方法 &raquo;</a>
       
     </p>
   </footer>

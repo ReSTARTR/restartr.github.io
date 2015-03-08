@@ -11,20 +11,7 @@
   <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="ハマったので。 1
-2
-3
-4
-5
-6
-7
-a = 2
-double = lambda x: x*a
-double(4) # 8 (=4*2)
-double(10) # 20 (=10*3)
-a = 3
-double(4) # 12 # WTF?
-double(10) # 30 &hellip;">
+  <meta name="description" content="最近Rubyでプロジェクトオイラーを解きながらRubyに慣れようとしてるのですが、ちょっと飽きてきたので息抜きにGoを書いたりしています。 ついでにZeroMQも試してみたかったので、GoとPythonをZeroMQで繋いでみました。 構成はこんな感じで、Python(かGo)clientを起動し &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -129,6 +116,146 @@ double(10) # 30 &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2013/04/26/connect-go-and-python-with-zeromq/">GoとPythonをZeroMQで繋ぐ</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-04-26T23:34:48+09:00" pubdate data-updated="true">2013-04-26 (Fri)</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>最近Rubyでプロジェクトオイラーを解きながらRubyに慣れようとしてるのですが、ちょっと飽きてきたので息抜きにGoを書いたりしています。</p>
+
+<p>ついでにZeroMQも試してみたかったので、GoとPythonをZeroMQで繋いでみました。</p>
+
+<p>構成はこんな感じで、Python(かGo)clientを起動し、Goで動くmonitorq経由でGoのserverにつながります。PUB/SUBでmonitorからモニタリングできるのがミソです。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line">              <span class="o">+----------------------------------------+</span>
+</span><span class="line">              <span class="o">|</span>                                        <span class="o">|</span>
+</span><span class="line">  <span class="o">+------+</span>        <span class="o">|--------------------------+</span>     <span class="o">+-----+</span> <span class="o">|</span>
+</span><span class="line">  <span class="o">|</span><span class="n">client</span><span class="o">|--------|</span><span class="mi">9001</span>     <span class="n">monitorq</span>     <span class="mi">9002</span><span class="o">|-----|</span><span class="n">serv</span> <span class="o">|</span> <span class="o">|</span>
+</span><span class="line">  <span class="o">|</span><span class="p">(</span><span class="no">REQ</span><span class="p">)</span> <span class="o">|</span>        <span class="o">|</span><span class="p">(</span><span class="no">ROUTER</span><span class="p">)</span>   <span class="mi">9003</span>   <span class="p">(</span><span class="no">DEALER</span><span class="p">)</span><span class="o">|</span>     <span class="o">|</span><span class="p">(</span><span class="no">REP</span><span class="p">)</span><span class="o">|</span> <span class="o">|</span>
+</span><span class="line">  <span class="o">+------+</span>        <span class="o">|--------------------------+</span>     <span class="o">+-----+</span> <span class="o">|</span>
+</span><span class="line">              <span class="o">|</span>          <span class="o">|</span><span class="p">(</span><span class="no">PUB</span><span class="p">)</span>                        <span class="o">|</span>
+</span><span class="line">              <span class="o">|</span>          <span class="o">|</span>                             <span class="o">|</span>
+</span><span class="line">              <span class="o">|</span>          <span class="o">|</span>                             <span class="o">|</span>
+</span><span class="line">              <span class="o">|</span>          <span class="o">|</span><span class="p">(</span><span class="no">SUB</span><span class="p">)</span>                        <span class="o">|</span>
+</span><span class="line">              <span class="o">|</span>      <span class="o">+-------+</span>                         <span class="o">|</span>
+</span><span class="line">              <span class="o">|</span>      <span class="o">|</span><span class="n">monitor</span><span class="o">|</span>                         <span class="o">|</span>
+</span><span class="line">              <span class="o">|</span>      <span class="o">+-------+</span>                         <span class="o">|</span>
+</span><span class="line">              <span class="o">+----------------------------------------+</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p><em>※client/server/monitorは複数たちあげるとよしなに振り分けてくれます。</em></p>
+
+<ul>
+  <li>monitorqでfan-in/outする</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>go run queue.go monitorq
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<ul>
+  <li>clientから”PING”を投げる(と、”PONG#<pid>&#8220;が帰る)</pid></li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>python run queue.py client
+</span><span class="line">PONG#&lt;28870&gt;
+</span><span class="line">PONG#&lt;28870&gt;
+</span><span class="line"> :
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<ul>
+  <li>serverから”PONG”を返す(clientからのPINGを表示)</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>go run queue.go serv
+</span><span class="line">Recv: PING#&lt;73835&gt;
+</span><span class="line">Recv: PING#&lt;73835&gt;
+</span><span class="line"> :
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<ul>
+  <li>monitorでリクエスト総数をモニタリング</li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>go run queue.go monitor
+</span><span class="line">MONITOR: IN: 2082, OUT 2082
+</span><span class="line">MONITOR: IN: 2083, OUT 2083
+</span><span class="line"> :
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>コードはgistにあげてます。</p>
+
+<ul>
+  <li><a href="https://gist.github.com/ReSTARTR/5467656">gist</a></li>
+</ul>
+
+<p>ZeroMQなら他にもいろんな構成がとれるので、使いどころは結構あるのではないかと。</p>
+
+<p>今回、不慣れなGoで書いてみましたが、これくらいであればもわりと素直にかけるなぁという印象です。</p>
+
+<p>Goで書かれたZeroMQのサンプルは以下githubリポジトリにたくさんあるので、覗いてみると色々勉強になります。</p>
+
+<ul>
+  <li><a href="https://github.com/imatix/zguide/tree/master/examples/Go">zguide/examples/Go at master ? imatix/zguide</a></li>
+</ul>
+</div>
+  
+  
+
+
+
+
+    </article>
   
   
     <article>
@@ -325,211 +452,6 @@ double(10) # 30 &hellip;">
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2013/04/05/my-first-pytest/">Pythonのテストにpytestを使ってみた</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2013-04-05T21:00:24+09:00" pubdate data-updated="true">2013-04-05 (Fri)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>pytestを使い始めました。</p>
-
-<ul>
-  <li><a href="http://pytest.org/latest/">pytest: helps you write better programs</a></li>
-</ul>
-
-<p>まだまだ機能は把握しきれていませんが、良いと思ったことは3つ。</p>
-
-<ol>
-  <li>テストがコケた箇所のコードがレポート内容に表示される</li>
-  <li>テスト対象を初期化したものの受け渡し方をスマートにできる</li>
-  <li>pytest.vimがなかなか使える</li>
-</ol>
-
-<h3 id="section">1.テストがコケた箇所のコードがレポート内容に表示される</h3>
-
-<p>これが巷でよく聞く一番のメリットかとは思いますが、コケたときの情報が全然違います。
-pytestはかなり詳細に表示してくれるので、レポートの内容だけでどこをどう直せば良いか把握できます。</p>
-
-<h4 id="unittest-v">unittestの実行結果(-vオプション付き)</h4>
-
-<p><a href="http://www.flickr.com/photos/53244662@N04/8621946368/" title="unittest by ReSTARTR_y, on Flickr"><img src="http://farm9.staticflickr.com/8523/8621946368_d7bc9a450d_z.jpg" width="640" height="220" alt="unittest" /></a></p>
-
-<h4 id="pytest-v">pytestの実行結果(-vオプション付き)</h4>
-
-<p><a href="http://www.flickr.com/photos/53244662@N04/8620844529/" title="pytest by ReSTARTR_y, on Flickr"><img src="http://farm9.staticflickr.com/8244/8620844529_ce66ff7f9c_z.jpg" width="640" height="401" alt="pytest" /></a></p>
-
-<p>文字列比較の場合は差分表示してくれたりするので便利です。</p>
-
-<h3 id="section-1">2. テスト対象を初期化したものの受け渡し方をスマートにできる</h3>
-
-<p>これが結構良い感じだと思いました。</p>
-
-<p>かなり単純なクラスを対象にして例を書きます。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="c"># -*- coding: utf-8 -*-</span>
-</span><span class="line">
-</span><span class="line"><span class="k">class</span> <span class="nc">Hoge</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
-</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">v</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
-</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">val</span> <span class="o">=</span> <span class="n">v</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h4 id="pythonunittest">python同梱のunittestで書く</h4>
-
-<p>こんな感じで、self.hogeを使ってテスト対象を受け渡します。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="c"># -*- coding: utf-8 -*-</span>
-</span><span class="line"><span class="kn">from</span> <span class="nn">hoge</span> <span class="kn">import</span> <span class="n">Hoge</span>
-</span><span class="line"><span class="kn">import</span> <span class="nn">unittest</span>
-</span><span class="line">
-</span><span class="line"><span class="k">class</span> <span class="nc">TestHoge1</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">def</span> <span class="nf">setUp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">hoge</span> <span class="o">=</span> <span class="n">Hoge</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">def</span> <span class="nf">test_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">assertIsInstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hoge</span><span class="p">,</span> <span class="n">Hoge</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">def</span> <span class="nf">test_val</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hoge</span><span class="o">.</span><span class="n">val</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">hoge</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s">&#39;hoge&#39;</span><span class="p">)</span>
-</span><span class="line">        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">hoge</span><span class="o">.</span><span class="n">val</span><span class="p">,</span> <span class="s">&#39;hige&#39;</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line"><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
-</span><span class="line">    <span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>pytestで書くとこんな感じになります。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="c"># -*- coding: utf-8 -*-</span>
-</span><span class="line"><span class="kn">from</span> <span class="nn">hoge</span> <span class="kn">import</span> <span class="n">Hoge</span>
-</span><span class="line"><span class="kn">import</span> <span class="nn">pytest</span>
-</span><span class="line">
-</span><span class="line"><span class="k">class</span> <span class="nc">TestHoge1</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">def</span> <span class="nf">pytest_funcarg__hoge</span><span class="p">(</span><span class="n">request</span><span class="p">):</span>
-</span><span class="line">        <span class="k">return</span> <span class="n">Hoge</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">def</span> <span class="nf">test_type</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hoge</span><span class="p">):</span>
-</span><span class="line">        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">hoge</span><span class="p">,</span> <span class="n">Hoge</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line">    <span class="k">def</span> <span class="nf">test_val</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">hoge</span><span class="p">):</span>
-</span><span class="line">        <span class="k">assert</span> <span class="n">hoge</span><span class="o">.</span><span class="n">val</span> <span class="o">==</span> <span class="mi">1</span>
-</span><span class="line">
-</span><span class="line">        <span class="n">hoge</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="s">&#39;hoge&#39;</span><span class="p">)</span>
-</span><span class="line">        <span class="k">assert</span> <span class="n">hoge</span><span class="o">.</span><span class="n">val</span> <span class="o">==</span> <span class="s">&#39;hige&#39;</span>
-</span><span class="line">
-</span><span class="line"><span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
-</span><span class="line">    <span class="n">pytest</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>何が良いかっていうと、各テストメソッドで必要な初期化済みHogeインスタンスを、pytest_funcarg__hoge()で作って渡してやることができます。pytest_funcarg__NAMEを定義すれば、各テストメソッドでNAMEとして引数にとることができるわけです。(<a href="http://pytest.org/latest-ja/funcargs.html">テスト関数 (funcargs) にオブジェクトを注入</a>)</p>
-
-<p>unittest.TestCaseのsetUpを使う場合、self.hogeに一旦入れてやらないといけないし、各テストメソッドではself.hogeでアクセスする必要も出てきます。</p>
-
-<p>見た目が簡潔になるのはとても良いことです。</p>
-
-<h3 id="pytestvim">3. pytest.vimがなかなか使える</h3>
-
-<p>vimのプラグインにpytest.vimっていうのがありました。
-これもなかなか使い勝手が良いです。</p>
-
-<p>詳しくは下記動画を御覧ください。</p>
-
-<ul>
-  <li><a href="http://vimeo.com/19774046"> pytest.vim 0.0.5 on Vimeo </a></li>
-</ul>
-
-<p>pytestの概要は以下スライドにて。</p>
-
-<iframe src="http://www.slideshare.net/slideshow/embed_code/14006990" width="427" height="356" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC;border-width:1px 1px 0;margin-bottom:5px" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen=""> </iframe>
-<div style="margin-bottom:5px"> <strong> <a href="http://www.slideshare.net/pfctdayelise/funcargs-other-fun-with-pytest" title="Funcargs &amp; other fun with pytest" target="_blank">Funcargs &amp; other fun with pytest</a> </strong> from <strong><a href="http://www.slideshare.net/pfctdayelise" target="_blank">Brianna Laugher</a></strong> </div>
-<p>他の機能は触りながらおいおい掴んでいければなと。</p>
-
-</div>
-  
-  
-
-
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/page/8/">&larr; Older</a>
@@ -585,6 +507,10 @@ pytestはかなり詳細に表示してくれるので、レポートの内容�
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2015/03/09/consul-cluster-with-docker/">DockerとWeaveを使って1台のマシンでConsulを複数動かしてみる</a>
+      </li>
+    
+      <li class="post">
         <a href="/2015/01/18/peek-for-profiling-rails-app/">Peek - Railsアプリのプロファイリングツール</a>
       </li>
     
@@ -600,16 +526,12 @@ pytestはかなり詳細に表示してくれるので、レポートの内容�
         <a href="/2014/08/13/golang-json-marshal-unmarshal/">Goのjson.Marshal/Unmarshalの仕様を整理してみる</a>
       </li>
     
-      <li class="post">
-        <a href="/2014/06/28/about-docker-libchan/">Docker謹製ライブラリのlibchanについて調べてみた</a>
-      </li>
-    
   </ul>
 </section>
 <section>
   <h1>Categories</h1>
   <ul id="categories">
-    <li><a href='/category/architecture/'>architecture</a></li><li><a href='/category/docker/'>docker</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/go/'>go</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/ruby/'>ruby</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
+    <li><a href='/category/architecture/'>architecture</a></li><li><a href='/category/docker/'>Docker</a></li><li><a href='/category/docker/'>docker</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/go/'>go</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/ruby/'>ruby</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
   </ul>
 </section>
 <section>

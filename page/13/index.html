@@ -11,9 +11,7 @@
   <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="6/18(土)に開催されたVarnish勉強会 Tokyo.vcl : ATNDに行ってきました。
-初のクックパッドさんオフィス訪問です。 Varnish3のリリースパーティーも兼ねての開催だったようで、ステッカーもいただいてしまいました。
-インフラ屋じゃない上に、 &hellip;">
+  <meta name="description" content="ScalaのORMとしてSquerylってのがあります。 Squeryl - A Scala ORM for SQL Databases 使い方は上記リンク先を見ればだいたいわかります。 あと、@jugyoさんのブログに導入あたりはまとまっていますし、 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -118,6 +116,191 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2011/08/16/3-things-that-i-was-in-trouble-using-squeryl/">ScalaのORMapperのSquerylを試してみてハマった３つのこと</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-08-16T08:00:15+09:00" pubdate data-updated="true">2011-08-16 (Tue)</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>ScalaのORMとしてSquerylってのがあります。</p>
+
+<ul>
+<li><a href="http://squeryl.org/index.html">Squeryl - A Scala ORM for SQL Databases</a></li>
+</ul>
+<p>使い方は上記リンク先を見ればだいたいわかります。</p>
+
+<p>あと、<a href="http://twitter.com/jugyo">@jugyo</a>さんのブログに導入あたりはまとまっていますし、つまづいたらGoogleGroupで検索すれば何か見つかるかもしれません。</p>
+
+<ul>
+<li><a href="http://blog.twiwt.org/e/f34763"> Twiwt:Blog / jugyo : squeryl を試す </a></li>
+<li><a href="http://blog.twiwt.org/e/7e40ce">Twiwt:Blog / jugyo : Squeryl の使い方 - セットアップ, モデルの定義, テーブル作成</a></li>
+<li><a href="https://groups.google.com/group/squeryl/about"> Squeryl | Google Groups </a></li>
+</ul>
+<p>さて、今回はTwitterっぽいものを想定して機能を試してみたのですが、３つほどハマったところを記しておきます。</p>
+
+<p>環境はScala2.9.0.1、Sbt0.7.7、MySQL5.5、Squeryl0.9.4です。</p>
+
+<p>ソースはgistに登録。それを本文末尾にも掲載しておきました。</p>
+
+<h3>１．プライマリーキーの指定での嵌りどころ</h3>
+<p>1つのカラムがPKとなるテーブルスキーマの場合、org.squeryl.KeyedEntity[T]を継承して使います。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">class</span> <span class="nc">Users</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">text</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">KeyedEntity</span><span class="o">[</span><span class="kt">Long</span><span class="o">]</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>KeyedEntityにはidというフィールドが用意されていて、継承時に型を指定することで、PKの型に適用させることができます。今回の場合であればLong型のPK「id」ということになります。</p>
+
+<p>ただし、この場合、PKはautoincrementedになってしまいます。</p>
+
+<p>コード的には下記のようにKeyedEntity[T]を使わずSchema継承時に定義するのと同等になるわけです。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">class</span> <span class="nc">Users</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">text</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span>
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">Db</span> <span class="k">extends</span> <span class="nc">Schema</span> <span class="o">{</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">val</span> <span class="n">users</span> <span class="k">=</span> <span class="n">table</span><span class="o">[</span><span class="kt">User</span><span class="o">](</span><span class="s">&quot;users&quot;</span><span class="o">)</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">on</span><span class="o">(</span><span class="n">users</span><span class="o">)(</span><span class="n">u</span> <span class="k">=&gt;</span> <span class="n">declare</span><span class="o">(</span>
+</span><span class="line">
+</span><span class="line">    <span class="n">u</span><span class="o">.</span><span class="n">id</span> <span class="n">is</span> <span class="o">(</span><span class="n">primaryKey</span><span class="o">,</span> <span class="n">autoincremented</span><span class="o">))</span>
+</span><span class="line">
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>これは結構困ります。そんな場合はSchemaを継承するときに定義を上書きすればOK。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">class</span> <span class="nc">Users</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">text</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">KeyedEntity</span><span class="o">[</span><span class="kt">Long</span><span class="o">]</span>
+</span><span class="line">
+</span><span class="line"><span class="k">class</span> <span class="nc">Db</span> <span class="k">extends</span> <span class="nc">Schema</span> <span class="o">{</span>
+</span><span class="line">
+</span><span class="line">  <span class="k">val</span> <span class="n">users</span> <span class="k">=</span> <span class="n">table</span><span class="o">[</span><span class="kt">User</span><span class="o">](</span><span class="s">&quot;users&quot;</span><span class="o">)</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">on</span><span class="o">(</span><span class="n">users</span><span class="o">)(</span><span class="n">u</span> <span class="k">=&gt;</span> <span class="n">declare</span><span class="o">(</span>
+</span><span class="line">
+</span><span class="line">    <span class="n">u</span><span class="o">.</span><span class="n">id</span> <span class="n">is</span> <span class="o">(</span><span class="n">primaryKey</span><span class="o">))</span>
+</span><span class="line">
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>これはSquerylのGoogleGroupに書いてました。</p>
+
+<ul>
+<li><a href="https://groups.google.com/forum/#!topic/squeryl/BTrKBwikMqs">how to cancel &#8220;autoincremented&#8221; from KeyedEntity[T]</a></li>
+</ul>
+<h3>２．DDLのカラムの順番の嵌りどころ</h3>
+<p>Db.printDdlを実行した時にカラムの順番が予測できません。</p>
+
+<p>PKが最初にくるのかと思えばそうでもないみたい。ここは細かく追ってないですが、これもGoogleGroupに答えがありました。</p>
+
+<ul>
+<li><a href="https://groups.google.com/forum/#!topic/squeryl/ZwiDf5Q-IUI">CREATE TABLE columns in order of constructor arguments</a></li>
+</ul>
+<p>答えとしては、org.squeryl.internals.DatabaseAdapter:: writeCreateTableあたりをorverrideしてなんとかしてくれとのこと。</p>
+
+<p><a href="https://github.com/max-l/Squeryl/blob/master/src/main/scala/org/squeryl/internals/DatabaseAdapter.scala#L255">https://github.com/max-l/Squeryl/blob/master/src/main/scala/org/squeryl/internals/DatabaseAdapter.scala#L255</a></p>
+
+<p>なんか良い方法はないの…</p>
+
+<p>とりあえず、printDdlした結果をコピーして、順番だけ書き換えて、手動で直接DBにクエリ発行すればなんとかなるでしょう。</p>
+
+<h3>３．外部キーの利用でのはまりどころ</h3>
+<p>２つのテーブルにRelationを設定してからDb.createした際、外部キーが設定されない問題がありました。</p>
+
+<p>MySQLは5.5を使っているので外部キーに対応していない訳でもないです。</p>
+
+<p>問題はAdapterの選定にありました。</p>
+
+<p>org.squeryl.adapter.MySQLAdapter</p>
+
+<p>をつかっていたのですが、</p>
+
+<p>org.squeryl.adapter.MySQLInnoDBAdapter</p>
+
+<p>を使えばOKでした。</p>
+
+<p>根本の原因は、org.squeryl.adapter.MySQLAdapterに</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">override</span> <span class="k">def</span> <span class="n">supportsForeignKeyConstraints</span> <span class="k">=</span> <span class="kc">false</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>と定義してあり、一方のorg.squeryl.adapter.MySQLInnoDBAdapterには</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">override</span> <span class="k">def</span> <span class="n">supportsForeignKeyConstraints</span> <span class="k">=</span> <span class="kc">true</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>と定義してあります。</p>
+
+<p>この値がtrueになっていないとForeignKeyの制約がDDLに含まれなくなってしまうので注意です。</p>
+
+<p><a href="https://github.com/max-l/Squeryl/blob/master/src/main/scala/org/squeryl/adapters/MySQLAdapter.scala#L75">Docコメントにも書いてある</a>ので注意です。</p>
+
+<p>以上、Squerylを弄ってみて嵌ったことをまとめてみました。</p>
+
+<h3>Squerylの使用感</h3>
+<p>ちょっと前にTwitterのStreamAPIのデータをMySQLに格納するためにSquerylを使ったのと今回少し弄ってみただけなのでまだまだ知らないことだらけです。他にも機能的はたくさん用意されていると思いますし、APIも割となじみやすいので複雑すぎないテーブル定義の場合には積極的にSquerylを使っていこうと思います。</p>
+
+<p><em>※ドキュメントや本体のソースを追いかけたりしながら使い方を学ぶのは非常に楽しいです:)</em></p>
+
+<p>で、ソースは以下です。</p>
+
+<script src="https://gist.github.com/1146854.js"> </script>
+
+</div>
+  
+  
+
+
+
+
+    </article>
   
   
     <article>
@@ -374,172 +557,6 @@
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2011/06/19/volunteer-at-shinchi-fukushima-pref/">東京から福島へ一泊二日でボランティアに行ってきた</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-06-19T12:03:20+09:00" pubdate data-updated="true">2011-06-19 (Sun)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><a href="http://www.flickr.com/photos/53244662@N04/5847245836/" title="IMG_5100 by ReSTARTR_y, on Flickr"><img src="http://farm4.static.flickr.com/3538/5847245836_ca37b883fe_z.jpg" width="640" height="427" alt="IMG_5100" /></a></p>
-
-<p>6/11,12の土日を利用して、福島県相馬郡新地町にボランティア活動に行ってきました。</p>
-
-<h2 id="section">活動の経緯</h2>
-
-<p>東日本大震災がおきてから、被災地に対して何かできることを、ということでこれまで募金と献血をやってきました。が、それだけでなく何かできることはないかと常々考えていました。
-仕事柄、ITを利用した貢献も考えたのですが、イマイチ現地の状況がわからない。情報を得ようとしても地域やソースによって様々かつ時間とともに大きく変化しているからです。
-また、社会人とはいうものの土日の時間やお金については結構余裕があるので、じゃあ現地でボランティアをすることで現状を知ることができるのではないか、と考えたのが今回の経緯です。
-その後、被災地の状況に詳しい元同僚に相談し、その子の母親と友人2名を加えた5名で活動をしてきました。</p>
-
-<h3 id="section-1">活動内容</h3>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5846683717/" title="IMG_5090 by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5109/5846683717_604f687639_m.jpg" width="240" height="160" alt="IMG_5090" /></a></p>
-
-<p>津波の被害をうけた民家の瓦礫撤去作業を行いました。
-とはいっても大きな物はあらかた自衛隊が撤去しているので、我々の役目は倒れた木の撤去や、瓦・ガラス等の破片の収集、側溝の泥かきなど、担当した民家の敷地内を綺麗にすること。
-計10名程度で、1日かけて行いましたが、天候が曇りだったこともあって順調に作業をすることができました。</p>
-
-<h2 id="section-2">現地に行ってみて</h2>
-
-<h4 id="section-3">ボランティアセンターすごい</h4>
-<p><a href="http://www.flickr.com/photos/53244662@N04/5822614663/" title="現地到着。まだ受付前。 by ReSTARTR_y, on Flickr"><img src="http://farm3.static.flickr.com/2673/5822614663_ec084f0dfd_m.jpg" width="240" height="144" alt="現地到着。まだ受付前。" /></a></p>
-
-<p>被災地のボランティアセンターもずいぶん落ち着いてきているようです。
-活動に必要な道具（スコップやマスク）だけでなく、水や活動後のアイスコーヒーなどの提供もして頂きました。
-ボランティア活動自体初めてだったのですが、たとえ不慣れであっても、コーディネーターの方々や一緒に活動する方々の力を借りながら活動することは可能であると実感しました。
-現地でボランティアをしたいと考えているけど踏み出せなかった方は、真夏になる前に一度足を運んでみてはいかがでしょう。</p>
-
-<h4 id="section-4">電波悪い</h4>
-<p>SoftBankの黒SIMをDesireSに入れて利用しているのですが、ほぼ繋がりません。
-全然つながらない訳ではないですが、かなり不安定でたまにつながる程度。picplzで写真アップロードしようとしても100%失敗します。
-今回の震災でインターネットが活躍したという話は聞きますが、このような電波状況のままでは欲しい情報も手に入らないでしょう。震災後にこうなったのかもともと電波の弱い地域だったのかわかりませんが、これではインターネットの存在も無意味。</p>
-
-<p>利用した福島県伊達市（福島市の近く）の宿泊施設で、地震を体験したのですが、電波が皆無だったために震源や地震の規模などの情報が全く手に入りませんでした。</p>
-
-<p>これまで、インターネットでほしい情報をいつでもどこでもすぐに手に入れられると思っていただけに、手に入らない状況に出くわすとかなりの不安感を覚えます。
-こうなると、頼れるものはテレビやラジオ、町内放送やご近所ネットワークになってくるでしょう。
-もちろん有線でのインターネットもあるかもしれませんが、緊急時にわざわざPCを起動したりしないでしょう。</p>
-
-<p>そう考えると、インターネットの果たすべき役割はリアルタイムに必要な一次的情報ではなく、その後の情報配信とその整理に注力すべきだと実感しました。</p>
-
-<h4 id="section-5">活動内容と現地で聞いたこと</h4>
-
-<p>一日目は新地町でボランティアを行い、宿泊施設はりょうぜん里山がっこうを利用。
-二日目は里山がっこうの自然体験をさせてもらい、その後温泉街で足湯につかって帰宅。</p>
-
-<ul>
-  <li><a href="http://www.date-satoyama.com/">NPO法人りょうぜん里山がっこう</a></li>
-</ul>
-
-<p>里山がっこうでは、震災後の放射能の影響とその取組みについて色々お話を伺いました。友人のブログにその詳細が書かれていますので、そちらを参照してもらうほうが良いと思います。</p>
-
-<ul>
-  <li><a href="http://agreenqoostar.blog129.fc2.com/blog-entry-604.html">AGREEN　イナカとトカイの橋渡し　 伊達市りょうぜん里山がっこうの「除染」への取り組み</a></li>
-</ul>
-
-<p>1日目の活動レポートもあります。</p>
-
-<ul>
-  <li><a href="http://agreenqoostar.blog129.fc2.com/blog-entry-603.html">AGREEN　イナカとトカイの橋渡し　 新地町ボランティアレポート</a></li>
-</ul>
-
-<h2 id="section-6">ボランティア活動に必要な情報</h2>
-
-<h4 id="section-7">ボランティアバスツアー</h4>
-
-<p>被災地は基本的に交通が整備されていません。
-一人暮らしで車も所有していない自分としては、現地の交通手段がネックになります。
-幸い、「ボランティアバスツアー」というものがあったのでこれを利用することを考えました。</p>
-
-<ul>
-  <li>
-    <table>
-      <tbody>
-        <tr>
-          <td><a href="http://www.pref-f-svc.org/archives/1216">東日本大震災復興支援・新地町で活動する災害ボランティア募集</a></td>
-          <td>福島県災害ボランティアセンター&lt;/a&gt;</td>
-        </tr>
-      </tbody>
-    </table>
-  </li>
-</ul>
-
-<p>これなら一人でも現地に向かうことも可能ですし、そこからはコーディネートしてもらえます。
-結局は、冒頭にも書いたとおり、田舎暮らしのマッチングの仕事の関係で被災地にも詳しい友人に相談した結果、彼女のご家族に福島駅から現地まで車をだして頂けることになり、東京ー福島間は夜行バスを利用して、友人4人とともに活動する結果となったのですが。</p>
-
-<h4 id="twitter">ボランティア情報のTwitterアカウント</h4>
-
-<p>定期的にボランディアバスツアーなどの情報は下記Twitterアカウントをフォローしておけば、チェックすることができます。(他にもあるかもしれませんが私はこちらでチェックしています。）</p>
-
-<ul>
-  <li>
-    <table>
-      <tbody>
-        <tr>
-          <td><a href="http://twitter.com/tominvc">@tominvc</a></td>
-          <td>被災地支援都民ボランティア</td>
-        </tr>
-      </tbody>
-    </table>
-  </li>
-  <li>
-    <table>
-      <tbody>
-        <tr>
-          <td><a href="http://tiwtter.com/tokyovolunteer">@tokyovolunteer</a></td>
-          <td>東京ボランティア・市民活動センター</td>
-        </tr>
-      </tbody>
-    </table>
-  </li>
-  <li>
-    <table>
-      <tbody>
-        <tr>
-          <td><a href="http://twitter.com/Tasukeaijp">@Tasukeaijp</a></td>
-          <td>助けあいジャパン</td>
-        </tr>
-      </tbody>
-    </table>
-  </li>
-</ul>
-
-<p>あとは、健康な体と必要不可欠な装備があれば十分貢献できると思います。</p>
-
-<p>現地で少しばかり写真を撮ってきたのでFrickrにあげておきました。</p>
-
-<object type="text/html" data="http://www.flickr.com/slideShow/index.gne?user_id=53244662@N04&amp;set_id=72157626993269710" width="500" height="500"> </object>
-
-</div>
-  
-  
-
-
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/page/14/">&larr; Older</a>
@@ -595,6 +612,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2015/03/09/consul-cluster-with-docker/">DockerとWeaveを使って1台のマシンでConsulを複数動かしてみる</a>
+      </li>
+    
+      <li class="post">
         <a href="/2015/01/18/peek-for-profiling-rails-app/">Peek - Railsアプリのプロファイリングツール</a>
       </li>
     
@@ -610,16 +631,12 @@
         <a href="/2014/08/13/golang-json-marshal-unmarshal/">Goのjson.Marshal/Unmarshalの仕様を整理してみる</a>
       </li>
     
-      <li class="post">
-        <a href="/2014/06/28/about-docker-libchan/">Docker謹製ライブラリのlibchanについて調べてみた</a>
-      </li>
-    
   </ul>
 </section>
 <section>
   <h1>Categories</h1>
   <ul id="categories">
-    <li><a href='/category/architecture/'>architecture</a></li><li><a href='/category/docker/'>docker</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/go/'>go</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/ruby/'>ruby</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
+    <li><a href='/category/architecture/'>architecture</a></li><li><a href='/category/docker/'>Docker</a></li><li><a href='/category/docker/'>docker</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/go/'>go</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/ruby/'>ruby</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
   </ul>
 </section>
 <section>
