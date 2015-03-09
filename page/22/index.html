@@ -11,7 +11,7 @@
   <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="エキスパートPythonプログラミングを少しずつ読み進めています。といっても気になるタイトルを拾い読みですが。 そのなかの”2.4 withとcontextlib”の章のwith文の例としてファイル読み込みのコードが書いてました。 たったこれだけで、自動クローズまでやってくれるみたい。 さらに、 &hellip;">
+  <meta name="description" content="数式を使わないデータマイニング入門 隠れた法則を発見する (光文社新書) [新書] テキストマイニング書を探していたら、なぜか同じ場所にあったので買いました。 データマイニングって何？という人向けの入門書。１時間もあればサクっと読める軽い内容。データマイニングをはじめる人だけでなく、 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -122,76 +122,6 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/2011/02/07/automatically-close-the-file-in-python-and-scala/">Pythonとscalaのファイルの自動クローズ</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-02-07T00:10:22+09:00" pubdate data-updated="true">2011-02-07 (Mon)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>エキスパートPythonプログラミングを少しずつ読み進めています。といっても気になるタイトルを拾い読みですが。</p>
-
-<p>そのなかの”2.4 withとcontextlib”の章のwith文の例としてファイル読み込みのコードが書いてました。
-<script src="https://gist.github.com/813385.js?file=read_file_using_with.py"></script>
-たったこれだけで、自動クローズまでやってくれるみたい。</p>
-
-<p><a id="more"></a><a id="more-576"></a>
-さらに、with文を使うためのクラス定義も可能らしい。
-<script src="https://gist.github.com/813385.js?file=Reader.py"></script></p>
-
-<p>実装すべきは下記２メソッドのみ。</p>
-
-<ul>
-<li>__enter__(self)</li>
-<li>__exit__(self, exception_type, exception_value, exception_traceback)</li>
-</ul>
-<p>__enter__の戻り値はasで受けとれます。
-__exit__で例外処理のfinallyに当たる処理を書きます。何も返さないと例外はその呼び出し元に伝播します。</p>
-
-<p>さらにさらに、contextlibというモジュールを使えば、もっと自然に書けます。
-<script src="https://gist.github.com/813385.js?file=read_file_with_closing.py"></script>
-※これは、contextmanager内のfinally句でcloseを書くのと同じ。(<a href="http://www.python.jp/doc/nightly/library/contextlib.html#contextlib.closing">参考</a>)</p>
-
-<h4>Scalaでwith（っぽいもの）を実装</h4>
-<p>pythonのwith文と同様の記述方法をScalaでやるとしたら…こんな感じでしょうか。
-<script src="https://gist.github.com/813385.js?file=FileReader.scala"></script></p>
-
-<p>ファイルの自動クローズについてはこちらを参考にさせていただきました。</p>
-
-<ul>
-  <li><a href="http://d.hatena.ne.jp/syttru/20080322/1206212125">Scalaでファイル操作 - syttruの日記</a></li>
-</ul>
-
-</div>
-  
-  
-
-
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
       <h1 class="entry-title"><a href="/2011/02/06/introduction-of-data-mining-without-formul/">数式を使わないデータマイニング入門</a></h1>
     
     
@@ -258,6 +188,98 @@ __exit__で例外処理のfinallyに当たる処理を書きます。何も返�
 
     </article>
   
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2011/01/30/how-to-start-learning-python-programming/">Pythonをはじめるために</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-01-30T22:04:12+09:00" pubdate data-updated="true">2011-01-30 (Sun)</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><a href="http://blog.restartr.com/2011/01/10/6-targets-i-want-to-achieve-in-2011/">今年の目標</a>として</p>
+<blockquote><p>3.pythonに手を出す</p></blockquote>
+<p>というのを掲げていて、「エキスパートPythonプログラミング」を買ったので、pythonの学習をこんな感じではじめてみるつもり、というのを書いておきます。</p>
+
+<ul>
+  <li><a href="http://www.amazon.co.jp/dp/4048686291">エキスパートPythonプログラミング</a></li>
+</ul>
+
+<p><a id="more"></a><a id="more-544"></a>&lt;/p&gt;</p>
+<h3>1.リファレンスを用意する</h3>
+<ul>
+<li>基礎文法：<a href="http://www.python.jp/doc/release/reference/">Python 言語リファレンス &mdash; Python v2.6.2 documentation</a></li>
+<li>チュートリアル：<a href="http://www.python.jp/doc/release/tutorial/index.html">Python チュートリアル &mdash; Python v2.6.2 documentation</a></li>
+<li>痒いところ向け：エキスパートPythonプログラミング</li>
+<li>PHPから逆引き：<a href="http://www.php2python.com/">Php2Python - Python alternatives to PHP functions, classes and librarie</a>
+
+<p>基礎文法は公式リファレンスで大体まかなえますし、ググれば大体の情報は手に入るので、あえて購入していません。オライリーの「初めてのpython 第3版」は古い上にゴツイので却下しました。（「初めてのpython第4版が洋書は最近出ましたが日本語訳はまだ）</p>
+<p>PHP2Pythonは、PHP関数をPythonに置き換えると…というのを投稿できるサイトです。PHP関数から逆引きできるので、目的がはっきりしていれば探しやすくてかなり便利です。</p>
+<h3>2.目標を決める</h3>
+<p>pythonを学び始めるにあたっては、何をどこまで学ぶのか、というのは明確にすべきでしょう。<br />
+私の場合は、こんな感じ。</p>
+<h4>他言語との違いを探る</h4>
+<p>新しい言語を学んだほうが良いというのはよく言われるところだと思います。たとえ直接的に必要性がなくても。その言語やコミュニティの特徴を知ることで、新しい視点が生まれます。<br />
+普段のプログラミングに良い部分を取り入れることができると期待しています。</p>
+<p><b>python界隈で知りたいこと</b><br />
+その言語に求めるものは、言語毎に異なるもの。私が気になっているのは以下のとおり。</p>
+<ul>
+<li>オブジェクト指向プログラミング</li>
+<li>関数型プログラミング</li>
+<li>アプリ開発フロー
+<li>
+<li>アジャイルへの取り組みやテスト手法</li>
+<li>メタプログラミング</li>
+
+<p>これを知るために最適だったのが、上述の「エキスパートPythonプログラミング」でした。</p>
+<p>また、特定の目的も一応あって、以下の２つを予定しています。</p>
+<p><b>自然言語処理入門</b><br />
+積読中の書籍に「入門　自然言語処理」があるのですが、pythonで解説されていますので、コードでつまづかない程度に基礎体力をつけておきます。<br />
+
+* [入門　自然言語処理](http://amazon.co.jp/dp/4873114705)
+
+必要そうな技術はこんな感じ。</p>
+<ul>
+<li>文字列の取り扱い</li>
+<li>NLTK(pythonの言語処理モジュール)の取り扱い</li>
+<li>統計処理ライブラリの取り扱い</li>
+</ul>
+<p><b>GAEアプリ開発</b><br />
+Scalaでも少し手をつけていたりますが、JMV系とPythonでどのような違いがあるのかも見てみたいところ。</p>
+<ul>
+<li>Webフレームワーク(Django, Kay等)の取り扱い</li>
+<li>連携する各サービスAPIの取り扱い</li>
+</ul>
+<p>当分は言語仕様と戯れようと思います。</p>
+</li></li></ul></li></ul>
+</div>
+  
+  
+
+
+
+
+    </article>
+  
   <div class="pagination">
     
       <a class="prev" href="/page/23/">&larr; Older</a>
@@ -313,10 +335,6 @@ __exit__で例外処理のfinallyに当たる処理を書きます。何も返�
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/2015/03/09/consul-cluster-with-docker/">DockerとWeaveを使って1台のマシンでConsulを複数動かしてみる</a>
-      </li>
-    
-      <li class="post">
         <a href="/2015/01/18/peek-for-profiling-rails-app/">Peek - Railsアプリのプロファイリングツール</a>
       </li>
     
@@ -330,6 +348,10 @@ __exit__で例外処理のfinallyに当たる処理を書きます。何も返�
     
       <li class="post">
         <a href="/2014/08/13/golang-json-marshal-unmarshal/">Goのjson.Marshal/Unmarshalの仕様を整理してみる</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2014/06/28/about-docker-libchan/">Docker謹製ライブラリのlibchanについて調べてみた</a>
       </li>
     
   </ul>

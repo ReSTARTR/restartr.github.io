@@ -11,7 +11,7 @@
   <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="はじめてのAndroidとしてHTC Desire Sを買ってみました。 購入したのは秋葉原のJAN-GLE。 通販で買うつもりでしたが、たまたま下記ツイートを見かけたので週末に店舗に行って買ってきたというわけです。 今まではiPhone3GSを使い続けていましたが、 &hellip;">
+  <meta name="description" content="エンジニアとしての生き方　　IT技術者たちよ、世界へ出よう！ (インプレス選書) [単行本（ソフトカバー）] エンジニアとしてのキャリアを見つめ直すための本です。著者のブログや雑誌寄稿を再構成されたもの。私は著者ブログ購読していないので今回が初見なわけですが、 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -116,62 +116,6 @@
     <div id="content">
       <div class="blog-index">
   
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2011/04/25/bought-htc-desire-s/">HTC Desire Sを買ってみた</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-04-25T23:12:59+09:00" pubdate data-updated="true">2011-04-25 (Mon)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><a href="http://www.flickr.com/photos/53244662@N04/5653772980/" title="IMG_4557 by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5310/5653772980_b12c71a761_z.jpg" width="640" height="427" alt="IMG_4557" /></a></p>
-
-<p>はじめてのAndroidとして<a href="http://www.htc.com/www/product/desires/overview.html">HTC Desire S</a>を買ってみました。</p>
-
-<p>購入したのは秋葉原の<a href="http://www.jan-gle.com/">JAN-GLE</a>。</p>
-
-<p>通販で買うつもりでしたが、たまたま下記ツイートを見かけたので週末に店舗に行って買ってきたというわけです。</p>
-
-<p><a href="http://blog.restartr.com/wp-content/uploads/2011/04/4ee8a29b22700d15be20990984897581.png"><img src="http://blog.restartr.com/wp-content/uploads/2011/04/4ee8a29b22700d15be20990984897581.png" alt="" title="4ee8a29b22700d15be20990984897581" width="738" height="338" class="aligncenter size-full wp-image-850" /></a></p>
-
-<p>今まではiPhone3GSを使い続けていましたが、そろそろ2年縛りが解ける頃だったこともあり、android機に手を出してみようという気になりました。
-何を買うかはずいぶん迷った挙句、Sumsung Nexus SとHTC Desire Sの2機種に絞り込み。
-最後は店員さんと話し合った結果HTC Desire Sを選択しました。</p>
-
-<p>いろいろいじり中ですが、なかなか完成度が高い印象をうけています。
-追ってインプレを書いてみようと思います。</p>
-
-<p>※せっかくなのでScalaでAndroidアプリでも書いてみようかなとも思ったり。</p>
-
-</div>
-  
-  
-
-
-
-
-    </article>
   
   
     <article>
@@ -298,6 +242,81 @@ P81に「企画に関わる人を減らして、魂のあるものを作る」�
 
     </article>
   
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2011/04/06/realtime-checkin-map-build-with-scala-and-jetty7-websocket/">ScalaとJetty7のWebSocketでリアルタイムチェックインマップを作ってみた</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-04-06T09:00:50+09:00" pubdate data-updated="true">2011-04-06 (Wed)</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><a href="http://blog.restartr.com/wp-content/uploads/2011/04/check-in-map-screenshot.png"><img src="http://blog.restartr.com/wp-content/uploads/2011/04/check-in-map-screenshot.png" alt="チェックインマップのスクリーンショット" title="チェックインマップのスクリーンショット" width="619" height="441" class="alignnone size-full wp-image-800" /></a></p>
+
+<p>最近、会社の組織変更に伴い新グループに移動しました。
+その際、グループ内の自己紹介用に作ったものをGithubに上げてみました。
+動いているものを公開したかったのですが永続的に公開できる場所がないのでソース公開のみです。</p>
+
+<ul>
+<li><a href="https://github.com/ReSTARTR/checkin_map"> ReSTARTR/checkin_map - GitHub </a></li>
+</ul>
+<p>以前scala advent calender 2010で「<a href="http://blog.restartr.com/2010/12/29/websocket-server-written-in-scala-with-netty/">NettyでWebSocketサーバーを実装する</a>」にてWebSocketサーバーを実装してましたが、今回はJettyを使っての実装にしてみました。</p>
+
+<p>pub/subモデルもどきを採用してみたりしましたが、正直勉強不足でうまい実装方法ができていないのが現状。
+少しづつリファクタリングしたいところ。
+コメントやフォークでのツッコミいただけると大変嬉しいです。</p>
+
+<h2 id="section">実行方法</h2>
+<p>こちらに実行方法を記述してる通りにやれば動作するはず。</p>
+
+<ul>
+<li><a href="https://github.com/ReSTARTR/checkin_map/blob/master/README.md">https://github.com/ReSTARTR/checkin_map/blob/master/README.md</a></li>
+</ul>
+<p>仕組み
+—-
+ * TwitterのStreamingAPIを使って、foursquareのチェックインツイートを取得
+ * それをWebsocket経由で地図にリアルタイムプロット</p>
+
+<h2 id="jetty7">Jetty7を使うに当たって</h2>
+<p>今のところ、sbt-0.7.5RC1 + jetty7.3.1.v20110307で動作確認済みです。</p>
+
+<p>jetty7.3のwebsocketを使うには、sbt-0.7.5RC以上を使わないといけないようです。
+sbt0.7.4だとjetty7.1までしかコンパイルできず、jetty7.1だとwebsocketの最新仕様にあってなくてソケットオープン時にコケます。
+(このあたりの組み合わせは記憶があいまいですが。。。）</p>
+
+<h2 id="scalajsonsjson">scalaのjsonオブジェクトではなくsjsonを使うこと</h2>
+<p>scala.util.parsing.json.JSONをつかってシリアライズすると、javascript側でのevalに失敗します。
+（原因はクオート処理しないため。）
+Scala内で完結するならまだしも、JavaScriptへ転送する場合はsjsonが良いようです。</p>
+
+</div>
+  
+  
+
+
+
+
+    </article>
+  
   <div class="pagination">
     
       <a class="prev" href="/page/18/">&larr; Older</a>
@@ -353,10 +372,6 @@ P81に「企画に関わる人を減らして、魂のあるものを作る」�
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/2015/03/09/consul-cluster-with-docker/">DockerとWeaveを使って1台のマシンでConsulを複数動かしてみる</a>
-      </li>
-    
-      <li class="post">
         <a href="/2015/01/18/peek-for-profiling-rails-app/">Peek - Railsアプリのプロファイリングツール</a>
       </li>
     
@@ -370,6 +385,10 @@ P81に「企画に関わる人を減らして、魂のあるものを作る」�
     
       <li class="post">
         <a href="/2014/08/13/golang-json-marshal-unmarshal/">Goのjson.Marshal/Unmarshalの仕様を整理してみる</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2014/06/28/about-docker-libchan/">Docker謹製ライブラリのlibchanについて調べてみた</a>
       </li>
     
   </ul>

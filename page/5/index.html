@@ -11,7 +11,12 @@
   <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="YouTubeで使われているvitessの実装をざっと見てたところ、memcachedクライアント実装が簡潔でわかりやすかったので出来る限りラフに実装を写経してみました。 やってることはコマンドラインからアドレスを受け取って、memcachedのstatsを表示するだけです。 この写経で学べること &hellip;">
+  <meta name="description" content="rubyやpythonなど通常のプログラムを書く場合は、基本的にソフトタブ(2spaces)でインデントされるようにvimを設定しています。 1
+2
+3
+set noexpandtab
+set tabstop=2
+set shiftwidth=2 けれど、Goの場合はインデントはハードタブが通例 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -122,209 +127,6 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/2014/04/21/golang-memcache-stats-client/">Goでmemcachedのstatsを取得する</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-04-21T00:17:33+09:00" pubdate data-updated="true">2014-04-21 (Mon)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>YouTubeで使われている<a href="https://github.com/youtube/vitess">vitess</a>の実装をざっと見てたところ、memcachedクライアント実装が簡潔でわかりやすかったので出来る限りラフに実装を写経してみました。</p>
-
-<p>やってることはコマンドラインからアドレスを受け取って、memcachedのstatsを表示するだけです。</p>
-
-<h3 id="section">この写経で学べること</h3>
-
-<ul>
-  <li>flagパッケージを使ったコマンドライン引数の取得</li>
-  <li>netパッケージを使ったネットワーク接続</li>
-  <li>bufioパッケージを使ったストリームの読み出し</li>
-</ul>
-
-<h3 id="main">main()</h3>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
-</span><span class="line">	<span class="c1">// 引数読み出し</span>
-</span><span class="line">	<span class="nx">address</span> <span class="o">:=</span> <span class="nx">flag</span><span class="p">.</span><span class="nx">String</span><span class="p">(</span><span class="s">&quot;address&quot;</span><span class="p">,</span> <span class="s">&quot;localhost:11211&quot;</span><span class="p">,</span> <span class="s">&quot;server address&quot;</span><span class="p">)</span>
-</span><span class="line">	<span class="nx">flag</span><span class="p">.</span><span class="nx">Parse</span><span class="p">()</span>
-</span><span class="line">	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;server: %s\n&quot;</span><span class="p">,</span> <span class="o">*</span><span class="nx">address</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line">	<span class="c1">// サーバーに接続</span>
-</span><span class="line">	<span class="nx">conn</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">GetConn</span><span class="p">(</span><span class="o">*</span><span class="nx">address</span><span class="p">)</span>
-</span><span class="line">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-</span><span class="line">		<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%#v&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
-</span><span class="line">		<span class="nx">os</span><span class="p">.</span><span class="nx">Exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-</span><span class="line">	<span class="p">}</span>
-</span><span class="line">	<span class="k">defer</span> <span class="nx">conn</span><span class="p">.</span><span class="nx">conn</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
-</span><span class="line">
-</span><span class="line">	<span class="c1">// stats読み出し</span>
-</span><span class="line">	<span class="nx">result</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">conn</span><span class="p">.</span><span class="nx">Stats</span><span class="p">()</span>
-</span><span class="line">	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%s&quot;</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span>
-</span><span class="line"><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h3 id="section-1">実行結果</h3>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>go run ./memcache_stats.go --address<span class="o">=</span>localhost:11211
-</span><span class="line">server: localhost:11211
-</span><span class="line">STAT pid 23282
-</span><span class="line">STAT uptime 12425
-</span><span class="line">STAT <span class="nb">time </span>1398007875
-</span><span class="line">STAT version 1.4.4
-</span><span class="line">STAT pointer_size 64
-</span><span class="line">STAT rusage_user 0.335948
-</span><span class="line">STAT rusage_system 0.344947
-</span><span class="line">  :
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h3 id="section-2">実装全体</h3>
-
-<div><script src="https://gist.github.com/11116595.js?file=memcache_stats.go"></script>
-<noscript><pre><code>package main                                                                                                                                                                          [32/1268]
-
-// 写経 from: https://github.com/youtube/vitess/blob/master/go/memcache/memcache.go
-//  * エラーハンドリングをできるかぎり省略して実装.
-//  * statsコマンドだけ実装
-
-import (
-        &quot;bufio&quot;
-        &quot;flag&quot;
-        &quot;fmt&quot;
-        &quot;net&quot;
-        &quot;os&quot;
-        &quot;strings&quot;
-)
-
-type Connection struct {
-        conn net.Conn
-        buffered bufio.ReadWriter
-}
-
-func GetConn(address string) (conn *Connection, err error) {
-        nc, err := net.Dial(&quot;tcp&quot;, address)
-        if err != nil {
-                return nil, err
-        }
-        return &amp;Connection{
-                conn: nc,
-                buffered: bufio.ReadWriter{
-                        Reader: bufio.NewReader(nc),
-                        Writer: bufio.NewWriter(nc),
-                },
-        }, err
-}
-
-func (mc *Connection) writestring(s string) {
-        _, err := mc.buffered.WriteString(s);
-        if err!= nil {
-                panic(err)
-        }
-}
-
-func (mc *Connection) readline() string {
-        mc.flush()
-        l, _, _ := mc.buffered.ReadLine()
-        return string(l)
-}
-
-func (mc *Connection) flush() {
-        err := mc.buffered.Flush()
-        if err != nil {
-                panic(err)
-        }
-}
-
-func (mc *Connection) Stats() (result []byte, err error) {
-        mc.writestring(&quot;stats\r\n&quot;)
-        mc.flush()
-        for {
-                l := mc.readline()
-                if strings.HasPrefix(l, &quot;END&quot;) {
-                        break
-                }
-                if strings.Contains(l, &quot;ERROR&quot;) {
-                        panic(&quot;ERROR&quot;)
-                }
-                result = append(result, l...)
-                result = append(result, &#39;\n&#39;)
-        }
-        return result, err
-}
-
-func main() {
-        address := flag.String(&quot;address&quot;, &quot;localhost:11211&quot;, &quot;server address&quot;)
-        flag.Parse()
-        fmt.Printf(&quot;server: %s\n&quot;, *address)
-
-        conn, err := GetConn(*address)
-        if err != nil {
-                fmt.Printf(&quot;%#v&quot;, err)
-                os.Exit(1)
-        }
-        defer conn.conn.Close()
-
-        result, _ := conn.Stats()
-        fmt.Printf(&quot;%s&quot;, result)
-}</code></pre></noscript></div>
-
-</div>
-  
-  
-
-
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
       <h1 class="entry-title"><a href="/2014/04/20/vimrc-noexpandtab-in-golang/">Vimで特定のファイルタイプだけタブインデントにする方法</a></h1>
     
     
@@ -392,6 +194,118 @@ func main() {
 
     </article>
   
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2014/04/06/reload-varnish-vcl/">VarnishのVCLを再起動なしに再読み込みする</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-04-06T15:38:08+09:00" pubdate data-updated="true">2014-04-06 (Sun)</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>/etc/varnish/default.vclを書き換えた時、</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">/etc/init.d/varnishd restart
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>ってやってたけど、reloadできることを今更知った。</p>
+
+<h3 id="vcllist-vcl">vcl.list: 現在の読み込んでるVCLの一覧を見る</h3>
+
+<p>CentOSのyumで入れたvarnishはデフォルトでこんなふうになってる</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>varnishadm -T localhost:6082 vcl.list
+</span><span class="line">active        579 boot
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="vclload-vcl">vcl.load: 新規にVCLをロードする</h3>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>varnishadm -T localhost:6082 vcl.load boot-<span class="sb">`</span>date+%Y%m%d%H%M%S<span class="sb">`</span> /etc/varnish/default.vcl
+</span><span class="line">VCL compiled.
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>この時点では利用可能な状態であって、まだ変更は反映されていない</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>varnishadm -T localhost:6082 vcl.list
+</span><span class="line">active        579 boot
+</span><span class="line">available       0 boot-20140406153127
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="vcluse-vcl">vcl.use: ロードしたVCLに切り替える</h3>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>varnishadm -T localhost:6082 vcl.use boot-20140406153127
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>何も表示されないけどちゃんと切り替わっている</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>varnishadm -T localhost:6082 vcl.list
+</span><span class="line">available     526 boot
+</span><span class="line">active         53 boot-20140406153127
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>ちなみに、真ん中の数値はactiveの場合は経過秒数で、availableになると数値が減っていく。
+でも、0になっても居座り続ける。この数値の変化のルールはよくわかってない。</p>
+
+<p>ということで不要な過去のvclは定期的に消さないとずっと残り続けてしまうので注意。</p>
+
+<h3 id="vcldiscard-vcl">vcl.discard: ロード済みvclの破棄</h3>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>varnishadm -T localhost:6082 vcl.discard boot
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>ここでも結果が表示されないけどちゃんと消えている。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>varnishadm -T localhost:6082 vcl.list
+</span><span class="line">available       11 boot-20140406155155
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>本当はinitスクリプト化すると便利なんだろうけど、手動でも良いかなと。</p>
+
+<ul>
+  <li><a href="http://blog.xcir.net/?p=124">Varnishで再起動無しで設定ファイルを適用する方法(reload) » cat /dev/random &gt; /dev/null &amp;</a></li>
+</ul>
+</div>
+  
+  
+
+
+
+
+    </article>
+  
   <div class="pagination">
     
       <a class="prev" href="/page/6/">&larr; Older</a>
@@ -447,10 +361,6 @@ func main() {
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/2015/03/09/consul-cluster-with-docker/">DockerとWeaveを使って1台のマシンでConsulを複数動かしてみる</a>
-      </li>
-    
-      <li class="post">
         <a href="/2015/01/18/peek-for-profiling-rails-app/">Peek - Railsアプリのプロファイリングツール</a>
       </li>
     
@@ -464,6 +374,10 @@ func main() {
     
       <li class="post">
         <a href="/2014/08/13/golang-json-marshal-unmarshal/">Goのjson.Marshal/Unmarshalの仕様を整理してみる</a>
+      </li>
+    
+      <li class="post">
+        <a href="/2014/06/28/about-docker-libchan/">Docker謹製ライブラリのlibchanについて調べてみた</a>
       </li>
     
   </ul>
