@@ -11,7 +11,9 @@
   <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="大震災から早くも５日が経過しました。 私は東京で震度５を体験しました。感じたあの揺れの大きさは今も鮮明に残っています。現在も余震が続いていたり、様々な二次災害が続いていますが、これまでに感じた違和感を書きだしてみました。 全然まとめにもなっていないし、多くは「感覚値」でしかないですが。 &hellip;">
+  <meta name="description" content="最近、会社の組織変更に伴い新グループに移動しました。
+その際、グループ内の自己紹介用に作ったものをGithubに上げてみました。
+動いているものを公開したかったのですが永続的に公開できる場所がないのでソース公開のみです。 ReSTARTR/checkin_map - GitHub 以前scala &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -122,6 +124,81 @@
       
   <header>
     
+      <h1 class="entry-title"><a href="/2011/04/06/realtime-checkin-map-build-with-scala-and-jetty7-websocket/">ScalaとJetty7のWebSocketでリアルタイムチェックインマップを作ってみた</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-04-06T09:00:50+09:00" pubdate data-updated="true">2011-04-06 (Wed)</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><a href="http://blog.restartr.com/wp-content/uploads/2011/04/check-in-map-screenshot.png"><img src="http://blog.restartr.com/wp-content/uploads/2011/04/check-in-map-screenshot.png" alt="チェックインマップのスクリーンショット" title="チェックインマップのスクリーンショット" width="619" height="441" class="alignnone size-full wp-image-800" /></a></p>
+
+<p>最近、会社の組織変更に伴い新グループに移動しました。
+その際、グループ内の自己紹介用に作ったものをGithubに上げてみました。
+動いているものを公開したかったのですが永続的に公開できる場所がないのでソース公開のみです。</p>
+
+<ul>
+<li><a href="https://github.com/ReSTARTR/checkin_map"> ReSTARTR/checkin_map - GitHub </a></li>
+</ul>
+<p>以前scala advent calender 2010で「<a href="http://blog.restartr.com/2010/12/29/websocket-server-written-in-scala-with-netty/">NettyでWebSocketサーバーを実装する</a>」にてWebSocketサーバーを実装してましたが、今回はJettyを使っての実装にしてみました。</p>
+
+<p>pub/subモデルもどきを採用してみたりしましたが、正直勉強不足でうまい実装方法ができていないのが現状。
+少しづつリファクタリングしたいところ。
+コメントやフォークでのツッコミいただけると大変嬉しいです。</p>
+
+<h2 id="section">実行方法</h2>
+<p>こちらに実行方法を記述してる通りにやれば動作するはず。</p>
+
+<ul>
+<li><a href="https://github.com/ReSTARTR/checkin_map/blob/master/README.md">https://github.com/ReSTARTR/checkin_map/blob/master/README.md</a></li>
+</ul>
+<p>仕組み
+—-
+ * TwitterのStreamingAPIを使って、foursquareのチェックインツイートを取得
+ * それをWebsocket経由で地図にリアルタイムプロット</p>
+
+<h2 id="jetty7">Jetty7を使うに当たって</h2>
+<p>今のところ、sbt-0.7.5RC1 + jetty7.3.1.v20110307で動作確認済みです。</p>
+
+<p>jetty7.3のwebsocketを使うには、sbt-0.7.5RC以上を使わないといけないようです。
+sbt0.7.4だとjetty7.1までしかコンパイルできず、jetty7.1だとwebsocketの最新仕様にあってなくてソケットオープン時にコケます。
+(このあたりの組み合わせは記憶があいまいですが。。。）</p>
+
+<h2 id="scalajsonsjson">scalaのjsonオブジェクトではなくsjsonを使うこと</h2>
+<p>scala.util.parsing.json.JSONをつかってシリアライズすると、javascript側でのevalに失敗します。
+（原因はクオート処理しないため。）
+Scala内で完結するならまだしも、JavaScriptへ転送する場合はsjsonが良いようです。</p>
+
+</div>
+  
+  
+
+
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/2011/03/16/i-feel-a-wrongness-about-terrible-disaster/">大震災を通じて感じた違和感</a></h1>
     
     
@@ -192,205 +269,6 @@
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2011/03/09/access-to-mongodb-in-scala-with-salat/">ScalaからMongoDBへアクセスする - Salat編</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-03-09T09:00:38+09:00" pubdate data-updated="true">2011-03-09 (Wed)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>前回はCasbahというライブラリを使ってMongoDBへアクセスしてみました。</p>
-
-<p><a href="http://blog.restartr.com/2011/03/07/access-to-mongodb-in-scala-with-casbah/">ScalaからMongoDBへアクセスする ? Casbah編</a></p>
-
-<p>今回は、Casbahに加えて、<a href="https://github.com/novus/salat">Salat</a>というライブラリをを組み合わせて、より便利にMongoDBとScalaとやりとりをする方法について見ていきます。</p>
-
-<h3>Salat</h3>
-<p><a href="https://github.com/novus/salat">novus/salat - GitHub</a></p>
-
-<p>Salatは、CasbahのMongoDBObjectとscalaのケースクラスと相互変換してくれる、ORマッパーです。wikiから引用するとこうあります。</p>
-
-<blockquote>
-Salat is a bi-directional Scala case class serialization library that leverages MongoDB&#8217;s DBObject (which uses BSON underneath) as its target format. This project is focused on fostering a DWIM and intuitive usage pattern for the end-user&#8217;s benefit, without sacrificing run time performance.
-
-</blockquote>
-<p>パフォーマンスの犠牲なしに、より便利にMongoDBとやりとりできるというものらしいです。DWIMって初耳なんですが、”Do What I Mean.”の略語だそうです。意図したとおりに動いてくれる、くらいの意味でしょうか。
-あと、「Salat」って、ロシア語で「サラダ」の意味だそうです。</p>
-
-<p>では、Salatの簡単な使い方を見ていきます。</p>
-
-<p><a id="more"></a><a id="more-749"></a></p>
-
-<h3> インストール </h3>
-<p>今回もsbt前提です。
-<script src="https://gist.github.com/860266.js?file=SalatTestProject.scala"></script>
-CasbahとSalatどちらも必要です。今回はCasbahは2.0.2を、Salatは0.0.5を利用します。あとはいつものように”sbt reload update”を実行するだけです。</p>
-
-<h3>CasbahでMongoDBへアクセス</h3>
-<p>まずはCasbaとSalatをインポート。
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="scala"><span class="line"><span class="k">import</span> <span class="nn">com.novus.salat._</span>
-</span><span class="line"><span class="k">import</span> <span class="nn">com.novus.salat.global._</span>
-</span><span class="line"><span class="k">import</span> <span class="nn">com.mongodb.casbah.Imports._</span>
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
-
-<p>CasbahのみでMongoDBに入れる例を復習します。
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="scala"><span class="line"><span class="k">val</span> <span class="n">collection</span> <span class="k">=</span> <span class="nc">MongoConnection</span><span class="o">()(</span><span class="s">&quot;salat_test&quot;</span><span class="o">)(</span><span class="s">&quot;sample&quot;</span><span class="o">)</span>
-</span><span class="line"><span class="n">collection</span> <span class="o">+=</span> <span class="nc">MongoDBObject</span><span class="o">(</span><span class="s">&quot;id&quot;</span><span class="o">-&gt;</span><span class="mi">1</span><span class="o">,</span> <span class="s">&quot;name&quot;</span><span class="o">-&gt;</span><span class="s">&quot;me&quot;</span><span class="o">,</span> <span class="s">&quot;age&quot;</span><span class="o">-&gt;</span><span class="mi">27</span><span class="o">)</span>
-</span><span class="line"><span class="n">println</span><span class="o">(</span><span class="n">collection</span><span class="o">.</span><span class="n">findOne</span><span class="o">(</span> <span class="nc">MongoDBObject</span><span class="o">(</span><span class="s">&quot;id&quot;</span><span class="o">-&gt;</span><span class="mi">1</span><span class="o">)).</span><span class="n">get</span> <span class="o">)</span>
-</span><span class="line"><span class="c1">// { &quot;_id&quot; : { &quot;$oid&quot; : &quot;4d76475ce10d23dcda26857d&quot;} , &quot;id&quot; : 1 , &quot;name&quot; : &quot;me&quot; , &quot;age&quot; : 27}</span>
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
-で、このような値がすでにMongoDBに入っているとして、それぞれのフィールドにアクセスする場合、以下のようになります。
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="scala"><span class="line"><span class="k">val</span> <span class="n">me2</span> <span class="k">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">findOne</span><span class="o">(</span> <span class="nc">MongoDBObject</span><span class="o">(</span><span class="s">&quot;id&quot;</span><span class="o">-&gt;</span><span class="mi">1</span><span class="o">)).</span><span class="n">get</span>
-</span><span class="line"><span class="n">println</span><span class="o">(</span> <span class="n">me2</span><span class="o">.</span><span class="n">getClass</span> <span class="o">)</span> <span class="c1">// class com.mongodb.BasicDBObject</span>
-</span><span class="line"><span class="n">println</span><span class="o">(</span> <span class="n">me2</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="s">&quot;name&quot;</span><span class="o">)</span> <span class="o">)</span> <span class="c1">// me</span>
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
-最後の”me2.get(“name”)”というのが格好悪いですね。もしかしたらDBから取り出したときに”name”というキーが存在しないかもしれません。ということで、そのフォーマットをケースクラスで定義できるSalatの出番です。
-Salatでは、grater[<type>]のインスタンスを用いてMongoDBObjectとケースクラスの変換を行います。シリアライズは
-DBに保存する際は「asDBObject」メソッドで取り出してクラスインスタンスとして扱う場合は「asObject」メソッドを使います。</type></p>
-
-<p>まずはクラスインスタンスをDBに入れる例。</p>
-
-<p>Userというケースクラスを定義して、graterを用いてDBObjectに変換しています。
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="scala"><span class="line"><span class="k">case</span> <span class="k">class</span> <span class="nc">User</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">age</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span>
-</span><span class="line">
-</span><span class="line"><span class="k">val</span> <span class="n">me</span> <span class="k">=</span> <span class="nc">User</span><span class="o">(</span><span class="n">id</span><span class="k">=</span><span class="mi">2</span><span class="o">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;me2&quot;</span><span class="o">,</span> <span class="n">age</span><span class="k">=</span><span class="mi">54</span><span class="o">)</span>
-</span><span class="line"><span class="k">val</span> <span class="n">g</span> <span class="k">=</span> <span class="n">grater</span><span class="o">[</span><span class="kt">User</span><span class="o">]</span>
-</span><span class="line"><span class="n">collection</span> <span class="o">+=</span> <span class="n">g</span><span class="o">.</span><span class="n">asDBObject</span><span class="o">(</span><span class="n">me</span><span class="o">)</span>
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;</p>
-
-<p>つぎに、DBからとりだした値をクラスインスタンスに変換する例です。
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="scala"><span class="line"><span class="k">val</span> <span class="n">meInDB</span> <span class="k">=</span> <span class="n">collection</span><span class="o">.</span><span class="n">findOne</span><span class="o">(</span> <span class="nc">MongoDBObject</span><span class="o">(</span><span class="s">&quot;id&quot;</span><span class="o">-&gt;</span><span class="mi">2</span><span class="o">)).</span><span class="n">get</span>
-</span><span class="line"><span class="n">println</span><span class="o">(</span> <span class="n">meInDB</span><span class="o">.</span><span class="n">getClass</span> <span class="o">)</span>
-</span><span class="line"><span class="c1">// class com.mongodb.BasicDBObject</span>
-</span><span class="line"><span class="n">println</span><span class="o">(</span> <span class="n">meInDB</span> <span class="o">)</span>
-</span><span class="line"><span class="c1">// { &quot;_id&quot; : { &quot;$oid&quot; : &quot;4d764830e10d23dc4758c29a&quot;} , &quot;_typeHint&quot; : &quot;User&quot; , &quot;id&quot; : 2 , &quot;name&quot; : &quot;me2&quot; , &quot;age&quot; : 54}</span>
-</span><span class="line"><span class="n">println</span><span class="o">(</span> <span class="n">g</span><span class="o">.</span><span class="n">asObject</span><span class="o">(</span><span class="n">meInDB</span><span class="o">)</span> <span class="o">)</span>
-</span><span class="line"><span class="c1">// User(2,me2,54)</span>
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
-このように、ケースクラスへのマッピングが行われることにより、Scalaのコード中で扱うMongoDBのドキュメントの型が明確になり、見通しがよくなります。</p>
-
-<p>「asObject(meInDB)」で変換する前の、DBからとりだしたままの状態(BasicDBObject型)の段階で</p>
-
-<blockquote>
-&#8221;_typeHint&#8221; : &#8220;User&#8221;
-
-</blockquote>
-<p>というキーと値が見えます。この値がこのドキュメントに対応するクラス型を定義することになります。</p>
-
-<h4>問題点：意図しないケースクラスへの変換</h4>
-<p>別のケースクラスに変換しようとするとどうなるでしょうか。
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="scala"><span class="line"><span class="k">case</span> <span class="k">class</span> <span class="nc">UserA</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">age</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span>
-</span><span class="line"><span class="n">println</span><span class="o">(</span> <span class="n">grater</span><span class="o">[</span><span class="kt">UserA</span><span class="o">].</span><span class="n">asObject</span><span class="o">(</span><span class="n">meInDB</span><span class="o">)</span> <span class="o">)</span> <span class="c1">// UserA(2,me2,54)</span>
-</span><span class="line"><span class="k">case</span> <span class="k">class</span> <span class="nc">UserB</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">salary</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span>
-</span><span class="line"><span class="n">println</span><span class="o">(</span> <span class="n">grater</span><span class="o">[</span><span class="kt">UserB</span><span class="o">].</span><span class="n">asObject</span><span class="o">(</span><span class="n">meInDB</span><span class="o">)</span> <span class="o">)</span>
-</span><span class="line"><span class="c1">// java.lang.Exception: class UserB requires value for &#39;salary&#39;</span>
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
-クラス名が違うUserAに変換しようとすると変換できてしまいます。キー名が異なるUserBに変換しようとした場合はコンパイルエラーとなります。「_typeHint」の値がうまく機能しているのか、少々疑問が残ります…</p>
-
-<h4>問題点：クラス階層の保持</h4>
-<p>また、クラス階層をもつ場合がテストケースにあるのですが、これも微妙な挙動をします。</p>
-
-<p><a href="https://github.com/novus/salat/blob/master/salat-core/src/test/scala/com/novus/salat/test/model/TestModel.scala">salat-core/src/test/scala/com/novus/salat/test/model/TestModel.scala at master from novus/salat - GitHub</a></p>
-
-<p>上記はテストケース用のモデル定義なのですが、Desmondのように別クラスの型を保持するケースクラスをDBObjectに変換する際に、Desmond型は保持できるのですが、それに含まれるAlice型が保持できずにリストに変換されてしまいます。</p>
-
-<p>こんな感じのコードで試してみました。
-&lt;div class=&#8217;bogus-wrapper&#8217;&gt;<notextile><figure class="code">&lt;figcaption&gt;<span></span>&lt;/figcaption&gt;&lt;div class=&#8221;highlight&#8221;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&#8221;gutter&#8221;&gt;&lt;pre class=&#8221;line-numbers&#8221;&gt;<span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-&lt;/pre&gt;&lt;/td&gt;&lt;td class=&#8217;code&#8217;&gt;&lt;pre&gt;<code class="scala"><span class="line"><span class="k">case</span> <span class="k">class</span> <span class="nc">Group</span><span class="o">(</span><span class="n">group_id</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">,</span> <span class="n">leader</span><span class="k">:</span> <span class="kt">User</span><span class="o">,</span> <span class="n">members</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">User</span><span class="o">])</span>
-</span><span class="line">
-</span><span class="line"><span class="k">val</span> <span class="n">me</span> <span class="k">=</span> <span class="nc">User</span><span class="o">(</span><span class="n">id</span><span class="k">=</span><span class="mi">11</span><span class="o">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;me&quot;</span><span class="o">,</span> <span class="n">age</span><span class="k">=</span><span class="mi">27</span><span class="o">)</span>
-</span><span class="line"><span class="k">val</span> <span class="n">you</span> <span class="k">=</span> <span class="nc">User</span><span class="o">(</span><span class="n">id</span><span class="k">=</span><span class="mi">12</span><span class="o">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;you&quot;</span><span class="o">,</span> <span class="n">age</span><span class="k">=</span><span class="mi">30</span><span class="o">)</span>
-</span><span class="line"><span class="k">val</span> <span class="n">members</span> <span class="k">=</span> <span class="nc">MongoDBList</span><span class="o">.</span><span class="n">newBuilder</span>
-</span><span class="line"><span class="n">members</span> <span class="o">+=</span> <span class="n">me</span>
-</span><span class="line"><span class="n">members</span> <span class="o">+=</span> <span class="n">you</span>
-</span><span class="line"><span class="k">val</span> <span class="n">group</span> <span class="k">=</span> <span class="nc">Group</span><span class="o">(</span><span class="n">group_id</span><span class="k">=</span><span class="mi">1</span><span class="o">,</span> <span class="n">name</span><span class="o">=</span><span class="s">&quot;you and me&quot;</span><span class="o">,</span> <span class="n">leader</span><span class="k">=</span><span class="n">me</span><span class="o">,</span> <span class="n">members</span><span class="k">=</span><span class="nc">List</span><span class="o">(</span><span class="n">me</span><span class="o">,</span> <span class="n">you</span><span class="o">))</span>
-</span><span class="line"><span class="n">println</span><span class="o">(</span><span class="n">group</span><span class="o">)</span>
-</span><span class="line"><span class="c1">// Group(1,you and me,List(User(11,me,27), User(12,you,30)))</span>
-</span><span class="line">
-</span><span class="line"><span class="n">println</span><span class="o">(</span><span class="n">grater</span><span class="o">[</span><span class="kt">Group</span><span class="o">].</span><span class="n">asDBObject</span><span class="o">(</span><span class="n">group</span><span class="o">))</span>
-</span><span class="line"><span class="c1">// // { &quot;_typeHint&quot; : &quot;Group&quot; , &quot;group_id&quot; : 1 , &quot;name&quot; : &quot;you and me&quot; , &quot;leader&quot; : [ 11 , &quot;me&quot; , 27] , &quot;members&quot; : [ [ 11 , &quot;me&quot; , 27] , [ 12 , &quot;you&quot; , 30]]}</span>
-</span></code>&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/div&gt;</figure></notextile>&lt;/div&gt;
-DBObjectに変換すると、leaderの値やmembersのList要素がリストに変換されてます。
-このままMongoDBに保存して、それを取り出したあとで”grater[Group].asObject(group)”しようとするとエラーになります。</p>
-
-<p>まだ触り始めたばかりでGithubのWikiもちゃんと読み込んでないので、扱い方が違っているのかもしれません。引き続き動作検証をすすめたいと思います。（結局、Rogueを使うというオチになりそうな気がしないくもないですが…）</p>
-
-<h3>関連リンク</h3>
-<ul>
-<li><a href="https://github.com/novus/salat/wiki/Quick-start">Quick start - GitHub</a></li>
-</ul>
-<p>今回も一応全コードを掲載しておきます。
-<script src="https://gist.github.com/860266.js?file=SalatSample.scala"></script></p>
-
-</div>
-  
-  
-
-
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/page/19/">&larr; Older</a>
@@ -446,6 +324,10 @@ DBObjectに変換すると、leaderの値やmembersのList要素がリストに�
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2015/03/09/consul-cluster-with-docker/">DockerとWeaveを使って1台のマシンでConsulを複数動かしてみる</a>
+      </li>
+    
+      <li class="post">
         <a href="/2015/01/18/peek-for-profiling-rails-app/">Peek - Railsアプリのプロファイリングツール</a>
       </li>
     
@@ -459,10 +341,6 @@ DBObjectに変換すると、leaderの値やmembersのList要素がリストに�
     
       <li class="post">
         <a href="/2014/08/13/golang-json-marshal-unmarshal/">Goのjson.Marshal/Unmarshalの仕様を整理してみる</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2014/06/28/about-docker-libchan/">Docker謹製ライブラリのlibchanについて調べてみた</a>
       </li>
     
   </ul>

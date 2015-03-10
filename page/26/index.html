@@ -11,9 +11,8 @@
   <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="先日のPHPMatsuriのハッカソンにて作成したXHProfの結果がみれるCustomPanelですが、そのまま公開するにはお恥ずかしい感じだったので、多少マシに改修したものを公開してみます。
-DebugKit, XHProfPanelとは
-CakePHPのDebugKitというプラグインがあり &hellip;">
+  <meta name="description" content="PHPよりScalaが簡単である、という議論に対するふたつのポストがあったので、自分向けにまとめました。 元記事：Wade Arnold ? Scala is easier than PHP
+返信：Reply to &#8220;Scala is Easier than PHP&#8221; 概要 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -124,6 +123,119 @@ CakePHPのDebugKitというプラグインがあり &hellip;">
       
   <header>
     
+      <h1 class="entry-title"><a href="/2010/11/23/scala-erlang-php-and-me/">ScalaとErlangとPHPと私</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2010-11-23T18:57:35+09:00" pubdate data-updated="true">2010-11-23 (Tue)</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>PHPよりScalaが簡単である、という議論に対するふたつのポストがあったので、自分向けにまとめました。</p>
+<ul>
+<li>元記事：<a href="http://wadearnold.com/blog/scala/scala-is-easier-than-php">Wade Arnold ? Scala is easier than PHP</a></li>
+<li>返信：<a href="http://videlalvaro.github.com/2010/11/reply-to-scala-is-easier-than-php.html">Reply to &#8220;Scala is Easier than PHP&#8221;</a></li>
+</ul>
+<h3>概要</h3>
+<p>ざっとこんな感じにまとめてしまいました。</p>
+<ul>
+<li>議論の中心はWebページ生成言語としての言語の比較ではない</li>
+<li>ふたりともWebページ生成ならPHPが優れているという立場にかわりはない</li>
+<li>議論の中心は主にスケーラビリティの確保とプロセス間通信</li>
+<li>元記事のWade ArnoldさんはScala推進派</li>
+<li>返信者のvidelalvaroさんはErlang推進派</li>
+<li>スケーラビリティ確保のためには関数型言語という結論</li>
+<li>ScalaかErlangどちらが簡単か、という議論はない</li>
+</ul>
+<p><a id="more"></a><a id="more-410"></a></p>
+<h3>ScalaがPHPより簡単な理由</h3>
+<p>Wade Arnoldさんが元記事「Scala is easier than PHP」において、マルチコア時代にはScalaが必要だ、みたいなことを書きました。彼はPHP３のころからPHPの開発に関わっていて、最近はZendFrameworkのコミッタをやっていたそうです。<br />
+PHPはいまだに最高の言語であると最初に断っておきつつ、Scalaの技術的な点を整理しておこう、という内容。</p>
+<p>スケーラビリティの確保のためには、PHPのようにたくさんのツールを必要とせずとも、言語仕様的に多くをサポートするScalaが簡単な理由である、と。Scalaへの移行は時間を必要とするが、スケーラビリティには必要な選択であるといっています。</p>
+<blockquote><p>No need for amqp with actors, no beanstalkd with mutable queues, and it’s fast as hell!</p></blockquote>
+<p><em>ActorによってAMQPはいらなくなる。ミュータブルなキューもbeanstalkdなしに。そしてそれはものすごく速い。<br />
+</em></p>
+<h3>PHPの代わりにErlangを使う理由</h3>
+<p>それに対してvidelalvaroさんが「Reply to &#8220;Scala is easier than PHP&#8221;」でコメントをしています。<br />
+おおむねWadeさんの意見に同意で、彼はScalaではなくErlangを推しているようです。</p>
+<p>意見としてはこんな感じでしょうか。</p>
+<ul>
+<li>サーバーのような長時間実行するプログラムにはErlangつかうといい</li>
+<li>スレッド間通信にはErlangをつかうといい</li>
+<li>Webページを生成するだけならPHPをつかうといい</li>
+<li>CPUの全コアを利用したいだけならPHP-FPMをつかうといい</li>
+</ul>
+<h3>スケーラビリティ確保のために必要なもの</h3>
+<p>元記事ではPHPのスケーラビリティ確保のために必要なものをあげ、これらを使うのは大変骨が折れると言っています。</p>
+<blockquote>
+<ul>
+<li>Fantastic at PHP internals</li>
+<li>Amazing at Apache HTTPD and compiling appropriate PHP extensions.</li>
+<li>Nginx</li>
+<li>BigIP ? More than round robin load balancing</li>
+<li>Intimately know how sessions work and probably write your own handlers</li>
+<li>Memcached</li>
+<li>APC</li>
+<li>AMQP</li>
+<li>BeanStalkd</li>
+<li>Code based sharding or at least master/slave logic</li>
+<li>C/C++</li>
+<li>Lots of security! It’s a problem with all dynamic languages.</li>
+<li>Zend Framework.</li>
+</ul>
+</blockquote>
+<p>それに対してScalaはたった５つ。</p>
+<blockquote>
+<ul>
+<li>6 months of scala</li>
+<li>Functional programming</li>
+<li><a onclick="javascript:_gaq.push(['_trackEvent','outbound-article','akkasource.org']);" href="http://akkasource.org/">Akka Framework</a></li>
+<li><a onclick="javascript:_gaq.push(['_trackEvent','outbound-article','liftweb.net']);" href="http://liftweb.net/">Lift Framework</a></li>
+<li>Nginx / Jetty</li>
+</ul>
+</blockquote>
+<p>ツールに頼らずとも言語が機能を備えているから気にすべきところが非常にシンプルになるようです。</p>
+<h3>個人的感想</h3>
+<p>PHPをWebページ生成以外で対決させるのはどうなんだろうと思いつつも、Scalaをどのような場面で使っていけばよいか考える良い機会になりました。<br />
+個人的な話をすると、Scalaは言語仕様を学ぶばかりで実際のプログラムを書くまでには至っていませんし、性能評価もまだやってないので「PHPからScalaに移行すべきだ」、と言い切るには至っていないのが現状です。<br />
+が、Wadeさんは後ほどもっと突っ込んだ記事を書くと冒頭に言っていますし、videlalvaroさんも最後に</p>
+<blockquote><p>if we want to sell functional languages like Erlang or Scala to the PHP programmer then we have to look for more compelling features that may attract them to look into these languages. What I think are those features ?I guess?, should be part of another blog post.</p></blockquote>
+<p>と、ScalaやErlangをPHPerに売り込むための魅力的な点をPOSTしてくれるかも。<br />
+それも楽しみにしておこうと思います。</p>
+<h3>余談</h3>
+<p>最近思うのが、Scalaって言語仕様があまりに多くて、それを学ぶことが楽しいです。<br />
+が、学ぶべき仕様がどこまでなのか見えてこず、さらに、仕様を学ぶこと自体が目的になってきているような気がします。<br />
+ということで(?)そろそろ、実際につくりたいプログラムを書きながら仕様を学ぶ方向にシフトしようと思います。</p>
+<p>※あとPHP-FPMもちゃんと調査・検証したいし、Kestrelのソースも読みたい。</p>
+</div>
+  
+  
+
+
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/2010/10/10/the-xhprofpanel-debugkit-custom-panel-cakephp/">CakePHPのDebugKitにプロファイル情報が見れるXHProfPanelを追加</a></h1>
     
     
@@ -226,103 +338,6 @@ cakeのアプリは<strong>cake.localhost</strong>、xhprofビューアは<stron
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2010/10/03/phpmatsuri-hack-days-by-php-hackers/">PHPMATSURI - PHPハッカー達による一泊二日のハックデイ</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2010-10-03T20:26:48+09:00" pubdate data-updated="true">2010-10-03 (Sun)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><a title="IMG_2470 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/5046336051/"><img src="http://farm5.static.flickr.com/4154/5046336051_aabef10eb4.jpg" alt="IMG_2470" width="500" height="333" /></a></p>
-<p><a href="http://2010.phpmatsuri.net/"><img class="alignnone size-medium wp-image-341" title="PHPMATSURI" src="http://blog.restartr.com/wp-content/uploads/2010/10/bunner-300x132.jpg" alt="" width="300" height="132" /></a><br />
-10月02日と03日の、一泊二日の<a href="http://2010.phpmatsuri.net/">PHPMASTURI</a>に参加してきました。</p>
-<ul>
-<li>ハッシュタグ: <a href="http://search.twitter.com/search?q=%23phpmatsuri">#phpmatsuri</a></li>
-<li>LTのustream: <a href="http://www.ustream.tv/channel/phpmatsuri">phpmatsuri on USTREAM</a></li>
-</ul>
-<h3>とにかく内容が濃い</h3>
-<ul>
-<li>楽天の吉岡さんによる大人のプログラミングキャンプ</li>
-<li>CakePHP,Symfony,Lithiumのデベロッパーによるセッション</li>
-<li>彼らのライブコーディングを間近に見られる各フレームワークのワークショップ</li>
-<li>スポンサー各社のセッション</li>
-<li>PHPによる開発事例プレゼン大会のJIREI NIGHT</li>
-<li>ZyngaJapanのお二人によるTDDを実体験できるワークショップ</li>
-<li>深夜まで続くハッカソンと、総勢33名による大LT大会</li>
-</ul>
-<p>ざっと並べただけでもこんな感じに、とにかく内容てんこ盛りな二日間でした。</p>
-<p><a id="more"></a><a id="more-335"></a></p>
-<p><a title="IMG_2512 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/5046956568/"><img src="http://farm5.static.flickr.com/4133/5046956568_dd9b08f6eb.jpg" alt="IMG_2512" width="500" height="333" /></a></p>
-<p>まとめるのは得意ではないので、参加した感想を少しばかり。</p>
-<h3>イベントに参加するということがいかに重要であるか</h3>
-<p>最初の吉岡さんのセッションは「この祭りをいかに楽しく有意義に過ごすか」ということを教えていただきました。また、各セッションを聞いたり、たくさんのデベロッパーの方々とコミュニケーションをとるのも非常に有意義でした。<br />
-最後のLT大会では、参加したみなさんの変態ぶりに圧倒されっぱなし。これだけ多くの発表があるとそれぞれに目の付け所が違っているが故にアイデアももらえるし、そこで発表すれば多くの反応をいただくこともできます。参加することで得られるメリットは、参加費用にはかえがたいものがあったと思います。<br />
-最後の締めで@yandoさんが「個人によるイベント」と仰っていて、このイベントは有志のスタッフの方々に支えられている、ことを実感しました。企画・運営をしてくださったスタッフのみなさんには本当に感謝します。<br />
-そして、PHPMATSURIに関わったすべての方に感謝したいと思います。ありがとうございました。</p>
-<p><a title="IMG_2491 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/5046334983/"><img src="http://farm5.static.flickr.com/4086/5046334983_8bd1c1329a.jpg" alt="IMG_2491" width="500" height="333" /></a><br />
-今回のチャレンジをまとめてみます。</p>
-<h3>チャレンジできたこと</h3>
-<ul>
-<li>CakePHP,Symfony2,Lithium各フレームワークの特徴を知る</li>
-<li>プレゼン資料を拙いながらも英語で作成する</li>
-<li>内容に関係なく発表者になる</li>
-<li>動かなかったで終わらせず、動くまでハックする</li>
-</ul>
-<h3>チャレンジできなかったこと</h3>
-<ul>
-<li>各FWデベロッパーの方々とのコミュニケーション</li>
-<li>セッションで質問する(TDDのワークでは質問しましたが)</li>
-<li>ソースコード公開</li>
-<li>Beer Driven Development</li>
-</ul>
-<h3>今後チャレンジしたいこと</h3>
-<ul>
-<li>今回の成果物のソースコード公開する</li>
-<li>英語を聞く力、話す力をつける</li>
-<li>発表の機会を自分でつくる</li>
-</ul>
-<h3>成果：XHProf CustomPanel</h3>
-<p>※詳しい話は別記事にてやります。</p>
-<div id="__ss_5344576" style="width: 425px;"><strong><a title="Php matusri xhprof custompanel" href="http://www.slideshare.net/restartr/php-matusri-xhprofcustompanelpublish">Php matusri xhprof custompanel</a></strong><object id="__sse5344576" classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" width="425" height="355" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,40,0"><param name="allowFullScreen" value="true" /><param name="allowScriptAccess" value="always" /><param name="src" value="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=phpmatusri-xhprofcustompanel-publish-101003011838-phpapp02&amp;stripped_title=php-matusri-xhprofcustompanelpublish&amp;userName=restartr" /><param name="name" value="__sse5344576" /><param name="allowfullscreen" value="true" /><embed id="__sse5344576" type="application/x-shockwave-flash" width="425" height="355" src="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=phpmatusri-xhprofcustompanel-publish-101003011838-phpapp02&amp;stripped_title=php-matusri-xhprofcustompanelpublish&amp;userName=restartr" name="__sse5344576" allowscriptaccess="always" allowfullscreen="true" /></object>
-<div style="padding: 5px 0 12px;">View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/restartr">Re STARTR</a>.</div>
-</div>
-<h3>おまけ</h3>
-<p>途中でレッドブルがふるまわれるというサービスまでありました。当日6時起きだったのに4時まで頑張れたのはレッドブルのおかげかもしれません。<br />
-<a title="IMG_2488 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/5046334797/"><img src="http://farm5.static.flickr.com/4108/5046334797_b3ed8b2f3e.jpg" alt="IMG_2488" width="500" height="333" /></a></p>
-<p>そして、最後にCakePHP開発者のGraham Weldonさんと記念撮影させてもらいました。<br />
-Thanks, Graham!<br />
-<a title="IMG_2514 by ReSTARTR_y, on Flickr" href="http://www.flickr.com/photos/53244662@N04/5046335737/"><img src="http://farm5.static.flickr.com/4113/5046335737_4651050be6.jpg" alt="IMG_2514" width="500" height="333" /></a><br />
-#ほとんど会話できなかったのが悔やまれます。会話することを怖がらないことが大事ですね。反省。</p>
-</div>
-  
-  
-
-
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/page/27/">&larr; Older</a>
@@ -378,6 +393,10 @@ Thanks, Graham!<br />
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2015/03/09/consul-cluster-with-docker/">DockerとWeaveを使って1台のマシンでConsulを複数動かしてみる</a>
+      </li>
+    
+      <li class="post">
         <a href="/2015/01/18/peek-for-profiling-rails-app/">Peek - Railsアプリのプロファイリングツール</a>
       </li>
     
@@ -391,10 +410,6 @@ Thanks, Graham!<br />
     
       <li class="post">
         <a href="/2014/08/13/golang-json-marshal-unmarshal/">Goのjson.Marshal/Unmarshalの仕様を整理してみる</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2014/06/28/about-docker-libchan/">Docker謹製ライブラリのlibchanについて調べてみた</a>
       </li>
     
   </ul>

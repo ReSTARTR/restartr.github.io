@@ -5,13 +5,13 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>DotCloudのMongoDBをScalaから使ってみる - I Will Survive</title>
+  <title>DockerとWeaveを使って1台のマシンでConsulを複数動かしてみる - I Will Survive</title>
   <meta name="author" content="ReSTARTR">
   <link rel="author" href="https://plus.google.com/103216164658230535238" />
   <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="DotCloudにDuoStackが買収されて、DotCloudでもMongoDBが使えるようになりましたし、node.jsも使えるしで、ますますDotCloudが魅力的なものになってきました。 ただし、node.jsはサポートされても、 &hellip;">
+  <meta name="description" content="軽くConsulを試してみたくて、でもVagrantで複数台仮想マシンを立ち上げるのはちょっと気が重い…ということでUbuntu14.10 on MacBookAirにDockerコンテナを複数立ち上げてクラスタを構築してみるテストをしました。">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -20,7 +20,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://blog.restartr.com/2011/05/28/access-from-scala-to-mongodb-on-dotcloud/">
+  <link rel="canonical" href="http://blog.restartr.com/2015/03/09/consul-cluster-with-docker/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
    <link href="/stylesheets/data-table.css" media="screen, projection" rel="stylesheet" type="text/css" />
@@ -119,7 +119,7 @@
   
   <header>
     
-      <h1 class="entry-title">DotCloudのMongoDBをScalaから使ってみる</h1>
+      <h1 class="entry-title">DockerとWeaveを使って1台のマシンでConsulを複数動かしてみる</h1>
       
       <style type="text/css">
   .sharing {
@@ -141,12 +141,12 @@
 </style>
 <div class="sharing">
   <ul>
-    <li><a href="http://blog.restartr.com/2011/05/28/access-from-scala-to-mongodb-on-dotcloud/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+    <li><a href="http://blog.restartr.com/2015/03/09/consul-cluster-with-docker/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
   
-  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2011/05/28/access-from-scala-to-mongodb-on-dotcloud/" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2011/05/28/access-from-scala-to-mongodb-on-dotcloud/" >Tweet</a></li>
+  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2015/03/09/consul-cluster-with-docker/" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2015/03/09/consul-cluster-with-docker/" >Tweet</a></li>
   
   
-  <li><div class="fb-like" data-href="http://blog.restartr.com/2011/05/28/access-from-scala-to-mongodb-on-dotcloud/" data-layout="button_count" data-action="like" data-show-faces="false" data-share="true"></div><script>(function(d, s, id) {
+  <li><div class="fb-like" data-href="http://blog.restartr.com/2015/03/09/consul-cluster-with-docker/" data-layout="button_count" data-action="like" data-show-faces="false" data-share="true"></div><script>(function(d, s, id) {
   var js, fjs = d.getElementsByTagName(s)[0];
   if (d.getElementById(id)) return;
   js = d.createElement(s); js.id = id;
@@ -177,91 +177,144 @@
   
 
 
-<time datetime="2011-05-28T20:00:57+09:00" pubdate data-updated="true">2011-05-28 (Sat)</time>
+<time datetime="2015-03-09T00:22:13+09:00" pubdate data-updated="true">2015-03-09 (Mon)</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>DotCloudにDuoStackが<a href="http://gigaom.com/cloud/exclusive-paas-startups-unite-dotcloud-buys-duostack/">買収され</a>て、DotCloudでもMongoDBが使えるようになりましたし、node.jsも使えるしで、ますますDotCloudが魅力的なものになってきました。</p>
+<div class="entry-content"><p>軽くConsulを試してみたくて、でもVagrantで複数台仮想マシンを立ち上げるのはちょっと気が重い…ということでUbuntu14.10 on MacBookAirにDockerコンテナを複数立ち上げてクラスタを構築してみるテストをしました。</p>
 
-<p>ただし、node.jsはサポートされても、WebSocketは正式サポートされていないと<a href="http://docs.dotcloud.com/components/nodejs/">公式マニュアル</a>にも書いてありますがWebSocketサポート済みのDuoStack買収によってどう流れるか気になるところです。</p>
-
-<p>さて今回は、前回作ったものをベースにScalaからMongoDBへアクセスするサンプルをDotCloudで動かすまでを書いておきます。（まぁ、Scalaのコードはオマケみたいなものですけど…）</p>
-
-<p>前回の記事はこちらです。</p>
+<p>Dockerfileとか簡単な動かし方(を適当英語で書いたもの)をgithubにあげてあります</p>
 
 <ul>
-  <li><a href="http://blog.restartr.com/2011/05/09/sample-sbt-project-for-dotcloud/">ScalaをDotCloudにアップロードするためのsbtサンプル</a></li>
+  <li><a href="https://github.com/ReSTARTR/test-consul-with-docker">ReSTARTR/test-consul-with-docker</a></li>
 </ul>
 
-<p>ちなみにDotCloudは下記バージョンにて動作しているみたいです（2011.05.28現在)</p>
+<p>Docker内のプロセスがLISTENするポートに対してコンテナ外から接続する場合、<code>-p</code>でホストのポートにひもづけるか、<code>--link</code>でコンテナ同士をつなぐのが最も手軽な方法です。が、consulは複数のポート（HTTP API用、DNS用、ゴシッププロトコル用等）を使うため、この手軽な方法でクラスタを構築することができません。</p>
+
+<p>Dockerコンテナの接続パターンとしてはいくつかあって、deeeetさんのブログ記事に詳しく書かれています。</p>
 
 <ul>
-  <li>nginx 0.7.65</li>
-  <li>jetty 6.1</li>
-  <li>mongodb 1.8.1</li>
+  <li><a href="http://deeeet.com/writing/2014/12/01/docker-link-pattern/">Dockerコンテナ接続パターン (2014年冬) | SOTA</a></li>
 </ul>
 
-<h3 id="section">作成したサンプルアプリ</h3>
+<p>今回は手元のMacBook Airだけで完結させたかったので、weaveを使ったコンテナ間ネットワークを利用することにしました。</p>
 
-<p>事情により停止する場合があるかもしれませんがご了承を。</p>
+<h3 id="weave">weave</h3>
 
 <ul>
-  <li><a href="http://samplemongo.ramee.dotcloud.com/">http://samplemongo.ramee.dotcloud.com/</a></li>
+  <li><a href="http://zettio.github.io/weave/">weave  | weave, the Docker network</a></li>
 </ul>
 
-<h3 id="dotcloudmongodb">DotCloudにMongoDBサーバーを準備する</h3>
-
-<p>DotCloudのMongoDBマニュアルはこちら</p>
+<p>dockerコンテナ間の内部ネットワークを構築するものです。詳しくはjacopenさんのSlideShareを。</p>
 
 <ul>
-  <li><a href="http://docs.dotcloud.com/components/mongodb/">MongoDB ? DotCloud documentation</a></li>
+  <li><a href="http://www.slideshare.net/jacopen/weave-40871981">Weaveを試してみた</a></li>
 </ul>
 
-<p>上記マニュアルにしたがって作成すればMongoDBサーバーを準備できます。
-基本的には、追加したいサーバーを登録して、ユーザーを作成するだけです。</p>
-
-<p>簡単。</p>
-
-<p>今回は”example.mongo”という名前で作成する例を記してありますので、
-それぞれ自分の作成したいアプリ名に読み替えて下さい。</p>
-
-<h4 id="section-1">サーバーを作成</h4>
-
-<p>事前に”dotcloud create example”は実行してあるものとします。
-詳しくはこちらの<a href="http://docs.dotcloud.com/tutorials/firststeps/#id2">マニュアル</a>を見てください。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>dotcloud deploy -t mongo example.mongo
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">&gt; Created <span class="s2">&quot;example.mongo&quot;</span>.
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h4 id="dbidpass">DB情報を確認（ID/PASS）</h4>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>dotcloud info example.mongo
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>deployコマンド実行してから実際に作成されるまで少し時間がかかります。
-すぐにinfoコマンドを実行すると下記エラーがでます。
-※正確に測ってませんが数十秒くらい？</p>
+<p>使い方はとても簡単で、weaveコンテナを立ち上げて、weaveコマンド経由でdockerコマンドを実行するだけ。
+これならVagrantのような仮想マシンのためにメモリとディスク容量を割く必要もなくなります。</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
 <span class="line-number">3</span>
 <span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">&gt; Sat May 28 08:14:43 Error: couldn<span class="err">&#39;</span>t connect to server 127.0.0.1 shell/mongo.js:79
-</span><span class="line">&gt; exception: connect failed
-</span><span class="line">&gt; Connection to mongo.example.dotcloud.com closed.
-</span><span class="line">&gt; Abort.
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo weave launch
+</span><span class="line"><span class="nv">$ </span>sudo docker ps
+</span><span class="line">CONTAINER ID        IMAGE                COMMAND                CREATED             STATUS              PORTS                                            NAMES
+</span><span class="line">2eda921c011e        zettio/weave:0.9.0   <span class="err">&quot;</span>/home/weave/weaver    31 seconds ago      Up 30 seconds       0.0.0.0:6783-&gt;6783/tcp, 0.0.0.0:6783-&gt;6783/udp   weave
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>作成完了していれば、下記情報が表示されますので、”mongodb_password: <strong>**</strong>“に記載されたパスワードをメモしておきます。</p>
+<p>これだけで仮想ネットワークができあがります。ホストOSで必要なポートは6783だけです。</p>
+
+<p>あとはweaveコマンドにIPを指定しつつdockerコマンドのオプションを付けて起動すればOK。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ C</span><span class="o">=</span><span class="k">$(</span>sudo weave run 10.0.0.1/24 -it ubuntu<span class="k">)</span>
+</span><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec</span> <span class="nv">$C</span> -it /bin/bash
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>ただ、さくらVPSのCentOS6では動きませんでした。面倒なので深く追ってません。。。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo /usr/local/bin/weave launch
+</span><span class="line">WARNING: Linux kernel version 3.5 or newer is required <span class="o">(</span>you have 2.6<span class="o">)</span>
+</span><span class="line">ERROR: ip utility, iproute2-ss091226 does not support network namespaces.
+</span><span class="line">       Please install iproute2-ss111010 or later.
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="consul">consul</h3>
+
+<ul>
+  <li><a href="https://www.consul.io/">consul</a></li>
+</ul>
+
+<p>Hashicorp謹製クラスタのオーケストレーションツール。今更説明する必要もないと思うので詳細は省略します。
+consul（と周辺ツールのconsul-templateやenvconsul)を使えば複数のホスト間で設定を共有できる、というのを試すのが今回の目的でしたが、とりあえず複数のconsulを動かすところまでを書きます。</p>
+
+<h3 id="consul-1">consulを起動してクラスタを構築する</h3>
+
+<p>weaveネットワークに接続したコンテナを4台立ち上げて、consul1, consul2をserverとして、consul3, consul4をclientとして起動します。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo weave run 10.0.0.1/24 -it -v <span class="k">$(</span><span class="nb">pwd</span> -P<span class="k">)</span>:/opt --name<span class="o">=</span>consul1 restartr/consul-ready
+</span><span class="line"><span class="nv">$ </span>sudo weave run 10.0.0.2/24 -it -v <span class="k">$(</span><span class="nb">pwd</span> -P<span class="k">)</span>:/opt --name<span class="o">=</span>consul2 restartr/consul-ready
+</span><span class="line"><span class="nv">$ </span>sudo weave run 10.0.0.3/24 -it -v <span class="k">$(</span><span class="nb">pwd</span> -P<span class="k">)</span>:/opt --name<span class="o">=</span>consul3 restartr/consul-ready
+</span><span class="line"><span class="nv">$ </span>sudo weave run 10.0.0.4/24 -it -v <span class="k">$(</span><span class="nb">pwd</span> -P<span class="k">)</span>:/opt --name<span class="o">=</span>consul4 restartr/consul-ready
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>あとはconsul agentを順に起動するだけ。</p>
+
+<p>ここで注意するのが<code>-bind</code>オプション。
+これを指定しないとdockerデフォルトのeth0のでクラスタにjoinすることになってしまい、このネットワークは他のコンテナとつながっていないためにクラスタ構築に失敗します。
+必ず<code>weave run 10.0.0.X/24</code>で指定したIPにbindしておきましょう。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec</span> -d consul1 consul agent -server -data-dir<span class="o">=</span>/tmp/consul -bootstrap-expect 1 -bind 10.0.0.1
+</span><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec</span> -d consul2 consul agent -server -data-dir<span class="o">=</span>/tmp/consul -config-dir<span class="o">=</span>/opt/consul.d/web.json -bind 10.0.0.2
+</span><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec</span> -d consul3 consul agent -data-dir<span class="o">=</span>/tmp/consul -config-dir<span class="o">=</span>/opt/consul.d/web.json -bind 10.0.0.3
+</span><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec</span> -d consul4 consul agent -data-dir<span class="o">=</span>/tmp/consul -config-dir<span class="o">=</span>/opt/consul.d/web.json -bind 10.0.0.4
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>で、先に起動したconsul1に対して残りのコンテナ内のconsul agentをjoinさせていきます。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec </span>consul2 consul join 10.0.0.1
+</span><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec </span>consul3 consul join 10.0.0.1
+</span><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec </span>consul4 consul join 10.0.0.1
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>と、<code>consul members</code>でjoinしている一覧が見えるようになります。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec </span>consul1 consul members
+</span><span class="line">Node          Address        Status  Type    Build  Protocol
+</span><span class="line">725dca3980ea  10.0.0.1:8301  alive   server  0.5.0  2
+</span><span class="line">f82001d6a7b4  10.0.0.2:8301  alive   server  0.5.0  2
+</span><span class="line">dcf304f77fdf  10.0.0.3:8301  alive   client  0.5.0  2
+</span><span class="line">3be672bd18b1  10.0.0.4:8301  alive   client  0.5.0  2
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>クラスタから離れるときは<code>consul leave</code>です。</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
@@ -272,143 +325,21 @@
 <span class="line-number">7</span>
 <span class="line-number">8</span>
 <span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">cluster: wolverine
-</span><span class="line">config:
-</span><span class="line">    mongodb_password: ******
-</span><span class="line">created_at: 1306570413.6722209
-</span><span class="line">name: example.mongo
-</span><span class="line">namespace: example
-</span><span class="line">ports:
-</span><span class="line">-   name: ssh
-</span><span class="line">    url: ssh://mongodb@mongo.example.dotcloud.com:5906
-</span><span class="line">-   name: mongodb
-</span><span class="line">    url: mongodb://root:******@mongo.example.dotcloud.com:5907
-</span><span class="line">state: running
-</span><span class="line"><span class="nb">type</span>: mongodb
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec </span>consul4 consul leave
+</span><span class="line">Graceful leave <span class="nb">complete</span>
+</span><span class="line">
+</span><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec </span>consul1 consul members
+</span><span class="line">Node          Address        Status  Type    Build  Protocol
+</span><span class="line">dcf304f77fdf  10.0.0.3:8301  alive   client  0.5.0  2
+</span><span class="line">3be672bd18b1  10.0.0.4:8301  left    client  0.5.0  2       <span class="c"># &lt;- Statusが&#39;alive&#39;から&#39;left&#39;に変わる</span>
+</span><span class="line">725dca3980ea  10.0.0.1:8301  alive   server  0.5.0  2
+</span><span class="line">f82001d6a7b4  10.0.0.2:8301  alive   server  0.5.0  2
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<h4 id="mongodb">MongoDBサーバーへログイン</h4>
+<p>という感じで、複数のマシンをいじってる感じがまったくしないくらい<code>weave</code> &amp; <code>docker exec</code>は便利です。
+weaveがプロダクション環境で使えるか、という点については未知ですが。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>dotcloud run example.mongo mongo
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>infoコマンドで表示されたパスワードを使って、”sampledb”というdbにアプリユーザーを追加します。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">&gt; use sampledb
-</span><span class="line">switched to db sampledb
-</span><span class="line">&gt; db.getSisterDB<span class="o">(</span><span class="s2">&quot;admin&quot;</span><span class="o">)</span>.auth<span class="o">(</span><span class="s2">&quot;root&quot;</span>, <span class="s2">&quot;&lt;infoコマンドで表示されるパスワード&gt;&quot;</span><span class="o">)</span>;
-</span><span class="line">1
-</span><span class="line">&gt; db.addUser<span class="o">(</span><span class="s2">&quot;APPUSER_NAME&quot;</span>, <span class="s2">&quot;APPPUSER_PASS&quot;</span><span class="o">)</span>;
-</span><span class="line"><span class="o">{</span>
-</span><span class="line">     <span class="s2">&quot;user&quot;</span> : <span class="s2">&quot;APPUSER_NAME&quot;</span>,
-</span><span class="line">     <span class="s2">&quot;readOnly&quot;</span> : <span class="nb">false</span>,
-</span><span class="line">     <span class="s2">&quot;pwd&quot;</span> : <span class="s2">&quot;xxxxxxxxxxxxxxxxxxxxxxxxxxxxx&quot;</span>
-</span><span class="line"><span class="o">}</span>
-</span><span class="line">&gt; <span class="nb">exit</span>
-</span><span class="line">bye
-</span><span class="line">Connection to mongo.example.dotcloud.com closed.
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>※とりあえず一旦ログアウトしてますが、別に必須じゃないです。</p>
-
-<h4 id="section-2">再度ログインしてテスト操作してみる</h4>
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>dotcloud run example.mongo mongo
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>新規作成したユーザーでDB操作が可能か確認してみます。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="c"># mongo</span>
-</span><span class="line">Warning: Permanently added <span class="s1">&#39;[mongo.example.dotcloud.com]:5906,[174.129.17.131]:5906&#39;</span> <span class="o">(</span>RSA<span class="o">)</span> &gt; to the list of known hosts.
-</span><span class="line">MongoDB shell version: 1.8.1
-</span><span class="line">connecting to: <span class="nb">test</span>
-</span><span class="line">&gt; use sampledb;
-</span><span class="line">switched to db sampledb
-</span><span class="line">&gt; db.auth<span class="o">(</span><span class="s2">&quot;sampleuser&quot;</span>, <span class="s2">&quot;samplepass&quot;</span><span class="o">)</span>;
-</span><span class="line">1
-</span><span class="line">&gt; db.sampledb.save<span class="o">({</span>id:1,name:<span class="s2">&quot;foo&quot;</span><span class="o">})</span>;
-</span><span class="line">&gt; db.sampledb.find<span class="o">()</span>;
-</span><span class="line"><span class="o">{</span> <span class="s2">&quot;_id&quot;</span> : ObjectId<span class="o">(</span><span class="s2">&quot;4de0b033a1fd29eb0e1522fd&quot;</span><span class="o">)</span>, <span class="s2">&quot;id&quot;</span> : 1, <span class="s2">&quot;name&quot;</span> : <span class="s2">&quot;foo&quot;</span> <span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>問題なさそうなので、あとはアプリを”dotcloud push”して動かすだけです。</p>
-
-<h3 id="scala">scalaからアクセスするサンプル</h3>
-
-<p>サービス名を「example.samplemongo”として作成する例です。</p>
-
-<p>requirementsはイカのとおり。</p>
-
-<ul>
-  <li>scala 2.9.0</li>
-  <li>sbt 0.7.7</li>
-  <li>jetty 7.3.1.v20110307</li>
-  <li>casbah 2.1.5.0</li>
-</ul>
-
-<p><code>sbt</code>
-で基本ディレクトリを作成したら、下記プロジェクト設定を{root}/project/build/MongoSampleProject.scala”として保存します。</p>
-
-<p>前回の設定クラスをコピーしてきたので、”sbt dot_create”と”sbt dot_push”も一応使えます。</p>
-
-<p>※”example.mongo”の名称は適宜読み替えでお願いします。
-##### MongodbSampleProject.scala</p>
-
-<script src="https://gist.github.com/996769.js?file=MongodbSampleProject.scala"></script>
-
-<p>配置できたら、</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">sbt reload update
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>でライブラリを読み込みます。</p>
-
-<p>あとは下記Servletの実装とweb.xmlを用意したらOK．</p>
-
-<h5 id="mongodbservletscala">MongodbServlet.scala</h5>
-
-<script src="https://gist.github.com/996769.js?file=MonbodbServlet.scala"></script>
-
-<h5 id="webxml">web.xml</h5>
-
-<script src="https://gist.github.com/996769.js?file=web.xml"></script>
-
-<p>できたら、”sbt dot_push”でdotcloudへアップロードされるはずです。</p>
-
-<p>最後に、”http:／／samplemongo.exapmle.dotcloud.com”にアクセスして、フォームからデータ登録ができれば成功です。</p>
-
-<p>RDBMSにくらべてデータ保存・取得までが圧倒的に簡単で、PaaSでもMongoDBはいい感じですね！</p>
-
+<p>次回（があれば）consulを使った設定の管理について試したメモを書きたいと思います。</p>
 </div>
 
 
@@ -434,12 +365,12 @@
 </style>
 <div class="sharing">
   <ul>
-    <li><a href="http://blog.restartr.com/2011/05/28/access-from-scala-to-mongodb-on-dotcloud/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+    <li><a href="http://blog.restartr.com/2015/03/09/consul-cluster-with-docker/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
   
-  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2011/05/28/access-from-scala-to-mongodb-on-dotcloud/" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2011/05/28/access-from-scala-to-mongodb-on-dotcloud/" >Tweet</a></li>
+  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2015/03/09/consul-cluster-with-docker/" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2015/03/09/consul-cluster-with-docker/" >Tweet</a></li>
   
   
-  <li><div class="fb-like" data-href="http://blog.restartr.com/2011/05/28/access-from-scala-to-mongodb-on-dotcloud/" data-layout="button_count" data-action="like" data-show-faces="false" data-share="true"></div><script>(function(d, s, id) {
+  <li><div class="fb-like" data-href="http://blog.restartr.com/2015/03/09/consul-cluster-with-docker/" data-layout="button_count" data-action="like" data-show-faces="false" data-share="true"></div><script>(function(d, s, id) {
   var js, fjs = d.getElementsByTagName(s)[0];
   if (d.getElementById(id)) return;
   js = d.createElement(s); js.id = id;
@@ -476,12 +407,12 @@
   
 
 
-<time datetime="2011-05-28T20:00:57+09:00" pubdate data-updated="true">2011-05-28 (Sat)</time>
+<time datetime="2015-03-09T00:22:13+09:00" pubdate data-updated="true">2015-03-09 (Mon)</time>
       
 
 <span class="categories">
   
-    <a class='category' href='/category/scala/'>Scala</a>
+    <a class='category' href='/category/docker/'>docker</a>
   
 </span>
 
@@ -490,10 +421,8 @@
     <hr />
     <p class="meta">
       
-        <a class="basic-alignment left" href="/2011/05/09/sample-sbt-project-for-dotcloud/" title="Previous Post: ScalaをDotCloudにアップロードするためのsbtサンプル">&laquo; ScalaをDotCloudにアップロードするためのsbtサンプル</a>
+        <a class="basic-alignment left" href="/2015/01/18/peek-for-profiling-rails-app/" title="Previous Post: Peek - Railsアプリのプロファイリングツール">&laquo; Peek - Railsアプリのプロファイリングツール</a>
       
-      
-        <a class="basic-alignment right" href="/2011/06/19/volunteer-at-shinchi-fukushima-pref/" title="Next Post: 東京から福島へ一泊二日でボランティアに行ってきた">東京から福島へ一泊二日でボランティアに行ってきた &raquo;</a>
       
     </p>
   </footer>
