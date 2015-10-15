@@ -4,7 +4,7 @@
   <title><![CDATA[Category: go | I Will Survive]]></title>
   <link href="http://blog.restartr.com/category/go/atom.xml" rel="self"/>
   <link href="http://blog.restartr.com/"/>
-  <updated>2015-03-10T23:41:24+09:00</updated>
+  <updated>2015-10-15T21:47:02+09:00</updated>
   <id>http://blog.restartr.com/</id>
   <author>
     <name><![CDATA[ReSTARTR]]></name>
@@ -12,6 +12,125 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA["Go Programming Blueprints"を読んだ]]></title>
+    <link href="http://blog.restartr.com/2015/10/15/go-programming-blueprints/"/>
+    <updated>2015-10-15T19:54:29+09:00</updated>
+    <id>http://blog.restartr.com/2015/10/15/go-programming-blueprints</id>
+    <content type="html"><![CDATA[<p><a href="http://www.amazon.co.jp/gp/product/B00T4ACPA0)">
+<img src="https://raw.githubusercontent.com/matryer/goblueprints/master/artwork/bookcover.jpg" alt="Go Blueprints by Mat Ryer book cover" />
+</a></p>
+
+<ul>
+  <li><a href="http://www.amazon.co.jp/gp/product/B00T4ACPA0">Go Programming Blueprints - Solving Development Challenges with Golang</a></li>
+</ul>
+
+<p>最近Kindleで購入したので、でひととおり読んで写経してみました。</p>
+
+<h3 id="section">概要と雑感</h3>
+
+<p>2015年1月に発売された書籍であり、Goのバージョンでいうと1.3から1.4の頃に書かれたものです。
+著者はGolang UK Conference 2015でトークもしていた<a href="https://twitter.com/matryer">@matryer</a>さん。
+(<em>※<a href="https://www.youtube.com/watch?v=tIm8UkSf6RA">Golang UK Conference 2015 - Mat Ryer - Building APIs - YouTube</a></em>)</p>
+
+<p>いくつかのGo製アプリケーション開発を通じて、Goの機能・パターンを学習する、という感じのもの。機能やパターンについて網羅的ではないものの、特定のユースケースをベースにしているため、パターンの理解は容易に感じます。取り扱うトピックも、web/apiサーバーとコマンドラインツールがバランスよく取り上げられています。</p>
+
+<p>対象読者は「すべてのGoプログラマー」と記載がありますが、<a href="https://tour.golang.org">A Tour of Go</a>をひととおりやったあとくらいがちょうど良い気がします。</p>
+
+<p>リファレンス的な構成の他書や<a href="https://golang.org/doc/effective_go.html">Effective Go</a>のような公式ドキュメントのものとうまくすみ分けができているのではないかと。</p>
+
+<p>ただ誤字・脱字が少し目立つかな（章ごとに1,2個程度ですが)という点が残念ではありますが、比較的わかりやすいミスなので読んでいて混乱するほどではありません。</p>
+
+<p><a href="https://github.com/golang/go/wiki/Books">Go Books</a>としては比較的マイナーっぽく、日本語圏の情報もないので購入はちょっとしたギャンブルでしたが、ある程度まとまったストーリーとして読めるGo関連の書籍は少ない印象ですし、自分としてはちょうど良い買い物だったかなと思います。</p>
+
+<p><em>※ソースコードも<a href="https://github.com/matryer/goblueprints">matryer/goblueprints</a>に公開されています</em></p>
+
+<p>_※当然英語ですが、さほど読みにくい感じはなかったです</p>
+
+<h3 id="section-1">構成</h3>
+
+<p>全8章で作成するアプリケーションのうち、1章で簡潔するものと章をまたがるものがあり、構成は以下のようになっています。</p>
+
+<h4 id="websocket">1, 2, 3: websocketによるチャットアプリケーション</h4>
+
+<ul>
+  <li>http.Handle/HandleFuncの基本的な使い方とか、TDDによるパッケージ開発、</li>
+  <li>ソーシャルログイン機能の追加(OAuthは<a href="https://github.com/stretchr/gomniauth">stretchr/gomniauth</a>を利用)</li>
+  <li>アイコン画像のアップロード機能の追加</li>
+</ul>
+
+<h4 id="section-2">4: 空きドメイン検索ツール</h4>
+
+<ul>
+  <li>Unixコマンドのように、STDIN/OUTを使った複数コマンドによる連携
+    <ul>
+      <li><code>$ 単語生成 | 単語の補正 | TLDの付与 | WHOISチェック</code></li>
+      <li>これらをos.Command.Stdin,Stdoutで束ねるコマンド
+        <ul>
+          <li><em>.o(シェルスクリプトでも良いのではと思いますが、外部プロセスとの連携の練習ということで…)</em></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="twitter">5, 6: Twitterのリアルタイムカウンター</h4>
+
+<ul>
+  <li>複数のプロセスで構成される分散システム
+    <ol>
+      <li>twitter streaming apiから拾ったツイートを<a href="http://nsq.io">NSQ</a>に追加するプログラム</li>
+      <li>NSQのsubscriberが単語別件数を集計して、1秒ごとにMongoDBを更新するプログラム</li>
+      <li>MongoDBの内容を管理・閲覧ツール(RESTful APIとWEBアプリ)</li>
+    </ol>
+  </li>
+</ul>
+
+<p>トピック</p>
+
+<ul>
+  <li>シグナルトラップによる安全なプロセス終了処理</li>
+  <li>sync.Mutexによる協調動作の実装</li>
+  <li><a href="https://github.com/stretchr/graceful">stretchr/graceful</a>での安全な終了処理</li>
+</ul>
+
+<h4 id="google-places-api">7: Google Places APIを使ったロケーション推薦アプリケーション</h4>
+
+<ul>
+  <li>iotaによるEnum相当の実現</li>
+  <li>TDDでパッケージ開発
+    <ul>
+      <li><em>.o(ここで<a href="https://github.com/cheekybits">cheekybits/is</a>が出てきたけど、全体で統一感出してほしい…)</em></li>
+    </ul>
+  </li>
+  <li>型アサーションによるキャスト</li>
+</ul>
+
+<h4 id="section-3">8 ファイル自動バックアップシステム</h4>
+
+<ul>
+  <li>2つのCLIツールの作成
+    <ul>
+      <li>backup: バックアップする対象リストの管理コマンド
+        <ul>
+          <li>メタデータ管理は<a href="https://github.com/mattyer/filedb">mattyer/filedb</a></li>
+        </ul>
+      </li>
+      <li>backupd: メタデータをもとに実ファイル監視とバックアップ実行する常駐プログラム</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="section-4">蛇足</h3>
+
+<p>そういえば、カーニハン著のThe Go Programming Languageが11月発売とのこと</p>
+
+<ul>
+  <li><a href="http://www.amazon.co.jp/gp/product/0134190440">The Go Programming Language</a></li>
+</ul>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Goのjson.Marshal/Unmarshalの仕様を整理してみる]]></title>

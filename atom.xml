@@ -4,7 +4,7 @@
   <title><![CDATA[I Will Survive]]></title>
   <link href="http://blog.restartr.com/atom.xml" rel="self"/>
   <link href="http://blog.restartr.com/"/>
-  <updated>2015-03-10T23:41:24+09:00</updated>
+  <updated>2015-10-15T21:47:02+09:00</updated>
   <id>http://blog.restartr.com/</id>
   <author>
     <name><![CDATA[ReSTARTR]]></name>
@@ -12,6 +12,125 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA["Go Programming Blueprints"を読んだ]]></title>
+    <link href="http://blog.restartr.com/2015/10/15/go-programming-blueprints/"/>
+    <updated>2015-10-15T19:54:29+09:00</updated>
+    <id>http://blog.restartr.com/2015/10/15/go-programming-blueprints</id>
+    <content type="html"><![CDATA[<p><a href="http://www.amazon.co.jp/gp/product/B00T4ACPA0)">
+<img src="https://raw.githubusercontent.com/matryer/goblueprints/master/artwork/bookcover.jpg" alt="Go Blueprints by Mat Ryer book cover" />
+</a></p>
+
+<ul>
+  <li><a href="http://www.amazon.co.jp/gp/product/B00T4ACPA0">Go Programming Blueprints - Solving Development Challenges with Golang</a></li>
+</ul>
+
+<p>最近Kindleで購入したので、でひととおり読んで写経してみました。</p>
+
+<h3 id="section">概要と雑感</h3>
+
+<p>2015年1月に発売された書籍であり、Goのバージョンでいうと1.3から1.4の頃に書かれたものです。
+著者はGolang UK Conference 2015でトークもしていた<a href="https://twitter.com/matryer">@matryer</a>さん。
+(<em>※<a href="https://www.youtube.com/watch?v=tIm8UkSf6RA">Golang UK Conference 2015 - Mat Ryer - Building APIs - YouTube</a></em>)</p>
+
+<p>いくつかのGo製アプリケーション開発を通じて、Goの機能・パターンを学習する、という感じのもの。機能やパターンについて網羅的ではないものの、特定のユースケースをベースにしているため、パターンの理解は容易に感じます。取り扱うトピックも、web/apiサーバーとコマンドラインツールがバランスよく取り上げられています。</p>
+
+<p>対象読者は「すべてのGoプログラマー」と記載がありますが、<a href="https://tour.golang.org">A Tour of Go</a>をひととおりやったあとくらいがちょうど良い気がします。</p>
+
+<p>リファレンス的な構成の他書や<a href="https://golang.org/doc/effective_go.html">Effective Go</a>のような公式ドキュメントのものとうまくすみ分けができているのではないかと。</p>
+
+<p>ただ誤字・脱字が少し目立つかな（章ごとに1,2個程度ですが)という点が残念ではありますが、比較的わかりやすいミスなので読んでいて混乱するほどではありません。</p>
+
+<p><a href="https://github.com/golang/go/wiki/Books">Go Books</a>としては比較的マイナーっぽく、日本語圏の情報もないので購入はちょっとしたギャンブルでしたが、ある程度まとまったストーリーとして読めるGo関連の書籍は少ない印象ですし、自分としてはちょうど良い買い物だったかなと思います。</p>
+
+<p><em>※ソースコードも<a href="https://github.com/matryer/goblueprints">matryer/goblueprints</a>に公開されています</em></p>
+
+<p>_※当然英語ですが、さほど読みにくい感じはなかったです</p>
+
+<h3 id="section-1">構成</h3>
+
+<p>全8章で作成するアプリケーションのうち、1章で簡潔するものと章をまたがるものがあり、構成は以下のようになっています。</p>
+
+<h4 id="websocket">1, 2, 3: websocketによるチャットアプリケーション</h4>
+
+<ul>
+  <li>http.Handle/HandleFuncの基本的な使い方とか、TDDによるパッケージ開発、</li>
+  <li>ソーシャルログイン機能の追加(OAuthは<a href="https://github.com/stretchr/gomniauth">stretchr/gomniauth</a>を利用)</li>
+  <li>アイコン画像のアップロード機能の追加</li>
+</ul>
+
+<h4 id="section-2">4: 空きドメイン検索ツール</h4>
+
+<ul>
+  <li>Unixコマンドのように、STDIN/OUTを使った複数コマンドによる連携
+    <ul>
+      <li><code>$ 単語生成 | 単語の補正 | TLDの付与 | WHOISチェック</code></li>
+      <li>これらをos.Command.Stdin,Stdoutで束ねるコマンド
+        <ul>
+          <li><em>.o(シェルスクリプトでも良いのではと思いますが、外部プロセスとの連携の練習ということで…)</em></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="twitter">5, 6: Twitterのリアルタイムカウンター</h4>
+
+<ul>
+  <li>複数のプロセスで構成される分散システム
+    <ol>
+      <li>twitter streaming apiから拾ったツイートを<a href="http://nsq.io">NSQ</a>に追加するプログラム</li>
+      <li>NSQのsubscriberが単語別件数を集計して、1秒ごとにMongoDBを更新するプログラム</li>
+      <li>MongoDBの内容を管理・閲覧ツール(RESTful APIとWEBアプリ)</li>
+    </ol>
+  </li>
+</ul>
+
+<p>トピック</p>
+
+<ul>
+  <li>シグナルトラップによる安全なプロセス終了処理</li>
+  <li>sync.Mutexによる協調動作の実装</li>
+  <li><a href="https://github.com/stretchr/graceful">stretchr/graceful</a>での安全な終了処理</li>
+</ul>
+
+<h4 id="google-places-api">7: Google Places APIを使ったロケーション推薦アプリケーション</h4>
+
+<ul>
+  <li>iotaによるEnum相当の実現</li>
+  <li>TDDでパッケージ開発
+    <ul>
+      <li><em>.o(ここで<a href="https://github.com/cheekybits">cheekybits/is</a>が出てきたけど、全体で統一感出してほしい…)</em></li>
+    </ul>
+  </li>
+  <li>型アサーションによるキャスト</li>
+</ul>
+
+<h4 id="section-3">8 ファイル自動バックアップシステム</h4>
+
+<ul>
+  <li>2つのCLIツールの作成
+    <ul>
+      <li>backup: バックアップする対象リストの管理コマンド
+        <ul>
+          <li>メタデータ管理は<a href="https://github.com/mattyer/filedb">mattyer/filedb</a></li>
+        </ul>
+      </li>
+      <li>backupd: メタデータをもとに実ファイル監視とバックアップ実行する常駐プログラム</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="section-4">蛇足</h3>
+
+<p>そういえば、カーニハン著のThe Go Programming Languageが11月発売とのこと</p>
+
+<ul>
+  <li><a href="http://www.amazon.co.jp/gp/product/0134190440">The Go Programming Language</a></li>
+</ul>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[DockerとWeaveを使って1台のマシンでConsulを複数動かしてみる]]></title>
@@ -2398,229 +2517,6 @@ pytestはかなり詳細に表示してくれるので、レポートの内容�
   <li>投稿時間はJSTからGMTに変換してます。不要なら適当に編集してください。</li>
 </ul>
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[EventStatsはherokuとMongoLabとさくらVPSで動いている]]></title>
-    <link href="http://blog.restartr.com/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps/"/>
-    <updated>2011-12-28T21:27:52+09:00</updated>
-    <id>http://blog.restartr.com/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps</id>
-    <content type="html"><![CDATA[<p>今月頭に<a href="http://blog.restartr.com/2011/12/10/eventststs">ブログ書きました</a>が、EventStatsという勉強会の参加者の推移が見れるサービスを公開しました。</p>
-
-<ul>
-  <li><a href="http://eventstats.restartr.com">EventStats - イベントの統計情報が見れます</a></li>
-</ul>
-
-<p>まぁ自分が欲しかっただけなんですけど、使ってみて頂ければ幸いです。
-今回はそのサービスの構成とかについて書いてみます。</p>
-
-<h3 id="section">アジェンダ</h3>
-
-<ol>
-  <li>全体像</li>
-  <li>システム構成</li>
-  <li>Gitリポジトリ</li>
-  <li>MongoDBのPaaS</li>
-  <li>各イベント管理サービスAPIの違い</li>
-  <li>開発メモ</li>
-</ol>
-
-<h3 id="section-1">1.全体像</h3>
-
-<p>開発環境も含めて全体像を図にしてみました。(初Cacooですが超べんりですね！)</p>
-
-<p>赤い線がGit操作で、黒い点線がMongoDBへのアクセスです。</p>
-
-<p><a href="https://cacoo.com/diagrams/Cp2yo6tQNlxCm5av"><img border="1" alt="全体像" src="https://cacoo.com/diagrams/Cp2yo6tQNlxCm5av-2260A.png" /></a></p>
-
-<h3 id="section-2">2.システム構成</h3>
-
-<p>大きく分けてwebとクローラーの２つです。
-webはherokuに、クローラーはさくらのVPSに配置。</p>
-
-<p>まずは優先してデータ蓄積を…ということでクローラーをpythonとmongodbで作成しました。
-(サービス的にはやいとこデータためないと意味ないので。)</p>
-
-<p>クローラーは５分おきに起動するのでScalaよりPythonを選択しました。起動コスト重視です。
-(Scalaでサクサク開発できる程のスキルではないというのもありますが… )</p>
-
-<p>実行場所はherokuのworkerも考えたましたが、最終的に既に利用していたさくらVPSでcronジョブとして運用することに。</p>
-
-<p>ということでScalaのWebはデータ参照のみで、データの更新はしません。</p>
-
-<h3 id="git">3.Gitリポジトリ</h3>
-
-<p>webとクローラーは分けてGitで管理。リモートリポジトリはどちらもさくらのVPS上においています。
-ただし、本番リリースは開発PCからherokuに別途pushします。</p>
-
-<p>※webもさくらVPSにリモートリポジトリを持って、本番データを参照するステージング環境として利用しています。</p>
-
-<h4 id="eventstats-web">eventstats-web</h4>
-
-<ul>
-  <li>host: <a href="http://www.heroku.com/">heroku</a> (Chedar)</li>
-  <li>scala
-    <ul>
-      <li>フレームワーク: <a href="https://github.com/unfiltered/unfiltered">unfiltered</a> 0.5.1</li>
-      <li>mongodb接続: <a href="http://api.mongodb.org/scala/casbah/2.1.5.0/">casbah</a> 2.1.5-1</li>
-      <li>テンプレートエンジン: <a href="https://github.com/unfiltered/unfiltered/tree/master/scalate">unfiltered-scalate</a> (ssp)</li>
-      <li>テスティングライブラリ: <a href="https://github.com/unfiltered/unfiltered/tree/master/spec">unfiltered-specs</a></li>
-    </ul>
-  </li>
-  <li>チャートのレンダリング: <a href="http://code.google.com/apis/chart/index.html">Google Chart Tools</a></li>
-</ul>
-
-<h4 id="eventstats-crawler">eventstats-crawler</h4>
-
-<ul>
-  <li>host: さくらのvps</li>
-  <li>python 2.6
-    <ul>
-      <li>フレームワーク: なし</li>
-      <li>mongodb接続: <a href="http://api.mongodb.org/python/1.11/">pymongo</a> 1.11</li>
-      <li>テスティングライブラリ: <a href="http://readthedocs.org/docs/nose/en/latest/">nose</a></li>
-      <li>その他: <a href="http://www.crummy.com/software/BeautifulSoup/">BeautifulSoup</a> (<em>partake.inのwebスクレイピングに利用</em>)</li>
-    </ul>
-  </li>
-</ul>
-
-<h3 id="mongodbpaas">4.MongoDBのPaas</h3>
-
-<p>herokuプラグインとして<a href="https://addons.heroku.com/mongolab">MongoLab</a>と<a href="https://addons.heroku.com/mongohq">MongoHQ</a>の２つが提供されています。どちらも無料枠があるのですが、MongoLabの方が無料で利用できる容量が大きいのでこちらを選択。</p>
-
-<p>月額の利用料金は以下です。（括弧内は1MBあたりの金額の目安です）
-<em>これ以上の容量も利用可能ですが個人で払う範囲ではないと思い除外してます。</em></p>
-
-<h4 id="mongolab">MongoLab</h4>
-<ul>
-  <li>$ 0.00/240MB</li>
-  <li>$10.00/0.5GB  ($0.020/MB)</li>
-  <li>$20.00/2.0GB  ($0.009/MB)</li>
-</ul>
-
-<h4 id="mongohq">MongoHQ</h4>
-
-<ul>
-  <li>$ 0.00/ 16MB</li>
-  <li>$ 5.00/256MB  ($0.019/MB)</li>
-  <li>$15.00/2.0GB  ($0.007/MB)</li>
-</ul>
-
-<h3 id="api">5.各イベント管理サービスAPIの違い</h3>
-
-<p>まずは<strong>atnd, zusaar, partake.inの３サービスに対応</strong>。</p>
-
-<p>それぞれ検索APIを提供してくれているのですが、当然ながら規格とかもないのでリクエストもレスポンスも違いがあります。</p>
-
-<p>データ蓄積する際にそのAPIの差異を吸収して、webアプリから参照する際は気にしなくていい戦略をとりました。
-APIの違い検索のみに特化して違いをまとめると以下の通りです。</p>
-
-<h4 id="atnd">atnd</h4>
-
-<p>イベント数も多いので、このAPIをスタンダードに設定。
-* API仕様
- * <a href="http://api.atnd.org/">http://api.atnd.org/</a>
-* リクエストパス
- * <a href="http://api.atnd.org/events/">/events/</a>
-   * イベントの検索
- * <a href="http://api.atnd.org/events/users/">/events/users/</a>
-   * イベントに参加しているユーザーの検索</p>
-
-<h4 id="zusaar">zusaar</h4>
-
-<p>基本的にはatnd準拠っぽい感じだけど細かい違いがあります。
- * API仕様
-   * <a href="http://www.zusaar.com/doc/api.html">http://www.zusaar.com/doc/api.html</a>
- * リクエストパス
-   * <a href="http://www.zusaar.com/api/event/">/api/event/</a>
-     * イベントの検索
-   * <a href="http://www.zusaar.com/api/event/user/">/api/event/user/</a>
-     * イベントに参加しているユーザーの検索
-atndとの違い
- * エントリポイントやデータのキー名が単数形
-   * events→event
-   * users→user
- * 明確なフィールドとしてのtwitter_idが無い
-    * 管理者も参加ユーザーも
- * ハッシュタグがない
- * レスポンスはjson一択</p>
-
-<h4 id="partakein">partake.in</h4>
-
-<p>全然違うAPI。APIリストにあっても未実装がほとんどなので、利用する際はソースを確認したほうが良いです。
-今回必要になりそうなAPIは２つくらいでした。</p>
-
-<ul>
-  <li>API仕様
-    <ul>
-      <li><a href="http://code.google.com/p/partakein/wiki/PublicWebAPI">http://code.google.com/p/partakein/wiki/PublicWebAPI</a></li>
-    </ul>
-  </li>
-  <li>リクエストパス
-    <ul>
-      <li><a href="http://partake.in/api/event/search/">/api/event/search</a>
-        <ul>
-          <li>イベントの検索</li>
-        </ul>
-      </li>
-      <li><a href="http://partake.in/api/event/get/">/api/event/get</a>
-        <ul>
-          <li>イベントの詳細データ取得</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li>APIのソース(抜粋)
-    <ul>
-      <li><a href="http://code.google.com/p/partakein/source/browse/trunk/Partake/src/main/java/in/partake/controller/api/event/SearchAction.java">in.partake.controller.api.event.SearchAction.java</a></li>
-      <li><a href="http://code.google.com/p/partakein/source/browse/trunk/Partake/src/main/java/in/partake/controller/api/event/EventAction.java">in.partake.controller.api.event.EventAction.java</a></li>
-    </ul>
-  </li>
-</ul>
-
-<p>その他の特徴は以下。</p>
-
-<ul>
-  <li>複数イベントを特定して一括取得するAPIはない</li>
-  <li>フィールド名がcamelCase形式</li>
-  <li>レスポンスはjson一択</li>
-  <li>検索パラメータも特殊かつ少数</li>
-  <li>検索APIで取得できるのはイベントの固定情報のみ
-    <ul>
-      <li>参加枠数はAPIから取得可能</li>
-      <li>変動するユーザー数は取得不可能</li>
-      <li>→Webページをスクレイピングするしかないという結論</li>
-    </ul>
-  </li>
-</ul>
-
-<p>上記をふまえ、atnd/zusaarはJSON形式でAPIからデータ取得。</p>
-
-<p>partake.inのみイベントのリストをAPIから取得して、ユーザー数はWebページのスクレイピングで対応しました。</p>
-
-<h3 id="section-3">6.開発メモ</h3>
-
-<h4 id="webherokuvps">web(heroku)からもクローラー(さくらのvps)からも離れた場所にある</h4>
-
-<p>開発PC上だと気にならなかったのですが、1件1件findしてinsertやupdateをしていると当然遅いです。なのである程度まとめて一気にinsertする方針に変更しました(ベンチ結果はありません ^^;)。
-更新はクローラーの１プロセスからのみ実行されるので、トランザクションとか意識しなくて良いです。なので比較的自由な構成がとれます。</p>
-
-<h4 id="scalajson-api">ScalaでJSON API</h4>
-
-<p>まずはUnfilteredでJSON APIを作成。けど、jsでjson取得〜チャート生成の実行時間が思いの外大きいので、jsonも１枚のHTMLに埋め込む方針に変更。</p>
-
-<h3 id="section-4">さいごに</h3>
-
-<p>ざっと書きだすとこんな感じです。まぁこんな構成もあるよ、ってくらいにしか言えませんが。</p>
-
-<p>webとクローラーを分けたことで、開発中のスキーマ変更が柔軟に行えたのは良かったのですが、スキーマ定義を共通で管理していないので、そのあたりうまく管理できると良いなと思ったり。
-当初はもう少しwebの機能も多かったのですが、効率化をしているうちにシンプルな形に落ち着きました。Scalaのコードもかなり小規模なものになっています。
-イベント管理者の方からのご意見ご要望などいただけると嬉しいです :)</p>
-
-<ul>
-  <li><a href="http://eventstats.restartr.com">EventStats - イベントの統計情報が見れます</a></li>
-</ul>
 ]]></content>
   </entry>
   
