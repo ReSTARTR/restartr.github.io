@@ -11,7 +11,7 @@
   <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="Rebuild Podcast Rebuild はソフトウェア開発、テクノロジー、ガジェットなどの話題を中心に、ゲストと話すギーク、デベロッパー向けのポッドキャスト番組です。 Hosted by @miyagawa http://rebuild.fm/ RSS iTunes mosaic.fm &hellip;">
+  <meta name="description" content="CentOSを使ってて不便なのがruby2系のインストール。 rbenvやruby-buildを使うかソースからインストールするのですが、この場合、環境を構築するたびにビルドすることになり時間もかかるし大変面倒です。 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -116,6 +116,296 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2014/05/11/build-rpm-on-docker-container/">Dockerを使って任意のrubyバージョンのrpmを作成する</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-05-11T00:00:00+09:00" pubdate data-updated="true">2014-05-11 (Sun)</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>CentOSを使ってて不便なのがruby2系のインストール。</p>
+
+<p>rbenvやruby-buildを使うかソースからインストールするのですが、この場合、環境を構築するたびにビルドすることになり時間もかかるし大変面倒です。</p>
+
+<p>なのでDockerを使ってクリーンな環境でRubyの最新rpmをビルドしてみました。</p>
+
+<p>Dockerを使えばビルド環境がすぐに立ち上げられるので、rpmビルドに必要なパッケージを確認したりするのに最適です。</p>
+
+<p>今回のソースはgithubにpushしてあります。</p>
+
+<ul>
+  <li><a href="https://github.com/ReSTARTR/ruby-rpmbuild-container">ReSTARTR/ruby-rpmbuild-container</a></li>
+</ul>
+
+<h2 id="section">環境</h2>
+
+<ul>
+  <li>ゲストOS：Vagrantで起動したUbuntu-14.04</li>
+  <li>コンテナ：centos:6.4</li>
+</ul>
+
+<h2 id="section-1">ファイルの配置</h2>
+
+<p>以下ファイルを同一ディレクトリに入れておきます。</p>
+
+<ul>
+  <li>Vagrantfile</li>
+  <li>provision.sh</li>
+  <li>Dockerfile</li>
+  <li>rubybuild.sh</li>
+  <li>ruby-2.0.0-p481.spec</li>
+</ul>
+
+<h2 id="section-2">手順</h2>
+
+<ol>
+  <li>ゲストOSの起動(Vagrant)</li>
+  <li>ゲストOSにsshログイン</li>
+  <li>Dockerコンテナのビルド</li>
+  <li>Dockerコンテナ内でrpmビルド</li>
+</ol>
+
+<h2 id="os">1. ゲストOSの起動</h2>
+
+<p>Vagrantfile</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1"># -*- mode: ruby -*-</span>
+</span><span class="line"><span class="c1"># vi: set ft=ruby :</span>
+</span><span class="line"><span class="no">VAGRANTFILE_API_VERSION</span> <span class="o">=</span> <span class="s2">&quot;2&quot;</span>
+</span><span class="line">
+</span><span class="line"><span class="no">Vagrant</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="no">VAGRANTFILE_API_VERSION</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box</span> <span class="o">=</span> <span class="s2">&quot;ubuntu/trusty64&quot;</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">synced_folder</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;/vagrant&quot;</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">provision</span> <span class="s2">&quot;shell&quot;</span><span class="p">,</span> <span class="ss">path</span><span class="p">:</span> <span class="s1">&#39;provision.sh&#39;</span>
+</span><span class="line">
+</span><span class="line">  <span class="c1"># お好みで</span>
+</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">provider</span> <span class="ss">:virtualbox</span> <span class="k">do</span> <span class="o">|</span><span class="n">vb</span><span class="o">|</span>
+</span><span class="line">    <span class="n">vb</span><span class="o">.</span><span class="n">customize</span> <span class="o">[</span><span class="s2">&quot;modifyvm&quot;</span><span class="p">,</span> <span class="ss">:id</span><span class="p">,</span> <span class="s2">&quot;--memory&quot;</span><span class="p">,</span> <span class="s2">&quot;2048&quot;</span><span class="p">,</span> <span class="s2">&quot;--cpus&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;--ioapic&quot;</span><span class="p">,</span> <span class="s2">&quot;on&quot;</span><span class="o">]</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line"><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>provision.sh</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">sudo apt-get update
+</span><span class="line">sudo apt-get install -y language-pack-ja
+</span><span class="line">
+</span><span class="line"><span class="c"># Docker</span>
+</span><span class="line">sudo apt-get install -y docker.io
+</span><span class="line">sudo ln -sf /usr/bin/docker.io /usr/local/bin/docker
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h2 id="osssh">2. ゲストOSにsshログイン</h2>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>vagrant up
+</span><span class="line"><span class="nv">$ </span>vagrant ssh
+</span><span class="line"><span class="nv">$ </span><span class="nb">cd</span> /vagrant
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h2 id="docker">3. Dockerコンテナのビルド</h2>
+
+<p>ビルド用specファイルを用意して、シェルスクリプトでビルドします。</p>
+
+<p>すると、コンテナにマウントしたボリュームにビルド済みのrpmファイルがコピーされます。</p>
+
+<h3 id="spec">ビルド用specシェルスクリプト</h3>
+
+<p>環境変数RUBY_VERSIONに”2.0.0-p481”や”2.0.0-p451”を設定すれば任意のバージョンをビルドします。</p>
+
+<p><em>※デフォルトの2.0.0-p481以外はそれ用のspecファイルが必要になります。</em></p>
+
+<p>rubybuild.sh</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="c">#!/bin/env bash</span>
+</span><span class="line"><span class="nv">WORKDIR</span><span class="o">=</span>/opt/rpmbuild
+</span><span class="line">
+</span><span class="line"><span class="nv">RUBY_VER</span><span class="o">=</span><span class="k">${</span><span class="nv">RUBY_VER</span><span class="k">:-</span><span class="s2">&quot;2.0.0-p481&quot;</span><span class="k">}</span>
+</span><span class="line"><span class="nv">RUBY_MAJOUR_VER</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span> <span class="nv">$RUBY_VER</span>|cut -d<span class="s2">&quot;-&quot;</span> -f1<span class="k">)</span>
+</span><span class="line"><span class="nv">RUBY_MINOR_VER</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span> <span class="nv">$RUBY_VER</span>|cut -d<span class="s2">&quot;-&quot;</span> -f2<span class="k">)</span>
+</span><span class="line"><span class="k">if</span> <span class="o">[</span> -z <span class="s2">&quot;$RUBY_MINOR_VER&quot;</span> <span class="o">]</span>; <span class="k">then</span>
+</span><span class="line"><span class="k">  </span><span class="nv">RUBY_TARBALL</span><span class="o">=</span><span class="s2">&quot;ruby-$RUBY_MAJOUR_VER.tar.gz&quot;</span>
+</span><span class="line"><span class="k">else</span>
+</span><span class="line"><span class="k">  </span><span class="nv">RUBY_TARBALL</span><span class="o">=</span><span class="s2">&quot;ruby-$RUBY_MAJOUR_VER-$RUBY_MINOR_VER.tar.gz&quot;</span>
+</span><span class="line"><span class="k">fi</span>
+</span><span class="line"><span class="nv">RUBY_REMOTE_FILE</span><span class="o">=</span><span class="s2">&quot;http://cache.ruby-lang.org/pub/ruby/${RUBY_MAJOUR_VER:0:3}/$RUBY_TARBALL&quot;</span>
+</span><span class="line">
+</span><span class="line">mkdir -p <span class="nv">$WORKDIR</span>/rpm/<span class="o">{</span>BUILD,SRPMS,SPECS,SOURCES,RPMS<span class="o">}</span>
+</span><span class="line"><span class="nb">echo</span> <span class="s2">&quot;%_topdir $WORKDIR/rpm&quot;</span> &gt; <span class="nv">$WORKDIR</span>/.rpmmacros
+</span><span class="line"><span class="k">if</span> <span class="o">[</span> ! -f <span class="nv">$WORKDIR</span>/rpm/SOURCES/<span class="nv">$RUBY_TARBALL</span> <span class="o">]</span>; <span class="k">then</span>
+</span><span class="line"><span class="k">  </span>wget <span class="nv">$RUBY_REMOTE_FILE</span> -O <span class="nv">$WORKDIR</span>/rpm/SOURCES/<span class="nv">$RUBY_TARBALL</span>
+</span><span class="line"><span class="k">fi</span>
+</span><span class="line">cp <span class="nv">$WORKDIR</span>/ruby-<span class="k">${</span><span class="nv">RUBY_VER</span><span class="k">}</span>.spec <span class="nv">$WORKDIR</span>/rpm/SPECS/ruby.spec
+</span><span class="line">rpmbuild -bb <span class="nv">$WORKDIR</span>/rpm/SPECS/ruby.spec
+</span><span class="line">
+</span><span class="line">cp <span class="nv">$WORKDIR</span>/rpm/RPMS/x86_64/* /shared/
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h2 id="dockerrpm">4. Dockerコンテナ内でrpmビルド</h2>
+
+<p>Dockerfile</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">FROM centos:6.4
+</span><span class="line">
+</span><span class="line"><span class="c"># setup</span>
+</span><span class="line">RUN yum update -y
+</span><span class="line">RUN yum install -y rpm-build gcc
+</span><span class="line">
+</span><span class="line"><span class="c"># epel</span>
+</span><span class="line">RUN rpm --import http://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-6
+</span><span class="line">RUN rpm -ihv http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+</span><span class="line">
+</span><span class="line"><span class="c"># ruby-depends</span>
+</span><span class="line">RUN yum install —enablerepo<span class="o">=</span>epel -y libyaml-devel
+</span><span class="line">RUN yum install -y byacc readline-devel ncourses-devel tcl-devel openssl-devel gdbm-devel db4-devel
+</span><span class="line">
+</span><span class="line"><span class="c"># build rpm</span>
+</span><span class="line">WORKDIR /opt/rpmbuild
+</span><span class="line">ADD rubybuild.sh /opt/rpmbuild/rubybuild.sh
+</span><span class="line">ADD ruby-2.0.0-p481.spec /opt/rpmbuild/ruby-2.0.0-p481.spec
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h2 id="rpm">コンテナ起動してrpmをビルド</h2>
+
+<p>コンテナを起動する際に、カレントディレクトリをマウントしておきます。</p>
+
+<p><em>※<code>--rm</code>オプションでrpm作成完了したらコンテナは破棄します</em></p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo docker build -t &lt;USERNAME&gt;/rpmbuild .
+</span><span class="line"><span class="nv">$ </span>sudo docker run --rm -v <span class="nv">$PWD</span>:/shared:rw -it &lt;CONTAINER_ID&gt; /bin/sh ./rubybuild.sh
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>成功すれば、ゲストOSのカレントディレクトリにrpmができてます。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>ls *.rpm
+</span><span class="line">ruby-2.0.0p481-2.el6.x86_64.rpm
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>これで、rpmコマンド一発で最新のrubyをインストールできます。</p>
+
+<p>rubyインストール済みコンテナを作るなら、Dockerfileに以下のように書けばruby実行環境のできあがりです。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">FROM centos:6.4
+</span><span class="line">
+</span><span class="line"><span class="c"># EPEL</span>
+</span><span class="line">RUN rpm --import http://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-6
+</span><span class="line">RUN rpm -ihv http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+</span><span class="line">
+</span><span class="line"><span class="c"># Install ruby rpm</span>
+</span><span class="line">ADD ruby-2.0.0p481-2.el6.x86_64.rpm ruby-2.0.0p481-2.el6.x86_64.rpm
+</span><span class="line">RUN yum install -y --enablerepo<span class="o">=</span>epel libyaml-devel
+</span><span class="line">RUN rpm -ihv ruby-2.0.0p481-2.el6.x86_64.rpm
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+</div>
+  
+  
+
+
+
+
+    </article>
   
   
     <article>
@@ -349,209 +639,6 @@ Practical insights for the engineering crowd
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2014/04/21/golang-memcache-stats-client/">Goでmemcachedのstatsを取得する</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-04-21T00:17:33+09:00" pubdate data-updated="true">2014-04-21 (Mon)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>YouTubeで使われている<a href="https://github.com/youtube/vitess">vitess</a>の実装をざっと見てたところ、memcachedクライアント実装が簡潔でわかりやすかったので出来る限りラフに実装を写経してみました。</p>
-
-<p>やってることはコマンドラインからアドレスを受け取って、memcachedのstatsを表示するだけです。</p>
-
-<h3 id="section">この写経で学べること</h3>
-
-<ul>
-  <li>flagパッケージを使ったコマンドライン引数の取得</li>
-  <li>netパッケージを使ったネットワーク接続</li>
-  <li>bufioパッケージを使ったストリームの読み出し</li>
-</ul>
-
-<h3 id="main">main()</h3>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">func</span> <span class="nx">main</span><span class="p">()</span> <span class="p">{</span>
-</span><span class="line">	<span class="c1">// 引数読み出し</span>
-</span><span class="line">	<span class="nx">address</span> <span class="o">:=</span> <span class="nx">flag</span><span class="p">.</span><span class="nx">String</span><span class="p">(</span><span class="s">&quot;address&quot;</span><span class="p">,</span> <span class="s">&quot;localhost:11211&quot;</span><span class="p">,</span> <span class="s">&quot;server address&quot;</span><span class="p">)</span>
-</span><span class="line">	<span class="nx">flag</span><span class="p">.</span><span class="nx">Parse</span><span class="p">()</span>
-</span><span class="line">	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;server: %s\n&quot;</span><span class="p">,</span> <span class="o">*</span><span class="nx">address</span><span class="p">)</span>
-</span><span class="line">
-</span><span class="line">	<span class="c1">// サーバーに接続</span>
-</span><span class="line">	<span class="nx">conn</span><span class="p">,</span> <span class="nx">err</span> <span class="o">:=</span> <span class="nx">GetConn</span><span class="p">(</span><span class="o">*</span><span class="nx">address</span><span class="p">)</span>
-</span><span class="line">	<span class="k">if</span> <span class="nx">err</span> <span class="o">!=</span> <span class="kc">nil</span> <span class="p">{</span>
-</span><span class="line">		<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%#v&quot;</span><span class="p">,</span> <span class="nx">err</span><span class="p">)</span>
-</span><span class="line">		<span class="nx">os</span><span class="p">.</span><span class="nx">Exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-</span><span class="line">	<span class="p">}</span>
-</span><span class="line">	<span class="k">defer</span> <span class="nx">conn</span><span class="p">.</span><span class="nx">conn</span><span class="p">.</span><span class="nx">Close</span><span class="p">()</span>
-</span><span class="line">
-</span><span class="line">	<span class="c1">// stats読み出し</span>
-</span><span class="line">	<span class="nx">result</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">conn</span><span class="p">.</span><span class="nx">Stats</span><span class="p">()</span>
-</span><span class="line">	<span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%s&quot;</span><span class="p">,</span> <span class="nx">result</span><span class="p">)</span>
-</span><span class="line"><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h3 id="section-1">実行結果</h3>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>go run ./memcache_stats.go --address<span class="o">=</span>localhost:11211
-</span><span class="line">server: localhost:11211
-</span><span class="line">STAT pid 23282
-</span><span class="line">STAT uptime 12425
-</span><span class="line">STAT <span class="nb">time </span>1398007875
-</span><span class="line">STAT version 1.4.4
-</span><span class="line">STAT pointer_size 64
-</span><span class="line">STAT rusage_user 0.335948
-</span><span class="line">STAT rusage_system 0.344947
-</span><span class="line">  :
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h3 id="section-2">実装全体</h3>
-
-<div><script src="https://gist.github.com/11116595.js?file=memcache_stats.go"></script>
-<noscript><pre><code>package main                                                                                                                                                                          [32/1268]
-
-// 写経 from: https://github.com/youtube/vitess/blob/master/go/memcache/memcache.go
-//  * エラーハンドリングをできるかぎり省略して実装.
-//  * statsコマンドだけ実装
-
-import (
-        &quot;bufio&quot;
-        &quot;flag&quot;
-        &quot;fmt&quot;
-        &quot;net&quot;
-        &quot;os&quot;
-        &quot;strings&quot;
-)
-
-type Connection struct {
-        conn net.Conn
-        buffered bufio.ReadWriter
-}
-
-func GetConn(address string) (conn *Connection, err error) {
-        nc, err := net.Dial(&quot;tcp&quot;, address)
-        if err != nil {
-                return nil, err
-        }
-        return &amp;Connection{
-                conn: nc,
-                buffered: bufio.ReadWriter{
-                        Reader: bufio.NewReader(nc),
-                        Writer: bufio.NewWriter(nc),
-                },
-        }, err
-}
-
-func (mc *Connection) writestring(s string) {
-        _, err := mc.buffered.WriteString(s);
-        if err!= nil {
-                panic(err)
-        }
-}
-
-func (mc *Connection) readline() string {
-        mc.flush()
-        l, _, _ := mc.buffered.ReadLine()
-        return string(l)
-}
-
-func (mc *Connection) flush() {
-        err := mc.buffered.Flush()
-        if err != nil {
-                panic(err)
-        }
-}
-
-func (mc *Connection) Stats() (result []byte, err error) {
-        mc.writestring(&quot;stats\r\n&quot;)
-        mc.flush()
-        for {
-                l := mc.readline()
-                if strings.HasPrefix(l, &quot;END&quot;) {
-                        break
-                }
-                if strings.Contains(l, &quot;ERROR&quot;) {
-                        panic(&quot;ERROR&quot;)
-                }
-                result = append(result, l...)
-                result = append(result, &#39;\n&#39;)
-        }
-        return result, err
-}
-
-func main() {
-        address := flag.String(&quot;address&quot;, &quot;localhost:11211&quot;, &quot;server address&quot;)
-        flag.Parse()
-        fmt.Printf(&quot;server: %s\n&quot;, *address)
-
-        conn, err := GetConn(*address)
-        if err != nil {
-                fmt.Printf(&quot;%#v&quot;, err)
-                os.Exit(1)
-        }
-        defer conn.conn.Close()
-
-        result, _ := conn.Stats()
-        fmt.Printf(&quot;%s&quot;, result)
-}</code></pre></noscript></div>
-
-</div>
-  
-  
-
-
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/page/6/">&larr; Older</a>
@@ -607,6 +694,10 @@ func main() {
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix/">Elixir/PhoenixでISUCON5予選の参考実装を書いた</a>
+      </li>
+    
+      <li class="post">
         <a href="/2015/10/15/go-programming-blueprints/">&#8220;Go Programming Blueprints&#8221;を読んだ</a>
       </li>
     
@@ -622,16 +713,12 @@ func main() {
         <a href="/2014/12/31/books-2014/">2014年に購入した技術書</a>
       </li>
     
-      <li class="post">
-        <a href="/2014/08/20/microservices-architecture/">InfoQ eMAG: Microservicesを少し読んだまとめと感想</a>
-      </li>
-    
   </ul>
 </section>
 <section>
   <h1>Categories</h1>
   <ul id="categories">
-    <li><a href='/category/architecture/'>architecture</a></li><li><a href='/category/docker/'>docker</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/go/'>go</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/ruby/'>ruby</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
+    <li><a href='/category/architecture/'>architecture</a></li><li><a href='/category/docker/'>docker</a></li><li><a href='/category/elixir/'>Elixir</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/go/'>go</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/ruby/'>ruby</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
   </ul>
 </section>
 <section>

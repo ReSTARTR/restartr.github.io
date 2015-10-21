@@ -5,13 +5,13 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>ScalaのORMapperのSquerylを試してみてハマった３つのこと - I Will Survive</title>
+  <title>Elixir/PhoenixでISUCON5予選の参考実装を書いた - I Will Survive</title>
   <meta name="author" content="ReSTARTR">
   <link rel="author" href="https://plus.google.com/103216164658230535238" />
   <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="ScalaのORMとしてSquerylってのがあります。 Squeryl - A Scala ORM for SQL Databases 使い方は上記リンク先を見ればだいたいわかります。 あと、@jugyoさんのブログに導入あたりはまとまっていますし、 &hellip;">
+  <meta name="description" content="ISUCON5予選の参考実装を、Elixir/Phoenixで実装してみました。 とりあえずひととおり動いたので現時点でのコードをGithubにpush。 github.com/ReSTARTR/isucon5-qualify-elixir 実装について補足 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -20,7 +20,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://blog.restartr.com/2011/08/16/3-things-that-i-was-in-trouble-using-squeryl/">
+  <link rel="canonical" href="http://blog.restartr.com/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
    <link href="/stylesheets/data-table.css" media="screen, projection" rel="stylesheet" type="text/css" />
@@ -119,7 +119,7 @@
   
   <header>
     
-      <h1 class="entry-title">ScalaのORMapperのSquerylを試してみてハマった３つのこと</h1>
+      <h1 class="entry-title">Elixir/PhoenixでISUCON5予選の参考実装を書いた</h1>
       
       <style type="text/css">
   .sharing {
@@ -141,12 +141,12 @@
 </style>
 <div class="sharing">
   <ul>
-    <li><a href="http://blog.restartr.com/2011/08/16/3-things-that-i-was-in-trouble-using-squeryl/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+    <li><a href="http://blog.restartr.com/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
   
-  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2011/08/16/3-things-that-i-was-in-trouble-using-squeryl/" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2011/08/16/3-things-that-i-was-in-trouble-using-squeryl/" >Tweet</a></li>
+  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix/" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix/" >Tweet</a></li>
   
   
-  <li><div class="fb-like" data-href="http://blog.restartr.com/2011/08/16/3-things-that-i-was-in-trouble-using-squeryl/" data-layout="button_count" data-action="like" data-show-faces="false" data-share="true"></div><script>(function(d, s, id) {
+  <li><div class="fb-like" data-href="http://blog.restartr.com/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix/" data-layout="button_count" data-action="like" data-show-faces="false" data-share="true"></div><script>(function(d, s, id) {
   var js, fjs = d.getElementsByTagName(s)[0];
   if (d.getElementById(id)) return;
   js = d.createElement(s); js.id = id;
@@ -177,45 +177,73 @@
   
 
 
-<time datetime="2011-08-16T08:00:15+09:00" pubdate data-updated="true">2011-08-16 (Tue)</time>
+<time datetime="2015-10-21T19:32:17+09:00" pubdate data-updated="true">2015-10-21 (Wed)</time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>ScalaのORMとしてSquerylってのがあります。</p>
+<div class="entry-content"><p><a href="https://github.com/isucon/isucon5-qualify">ISUCON5予選の参考実装</a>を、Elixir/Phoenixで実装してみました。</p>
+
+<p>とりあえずひととおり動いたので現時点でのコードをGithubにpush。</p>
 
 <ul>
-<li><a href="http://squeryl.org/index.html">Squeryl - A Scala ORM for SQL Databases</a></li>
+  <li><a href="https://github.com/ReSTARTR/isucon5-qualify-elixir">github.com/ReSTARTR/isucon5-qualify-elixir</a></li>
 </ul>
-<p>使い方は上記リンク先を見ればだいたいわかります。</p>
 
-<p>あと、<a href="http://twitter.com/jugyo">@jugyo</a>さんのブログに導入あたりはまとまっていますし、つまづいたらGoogleGroupで検索すれば何か見つかるかもしれません。</p>
+<h3 id="section">実装について補足</h3>
 
-<ul>
-<li><a href="http://blog.twiwt.org/e/f34763"> Twiwt:Blog / jugyo : squeryl を試す </a></li>
-<li><a href="http://blog.twiwt.org/e/7e40ce">Twiwt:Blog / jugyo : Squeryl の使い方 - セットアップ, モデルの定義, テーブル作成</a></li>
-<li><a href="https://groups.google.com/group/squeryl/about"> Squeryl | Google Groups </a></li>
-</ul>
-<p>さて、今回はTwitterっぽいものを想定して機能を試してみたのですが、３つほどハマったところを記しておきます。</p>
+<p>まずは他言語の初期実装と同等のSQLを再現することを目標としました。</p>
 
-<p>環境はScala2.9.0.1、Sbt0.7.7、MySQL5.5、Squeryl0.9.4です。</p>
+<p>Goの実装を参考に、まずは各ページを実装してブラウザでひととおり機能が実装できているか確認。
+その後ベンチマークをすべて通過するまでひたすら修正するという手順ですすめました。</p>
 
-<p>ソースはgistに登録。それを本文末尾にも掲載しておきました。</p>
+<p>そのため、テンプレートの細かい表示(時刻フォーマット等)の不備や、ベンチマーカーがチェックしない機能が抜けている可能性があります。</p>
 
-<h3>１．プライマリーキーの指定での嵌りどころ</h3>
-<p>1つのカラムがPKとなるテーブルスキーマの場合、org.squeryl.KeyedEntity[T]を継承して使います。</p>
+<h3 id="section-1">ベンチマーク結果</h3>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">class</span> <span class="nc">Users</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">text</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">KeyedEntity</span><span class="o">[</span><span class="kt">Long</span><span class="o">]</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>気になる性能ですが、Goと比較すると以下のような結果となりました。</p>
 
-<p>KeyedEntityにはidというフィールドが用意されていて、継承時に型を指定することで、PKの型に適用させることができます。今回の場合であればLong型のPK「id」ということになります。</p>
+<p>※VirtualBox上にたてたMySQLにたいして、ホストのMacOSX上でアプリケーションを実行しています</p>
 
-<p>ただし、この場合、PKはautoincrementedになってしまいます。</p>
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Lang</th>
+      <th style="text-align: right">requests</th>
+      <th style="text-align: right">elapsed</th>
+      <th style="text-align: right">success</th>
+      <th style="text-align: right">redirect</th>
+      <th style="text-align: right">failure</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">Elixir/Phoenix</td>
+      <td style="text-align: right">333</td>
+      <td style="text-align: right">76093</td>
+      <td style="text-align: right">239</td>
+      <td style="text-align: right">93</td>
+      <td style="text-align: right">1</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Go</td>
+      <td style="text-align: right">138</td>
+      <td style="text-align: right">106728</td>
+      <td style="text-align: right">98</td>
+      <td style="text-align: right">39</td>
+      <td style="text-align: right">1</td>
+    </tr>
+  </tbody>
+</table>
 
-<p>コード的には下記のようにKeyedEntity[T]を使わずSchema継承時に定義するのと同等になるわけです。</p>
+<p>同じクエリを再現したうえで、だいたい2倍くらいの性能差？でしょうか。
+が、完全に模倣できているか自信はないのであくまで参考程度ということで…</p>
+
+<p>以下にベンチマーカーの出力内容も貼っておきます。</p>
+
+<p>elixir/phoenix版の結果</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
@@ -228,20 +256,34 @@
 <span class="line-number">9</span>
 <span class="line-number">10</span>
 <span class="line-number">11</span>
-</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">class</span> <span class="nc">Users</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">text</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+</pre></td><td class="code"><pre><code class="json"><span class="line"><span class="p">{</span>
+</span><span class="line">  <span class="nt">&quot;valid&quot;</span> <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span><span class="line">  <span class="nt">&quot;requests&quot;</span> <span class="p">:</span> <span class="mi">333</span><span class="p">,</span>
+</span><span class="line">  <span class="nt">&quot;elapsed&quot;</span> <span class="p">:</span> <span class="mi">76093</span><span class="p">,</span>
+</span><span class="line">  <span class="nt">&quot;done&quot;</span> <span class="p">:</span> <span class="s2">&quot;[{Isucon5InitExecutor},{BootstrapChecker},{Isucon5Load,Isucon5Load,Isucon5Load,Isucon5Load,Isucon5Checker}]&quot;</span><span class="p">,</span>
+</span><span class="line">  <span class="nt">&quot;responses&quot;</span> <span class="p">:</span> <span class="p">{</span>
+</span><span class="line">    <span class="nt">&quot;success&quot;</span> <span class="p">:</span> <span class="mi">239</span><span class="p">,</span>
+</span><span class="line">    <span class="nt">&quot;redirect&quot;</span> <span class="p">:</span> <span class="mi">93</span><span class="p">,</span>
+</span><span class="line">    <span class="nt">&quot;failure&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span class="line">    <span class="nt">&quot;error&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+</span><span class="line">    <span class="nt">&quot;exception&quot;</span> <span class="p">:</span> <span class="mi">0</span>
+</span><span class="line">  <span class="p">},</span>
+</span><span class="line">  <span class="nt">&quot;violations&quot;</span> <span class="p">:</span> <span class="p">[</span> <span class="p">]</span>
+</span><span class="line"><span class="p">}</span>
 </span><span class="line">
-</span><span class="line"><span class="k">class</span> <span class="nc">Db</span> <span class="k">extends</span> <span class="nc">Schema</span> <span class="o">{</span>
+</span><span class="line"><span class="err">BUILD</span> <span class="err">SUCCESSFUL</span>
 </span><span class="line">
-</span><span class="line">  <span class="k">val</span> <span class="n">users</span> <span class="k">=</span> <span class="n">table</span><span class="o">[</span><span class="kt">User</span><span class="o">](</span><span class="s">&quot;users&quot;</span><span class="o">)</span>
-</span><span class="line">
-</span><span class="line">  <span class="n">on</span><span class="o">(</span><span class="n">users</span><span class="o">)(</span><span class="n">u</span> <span class="k">=&gt;</span> <span class="n">declare</span><span class="o">(</span>
-</span><span class="line">
-</span><span class="line">    <span class="n">u</span><span class="o">.</span><span class="n">id</span> <span class="n">is</span> <span class="o">(</span><span class="n">primaryKey</span><span class="o">,</span> <span class="n">autoincremented</span><span class="o">))</span>
-</span><span class="line">
-</span><span class="line"><span class="o">}</span>
+</span><span class="line"><span class="err">Total</span> <span class="err">time:</span> <span class="mi">1</span> <span class="err">mins</span> <span class="mf">27.449</span> <span class="err">secs</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>これは結構困ります。そんな場合はSchemaを継承するときに定義を上書きすればOK。</p>
+<p>go版の結果</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
@@ -254,84 +296,43 @@
 <span class="line-number">9</span>
 <span class="line-number">10</span>
 <span class="line-number">11</span>
-</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">class</span> <span class="nc">Users</span><span class="o">(</span><span class="n">id</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span> <span class="n">text</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">KeyedEntity</span><span class="o">[</span><span class="kt">Long</span><span class="o">]</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+</pre></td><td class="code"><pre><code class="json"><span class="line"><span class="p">{</span>
+</span><span class="line">  <span class="nt">&quot;valid&quot;</span> <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span><span class="line">  <span class="nt">&quot;requests&quot;</span> <span class="p">:</span> <span class="mi">138</span><span class="p">,</span>
+</span><span class="line">  <span class="nt">&quot;elapsed&quot;</span> <span class="p">:</span> <span class="mi">106728</span><span class="p">,</span>
+</span><span class="line">  <span class="nt">&quot;done&quot;</span> <span class="p">:</span> <span class="s2">&quot;[{Isucon5InitExecutor},{BootstrapChecker},{Isucon5Load,Isucon5Load,Isucon5Load,Isucon5Load,Isucon5Checker}]&quot;</span><span class="p">,</span>
+</span><span class="line">  <span class="nt">&quot;responses&quot;</span> <span class="p">:</span> <span class="p">{</span>
+</span><span class="line">    <span class="nt">&quot;success&quot;</span> <span class="p">:</span> <span class="mi">98</span><span class="p">,</span>
+</span><span class="line">    <span class="nt">&quot;redirect&quot;</span> <span class="p">:</span> <span class="mi">39</span><span class="p">,</span>
+</span><span class="line">    <span class="nt">&quot;failure&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span class="line">    <span class="nt">&quot;error&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+</span><span class="line">    <span class="nt">&quot;exception&quot;</span> <span class="p">:</span> <span class="mi">0</span>
+</span><span class="line">  <span class="p">},</span>
+</span><span class="line">  <span class="nt">&quot;violations&quot;</span> <span class="p">:</span> <span class="p">[</span> <span class="p">]</span>
+</span><span class="line"><span class="p">}</span>
 </span><span class="line">
-</span><span class="line"><span class="k">class</span> <span class="nc">Db</span> <span class="k">extends</span> <span class="nc">Schema</span> <span class="o">{</span>
+</span><span class="line"><span class="err">BUILD</span> <span class="err">SUCCESSFUL</span>
 </span><span class="line">
-</span><span class="line">  <span class="k">val</span> <span class="n">users</span> <span class="k">=</span> <span class="n">table</span><span class="o">[</span><span class="kt">User</span><span class="o">](</span><span class="s">&quot;users&quot;</span><span class="o">)</span>
-</span><span class="line">
-</span><span class="line">  <span class="n">on</span><span class="o">(</span><span class="n">users</span><span class="o">)(</span><span class="n">u</span> <span class="k">=&gt;</span> <span class="n">declare</span><span class="o">(</span>
-</span><span class="line">
-</span><span class="line">    <span class="n">u</span><span class="o">.</span><span class="n">id</span> <span class="n">is</span> <span class="o">(</span><span class="n">primaryKey</span><span class="o">))</span>
-</span><span class="line">
-</span><span class="line"><span class="o">}</span>
+</span><span class="line"><span class="err">Total</span> <span class="err">time:</span> <span class="mi">1</span> <span class="err">mins</span> <span class="mf">54.937</span> <span class="err">secs</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>これはSquerylのGoogleGroupに書いてました。</p>
+<h3 id="section-2">今後</h3>
 
-<ul>
-<li><a href="https://groups.google.com/forum/#!topic/squeryl/BTrKBwikMqs">how to cancel &#8220;autoincremented&#8221; from KeyedEntity[T]</a></li>
-</ul>
-<h3>２．DDLのカラムの順番の嵌りどころ</h3>
-<p>Db.printDdlを実行した時にカラムの順番が予測できません。</p>
+<p>今回のISUCONアプリは結構機能を積んでいるため、Elixir/Phoenixに慣れるにはちょうど良いテーマなのではないかと思います。</p>
 
-<p>PKが最初にくるのかと思えばそうでもないみたい。ここは細かく追ってないですが、これもGoogleGroupに答えがありました。</p>
+<p>ただPhoenix初心者ということもあり、実装していたほとんどの時間は”Ectoでどうやってクエリを再現するか”に使っていて、
+ロジックの書き方とか各モジュールの使い分けとかまであまり気にできてません。
+Phoenix/Ectoの有効性を台無しにしていること間違いなし…
+まぁ、そこんところはおいおい感覚をつかんでいこうかな、と。</p>
 
-<ul>
-<li><a href="https://groups.google.com/forum/#!topic/squeryl/ZwiDf5Q-IUI">CREATE TABLE columns in order of constructor arguments</a></li>
-</ul>
-<p>答えとしては、org.squeryl.internals.DatabaseAdapter:: writeCreateTableあたりをorverrideしてなんとかしてくれとのこと。</p>
-
-<p><a href="https://github.com/max-l/Squeryl/blob/master/src/main/scala/org/squeryl/internals/DatabaseAdapter.scala#L255">https://github.com/max-l/Squeryl/blob/master/src/main/scala/org/squeryl/internals/DatabaseAdapter.scala#L255</a></p>
-
-<p>なんか良い方法はないの…</p>
-
-<p>とりあえず、printDdlした結果をコピーして、順番だけ書き換えて、手動で直接DBにクエリ発行すればなんとかなるでしょう。</p>
-
-<h3>３．外部キーの利用でのはまりどころ</h3>
-<p>２つのテーブルにRelationを設定してからDb.createした際、外部キーが設定されない問題がありました。</p>
-
-<p>MySQLは5.5を使っているので外部キーに対応していない訳でもないです。</p>
-
-<p>問題はAdapterの選定にありました。</p>
-
-<p>org.squeryl.adapter.MySQLAdapter</p>
-
-<p>をつかっていたのですが、</p>
-
-<p>org.squeryl.adapter.MySQLInnoDBAdapter</p>
-
-<p>を使えばOKでした。</p>
-
-<p>根本の原因は、org.squeryl.adapter.MySQLAdapterに</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">override</span> <span class="k">def</span> <span class="n">supportsForeignKeyConstraints</span> <span class="k">=</span> <span class="kc">false</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>と定義してあり、一方のorg.squeryl.adapter.MySQLInnoDBAdapterには</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">override</span> <span class="k">def</span> <span class="n">supportsForeignKeyConstraints</span> <span class="k">=</span> <span class="kc">true</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>と定義してあります。</p>
-
-<p>この値がtrueになっていないとForeignKeyの制約がDDLに含まれなくなってしまうので注意です。</p>
-
-<p><a href="https://github.com/max-l/Squeryl/blob/master/src/main/scala/org/squeryl/adapters/MySQLAdapter.scala#L75">Docコメントにも書いてある</a>ので注意です。</p>
-
-<p>以上、Squerylを弄ってみて嵌ったことをまとめてみました。</p>
-
-<h3>Squerylの使用感</h3>
-<p>ちょっと前にTwitterのStreamAPIのデータをMySQLに格納するためにSquerylを使ったのと今回少し弄ってみただけなのでまだまだ知らないことだらけです。他にも機能的はたくさん用意されていると思いますし、APIも割となじみやすいので複雑すぎないテーブル定義の場合には積極的にSquerylを使っていこうと思います。</p>
-
-<p><em>※ドキュメントや本体のソースを追いかけたりしながら使い方を学ぶのは非常に楽しいです:)</em></p>
-
-<p>で、ソースは以下です。</p>
-
-<script src="https://gist.github.com/1146854.js"> </script>
-
+<p>このあとはEctoの抽象化を活かしつつさらに最適化をすすめていったときに、どのような性能を発揮するのか気になるところです。</p>
 </div>
 
 
@@ -357,12 +358,12 @@
 </style>
 <div class="sharing">
   <ul>
-    <li><a href="http://blog.restartr.com/2011/08/16/3-things-that-i-was-in-trouble-using-squeryl/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+    <li><a href="http://blog.restartr.com/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
   
-  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2011/08/16/3-things-that-i-was-in-trouble-using-squeryl/" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2011/08/16/3-things-that-i-was-in-trouble-using-squeryl/" >Tweet</a></li>
+  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix/" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix/" >Tweet</a></li>
   
   
-  <li><div class="fb-like" data-href="http://blog.restartr.com/2011/08/16/3-things-that-i-was-in-trouble-using-squeryl/" data-layout="button_count" data-action="like" data-show-faces="false" data-share="true"></div><script>(function(d, s, id) {
+  <li><div class="fb-like" data-href="http://blog.restartr.com/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix/" data-layout="button_count" data-action="like" data-show-faces="false" data-share="true"></div><script>(function(d, s, id) {
   var js, fjs = d.getElementsByTagName(s)[0];
   if (d.getElementById(id)) return;
   js = d.createElement(s); js.id = id;
@@ -399,12 +400,12 @@
   
 
 
-<time datetime="2011-08-16T08:00:15+09:00" pubdate data-updated="true">2011-08-16 (Tue)</time>
+<time datetime="2015-10-21T19:32:17+09:00" pubdate data-updated="true">2015-10-21 (Wed)</time>
       
 
 <span class="categories">
   
-    <a class='category' href='/category/scala/'>Scala</a>
+    <a class='category' href='/category/elixir/'>Elixir</a>
   
 </span>
 
@@ -413,10 +414,8 @@
     <hr />
     <p class="meta">
       
-        <a class="basic-alignment left" href="/2011/06/21/go-to-varnish-study-tokyovc/" title="Previous Post: Varnish勉強会 #tokyovcl に行ってきた">&laquo; Varnish勉強会 #tokyovcl に行ってきた</a>
+        <a class="basic-alignment left" href="/2015/10/15/go-programming-blueprints/" title="Previous Post: "Go Programming Blueprints"を読んだ">&laquo; "Go Programming Blueprints"を読んだ</a>
       
-      
-        <a class="basic-alignment right" href="/2011/08/30/config-libraries-in-scala/" title="Next Post: Scalaで設定ファイルを使いたい時どうしたらいいの？">Scalaで設定ファイルを使いたい時どうしたらいいの？ &raquo;</a>
       
     </p>
   </footer>

@@ -4,7 +4,7 @@
   <title><![CDATA[I Will Survive]]></title>
   <link href="http://blog.restartr.com/atom.xml" rel="self"/>
   <link href="http://blog.restartr.com/"/>
-  <updated>2015-10-15T21:47:02+09:00</updated>
+  <updated>2015-10-21T20:19:17+09:00</updated>
   <id>http://blog.restartr.com/</id>
   <author>
     <name><![CDATA[ReSTARTR]]></name>
@@ -12,6 +12,163 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Elixir/PhoenixでISUCON5予選の参考実装を書いた]]></title>
+    <link href="http://blog.restartr.com/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix/"/>
+    <updated>2015-10-21T19:32:17+09:00</updated>
+    <id>http://blog.restartr.com/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix</id>
+    <content type="html"><![CDATA[<p><a href="https://github.com/isucon/isucon5-qualify">ISUCON5予選の参考実装</a>を、Elixir/Phoenixで実装してみました。</p>
+
+<p>とりあえずひととおり動いたので現時点でのコードをGithubにpush。</p>
+
+<ul>
+  <li><a href="https://github.com/ReSTARTR/isucon5-qualify-elixir">github.com/ReSTARTR/isucon5-qualify-elixir</a></li>
+</ul>
+
+<h3 id="section">実装について補足</h3>
+
+<p>まずは他言語の初期実装と同等のSQLを再現することを目標としました。</p>
+
+<p>Goの実装を参考に、まずは各ページを実装してブラウザでひととおり機能が実装できているか確認。
+その後ベンチマークをすべて通過するまでひたすら修正するという手順ですすめました。</p>
+
+<p>そのため、テンプレートの細かい表示(時刻フォーマット等)の不備や、ベンチマーカーがチェックしない機能が抜けている可能性があります。</p>
+
+<h3 id="section-1">ベンチマーク結果</h3>
+
+<p>気になる性能ですが、Goと比較すると以下のような結果となりました。</p>
+
+<p>※VirtualBox上にたてたMySQLにたいして、ホストのMacOSX上でアプリケーションを実行しています</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Lang</th>
+      <th style="text-align: right">requests</th>
+      <th style="text-align: right">elapsed</th>
+      <th style="text-align: right">success</th>
+      <th style="text-align: right">redirect</th>
+      <th style="text-align: right">failure</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">Elixir/Phoenix</td>
+      <td style="text-align: right">333</td>
+      <td style="text-align: right">76093</td>
+      <td style="text-align: right">239</td>
+      <td style="text-align: right">93</td>
+      <td style="text-align: right">1</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Go</td>
+      <td style="text-align: right">138</td>
+      <td style="text-align: right">106728</td>
+      <td style="text-align: right">98</td>
+      <td style="text-align: right">39</td>
+      <td style="text-align: right">1</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>同じクエリを再現したうえで、だいたい2倍くらいの性能差？でしょうか。
+が、完全に模倣できているか自信はないのであくまで参考程度ということで…</p>
+
+<p>以下にベンチマーカーの出力内容も貼っておきます。</p>
+
+<p>elixir/phoenix版の結果</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+</pre></td><td class="code"><pre><code class="json"><span class="line"><span class="p">{</span>
+</span><span class="line">  <span class="nt">&quot;valid&quot;</span> <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span><span class="line">  <span class="nt">&quot;requests&quot;</span> <span class="p">:</span> <span class="mi">333</span><span class="p">,</span>
+</span><span class="line">  <span class="nt">&quot;elapsed&quot;</span> <span class="p">:</span> <span class="mi">76093</span><span class="p">,</span>
+</span><span class="line">  <span class="nt">&quot;done&quot;</span> <span class="p">:</span> <span class="s2">&quot;[{Isucon5InitExecutor},{BootstrapChecker},{Isucon5Load,Isucon5Load,Isucon5Load,Isucon5Load,Isucon5Checker}]&quot;</span><span class="p">,</span>
+</span><span class="line">  <span class="nt">&quot;responses&quot;</span> <span class="p">:</span> <span class="p">{</span>
+</span><span class="line">    <span class="nt">&quot;success&quot;</span> <span class="p">:</span> <span class="mi">239</span><span class="p">,</span>
+</span><span class="line">    <span class="nt">&quot;redirect&quot;</span> <span class="p">:</span> <span class="mi">93</span><span class="p">,</span>
+</span><span class="line">    <span class="nt">&quot;failure&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span class="line">    <span class="nt">&quot;error&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+</span><span class="line">    <span class="nt">&quot;exception&quot;</span> <span class="p">:</span> <span class="mi">0</span>
+</span><span class="line">  <span class="p">},</span>
+</span><span class="line">  <span class="nt">&quot;violations&quot;</span> <span class="p">:</span> <span class="p">[</span> <span class="p">]</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="err">BUILD</span> <span class="err">SUCCESSFUL</span>
+</span><span class="line">
+</span><span class="line"><span class="err">Total</span> <span class="err">time:</span> <span class="mi">1</span> <span class="err">mins</span> <span class="mf">27.449</span> <span class="err">secs</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>go版の結果</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+</pre></td><td class="code"><pre><code class="json"><span class="line"><span class="p">{</span>
+</span><span class="line">  <span class="nt">&quot;valid&quot;</span> <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span><span class="line">  <span class="nt">&quot;requests&quot;</span> <span class="p">:</span> <span class="mi">138</span><span class="p">,</span>
+</span><span class="line">  <span class="nt">&quot;elapsed&quot;</span> <span class="p">:</span> <span class="mi">106728</span><span class="p">,</span>
+</span><span class="line">  <span class="nt">&quot;done&quot;</span> <span class="p">:</span> <span class="s2">&quot;[{Isucon5InitExecutor},{BootstrapChecker},{Isucon5Load,Isucon5Load,Isucon5Load,Isucon5Load,Isucon5Checker}]&quot;</span><span class="p">,</span>
+</span><span class="line">  <span class="nt">&quot;responses&quot;</span> <span class="p">:</span> <span class="p">{</span>
+</span><span class="line">    <span class="nt">&quot;success&quot;</span> <span class="p">:</span> <span class="mi">98</span><span class="p">,</span>
+</span><span class="line">    <span class="nt">&quot;redirect&quot;</span> <span class="p">:</span> <span class="mi">39</span><span class="p">,</span>
+</span><span class="line">    <span class="nt">&quot;failure&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span class="line">    <span class="nt">&quot;error&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+</span><span class="line">    <span class="nt">&quot;exception&quot;</span> <span class="p">:</span> <span class="mi">0</span>
+</span><span class="line">  <span class="p">},</span>
+</span><span class="line">  <span class="nt">&quot;violations&quot;</span> <span class="p">:</span> <span class="p">[</span> <span class="p">]</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="err">BUILD</span> <span class="err">SUCCESSFUL</span>
+</span><span class="line">
+</span><span class="line"><span class="err">Total</span> <span class="err">time:</span> <span class="mi">1</span> <span class="err">mins</span> <span class="mf">54.937</span> <span class="err">secs</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="section-2">今後</h3>
+
+<p>今回のISUCONアプリは結構機能を積んでいるため、Elixir/Phoenixに慣れるにはちょうど良いテーマなのではないかと思います。</p>
+
+<p>ただPhoenix初心者ということもあり、実装していたほとんどの時間は”Ectoでどうやってクエリを再現するか”に使っていて、
+ロジックの書き方とか各モジュールの使い分けとかまであまり気にできてません。
+Phoenix/Ectoの有効性を台無しにしていること間違いなし…
+まぁ、そこんところはおいおい感覚をつかんでいこうかな、と。</p>
+
+<p>このあとはEctoの抽象化を活かしつつさらに最適化をすすめていったときに、どのような性能を発揮するのか気になるところです。</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA["Go Programming Blueprints"を読んだ]]></title>
@@ -2417,105 +2574,6 @@ pytestはかなり詳細に表示してくれるので、レポートの内容�
 <h5 id="section">余談</h5>
 
 <p>このWebサービス、クローラーはPython、WebサイトはScalaで書いていて、一年近く前に書いたコードなのでちょっとだけ時間かかりました。仕事で使っているpythonに比べて、シンタックスを見るのも数ヶ月ぶりなScalaは何をやっているか思い出すのにもひと苦労です。もっとScalaにも取り組みたいのですが…</p>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[はてなダイアリーからTumblrへデータ移行するpythonスクリプト]]></title>
-    <link href="http://blog.restartr.com/2012/03/25/python-script-for-moving-from-movabletype-to-tumblr/"/>
-    <updated>2012-03-25T02:30:19+09:00</updated>
-    <id>http://blog.restartr.com/2012/03/25/python-script-for-moving-from-movabletype-to-tumblr</id>
-    <content type="html"><![CDATA[<p>どうも。もうすぐ入社３ヶ月が経って試用期間が終わろうとしている状況な僕です。</p>
-
-<p>すっかり停滞気味のブログですが保守も兼ねて投稿を。</p>
-
-<h3 id="deldeltumblr">はてダから<del>はてブロ</del>Tumblrへ</h3>
-
-<p>とあるブログをはてなダイアリーで書いていたのですが、Tumblrへブログのデータを移行したいという要求が出てきました。ということでpythonで移行スクリプトを書いてみました。</p>
-
-<h3 id="section">ソースコード</h3>
-
-<p>例によってGitHubにて公開しておきます。</p>
-
-<ul>
-  <li><a href="https://github.com/ReSTARTR/mt2tumblr">https://github.com/ReSTARTR/mt2tumblr</a></li>
-</ul>
-
-<p>python2.6以外はテストしてません( ｰ`дｰ´)ｷﾘｯ</p>
-
-<h3 id="section-1">使い方</h3>
-
-<p>oauth2に依存しているので、実行前にインストールしておいてください。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="n">pip</span> <span class="n">install</span> <span class="n">oauth2</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>使い方はREADMEどおりです。いつもどおりのテキトー英文です。</p>
-
-<ol>
-  <li>はてなダイアリーの管理画面から”管理 &gt; インポート/エクスポート”でMovableType形式のファイルをダウンロード</li>
-  <li>ダウンロードしたファイルをresourcesディレクトリに配置</li>
-  <li>tumblrにアプリケーションを登録( <a href="http://www.tumblr.com/oauth/apps">http://www.tumblr.com/oauth/apps</a> )</li>
-  <li>consumer_keyとconsumer_secretを入手</li>
-  <li>config.pyを編集する</li>
-</ol>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="n">CONSUMER_KEY</span> <span class="o">=</span> <span class="s">&#39;&lt;consumer_key&gt;&#39;</span>
-</span><span class="line"><span class="n">CONSUMER_SECRET</span> <span class="o">=</span> <span class="s">&#39;&lt;consumer_secret&gt;&#39;</span>
-</span><span class="line"><span class="n">BASE_HOSTNAME</span> <span class="o">=</span> <span class="s">&#39;&lt;your_tumblr_url&gt;&#39;</span> <span class="c"># &#39;&lt;your-id&gt;.tumblr.com&#39;のように&quot;http://&quot;は抜きで。</span>
-</span><span class="line"><span class="n">PARSE_FILE_PATH</span> <span class="o">=</span> <span class="s">&#39;path/to/movable_type_data.txt&#39;</span>
-</span><span class="line"><span class="n">POST_STATE</span> <span class="o">=</span> <span class="s">&#39;publish&#39;</span> <span class="c"># 動作テストしたいなら&#39;draft&#39;にすると良いです。</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>実行する</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">python run.py
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-<ul>
-  <li>まずはファイルの内容を読み込んで、日時、カテゴリ、タイトルが表示されるので問題ないか確認</li>
-</ul>
-
-<p>OAuth認証する。</p>
-
-<ul>
-  <li>下記のようにURLが表示されるのでブラウザでアクセス。</li>
-</ul>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class="python"><span class="line"><span class="nb">open</span> <span class="ow">in</span> <span class="n">browser</span><span class="p">:</span><span class="n">http</span><span class="p">:</span><span class="o">//</span><span class="n">www</span><span class="o">.</span><span class="n">tumblr</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">oauth</span><span class="o">/</span><span class="n">authorize</span><span class="err">?</span><span class="n">oauth_token</span><span class="o">=</span><span class="p">{</span><span class="n">OAUTH_TOKEN</span><span class="p">}</span>
-</span><span class="line">
-</span><span class="line"><span class="n">oauth_verifier</span><span class="p">:</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<ul>
-  <li>リダイレクト先のURLに含まれる”oauth_verifier”の値をコピーしてターミナルにペースト。
-    <ul>
-      <li>リダイレクト先は404になりますが、oauth_verifierが欲しいだけなのでそれで問題なしです。</li>
-    </ul>
-  </li>
-</ul>
-
-<p>これで、Tumblerへのインポートが始まります。</p>
-
-<p>(ﾟдﾟ)ｳﾏｰ</p>
-
-<h3 id="section-2">注意事項</h3>
-
-<ul>
-  <li>APIの呼び出し回数の制限に引っかかるかもしれませんがそのへんのエラー制御はできていません。</li>
-  <li>MovableType形式のデータをTumblrに移行するスクリプトとしてつくっていますが、実際にははてなダイアリーからMovableType形式でエクスポートしたデータでしかテストしていません。それ以外で動くかは保証できません…</li>
-  <li>投稿時間はJSTからGMTに変換してます。不要なら適当に編集してください。</li>
-</ul>
 
 ]]></content>
   </entry>
