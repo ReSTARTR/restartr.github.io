@@ -4,7 +4,7 @@
   <title><![CDATA[I Will Survive]]></title>
   <link href="http://blog.restartr.com/atom.xml" rel="self"/>
   <link href="http://blog.restartr.com/"/>
-  <updated>2015-10-21T20:32:37+09:00</updated>
+  <updated>2015-10-21T20:35:44+09:00</updated>
   <id>http://blog.restartr.com/</id>
   <author>
     <name><![CDATA[ReSTARTR]]></name>
@@ -80,7 +80,7 @@
 <span class="line-number">4</span>
 <span class="line-number">5</span>
 <span class="line-number">6</span>
-</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1"># Eixir/Phoenix</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1"># Elixir/Phoenix</span>
 </span><span class="line"><span class="n">irb</span><span class="p">(</span><span class="n">main</span><span class="p">):</span><span class="mo">001</span><span class="p">:</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">base_score</span> <span class="o">=</span> <span class="mi">239</span> <span class="o">+</span> <span class="mi">93</span> <span class="o">*</span> <span class="mi">0</span><span class="o">.</span><span class="mi">1</span>
 </span><span class="line"><span class="o">=&gt;</span> <span class="mi">248</span><span class="o">.</span><span class="mi">3</span>
 </span><span class="line"><span class="c1"># Go</span>

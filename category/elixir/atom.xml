@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Elixir | I Will Survive]]></title>
   <link href="http://blog.restartr.com/category/elixir/atom.xml" rel="self"/>
   <link href="http://blog.restartr.com/"/>
-  <updated>2015-10-21T20:32:37+09:00</updated>
+  <updated>2015-10-21T20:35:44+09:00</updated>
   <id>http://blog.restartr.com/</id>
   <author>
     <name><![CDATA[ReSTARTR]]></name>
@@ -75,7 +75,7 @@
 <p><a href="https://github.com/isucon/isucon5-qualify/blob/master/eventapp/lib/score.rb">スコア計算式</a>をもとに計算してみると以下のようなスコアとなります(eror, exception, violationsはないので減点は無し)</p>
 
 <p><code>ruby
-# Eixir/Phoenix
+# Elixir/Phoenix
 irb(main):001:0&gt; base_score = 239 + 93 * 0.1
 =&gt; 248.3
 # Go
