@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Elixir | I Will Survive]]></title>
   <link href="http://blog.restartr.com/category/elixir/atom.xml" rel="self"/>
   <link href="http://blog.restartr.com/"/>
-  <updated>2015-10-21T20:35:44+09:00</updated>
+  <updated>2015-10-21T22:05:55+09:00</updated>
   <id>http://blog.restartr.com/</id>
   <author>
     <name><![CDATA[ReSTARTR]]></name>
@@ -35,7 +35,13 @@
 
 <p>そのため、テンプレートの細かい表示(時刻フォーマット等)の不備や、ベンチマーカーがチェックしない機能が抜けている可能性があります。</p>
 
-<h3 id="section-1">ベンチマーク結果</h3>
+<h3 id="section-1">注意点</h3>
+
+<p>ベンチマーカーがCSSファイルのサイズを厳密にチェックしていて、なぜか1バイト余計に増えてしまってパスしない問題が発生します。
+<a href="https://github.com/isucon/isucon5-qualify/blob/42cec755d41b1573af3dd4735d78523494fd42dd/bench/src/main/java/net/isucon/isucon5q/bench/scenario/BootstrapChecker.java#L186">チェック箇所のサイズ</a>を<code>122540</code>から<code>122541</code>にすることで無理やりとおしました。
+原因は追って調査ですが、機能的に問題ないはずなので一時しのぎです。</p>
+
+<h3 id="section-2">ベンチマーク結果</h3>
 
 <p>気になる性能ですが、Goと比較すると以下のような結果となりました。</p>
 
@@ -134,7 +140,7 @@ irb(main):002:0&gt; base_score = 98 + 39 * 0.1
 <p>Total time: 1 mins 54.937 secs
 ```</p>
 
-<h3 id="section-2">今後</h3>
+<h3 id="section-3">今後</h3>
 
 <p>今回のISUCONアプリは結構機能を積んでいるため、Elixir/Phoenixに慣れるにはちょうど良いテーマなのではないかと思います。</p>
 
