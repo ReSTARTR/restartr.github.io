@@ -238,7 +238,23 @@
   </tbody>
 </table>
 
-<p>同じクエリを再現したうえで、だいたい2倍くらいの性能差？でしょうか。
+<p><a href="https://github.com/isucon/isucon5-qualify/blob/master/eventapp/lib/score.rb">スコア計算式</a>をもとに計算してみると以下のようなスコアとなります(eror, exception, violationsはないので減点は無し)</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1"># Eixir/Phoenix</span>
+</span><span class="line"><span class="n">irb</span><span class="p">(</span><span class="n">main</span><span class="p">):</span><span class="mo">001</span><span class="p">:</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">base_score</span> <span class="o">=</span> <span class="mi">239</span> <span class="o">+</span> <span class="mi">93</span> <span class="o">*</span> <span class="mi">0</span><span class="o">.</span><span class="mi">1</span>
+</span><span class="line"><span class="o">=&gt;</span> <span class="mi">248</span><span class="o">.</span><span class="mi">3</span>
+</span><span class="line"><span class="c1"># Go</span>
+</span><span class="line"><span class="n">irb</span><span class="p">(</span><span class="n">main</span><span class="p">):</span><span class="mo">002</span><span class="p">:</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">base_score</span> <span class="o">=</span> <span class="mi">98</span> <span class="o">+</span> <span class="mi">39</span> <span class="o">*</span> <span class="mi">0</span><span class="o">.</span><span class="mi">1</span>
+</span><span class="line"><span class="o">=&gt;</span> <span class="mi">101</span><span class="o">.</span><span class="mi">9</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>同じクエリを再現したうえで、だいたい2.5倍くらいの性能差？でしょうか。
 が、完全に模倣できているか自信はないのであくまで参考程度ということで…</p>
 
 <p>以下にベンチマーカーの出力内容も貼っておきます。</p>
