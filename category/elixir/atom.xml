@@ -4,7 +4,7 @@
   <title><![CDATA[Category: Elixir | I Will Survive]]></title>
   <link href="http://blog.restartr.com/category/elixir/atom.xml" rel="self"/>
   <link href="http://blog.restartr.com/"/>
-  <updated>2015-10-21T22:05:55+09:00</updated>
+  <updated>2015-10-22T07:38:01+09:00</updated>
   <id>http://blog.restartr.com/</id>
   <author>
     <name><![CDATA[ReSTARTR]]></name>
@@ -19,6 +19,9 @@
     <updated>2015-10-21T19:32:17+09:00</updated>
     <id>http://blog.restartr.com/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix</id>
     <content type="html"><![CDATA[<p><a href="https://github.com/isucon/isucon5-qualify">ISUCON5予選の参考実装</a>を、Elixir/Phoenixで実装してみました。</p>
+
+<blockquote class="twitter-tweet" lang="ja"><p lang="en" dir="ltr">It (partially) works! <a href="https://twitter.com/hashtag/myelixirstatus?src=hash">#myelixirstatus</a> <a href="https://t.co/NuhhufXAwC">pic.twitter.com/NuhhufXAwC</a></p>&mdash; Masaki YOSHIDA (@ReSTARTR) <a href="https://twitter.com/ReSTARTR/status/656434698730639360">2015, 10月 20</a></blockquote>
+<script async="" src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
 
 <p>汚いながらもとりあえずひととおり動いたので現時点でのコードをGithubにpush。</p>
 
