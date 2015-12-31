@@ -4,7 +4,7 @@
   <title><![CDATA[Category: 書籍 | I Will Survive]]></title>
   <link href="http://blog.restartr.com/category/shu-ji/atom.xml" rel="self"/>
   <link href="http://blog.restartr.com/"/>
-  <updated>2015-10-22T11:42:25+09:00</updated>
+  <updated>2015-12-31T20:12:06+09:00</updated>
   <id>http://blog.restartr.com/</id>
   <author>
     <name><![CDATA[ReSTARTR]]></name>
@@ -12,6 +12,79 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[2015年ふりかえり]]></title>
+    <link href="http://blog.restartr.com/2015/12/31/things-of-2015/"/>
+    <updated>2015-12-31T18:59:46+09:00</updated>
+    <id>http://blog.restartr.com/2015/12/31/things-of-2015</id>
+    <content type="html"><![CDATA[<p>2015年も終わりが近づいているということでご報告もかねてふりかえりを…</p>
+
+<h3 id="section">個人的トピック</h3>
+
+<p>ブログには書いてませんでしたが、8月で2年とすこしお世話になった株式会社VASILYを退職しました。
+それからいくつかの会社とお話した後、11月から<a href="https://www.wantedly.com/companies/hitomedia">株式会社ヒトメディア</a>に転職しました。
+(あらためて転職エントリを書こうとおもっていたのに年末になってしまい、完全にタイミングを逃した感じです…)</p>
+
+<p>といってもあまり本社にはおらず、もっぱら新宿で勤務している日々です。やっていることもいまのところ前職とあまり変わっておらず、アプリケーションの改善やインフラまわり全般をやっています。個人的にはもっとアプリケーションよりの仕事をしていきたいのですが、まずは目先の改善からということで。</p>
+
+<p>あと、今年とかやったこととか読んだ本のまとめです。</p>
+
+<h3 id="section-1">やったこと</h3>
+
+<p>仕事</p>
+
+<ul>
+  <li>Railsアプリのチューニング</li>
+  <li>Docker, AWS ECS</li>
+  <li>AWSまわり全般</li>
+</ul>
+
+<p>個人</p>
+
+<ul>
+  <li>Consul</li>
+  <li>GCE</li>
+  <li>ISUCON5予選のElixir実装</li>
+</ul>
+
+<h3 id="section-2">書籍</h3>
+
+<p>プログラミング・設計</p>
+
+<ul>
+  <li><a href="http://www.amazon.co.jp//dp/4774171417/">WEB+DB PRESS vol.85</a></li>
+  <li><a href="http://www.amazon.co.jp/dp/4873115892/">SQLアンチパターン</a></li>
+  <li><a href="http://www.amazon.co.jp//dp/4774171972/">理論から学ぶ データベース実践入門</a></li>
+  <li><a href="http://www.amazon.co.jp/dp/B00SY2UKHY/1">Webエンジニアが知っておきたいインフラの基本 </a></li>
+  <li><a href="http://www.amazon.co.jp/dp/B00UX9VJGW/">実践ドメイン駆動設計</a></li>
+  <li><a href="http://www.amazon.co.jp//dp/B00PKTGM9O/">Programming Elixir</a></li>
+  <li><a href="http://www.amazon.co.jp/dp/4774173010/">SQL実践入門</a></li>
+  <li><a href="https://www.manning.com/books/the-little-elixir-and-otp-guidebook">The Little Elixir &amp; OTP Guidebook</a></li>
+  <li><a href="http://www.amazon.co.jp/dp/4873116937/">ZooKeeperによる分散システム管理 </a></li>
+  <li><a href="http://www.amazon.co.jp/dp/B00T4ACPA0/">Go Programming Blueprints</a></li>
+</ul>
+
+<p>開発体制</p>
+
+<ul>
+  <li><a href="http://www.amazon.co.jp/dp/4774172367/">スクラム実践入門</a></li>
+  <li><a href="http://www.amazon.co.jp//dp/B00MGGW9MI/">DevOps 逆転だ！究極の継続的デリバリー</a></li>
+  <li><a href="http://www.amazon.co.jp//dp/B00O8GIJ1E/">カンバン-ソフトウェア開発の変革</a></li>
+  <li><a href="http://www.amazon.co.jp/dp/B00DIM6BMI/">SCRUM BOOT CAMP THE BOOK</a></li>
+</ul>
+
+<p>その他</p>
+
+<ul>
+  <li><a href="http://www.amazon.co.jp/dp/1617292397">Soft Skills</a></li>
+  <li><a href="http://www.amazon.co.jp//dp/4121022823/">地方消滅-東京一極集中が招く人口急減</a></li>
+</ul>
+
+<p>ということで、2015年中はお世話になりました。
+2016年もどうぞよろしくおねがいします :bow:</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA["Go Programming Blueprints"を読んだ]]></title>
@@ -337,48 +410,6 @@ P81に「企画に関わる人を減らして、魂のあるものを作る」�
 もう少し視野を広げて見識を深める必要がありそうです。</p>
 
 <p>ここ1年程ちゃんとした料理をしていない私ですが、簡単につくれるレシピをクックパッドで探してみようかな。</p>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[数式を使わないデータマイニング入門]]></title>
-    <link href="http://blog.restartr.com/2011/02/06/introduction-of-data-mining-without-formul/"/>
-    <updated>2011-02-06T22:47:11+09:00</updated>
-    <id>http://blog.restartr.com/2011/02/06/introduction-of-data-mining-without-formul</id>
-    <content type="html"><![CDATA[<ul>
-  <li><a href="http://www.amazon.co.jp/dp/4334033555">数式を使わないデータマイニング入門 隠れた法則を発見する (光文社新書) [新書]</a></li>
-</ul>
-
-<p>テキストマイニング書を探していたら、なぜか同じ場所にあったので買いました。</p>
-
-<p>データマイニングって何？という人向けの入門書。１時間もあればサクっと読める軽い内容。データマイニングをはじめる人だけでなく、<strong>データマイニングを依頼する側</strong>が読むと良いのではないでしょうか。</p>
-
-<p><a id="more"></a><a id="more-564"></a></p>
-
-<h4>マイニング＝採鉱</h4>
-<p>第一章にも書いてあるけど、</p>
-
-<blockquote><em>マイニングとは、「採鉱」を指す言葉である。データマイニングにおけるマイニングは二段階のプロセスに分かれる。
-一段階目は、大量の情報から隠れた法則を見つけ出すこと。
-〜中略〜
-二段階目は、そこで見つかった法則のなかから、使えるものを探し出すこと。これは意外に認知されていない。</em>
-
-</blockquote>
-<p>さらに、</p>
-
-<blockquote><em>多くの人は法則さえ見つかれば、それが有意で、お金にもなると考えている。しかし、実際には役に立たない法則の方が多い。この事実は見過ごされがちだ。</em>
-</blockquote>
-<p>マイニングを行えば、何かしら答えが見つかるものだと思われがち。結果的に答えが見つかればラッキー。データマイニングを依頼する側には「期待せずに期待してください」としか言えないですね…</p>
-
-<p>ところで、何かしら答えを限られた期間で見つけ出すのは難しいのだとすれば、データ分析者は評価者に対して目標として何をコミットし、どのように結果を評価されるのでしょうか。プログラマーと同じく、明確な数値目標を設定しづらい職業なのかなと思ったり。</p>
-
-<h4>監視社会</h4>
-<p>本書中盤にはデータマイニング手法としていくつか概要の説明があり、最後には監視社会について触れています。それまでの流れと少し関連性が低い内容ではあるけれど、興味深い内容。参考図書として挙げられていたもの（下記）が１０年前の書籍なので、関連する最近の書籍をさがしてみる予定。</p>
-
-<ul>
-  <li><a href="http://www.amazon.co.jp/dp/4791760085">監視社会 [単行本]</a></li>
-</ul>
 
 ]]></content>
   </entry>

@@ -11,8 +11,9 @@
   <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="6/11,12の土日を利用して、福島県相馬郡新地町にボランティア活動に行ってきました。 活動の経緯 東日本大震災がおきてから、被災地に対して何かできることを、ということでこれまで募金と献血をやってきました。が、それだけでなく何かできることはないかと常々考えていました。
-仕事柄、 &hellip;">
+  <meta name="description" content="6/18(土)に開催されたVarnish勉強会 Tokyo.vcl : ATNDに行ってきました。
+初のクックパッドさんオフィス訪問です。 Varnish3のリリースパーティーも兼ねての開催だったようで、ステッカーもいただいてしまいました。
+インフラ屋じゃない上に、 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -117,6 +118,261 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2011/06/21/go-to-varnish-study-tokyovc/">Varnish勉強会 #tokyovcl に行ってきた</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-06-21T23:56:40+09:00" pubdate data-updated="true">2011-06-21 (Tue)</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><a href="http://www.flickr.com/photos/53244662@N04/5856931526/" title="IMAG0053 by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5029/5856931526_1119c53a87.jpg" width="500" height="299" alt="IMAG0053" /></a></p>
+
+<p>6/18(土)に開催された<a href="http://atnd.org/events/16681">Varnish勉強会 Tokyo.vcl : ATND</a>に行ってきました。
+初のクックパッドさんオフィス訪問です。</p>
+
+<p>Varnish3のリリースパーティーも兼ねての開催だったようで、ステッカーもいただいてしまいました。
+インフラ屋じゃない上に、Varnish触ったのは前日の晩という超初心者だったので結構不安でしたが、
+ビアバッシュを含め色々な話しが聞けた実りある良い勉強会でした。</p>
+
+<p>主催の@hmskさんをはじめ登壇者の皆様、ならびにビアバッシュで交流してくださった皆様ありがとうございました。</p>
+
+<h3 id="section">雑感</h3>
+<ul>
+  <li>Varnishは画像配信の事例が多い</li>
+  <li>HTTPサーバーの前だけじゃなくてSolrのような内部ネットワーク間の通信にも適用できる。</li>
+  <li>Varnish落ちたときにApacheの負荷を避けるためにSquidが使える。</li>
+  <li>拡張次第でHTTPサーバーにもKVSにも化ける（やりすぎ注意？）。</li>
+  <li>クラウドでの運用はフロンティア。</li>
+  <li>設定ファイルのvclはもはやプログラム</li>
+  <li>ESIの事例なかったけど使いにくいのかな？</li>
+  <li>とりあえず実戦投入して様子見ないとわからないことが多そう。</li>
+  <li>あ、どれだけ高速化したかについての言及がなかったような…</li>
+</ul>
+
+<h2 id="section-1">各発表メモ</h2>
+<p>スライドと、その丸写しみたいな感じのメモをペタペタ。</p>
+
+<h3 id="varnishcache30vupxcir">VarnishCache3.0新機能とVUPの仕方(@xcir)</h3>
+
+<div style="width:425px" id="__ss_8344516"> <strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/xcir/tokyovclvarnishcache30vup" title="tokyo.vcl発表資料（VarnishCache3.0新機能とVUPの仕方）">tokyo.vcl発表資料（VarnishCache3.0新機能とVUPの仕方）</a></strong> <iframe src="http://www.slideshare.net/slideshow/embed_code/8344516" width="425" height="355" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
+<div style="padding:5px 0 12px"> View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/xcir">xcir</a> </div>
+
+</div>
+<ul>
+  <li>ESIでのgzip
+    <ul>
+      <li>ブロックが圧縮されているとESIできなかった(~2）</li>
+      <li>defaultパラメータが改善された</li>
+    </ul>
+  </li>
+  <li>stream support
+    <ul>
+      <li>別のストリームは待機させられる（？</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="varnishphji">イカ娘も終わったしVarnishでも使うか(@phji)</h3>
+
+<div style="width:425px" id="__ss_8366215"> <strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/phji/varnishika" title="イカ娘も終わったしVarnishでも使うか">イカ娘も終わったしVarnishでも使うか</a></strong> <iframe src="http://www.slideshare.net/slideshow/embed_code/8366215" width="425" height="355" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
+<div style="padding:5px 0 12px"> View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/phji">Kazutoshi Fujimoto</a> </div>
+
+</div>
+<ul>
+  <li>[RAM8G Xeon 4core SSD256GB ] x 20servers</li>
+  <li>pixiv
+    <ul>
+      <li>nginx -&gt; (consistent hash) -&gt; quid -&gt; nginx -&gt; apache</li>
+      <li>lookupとかかないとキャッシュされないｗ</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="twitteryatsvarnishpenguinana">twitter検索(yats)でvarnish使ってみた(@PENGUINANA_)</h3>
+<ul>
+  <li>API 7000M req/month</li>
+  <li>PV 150Mreq/month</li>
+  <li>varnish(vps) -&gt; nginx[ webAPI -&gt; varnish -&gt; Solr ]</li>
+  <li>service : cache + failover</li>
+  <li>Solr: slaveのキャッシュクリアーが重いので、その前面にVarnishをおいている(ラウンドロビンとFailover）</li>
+  <li>autocomplete
+    <ul>
+      <li>キャッシュと相性よさそう</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="ec2varnishmirakui">EC2とvarnishで画像配信(@mirakui)</h3>
+
+<div style="width:425px" id="__ss_8352369"> <strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/mirakui/ec2varnish" title="EC2とVarnishで画像配信">EC2とVarnishで画像配信</a></strong> <iframe src="http://www.slideshare.net/slideshow/embed_code/8352369" width="425" height="355" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
+<div style="padding:5px 0 12px"> View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/mirakui">Issei Naruta</a> </div>
+
+</div>
+<ul>
+  <li>失敗談</li>
+  <li>TOFU
+    <ul>
+      <li>アップロード時ではなくオンデマンドでリサイズ</li>
+      <li>akamai（CDN)に7000RPSのうち、ELBには700RPSくる。60%受けるリクエストをキャッシュできればApache負荷軽減できるのでは？
+        <ul>
+          <li>という導入経緯（からの失敗</li>
+        </ul>
+      </li>
+      <li>1st challenge
+        <ul>
+          <li>EC2(M2.XLARGE[17.1GB RAM] + EBS[100GB for swap])</li>
+          <li>300rps</li>
+          <li>結果：オンメモリだけなら順調だけど、あふれてきてOSにSWAPさせたとたんLOADAVERAGEが爆発して死亡。</li>
+        </ul>
+      </li>
+      <li>2nd challenge
+        <ul>
+          <li>EC2(M2.XLARGE[17.1GB RAM] + EBS[100GB for ext3])</li>
+          <li>“file storage”を使っても結局メモリ容量が大量に必要</li>
+        </ul>
+      </li>
+      <li>ec2のxlargeインスタンスには、IO性能「標準」と「高」がある
+        <ul>
+          <li>今回は「標準」を利用して失敗</li>
+          <li>「高」ならうまくいくかも</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>varnish3
+    <ul>
+      <li>hash director
+        <ul>
+          <li>consistent hashingができるかも？</li>
+          <li>nginxいらずに複数varnish運用ができるかも？</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="puppetvarnishsquidar1">Puppetでvarnishもsquidも面倒みる(@ar1)</h3>
+<ul>
+  <li>ふつうはvarnishは落ちるのでLBつかって並列で運用</li>
+  <li>varnishおちるとWebサーバーが負荷かかってしまう
+    <ul>
+      <li>LB -&gt; varnish -&gt; squid -&gt; apache</li>
+      <li>squidどうしでキャッシュを共有できるので、１つSquidおちてもWebサーバーにききにいかずにすむ。</li>
+    </ul>
+  </li>
+  <li>puppet
+    <ul>
+      <li>設定をらくにする</li>
+      <li>cacheのExpire</li>
+      <li>サーバーのぬきさし</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="varnishspchidren">楽天でvarnish(@spchidren)</h3>
+<ul>
+  <li>L7 balancingがやりたくてVarnish導入
+    <ul>
+      <li>URLによってWebサーバーのグループを切り替えたい</li>
+    </ul>
+  </li>
+  <li>akamai -&gt; LB -&gt; varnish(RAM24G[malloc18G/hitrate 75%] -&gt; apache(+mod_thumb)</li>
+  <li>LBからVarnishを切り離すのはどうやる？</li>
+  <li>CDNやVarnishのcache clearをどうやるか
+    <ul>
+      <li>画像登録されたときにMQに登録して、必要に応じて消す</li>
+      <li>CDNは常にExpireされない状態にしておける。</li>
+    </ul>
+  </li>
+  <li>ImageMagicおもい
+    <ul>
+      <li>varnishにサムネイルをつくるしくみを組み込んでみれば？（FreeImage)</li>
+      <li>cc_commandでインクルードさせて、C言語でサムネイルつくるしくみをくみこむ</li>
+    </ul>
+  </li>
+  <li>varnishのいくさき
+    <ul>
+      <li>nginxにも近いしredisにもちかづいてきてる</li>
+      <li>どこにいくんでしょ</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="tddvclhmsk">TDDでVCL書いてデプロイ(@hmsk)</h3>
+<ul>
+  <li>varnishtest
+    <ul>
+      <li>RSpecぽい書き方できる</li>
+      <li>xxx.vcltestファイルにケースを記述</li>
+    </ul>
+  </li>
+  <li>vmod
+    <ul>
+      <li>vclの設定をC言語っぽく描ける</li>
+      <li>パージや圧縮、エラーなどに使える</li>
+      <li>モバイル端末のリストのチェックにもVCLから外出しできる</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="section-2">関連リンク</h2>
+<ul>
+  <li>ATND
+    <ul>
+      <li><a href="http://atnd.org/events/16681">Varnish勉強会 Tokyo.vcl : ATND</a></li>
+    </ul>
+  </li>
+  <li>Ustream
+    <ul>
+      <li><a href="http://www.ustream.tv/recorded/15453305">http://www.ustream.tv/recorded/15453305</a></li>
+      <li><a href="http://www.ustream.tv/recorded/15453834">http://www.ustream.tv/recorded/15453834</a></li>
+    </ul>
+  </li>
+  <li>Togetter
+    <ul>
+      <li><a href="http://togetter.com/li/151585">Togetter - 「第一回 Varnish勉強会 Tokyo.vcl」</a></li>
+    </ul>
+  </li>
+  <li>勉強会レポート
+    <ul>
+      <li><a href="http://d.hatena.ne.jp/hxmasaki/20110620/1308547067">Varnish勉強会 Tokyo.vclを行いました - ククラフト</a></li>
+      <li><a href="http://d.hatena.ne.jp/mirakui/20110619/1308497959">私がクックパッドの画像配信野郎です - 床のトルストイ、ゲイとするとのこと</a></li>
+      <li><a href="http://blog.xcir.net/?p=438">Tokyo.vclでVarnishCache3の新機能とVUPの仕方を話してきました « cat /dev/random &gt; /dev/null &amp;</a></li>
+      <li><a href="http://blog.udzura.jp/2011/06/20/summary-of-tokyo-varnish-study-on-20110618/">東京varnish勉強会(Tokyo.vcl)まとめ «  blog.udzura.jp</a></li>
+    </ul>
+  </li>
+</ul>
+
+</div>
+  
+  
+
+
+
+
+    </article>
   
   
     <article>
@@ -284,268 +540,6 @@
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2011/05/28/access-from-scala-to-mongodb-on-dotcloud/">DotCloudのMongoDBをScalaから使ってみる</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-05-28T20:00:57+09:00" pubdate data-updated="true">2011-05-28 (Sat)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>DotCloudにDuoStackが<a href="http://gigaom.com/cloud/exclusive-paas-startups-unite-dotcloud-buys-duostack/">買収され</a>て、DotCloudでもMongoDBが使えるようになりましたし、node.jsも使えるしで、ますますDotCloudが魅力的なものになってきました。</p>
-
-<p>ただし、node.jsはサポートされても、WebSocketは正式サポートされていないと<a href="http://docs.dotcloud.com/components/nodejs/">公式マニュアル</a>にも書いてありますがWebSocketサポート済みのDuoStack買収によってどう流れるか気になるところです。</p>
-
-<p>さて今回は、前回作ったものをベースにScalaからMongoDBへアクセスするサンプルをDotCloudで動かすまでを書いておきます。（まぁ、Scalaのコードはオマケみたいなものですけど…）</p>
-
-<p>前回の記事はこちらです。</p>
-
-<ul>
-  <li><a href="http://blog.restartr.com/2011/05/09/sample-sbt-project-for-dotcloud/">ScalaをDotCloudにアップロードするためのsbtサンプル</a></li>
-</ul>
-
-<p>ちなみにDotCloudは下記バージョンにて動作しているみたいです（2011.05.28現在)</p>
-
-<ul>
-  <li>nginx 0.7.65</li>
-  <li>jetty 6.1</li>
-  <li>mongodb 1.8.1</li>
-</ul>
-
-<h3 id="section">作成したサンプルアプリ</h3>
-
-<p>事情により停止する場合があるかもしれませんがご了承を。</p>
-
-<ul>
-  <li><a href="http://samplemongo.ramee.dotcloud.com/">http://samplemongo.ramee.dotcloud.com/</a></li>
-</ul>
-
-<h3 id="dotcloudmongodb">DotCloudにMongoDBサーバーを準備する</h3>
-
-<p>DotCloudのMongoDBマニュアルはこちら</p>
-
-<ul>
-  <li><a href="http://docs.dotcloud.com/components/mongodb/">MongoDB ? DotCloud documentation</a></li>
-</ul>
-
-<p>上記マニュアルにしたがって作成すればMongoDBサーバーを準備できます。
-基本的には、追加したいサーバーを登録して、ユーザーを作成するだけです。</p>
-
-<p>簡単。</p>
-
-<p>今回は”example.mongo”という名前で作成する例を記してありますので、
-それぞれ自分の作成したいアプリ名に読み替えて下さい。</p>
-
-<h4 id="section-1">サーバーを作成</h4>
-
-<p>事前に”dotcloud create example”は実行してあるものとします。
-詳しくはこちらの<a href="http://docs.dotcloud.com/tutorials/firststeps/#id2">マニュアル</a>を見てください。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>dotcloud deploy -t mongo example.mongo
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">&gt; Created <span class="s2">&quot;example.mongo&quot;</span>.
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h4 id="dbidpass">DB情報を確認（ID/PASS）</h4>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>dotcloud info example.mongo
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>deployコマンド実行してから実際に作成されるまで少し時間がかかります。
-すぐにinfoコマンドを実行すると下記エラーがでます。
-※正確に測ってませんが数十秒くらい？</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">&gt; Sat May 28 08:14:43 Error: couldn<span class="err">&#39;</span>t connect to server 127.0.0.1 shell/mongo.js:79
-</span><span class="line">&gt; exception: connect failed
-</span><span class="line">&gt; Connection to mongo.example.dotcloud.com closed.
-</span><span class="line">&gt; Abort.
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>作成完了していれば、下記情報が表示されますので、”mongodb_password: <strong>**</strong>“に記載されたパスワードをメモしておきます。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">cluster: wolverine
-</span><span class="line">config:
-</span><span class="line">    mongodb_password: ******
-</span><span class="line">created_at: 1306570413.6722209
-</span><span class="line">name: example.mongo
-</span><span class="line">namespace: example
-</span><span class="line">ports:
-</span><span class="line">-   name: ssh
-</span><span class="line">    url: ssh://mongodb@mongo.example.dotcloud.com:5906
-</span><span class="line">-   name: mongodb
-</span><span class="line">    url: mongodb://root:******@mongo.example.dotcloud.com:5907
-</span><span class="line">state: running
-</span><span class="line"><span class="nb">type</span>: mongodb
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h4 id="mongodb">MongoDBサーバーへログイン</h4>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>dotcloud run example.mongo mongo
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>infoコマンドで表示されたパスワードを使って、”sampledb”というdbにアプリユーザーを追加します。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">&gt; use sampledb
-</span><span class="line">switched to db sampledb
-</span><span class="line">&gt; db.getSisterDB<span class="o">(</span><span class="s2">&quot;admin&quot;</span><span class="o">)</span>.auth<span class="o">(</span><span class="s2">&quot;root&quot;</span>, <span class="s2">&quot;&lt;infoコマンドで表示されるパスワード&gt;&quot;</span><span class="o">)</span>;
-</span><span class="line">1
-</span><span class="line">&gt; db.addUser<span class="o">(</span><span class="s2">&quot;APPUSER_NAME&quot;</span>, <span class="s2">&quot;APPPUSER_PASS&quot;</span><span class="o">)</span>;
-</span><span class="line"><span class="o">{</span>
-</span><span class="line">     <span class="s2">&quot;user&quot;</span> : <span class="s2">&quot;APPUSER_NAME&quot;</span>,
-</span><span class="line">     <span class="s2">&quot;readOnly&quot;</span> : <span class="nb">false</span>,
-</span><span class="line">     <span class="s2">&quot;pwd&quot;</span> : <span class="s2">&quot;xxxxxxxxxxxxxxxxxxxxxxxxxxxxx&quot;</span>
-</span><span class="line"><span class="o">}</span>
-</span><span class="line">&gt; <span class="nb">exit</span>
-</span><span class="line">bye
-</span><span class="line">Connection to mongo.example.dotcloud.com closed.
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>※とりあえず一旦ログアウトしてますが、別に必須じゃないです。</p>
-
-<h4 id="section-2">再度ログインしてテスト操作してみる</h4>
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>dotcloud run example.mongo mongo
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>新規作成したユーザーでDB操作が可能か確認してみます。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="c"># mongo</span>
-</span><span class="line">Warning: Permanently added <span class="s1">&#39;[mongo.example.dotcloud.com]:5906,[174.129.17.131]:5906&#39;</span> <span class="o">(</span>RSA<span class="o">)</span> &gt; to the list of known hosts.
-</span><span class="line">MongoDB shell version: 1.8.1
-</span><span class="line">connecting to: <span class="nb">test</span>
-</span><span class="line">&gt; use sampledb;
-</span><span class="line">switched to db sampledb
-</span><span class="line">&gt; db.auth<span class="o">(</span><span class="s2">&quot;sampleuser&quot;</span>, <span class="s2">&quot;samplepass&quot;</span><span class="o">)</span>;
-</span><span class="line">1
-</span><span class="line">&gt; db.sampledb.save<span class="o">({</span>id:1,name:<span class="s2">&quot;foo&quot;</span><span class="o">})</span>;
-</span><span class="line">&gt; db.sampledb.find<span class="o">()</span>;
-</span><span class="line"><span class="o">{</span> <span class="s2">&quot;_id&quot;</span> : ObjectId<span class="o">(</span><span class="s2">&quot;4de0b033a1fd29eb0e1522fd&quot;</span><span class="o">)</span>, <span class="s2">&quot;id&quot;</span> : 1, <span class="s2">&quot;name&quot;</span> : <span class="s2">&quot;foo&quot;</span> <span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>問題なさそうなので、あとはアプリを”dotcloud push”して動かすだけです。</p>
-
-<h3 id="scala">scalaからアクセスするサンプル</h3>
-
-<p>サービス名を「example.samplemongo”として作成する例です。</p>
-
-<p>requirementsはイカのとおり。</p>
-
-<ul>
-  <li>scala 2.9.0</li>
-  <li>sbt 0.7.7</li>
-  <li>jetty 7.3.1.v20110307</li>
-  <li>casbah 2.1.5.0</li>
-</ul>
-
-<p><code>sbt</code>
-で基本ディレクトリを作成したら、下記プロジェクト設定を{root}/project/build/MongoSampleProject.scala”として保存します。</p>
-
-<p>前回の設定クラスをコピーしてきたので、”sbt dot_create”と”sbt dot_push”も一応使えます。</p>
-
-<p>※”example.mongo”の名称は適宜読み替えでお願いします。
-##### MongodbSampleProject.scala</p>
-
-<script src="https://gist.github.com/996769.js?file=MongodbSampleProject.scala"></script>
-
-<p>配置できたら、</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">sbt reload update
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>でライブラリを読み込みます。</p>
-
-<p>あとは下記Servletの実装とweb.xmlを用意したらOK．</p>
-
-<h5 id="mongodbservletscala">MongodbServlet.scala</h5>
-
-<script src="https://gist.github.com/996769.js?file=MonbodbServlet.scala"></script>
-
-<h5 id="webxml">web.xml</h5>
-
-<script src="https://gist.github.com/996769.js?file=web.xml"></script>
-
-<p>できたら、”sbt dot_push”でdotcloudへアップロードされるはずです。</p>
-
-<p>最後に、”http:／／samplemongo.exapmle.dotcloud.com”にアクセスして、フォームからデータ登録ができれば成功です。</p>
-
-<p>RDBMSにくらべてデータ保存・取得までが圧倒的に簡単で、PaaSでもMongoDBはいい感じですね！</p>
-
-</div>
-  
-  
-
-
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/page/16/">&larr; Older</a>
@@ -601,6 +595,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2015/12/31/things-of-2015/">2015年ふりかえり</a>
+      </li>
+    
+      <li class="post">
         <a href="/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix/">Elixir/PhoenixでISUCON5予選の参考実装を書いた</a>
       </li>
     
@@ -614,10 +612,6 @@
     
       <li class="post">
         <a href="/2015/01/18/peek-for-profiling-rails-app/">Peek - Railsアプリのプロファイリングツール</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2014/12/31/books-2014/">2014年に購入した技術書</a>
       </li>
     
   </ul>

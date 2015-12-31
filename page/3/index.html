@@ -11,8 +11,8 @@
   <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="投稿数を稼ぐべく、とりあえず今年購入した（であろう）本をリストアップしつつ、今年の振り返りでも。 購入しただけで読めてないものや、途中のものもありますが、技術書なんてリファレンスなので全部読む必要もないわけで(言い訳)。
-一度手放した本とか角川祭りとかでKindleストアでの購入が増えた年でした。 &hellip;">
+  <meta name="description" content="Peekという、Railsアプリケーションに組み込めるプロファイリングツール（群）があります。
+How we keep Github fastでも言及されているツールです。(2012年なので少し古いですが。) プロファイリングツールと適正 プロファイリング用のツールはたくさんあって、 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -123,6 +123,113 @@
       
   <header>
     
+      <h1 class="entry-title"><a href="/2015/01/18/peek-for-profiling-rails-app/">Peek - Railsアプリのプロファイリングツール</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-01-18T13:26:53+09:00" pubdate data-updated="true">2015-01-18 (Sun)</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><a href="https://github.com/peek/peek">Peek</a>という、Railsアプリケーションに組み込めるプロファイリングツール（群）があります。
+<a href="https://github.com/blog/1252-how-we-keep-github-fast">How we keep Github fast</a>でも言及されているツールです。(2012年なので少し古いですが。)</p>
+
+<h3 id="section">プロファイリングツールと適正</h3>
+
+<p>プロファイリング用のツールはたくさんあって、時間がかかる特定の処理を改善するために使うものもあれば、常時記録して特異な変化を監視するものもあります。</p>
+
+<p>今回は後者寄りの要件であり、これに見合うものとしてPeekを取り上げました。</p>
+
+<p>Railsでこれ以外のツールとしては、<a href="https://github.com/MiniProfiler/rack-mini-profiler">rack-mini-profiler</a>や<a href="https://github.com/newrelic/rpm">newrelic/rpm</a>などがあり、それらについて今回の要件と照合してみました。</p>
+
+<h4 id="newrelic-rpm">newrelic rpm</h4>
+
+<p>newrelicのサービス上で結果が確認出来るだけではなく、<a href="https://github.com/newrelic/rpm#developer-mode">デベロッパーモード</a>の場合に”/newrelic”にアクセスするとリクエストごとのプロファイル結果が見れます。
+ただ、別途”/newrelic”のURLを開く必要があり、パフォーマンスチェックを忘れがちになる可能性があります。</p>
+
+<h4 id="rack-mini-profiler">rack-mini-profiler</h4>
+
+<p>トータルの処理時間は画面隅に表示されるけれど、個々の処理時間については画面隅のボックスをクリックして詳細を開かないといけません。</p>
+
+<h4 id="peek">peek</h4>
+
+<p>Peekは適切な粒度で常に目に入れることができるツールであり、常用するのにちょうど良いのでは、という印象です。</p>
+
+<p>先のGihtubのブログでは”Mission controll bar”いう、スタッフがプロダクション環境でも常にパフォーマンスを確認できる仕組みが整えられています。</p>
+
+<h3 id="peek-1">Peekのしくみ</h3>
+
+<p>しくみは以下ブログ記事が詳しいです。</p>
+
+<ul>
+  <li><a href="http://r7kamura.hatenablog.com/entry/2014/09/24/004607">Railsの性能測定用プラグイン peek/peek - ✘╹◡╹✘</a></li>
+</ul>
+
+<p>リクエストごとにIDを発行し、そのリクエストごとに各種計測値をデータストア（ファイル、Redis、Memcached等）に保存。
+ページ表示後に別リクエスト(“/peek/…“)として非同期で計測値を取得して、画面の要素を置換する、というしくみ。</p>
+
+<h3 id="peek-2">Peekの拡張</h3>
+
+<p>Peek自体はプラットフォームを提供するだけで、実際の個々の値を記録したりするのはそのプラグイン。</p>
+
+<p>対応しているのは<a href="https://github.com/peek/peek#available-peek-views">Available Peek views</a>
+に記載されています。仮にほしいものが見つからなかったとしても、わりと手軽に追加できるような仕組みになっています。</p>
+
+<p>ということでmemcached用のプラグインをつくりました。</p>
+
+<ul>
+  <li><a href="https://github.com/ReSTARTR/peek-memcached">peek-memcached</a></li>
+</ul>
+
+<p><a href="https://github.com/evan/memcached">evan/memcached</a>という、cで実装されたruby用memcachedクライアントがあって、それを使ったmemcachedアクセスを記録するプラグインです。</p>
+
+<p>このプラグインでは<code>Memcached#get</code><code>Memcached#set</code>メソッドにモンキーパッチあてて、回数と時間を記録しています。</p>
+
+<ul>
+  <li>呼び出し回数(calls)</li>
+  <li>総処理時間(duration)</li>
+</ul>
+
+<p>に加えて、下記も記録できるようになっています。</p>
+
+<ul>
+  <li>キャッシュヒット数(Get[HIT])</li>
+  <li>キャッシュミス数(Get[MISS])</li>
+  <li>キャッシュ更新数(Set)</li>
+</ul>
+
+<h3 id="peek-3">Peekの惜しいところ</h3>
+
+<p>要素が増えるとブラウザの横幅に収まりきらなくなって、折り返し＆はみ出します。本当に必要な要素に絞る抑止力にはなりますが、もう少しコンパクトに収められるとよりよいかな、と。</p>
+</div>
+  
+  
+
+
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
       <h1 class="entry-title"><a href="/2014/12/31/books-2014/">2014年に購入した技術書</a></h1>
     
     
@@ -217,146 +324,6 @@
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2014/08/20/microservices-architecture/">InfoQ eMAG: Microservicesを少し読んだまとめと感想</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-08-20T00:14:35+09:00" pubdate data-updated="true">2014-08-20 (Wed)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>なんだか、世間的にMicroservicesが次の注目対象になりそうな感じです。</p>
-
-<p>DockerConでも複数のセッションで言及があったり、はてブにもたまに関連記事があがってきたりしてます。</p>
-
-<p>実態はどんなものかイメージしにくかったのですが、最近InfoQで公開されたeMAGが情報としてまとまっている気がしたので、これを読み進めています。</p>
-
-<ul>
-  <li><a href="http://www.infoq.com/minibooks/emag-microservices">InfoQ eMAG: Microservices</a></li>
-</ul>
-
-<h3 id="section">本に含まれている内容</h3>
-
-<p>この本は、過去のInfoQ記事や各ブログを再構成したもので、以下の記事タイトルがまとめられています。</p>
-
-<ul>
-  <li>Microservices: Decomposing Applications for Deployability and Scalability</li>
-  <li>Microservices and SOA</li>
-  <li>Adrian Cockcroft on Microservices and DevOps</li>
-  <li>Microservices? What about Nanoservices?</li>
-  <li>Building Products at SoundCloud</li>
-  <li>The Strengths and Weaknesses of Microservices</li>
-  <li>GOTO Berlin: Microservices as an Alternative to Monoliths</li>
-</ul>
-
-<p>そのうち、以下を読んだので、まとめと雑感を書きます。</p>
-
-<ul>
-  <li>Microservices: Decomposing Applications for Deployability and Scalability</li>
-  <li>Building Products at SoundCloud</li>
-</ul>
-
-<p>本の主題はMicroservices Architectureですが、それに伴うソフトウェアの設計手法などの参照もたくさん含まれているので、いろんな情報への入口としても勉強になると思います。</p>
-
-<h4 id="microservices-decomposing-applications-for-deployability-and-scalability">Microservices: Decomposing Applications for Deployability and Scalability</h4>
-
-<ul>
-  <li>ドメイン単位で複数に分割されたもの小さなサービスのの集合体をMicroservices Architectureと呼ぶ</li>
-  <li>既存フレームワークとかでservice層として定義していた単位が別々のプロセスに切りだされているイメージ</li>
-  <li>一方、既存のシステムはMonolithic Architectureと呼ばれる</li>
-  <li>システム設計における単一責任原則の適用ともいえる</li>
-  <li>現実に則したSOAの焼き直しである</li>
-</ul>
-
-<p>メリット</p>
-
-<ul>
-  <li>個々にデプロイ可能である</li>
-  <li>個々のMicroserviceが独立しているため、サービス全体の可用性向上を期待できる</li>
-  <li>開発チームを小さい単位に分割しやすい</li>
-  <li>言語やフレームワークの移行が容易になる。変更が小規模なので仮に失敗しても取り戻しやすい。</li>
-</ul>
-
-<p>デメリット</p>
-
-<ul>
-  <li>個々にはシンプルでも全体の複雑性は増す</li>
-  <li>サービス間のIPCメカニズムが必要</li>
-  <li>サービス間をまたいだテストがやりにくい</li>
-  <li>他サービスに影響する変更のデプロイは手順を十分に検討する必要がある</li>
-  <li>運用が大変。ハイレベルな自動化が要求される</li>
-</ul>
-
-<h4 id="building-products-at-soundcloud">Building Products at SoundCloud</h4>
-
-<p>SoundCloudのMicroservices移行話は「Building Products at SoundCLoud」という三回分のブログ記事を再構成してまとめた内容になっています。</p>
-
-<ul>
-  <li><a href="https://developers.soundcloud.com/blog/building-products-at-soundcloud-part-1-dealing-with-the-monolith">Building Products at SoundCloud—Part I: Dealing with the Monolith</a></li>
-  <li><a href="https://developers.soundcloud.com/blog/building-products-at-soundcloud-part-2-breaking-the-monolith">Building Products at SoundCloud—Part II: Breaking the Monolith</a></li>
-  <li><a href="https://developers.soundcloud.com/blog/building-products-at-soundcloud-part-3-microservices-in-scala-and-finagle">Building Products at SoundCloud—Part III: Microservices in Scala and Finagle</a></li>
-</ul>
-
-<p>MonolithicなRailsアプリからMicroservicesに移行するまでの手順や失敗が紹介されていて、これから移行を進めるチームにとって有益になるでしょう。</p>
-
-<p>彼らは既存アプリの機能をいきなり別言語で切り出すのではなく、</p>
-
-<blockquote>
-  <p>分析→リファクタリング→Service分割→新技術の採用</p>
-</blockquote>
-
-<p>という手順を踏んでいます。この移行における重要な点は、どのような新技術を採用するかではなく、DDDをベースとしたドメイン分析を行うことにあると思います。分割の単位を誤ったなら個々のサービスの依存性を排除しきれなくなり全体の複雑性は確実に高くなります。</p>
-
-<p>ドメイン分割の一例として、<a href="http://martinfowler.com/bliki/BoundedContext.html">Bounded Context</a>を利用した例が紹介されています。</p>
-
-<p>また、依存性の低い個々のMicroserviceにできることで、それぞれに独立したチームを配置することも可能になります。
-ただ、それぞれのチームが無秩序に技術選定を行うことでスキルや情報の局所性(<a href="http://en.wikipedia.org/wiki/Bus_factor">Bus Factor</a>の低下)を招くことになるため、一定のルールを決めることも重要になるようです。結果として彼らはJVMベースのScala,ClojureJRubyを中心としたシステムを作ることを決定しています。(同時にGoとRubyもサポート)</p>
-
-<h4 id="section-1">雑感</h4>
-
-<p>Microservicesへ移行するにはサービス規模・システム規模・開発チーム規模が大きいことが前提であり、そうでない限りはMonolithicなシステムで頑張るほうが良いかな、というのが個人的な意見です。また、DDDのような適切なドメイン分析ができるアーキテクトが存在しない場合にもMicroservicesはあまり良い選択肢とはいえないと思います。それらの前提をクリアできるのであれば、長いプロダクトのライフスパンにおいて、システムそのものだけでなく開発チームも含めて良い影響をもらたすことになるのではないでしょうか。</p>
-
-<p>ということで「Microservicesの本質はドメイン分析であり、デプロイ単位や技術選定などのメリットは副次的なものである」というのがこのeMAGを読んで得たとりあえずの結論です。</p>
-
-<h4 id="section-2">参考リンク</h4>
-
-<p>Martin Fowler氏の記事だけでなく、DockerConでのYelpのスライドやInfoQのbitlyの記事も参考になります。</p>
-
-<ul>
-  <li><a href="http://martinfowler.com/articles/microservices.html">Microservices</a></li>
-  <li><a href="https://recompile.net/posts/microservices.html">マイクロサービス（microservices）とは何か — recompile.net</a></li>
-  <li><a href="http://www.slideshare.net/dotCloud/building-a-smarter">Building a smarter application Stack by Tomas Doran from Yelp</a></li>
-  <li><a href="http://www.infoq.com/jp/news/2014/08/bitly-lessons-learned">bitlyでの分散システム構築から学んだこと</a></li>
-</ul>
-</div>
-  
-  
-
-
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/page/4/">&larr; Older</a>
@@ -412,6 +379,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2015/12/31/things-of-2015/">2015年ふりかえり</a>
+      </li>
+    
+      <li class="post">
         <a href="/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix/">Elixir/PhoenixでISUCON5予選の参考実装を書いた</a>
       </li>
     
@@ -425,10 +396,6 @@
     
       <li class="post">
         <a href="/2015/01/18/peek-for-profiling-rails-app/">Peek - Railsアプリのプロファイリングツール</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2014/12/31/books-2014/">2014年に購入した技術書</a>
       </li>
     
   </ul>
