@@ -4,7 +4,7 @@
   <title><![CDATA[I Will Survive]]></title>
   <link href="http://blog.restartr.com/atom.xml" rel="self"/>
   <link href="http://blog.restartr.com/"/>
-  <updated>2016-02-19T21:06:13+09:00</updated>
+  <updated>2016-02-19T21:08:08+09:00</updated>
   <id>http://blog.restartr.com/</id>
   <author>
     <name><![CDATA[ReSTARTR]]></name>
@@ -12,6 +12,188 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[ErgoDox EZを注文した(けどまだ届いてない)]]></title>
+    <link href="http://blog.restartr.com/2016/02/17/ergodox-ez/"/>
+    <updated>2016-02-17T22:57:45+09:00</updated>
+    <id>http://blog.restartr.com/2016/02/17/ergodox-ez</id>
+    <content type="html"><![CDATA[<p><img src="http://res.cloudinary.com/indiegogo-media-prod-cld/image/upload/c_limit,w_620/v1435062448/e209onukdbrkpy4fygew.png" alt="ErgoDox EZ" /></p>
+
+<p>大きなプロジェクトが一区切りついたこともあって、勢いでErgoDox EZを買いました。</p>
+
+<p>お高めキーボード遍歴としては、FILCO Majestouch(黒軸)を1年程使った後、ここ5年くらいずっとHHKBpro2(墨黒無刻印)を使っていました。が、ずっとこれに変わるコンパクトかつ親指をもてあまさない最高なキーボードがないかなと思ってました。</p>
+
+<p>つい最近「<a href="http://nippondanji.blogspot.jp/2016/01/ergodox.html">漢(オトコ)のコンピュータ道: キーボードを新しくした話(ErgoDox)</a>」を目にしたこともあって、また理想のキーボードを探してみることにした結果、ErgoDox EZに行き着いた、といういきさつです。</p>
+
+<p>本当なら届いてからポストしようと考えてたのですが、確認したら4月あたりまで1ヶ月程かかるらしいので、とりあえず注文するまでに調べたことを書いておきます。</p>
+
+<blockquote class="twitter-tweet" data-lang="ja"><p lang="en" dir="ltr"><a href="https://twitter.com/ReSTARTR">@restartr</a> Hello, and thank you for supporting us! We expect to ship current orders around April, working hard to cut down lead times.</p>&mdash; ErgoDox EZ (@ErgoDoxEZ) <a href="https://twitter.com/ErgoDoxEZ/status/699937511099863041">2016, 2月 17</a></blockquote>
+<script async="" src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+<p>まじか…orz</p>
+
+<h2 id="ergodox">ErgoDoxを買えるところ</h2>
+
+<p><a href="http://ergodox.org">ErgoDox</a>そのものは<a href="http://www.key64.org">The Key64 Keyboard</a>の流れから生まれた設計とかコードが公開されたプロジェクトであり、実際にはパーツを揃えて組み立てたりしないといけないのが敷居の高いところ。
+ですが、クラウドファンディングで製造販売する流れができていて非常にありがたいです。</p>
+
+<ul>
+  <li><a href="https://www.indiegogo.com/projects/ergodox-ez-an-incredible-mechanical-keyboard#/">ErgoDox EZ: An incredible mechanical keyboard | Indiegogo</a></li>
+  <li><a href="http://falbatech.pl/prestashop/index.php">FalbaTech</a></li>
+  <li><a href="https://www.massdrop.com/buy/ergodox">ErgoDox Ergonomic Mechanical Keyboard Kit Drop - Massdrop</a>(今は買えない)</li>
+  <li><a href="https://www.massdrop.com/buy/infinity-ergodox">Infinity ErgoDox Ergonomic Keyboard Kit Drop - Massdrop</a>(今は買えない)</li>
+</ul>
+
+<p>完成形だったり、組み立て式だったり、細部の造形がイマイチだったり様々です。</p>
+
+<p>ErgoDox EZが写真で見る限りかなり質感よさそうですし、傾斜できるスタンドが用意されていたりキートップとスイッチ(後述)を6種類から選べるのが気の利いている点が気に入ってこれにしました。</p>
+
+<h2 id="ergodox-ez">ErgoDox EZについて</h2>
+
+<p>サイトを眺めているといろいろ知らない要素が出てきて「はて?」となったので、ざっと重要なポイントを抜き出しつつ軽く補足をくわえて以下に書き出してみます。</p>
+
+<h3 id="section">概要</h3>
+
+<ul>
+  <li>完成形（組み立てでない）</li>
+  <li>2年保証</li>
+  <li><a href="http://www.maruichirubber.co.jp/rubber/newpage2-2.htm">インジェクションモールドABS製</a>フレーム
+    <ul>
+      <li>他の成形手法より大量生産に向いているが高価、らしい</li>
+    </ul>
+  </li>
+  <li>刻印のあるキーキャップも選択可能
+    <ul>
+      <li>基本は無刻印</li>
+    </ul>
+  </li>
+  <li>アクセサリー
+    <ul>
+      <li>Tilt/Tentキット</li>
+      <li>リストレスト</li>
+    </ul>
+  </li>
+  <li>強力なカスタマイズ力、オープンソースなファームウェア(QMK)</li>
+  <li>Nキーロールオーバーと<a href="https://ja.wikipedia.org/wiki/マウスキー">マウスキー</a>に対応</li>
+</ul>
+
+<h3 id="section-1">価格</h3>
+
+<ul>
+  <li>本体、Tilt/Tentキット、リストレスト $295</li>
+  <li>本体のみ(キースイッチあり、キーキャップなし) $205</li>
+  <li>本体のみ(無刻印キートップ) $240</li>
+  <li>本体のみ(刻印キートップ) $240</li>
+  <li>本体のみ(キースイッチあり、キーキャップなし)、Tilt/Tent Kit、リストレスト $260</li>
+  <li>Tilt/Tentキット、リストレスト $85</li>
+  <li>Tilt/Tentキット $45</li>
+  <li>リストレスト $45</li>
+</ul>
+
+<p>バラで買うと$240 + $45 + $45の$330なので、全部入りを買うのが良いかと。
+あとでキーキャップを変えるにしても揃えるのが大変そうなので。</p>
+
+<p>全部入りの場合、120円/ドル換算で約35,000円程度です。HHKBpro2とかREALFORCEが2万円強なので、それより1.5倍くらいお高めです。が、Kinesisが定価45,000を超えることを考えるとなかなか良いポジションではないかと思います。(一般的なキーボードからしたら十分すぎるほど高価ですけど…)</p>
+
+<h3 id="section-2">キーキャップ</h3>
+
+<ul>
+  <li>PBT樹脂DCS キーキャップ
+    <ul>
+      <li>刻印ありの場合はDSA(DCSよりもフラットな並び)</li>
+    </ul>
+  </li>
+  <li>PBTは樹脂の種類で、ABSに比べて耐久性に優れている
+    <ul>
+      <li>HHKBpro2のキーキャップはPBTでケースはABS<a href="https://www.pfu.fujitsu.com/hhkeyboard/notice.html">とのこと</a></li>
+    </ul>
+  </li>
+  <li>DCSはキーキャップ形状の一種
+    <ul>
+      <li><a href="http://www.keycapsdirect.com/pdfs/DCSFamily.pdf">DCS FAMILY(PDF)</a></li>
+    </ul>
+  </li>
+</ul>
+
+<p>おそらく<a href="http://www.gateron.com/page153?product_id=57">Gateron製</a>ではないかと思います(キースイッチがgateron製なので)</p>
+
+<h3 id="section-3">キースイッチ（軸）</h3>
+
+<ul>
+  <li>Gateron製キースイッチ
+    <ul>
+      <li><a href="http://www.gateron.com/page152?product_category=1&amp;brd=1">机械键盘轴开关，国产cherry轴开关，gateron轴青轴红轴茶轴黑轴gateron官网官方网站</a></li>
+      <li>Cherryスイッチクローン(中国製?)</li>
+      <li>Cherryに比べて滑らか</li>
+    </ul>
+  </li>
+</ul>
+
+<p>ErgoDox EZでは6つのスイッチから選べます。
+このスイッチについてさんざん調べまわった結果、僕は”Gateron White”を選択しました。</p>
+
+<p>ちなみに、注文した後のメールに各スイッチの仕様書(PDF)が添付されていますので、そちらも見つつ選ぶと良いです。
+(すべての注文処理が終わった後にこの添付ファイルに気づきました…)</p>
+
+<ul>
+  <li>Gateron White(リニア・35g)</li>
+  <li>Gateron Red(リニア・45g =<a href="https://deskthority.net/wiki/Cherry_MX_Red">Cherry MX赤軸</a>)</li>
+  <li>Gateron Black(リニア・50g, =<a href="https://deskthority.net/wiki/Cherry_MX_Black">Cherry MX黒軸</a>)</li>
+  <li>Gateron Yellow(リニア・50g)</li>
+  <li>Gateron Brown(タクタイル・45g =<a href="https://deskthority.net/wiki/Cherry_MX_Brown">Cherry MX茶軸</a>)</li>
+  <li>Gateron Blue(タクタイル・55g =<a href="https://deskthority.net/wiki/Cherry_MX_Blue">Cherry MX青軸</a>)</li>
+</ul>
+
+<p>PDFに表記されていた図を雑に並べてみました。</p>
+
+<p><img src="https://www.evernote.com/shard/s4/sh/6b2bf7a4-e73b-4fb3-b70d-bd75dbf64b69/8ea0e75414c133c7/res/70dd1230-de5f-4bc3-a25c-795101208dbc/スクリーンショット%202016-02-17%2020.37.23.png?resizeSmall&amp;width=832" alt="" /></p>
+
+<p>参考までに、他のキースイッチの数値はこんな感じ。</p>
+
+<ul>
+  <li>HHKB Pro2 荷重45g 4mmストローク</li>
+  <li>REALFORCE 荷重30~45g(変荷重と固定の3種)  4mmストローク</li>
+</ul>
+
+<p>自分の場合、クリック感があるタクタイルより、リニアが好き（FILCO時代は黒軸でした)なので、白、赤、黄、黒あたりが選択肢となります。
+HHKB pro2が荷重45gなので、赤軸がいちばん近いです。REALFORCEなら白軸35gが近いでしょうか。</p>
+
+<p>Youtubeにもいろいろがあがっていましたので、こちらも参考に。</p>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/gy2C1Of0oQk" frameborder="0" allowfullscreen=""></iframe>
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/A2Px2f6A5dM" frameborder="0" allowfullscreen=""></iframe>
+
+<p>とまぁそんな感じの製品です。到着までまだまだ待たないといけないのがつらいです。。。
+いまのところ注文してから到着まで1ヶ月とのことなので、はやめに注文したほうが良いかと思います。
+購入してみようかな？と思った方はこちらからどうぞ:-)</p>
+
+<iframe src="https://www.indiegogo.com/project/ergodox-ez-an-incredible-mechanical-keyboard/embedded" width="222px" height="445px" frameborder="0" scrolling="no"></iframe>
+
+<p>ちなみに、<a href="http://www.jw-shop.com/menu-row/keyboard.htm">キーボード カスタム制作</a>というサービスもあるみたいです。</p>
+
+<h2 id="section-4">参考にしたところ</h2>
+
+<ul>
+  <li><a href="http://nippondanji.blogspot.jp/2016/01/ergodox.html">漢(オトコ)のコンピュータ道: キーボードを新しくした話(ErgoDox)</a></li>
+  <li>
+    <table>
+      <tbody>
+        <tr>
+          <td>[ergodoxを買いました</td>
+          <td>kammers](http://kammers.aa0.netvolante.jp/20150928201048/)</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li><a href="https://deskthority.net/wiki/ErgoDox">ErgoDox - Deskthority wiki</a></li>
+  <li><a href="https://www.massdrop.com/buy/gateron-switches">Gateron Switches Drop - Massdrop</a></li>
+  <li><a href="https://deskthority.net/wiki/Gateron_KS-3_series">Gateron KS-3 series - Deskthority wiki</a></li>
+  <li><a href="http://g-chan.dip.jp/square/archives/2016/02/nisse_nisse.html">G-chan Square - [キーボード][NISSE] エスリルのキーボード”NISSE” 3台目を購入しました</a></li>
+</ul>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[2015年ふりかえり]]></title>
@@ -2596,64 +2778,6 @@ pytestはかなり詳細に表示してくれるので、レポートの内容�
 </ul>
 
 <p>それでは。</p>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[プログラマーにとっての『UMLっぽい何か』]]></title>
-    <link href="http://blog.restartr.com/2013/04/01/uml-for-programmer/"/>
-    <updated>2013-04-01T20:12:54+09:00</updated>
-    <id>http://blog.restartr.com/2013/04/01/uml-for-programmer</id>
-    <content type="html"><![CDATA[<p>わりと普遍的な話題だったので便乗です。</p>
-
-<p><a href="http://nekoya.github.com/blog/2013/04/01/useful-uml/"> UMLも捨てたもんじゃない - nekoya press </a></p>
-
-<blockquote>
-<ul>
-<li>UMLは設計の技法ではない</li>
-<li>頭の中を整理するため、あるいは人と共有する際の表現技法である</li>
-</ul>
-</blockquote>
-<p>とか、</p>
-
-<blockquote>UMLの厳密な書式ルールには全くこだわりはなく、大まかなイメージだけ伝われば、細かい部分は口頭でフォローすれば十分だと考えていています。そういう意味ではUMLを正しく使っているとは言えないのかも知れませんが、それはそれでいいんじゃないのと。
-
-</blockquote>
-
-<p>は、まったくもって同意見で、「UML」という”なんだか面倒くさそうなイメージ”を捨てて、コードを整理もしくは伝達する補足的なものとして扱うことが大事だと思います。UMLを本を読んできっちり勉強する必要もなくて、英会話が完璧な文法に則る必要がないのと基本的に同じだと思います。</p>
-
-<p>所謂SEが用いるUMLではなくプログラマーにとってのUMLは、もっとくだけたもので良いのです。</p>
-
-<h4 id="section">いつやるか</h4>
-<p>どのフェーズでこの図の作成にとりかかるかが問題になると思いますが、自分の場合は以下の場合に作成を試みることが多いです。</p>
-
-<p>（主にクラス図作成の場合を想定しています。）</p>
-
-<p><strong>1. プロトタイプ的に作り始めたコードが、ある程度育ってきて全体が見えづらいと感じた時</strong></p>
-
-<p>これは自分のために作成するもの。なのでUMLのルールに準拠する必要はありませんので、どちらかといえば書き捨て型といえます。</p>
-
-<p>（※ドキュメントの無いコードを読む場合も書き捨て型で作成します。）</p>
-
-<p>そして、この図をもとに設計を見なおしたりします。</p>
-
-<p><strong>2. 自分が作ったコードを他の誰かが読む時</strong></p>
-
-<p>これは他人のために作成するもの。すでに設計が固まった段階のコードを追いかける上での補足情報になります。</p>
-
-<p>完全にUML準拠する必要はないでしょうが、ある程度は従ったほうが余計な誤解もなくなるかもしれません。1である程度整理ができているのでこの段階での作成は非常にそれ程苦ではないはずです。</p>
-
-<p>どちらの場合もコードありきで、後追いでの図形作成になります。注意すべきなのは、図にすべての情報を詰め込むわけではなく、必要最低限の情報に留めることで図をシンプルに保つことは必要です。</p>
-
-<p>とまぁ、これくらいシンプルなルールであれば、普段の開発フローに取り入れることはさほど大きなコストではないと考えます。多くの人はこれくらいのことはやっているんじゃないかとは思いますが、先のブログでも書かれている通り表立って議論されることはあまりないように感じます。</p>
-
-<h4 id="section-1">図を描くためのツール</h4>
-<p>図形作成のためにいちいち<a href="http://astah.change-vision.com/ja/index.html">astah*</a>やExcel()のようなアプリケーションを立ち上げるのは面倒ですよね。</p>
-
-<p><a href="https://drive.google.com">Google Drive</a>の「図形描画」や「プレゼンテーション」がオススメです。きっちりUML準拠の図を作成するわけではないので、クラス図(もどき)ならこれで十分ですし、共有も簡単です。シーケンス図はちょっと書きづらいかもしれませんが、そんな時はノートやホワイトボードに書いたものを写真に撮って適当な場所で共有すればOKでしょう。</p>
-
-<p>ところで、オブジェクト指向の場合ではなく、（純粋）関数型の場合はどうなのでしょうかね。数式？</p>
 
 ]]></content>
   </entry>

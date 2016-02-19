@@ -11,8 +11,7 @@
   <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="DockerCon2014で発表されたlibchanについて調べたことをまとめてみます。 libchanはlibcontainerやlibswarmと共に発表されました。
-libswarmはDockerを中心にしたエコシステムにおけるベンダーロックインを回避するためのソリューションであり、 &hellip;">
+  <meta name="description" content="TL;DR goの構造体につけるタグは、フォーマットが不正だと読み込まれない(当然) json.Marshalは、構造体のjsonタグがあればその値をキーとしてJSON文字列を生成する json.Unmarshalは、構造体のjsonタグがあればその値を対応するフィールドにマッピングする &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -117,6 +116,256 @@ libswarmはDockerを中心にしたエコシステムにおけるベンダーロ
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2014/08/13/golang-json-marshal-unmarshal/">Goのjson.Marshal/Unmarshalの仕様を整理してみる</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2014-08-13T00:02:42+09:00" pubdate data-updated="true">2014-08-13 (Wed)</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h3 id="tldr">TL;DR</h3>
+
+<ul>
+  <li>goの構造体につけるタグは、フォーマットが不正だと読み込まれない(当然)</li>
+  <li>json.Marshalは、構造体のjsonタグがあればその値をキーとしてJSON文字列を生成する</li>
+  <li>json.Unmarshalは、構造体のjsonタグがあればその値を対応するフィールドにマッピングする
+    <ul>
+      <li>jsonタグがなければ、完全一致もしくはcase-insensitiveなフィールドにマッピングする</li>
+    </ul>
+  </li>
+</ul>
+
+<p>では、ひとつづつ確認していきます。</p>
+
+<h3 id="go">goの構造体につけるタグは、フォーマットが不正だと読み込まれない(当然)</h3>
+
+<p>goの構造体にはタグの機能があって、型の後に特定のフォーマットでアノテーションが記述できます</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">type</span> <span class="nx">MyType</span> <span class="kd">struct</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">Hoge</span> <span class="kt">string</span> <span class="s">`foo:&quot;1&quot; bar:&quot;2&quot;`</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p><code>key:"value"</code>をスペース区切りで複数かけます。
+で、アクセスするにはリフレクションを使います。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="nx">t</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nx">TypeOf</span><span class="p">(</span><span class="nx">MyType</span><span class="p">{})</span>
+</span><span class="line"><span class="nx">tagFoo</span> <span class="o">:=</span> <span class="nx">t</span><span class="p">.</span><span class="nx">Field</span><span class="p">(</span><span class="mi">0</span><span class="p">).</span><span class="nx">Get</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">)</span>
+</span><span class="line"><span class="nx">tagBar</span> <span class="o">:=</span> <span class="nx">t</span><span class="p">.</span><span class="nx">Field</span><span class="p">(</span><span class="mi">0</span><span class="p">).</span><span class="nx">Get</span><span class="p">(</span><span class="s">&quot;bar&quot;</span><span class="p">)</span>
+</span><span class="line"><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;foo=%s, bar=%s\n&quot;</span><span class="p">,</span> <span class="nx">tagFoo</span><span class="p">,</span> <span class="nx">tagBar</span><span class="p">)</span>
+</span><span class="line"><span class="c1">// foo=1, bar=2</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>タグのフォーマットが不正な場合は、値が空になります。コンパイルエラーにはなりません。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">type</span> <span class="nx">MyType</span> <span class="kd">struct</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">Hoge</span> <span class="kt">string</span> <span class="s">`foo:1`</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line"><span class="nx">t</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nx">TypeOf</span><span class="p">(</span><span class="nx">MyType</span><span class="p">{})</span>
+</span><span class="line"><span class="nx">tagFoo</span> <span class="o">:=</span> <span class="nx">t</span><span class="p">.</span><span class="nx">Field</span><span class="p">(</span><span class="mi">0</span><span class="p">).</span><span class="nx">Get</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">)</span>
+</span><span class="line"><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;foo=%#v\n&quot;</span><span class="p">,</span> <span class="nx">tagFoo</span><span class="p">)</span>
+</span><span class="line"><span class="c1">// foo=&quot;&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>このエラーをコンパイルする前に検知するには、<code>go vet</code>コマンドが使えます。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>go vet my_type.go
+</span><span class="line">my_type.go:10: struct field tag <span class="sb">`</span>foo:1<span class="sb">`</span> not compatible with reflect.StructTag.Get
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>できれば<code>go compile</code>実行したときに自動的にチェックしてほしいところですが…</p>
+
+<p>で、jsonパッケージのMarshal/Unmarshalは、このタグを使ってアノテーションを記述することができます。</p>
+
+<h3 id="jsonmarshaljsonjson">json.Marshalは、構造体のjsonタグがあればその値をキーとしてJSON文字列を生成する</h3>
+
+<p>json.Marshalは構造体からJSON文字列への変換する関数です。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">type</span> <span class="nx">MyType</span> <span class="kd">struct</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">A</span> <span class="kt">string</span>
+</span><span class="line">  <span class="nx">FooBar</span> <span class="kt">string</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="nx">mt</span> <span class="o">:=</span> <span class="nx">MyType</span><span class="p">{</span><span class="s">&quot;aaaa&quot;</span><span class="p">,</span> <span class="s">&quot;baz&quot;</span><span class="p">}</span>
+</span><span class="line"><span class="nx">b</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nx">Marshal</span><span class="p">(</span><span class="nx">mt</span><span class="p">)</span>
+</span><span class="line"><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%s\n&quot;</span><span class="p">,</span> <span class="nb">string</span><span class="p">(</span><span class="nx">b</span><span class="p">))</span>
+</span><span class="line"><span class="c1">// {&quot;A&quot;:&quot;aaaa&quot;,&quot;FooBar&quot;:&quot;baz&quot;}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>普通にやると、フィールド名がそのままJSONのキーになります。</p>
+
+<p>ここで構造体のタグ機能をつかって、フィールド名のアノテーションを書くことで、任意のフィールド名でJSONが生成できます。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">type</span> <span class="nx">MyType</span> <span class="kd">struct</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">A</span> <span class="kt">string</span> <span class="s">`json:&quot;a&quot;`</span>
+</span><span class="line">  <span class="nx">FooBar</span> <span class="kt">string</span> <span class="s">`json:&quot;foo_bar&quot;`</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="nx">mt</span> <span class="o">:=</span> <span class="nx">MyType</span><span class="p">{</span><span class="s">&quot;aaaa&quot;</span><span class="p">,</span> <span class="s">&quot;baz&quot;</span><span class="p">}</span>
+</span><span class="line"><span class="nx">b</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nx">Marshal</span><span class="p">(</span><span class="nx">mt</span><span class="p">)</span>
+</span><span class="line"><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%s\n&quot;</span><span class="p">,</span> <span class="nb">string</span><span class="p">(</span><span class="nx">b</span><span class="p">))</span>
+</span><span class="line"><span class="c1">// {&quot;a&quot;:&quot;aaaa&quot;,&quot;foo_bar&quot;:&quot;baz&quot;}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>アノテーション指定した”a”がJSONのキーとして使用されていることが確認できます。</p>
+
+<h3 id="jsonunmarshaljson">json.Unmarshalは、構造体のjsonタグがあればその値を対応するフィールドにマッピングする</h3>
+
+<p>json.UnmarshalはJSON文字列から構造体へ変換する関数です。</p>
+
+<p>まずはタグなしのパターン</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">type</span> <span class="nx">MyType</span> <span class="kd">struct</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">A</span> <span class="kt">string</span>
+</span><span class="line">  <span class="nx">FooBar</span> <span class="kt">string</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="kd">var</span> <span class="nx">mt</span> <span class="nx">MyType</span>
+</span><span class="line"><span class="nx">json</span><span class="p">.</span><span class="nx">Unarshal</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="s">`{&quot;A&quot;:&quot;aaa&quot;, &quot;FooBar&quot;:&quot;baz&quot;}`</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">mt</span><span class="p">)</span>
+</span><span class="line"><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%#v\n&quot;</span><span class="p">,</span> <span class="nx">mt</span><span class="p">)</span> <span class="c1">// main.MyType{A:&quot;aaaa&quot;,FooBar:&quot;baz&quot;}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>JSONのフィールド名がsnake_caseのパターン</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">var</span> <span class="nx">mt</span> <span class="nx">MyType</span>
+</span><span class="line"><span class="nx">json</span><span class="p">.</span><span class="nx">Unarshal</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="s">`{&quot;a&quot;:&quot;aaa&quot;,&quot;foo_bar&quot;:&quot;baz&quot;}`</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">mt</span><span class="p">)</span>
+</span><span class="line"><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%#v\n&quot;</span><span class="p">,</span> <span class="nx">mt</span><span class="p">)</span> <span class="c1">// main.MyType{A:&quot;aaaa&quot;, FooBar:&quot;&quot;}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>ここで「ん？」となるわけです。タグによるアノテーションがないのになぜ小文字のフィールドがちゃんと読み込まれているのか…と。</p>
+
+<p>この仕様、json.Unmarshalのgodocにちゃんと書いてあります。</p>
+
+<p><a href="http://golang.org/pkg/encoding/json/#Unmarshal">func Unmarshal</a></p>
+
+<blockquote>
+  <p>To unmarshal JSON into a struct, Unmarshal matches incoming object keys to the keys used by Marshal (either the struct field name or its tag), preferring an exact match but also accepting a case-insensitive match.</p>
+</blockquote>
+
+<p>どうやら、json.Unmarshalは、JSONに含まれるキーと完全一致か、case-insensitiveに一致する構造体のフィールドにマッピングする仕様となっているようです。もちろん、snake_caseなJSONのキーはアノテーションがないとマッピングされず無視されます。（構造体のフィールドとしてsnale_caseが存在しない限りは)</p>
+
+<h3 id="section">経緯</h3>
+
+<p>先日、<a href="http://connpass.com/event/7914/">ヒカルのGO! hikarie.go #2</a>で<a href="https://twitter.com/yosuke_furukawa">@yosuke_furukawa</a>さんによるGoでJSON APIを書いてみるというハンズオンを体験してきました。</p>
+
+<ul>
+  <li><a href="https://github.com/yosuke-furukawa/golang-study">yosuke-furukawa/golang-study</a></li>
+</ul>
+
+<p>そこで、アノテーションをつけた構造体を使ってMarshalした時に、書いたコードがこれです。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">type</span> <span class="nx">User</span> <span class="kd">struct</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">Name</span> <span class="kt">string</span> <span class="s">`json:name`</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line"><span class="nx">user</span> <span class="o">:=</span> <span class="nx">User</span><span class="p">{</span><span class="s">&quot;restartr&quot;</span><span class="p">}</span>
+</span><span class="line"><span class="nx">b</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nx">Marshal</span><span class="p">(</span><span class="nx">user</span><span class="p">)</span>
+</span><span class="line"><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%s\n&quot;</span><span class="p">,</span> <span class="nb">string</span><span class="p">(</span><span class="nx">b</span><span class="p">))</span> <span class="c1">// {&quot;Name&quot;:&quot;restartr&quot;}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>小文字で出力してほしいのに、アノテーションが効かない…となったわけです。
+他の参加者が<code>json:"name"</code>でないといけないことに気づいて、この件は一件落着。</p>
+
+<p>だったのですが、もう少し詳しく調べると上に整理したような仕様が見えてきたというわけです。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">type</span> <span class="nx">User</span> <span class="kd">struct</span> <span class="p">{</span>
+</span><span class="line">  <span class="nx">Name</span> <span class="kt">string</span> <span class="s">`json:name`</span> <span class="c1">// 実際は無視されている</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line"><span class="kd">var</span> <span class="nx">user</span> <span class="nx">User</span>
+</span><span class="line"><span class="nx">json</span><span class="p">.</span><span class="nx">Unmarshal</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="s">`{&quot;name&quot;:&quot;restartr&quot;}`</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">user</span><span class="p">)</span>
+</span><span class="line"><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%s\n&quot;</span><span class="p">,</span> <span class="nx">user</span><span class="p">)</span> <span class="c1">// main.User{Name:&quot;restartr&quot;}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>実はこの時書いた<code>json:name</code>というアノテーションは不正なフォーマットとして無視されていて、たまたまUser.Nameというフィールドにcase-insensitiveでUnmarshalした時にマッピングができていたにすぎなかったようです。</p>
+
+<p>とまぁそんな感じでJSONの取り扱いについて正しい知識を得られたのですが、一人でやってた時には気づかなかった疑問とか知識として不足している点に気付けるので、ハンズオン形式も良いものですね。</p>
+</div>
+  
+  
+
+
+
+
+    </article>
   
   
     <article>
@@ -368,296 +617,6 @@ APIが安定してくると他のフレームワーク等への導入なども�
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2014/05/11/build-rpm-on-docker-container/">Dockerを使って任意のrubyバージョンのrpmを作成する</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-05-11T00:00:00+09:00" pubdate data-updated="true">2014-05-11 (Sun)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>CentOSを使ってて不便なのがruby2系のインストール。</p>
-
-<p>rbenvやruby-buildを使うかソースからインストールするのですが、この場合、環境を構築するたびにビルドすることになり時間もかかるし大変面倒です。</p>
-
-<p>なのでDockerを使ってクリーンな環境でRubyの最新rpmをビルドしてみました。</p>
-
-<p>Dockerを使えばビルド環境がすぐに立ち上げられるので、rpmビルドに必要なパッケージを確認したりするのに最適です。</p>
-
-<p>今回のソースはgithubにpushしてあります。</p>
-
-<ul>
-  <li><a href="https://github.com/ReSTARTR/ruby-rpmbuild-container">ReSTARTR/ruby-rpmbuild-container</a></li>
-</ul>
-
-<h2 id="section">環境</h2>
-
-<ul>
-  <li>ゲストOS：Vagrantで起動したUbuntu-14.04</li>
-  <li>コンテナ：centos:6.4</li>
-</ul>
-
-<h2 id="section-1">ファイルの配置</h2>
-
-<p>以下ファイルを同一ディレクトリに入れておきます。</p>
-
-<ul>
-  <li>Vagrantfile</li>
-  <li>provision.sh</li>
-  <li>Dockerfile</li>
-  <li>rubybuild.sh</li>
-  <li>ruby-2.0.0-p481.spec</li>
-</ul>
-
-<h2 id="section-2">手順</h2>
-
-<ol>
-  <li>ゲストOSの起動(Vagrant)</li>
-  <li>ゲストOSにsshログイン</li>
-  <li>Dockerコンテナのビルド</li>
-  <li>Dockerコンテナ内でrpmビルド</li>
-</ol>
-
-<h2 id="os">1. ゲストOSの起動</h2>
-
-<p>Vagrantfile</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1"># -*- mode: ruby -*-</span>
-</span><span class="line"><span class="c1"># vi: set ft=ruby :</span>
-</span><span class="line"><span class="no">VAGRANTFILE_API_VERSION</span> <span class="o">=</span> <span class="s2">&quot;2&quot;</span>
-</span><span class="line">
-</span><span class="line"><span class="no">Vagrant</span><span class="o">.</span><span class="n">configure</span><span class="p">(</span><span class="no">VAGRANTFILE_API_VERSION</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
-</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">box</span> <span class="o">=</span> <span class="s2">&quot;ubuntu/trusty64&quot;</span>
-</span><span class="line">
-</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">synced_folder</span> <span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="s2">&quot;/vagrant&quot;</span>
-</span><span class="line">
-</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">provision</span> <span class="s2">&quot;shell&quot;</span><span class="p">,</span> <span class="ss">path</span><span class="p">:</span> <span class="s1">&#39;provision.sh&#39;</span>
-</span><span class="line">
-</span><span class="line">  <span class="c1"># お好みで</span>
-</span><span class="line">  <span class="n">config</span><span class="o">.</span><span class="n">vm</span><span class="o">.</span><span class="n">provider</span> <span class="ss">:virtualbox</span> <span class="k">do</span> <span class="o">|</span><span class="n">vb</span><span class="o">|</span>
-</span><span class="line">    <span class="n">vb</span><span class="o">.</span><span class="n">customize</span> <span class="o">[</span><span class="s2">&quot;modifyvm&quot;</span><span class="p">,</span> <span class="ss">:id</span><span class="p">,</span> <span class="s2">&quot;--memory&quot;</span><span class="p">,</span> <span class="s2">&quot;2048&quot;</span><span class="p">,</span> <span class="s2">&quot;--cpus&quot;</span><span class="p">,</span> <span class="s2">&quot;2&quot;</span><span class="p">,</span> <span class="s2">&quot;--ioapic&quot;</span><span class="p">,</span> <span class="s2">&quot;on&quot;</span><span class="o">]</span>
-</span><span class="line">  <span class="k">end</span>
-</span><span class="line"><span class="k">end</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>provision.sh</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">sudo apt-get update
-</span><span class="line">sudo apt-get install -y language-pack-ja
-</span><span class="line">
-</span><span class="line"><span class="c"># Docker</span>
-</span><span class="line">sudo apt-get install -y docker.io
-</span><span class="line">sudo ln -sf /usr/bin/docker.io /usr/local/bin/docker
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h2 id="osssh">2. ゲストOSにsshログイン</h2>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>vagrant up
-</span><span class="line"><span class="nv">$ </span>vagrant ssh
-</span><span class="line"><span class="nv">$ </span><span class="nb">cd</span> /vagrant
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h2 id="docker">3. Dockerコンテナのビルド</h2>
-
-<p>ビルド用specファイルを用意して、シェルスクリプトでビルドします。</p>
-
-<p>すると、コンテナにマウントしたボリュームにビルド済みのrpmファイルがコピーされます。</p>
-
-<h3 id="spec">ビルド用specシェルスクリプト</h3>
-
-<p>環境変数RUBY_VERSIONに”2.0.0-p481”や”2.0.0-p451”を設定すれば任意のバージョンをビルドします。</p>
-
-<p><em>※デフォルトの2.0.0-p481以外はそれ用のspecファイルが必要になります。</em></p>
-
-<p>rubybuild.sh</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-<span class="line-number">21</span>
-<span class="line-number">22</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="c">#!/bin/env bash</span>
-</span><span class="line"><span class="nv">WORKDIR</span><span class="o">=</span>/opt/rpmbuild
-</span><span class="line">
-</span><span class="line"><span class="nv">RUBY_VER</span><span class="o">=</span><span class="k">${</span><span class="nv">RUBY_VER</span><span class="k">:-</span><span class="s2">&quot;2.0.0-p481&quot;</span><span class="k">}</span>
-</span><span class="line"><span class="nv">RUBY_MAJOUR_VER</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span> <span class="nv">$RUBY_VER</span>|cut -d<span class="s2">&quot;-&quot;</span> -f1<span class="k">)</span>
-</span><span class="line"><span class="nv">RUBY_MINOR_VER</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span> <span class="nv">$RUBY_VER</span>|cut -d<span class="s2">&quot;-&quot;</span> -f2<span class="k">)</span>
-</span><span class="line"><span class="k">if</span> <span class="o">[</span> -z <span class="s2">&quot;$RUBY_MINOR_VER&quot;</span> <span class="o">]</span>; <span class="k">then</span>
-</span><span class="line"><span class="k">  </span><span class="nv">RUBY_TARBALL</span><span class="o">=</span><span class="s2">&quot;ruby-$RUBY_MAJOUR_VER.tar.gz&quot;</span>
-</span><span class="line"><span class="k">else</span>
-</span><span class="line"><span class="k">  </span><span class="nv">RUBY_TARBALL</span><span class="o">=</span><span class="s2">&quot;ruby-$RUBY_MAJOUR_VER-$RUBY_MINOR_VER.tar.gz&quot;</span>
-</span><span class="line"><span class="k">fi</span>
-</span><span class="line"><span class="nv">RUBY_REMOTE_FILE</span><span class="o">=</span><span class="s2">&quot;http://cache.ruby-lang.org/pub/ruby/${RUBY_MAJOUR_VER:0:3}/$RUBY_TARBALL&quot;</span>
-</span><span class="line">
-</span><span class="line">mkdir -p <span class="nv">$WORKDIR</span>/rpm/<span class="o">{</span>BUILD,SRPMS,SPECS,SOURCES,RPMS<span class="o">}</span>
-</span><span class="line"><span class="nb">echo</span> <span class="s2">&quot;%_topdir $WORKDIR/rpm&quot;</span> &gt; <span class="nv">$WORKDIR</span>/.rpmmacros
-</span><span class="line"><span class="k">if</span> <span class="o">[</span> ! -f <span class="nv">$WORKDIR</span>/rpm/SOURCES/<span class="nv">$RUBY_TARBALL</span> <span class="o">]</span>; <span class="k">then</span>
-</span><span class="line"><span class="k">  </span>wget <span class="nv">$RUBY_REMOTE_FILE</span> -O <span class="nv">$WORKDIR</span>/rpm/SOURCES/<span class="nv">$RUBY_TARBALL</span>
-</span><span class="line"><span class="k">fi</span>
-</span><span class="line">cp <span class="nv">$WORKDIR</span>/ruby-<span class="k">${</span><span class="nv">RUBY_VER</span><span class="k">}</span>.spec <span class="nv">$WORKDIR</span>/rpm/SPECS/ruby.spec
-</span><span class="line">rpmbuild -bb <span class="nv">$WORKDIR</span>/rpm/SPECS/ruby.spec
-</span><span class="line">
-</span><span class="line">cp <span class="nv">$WORKDIR</span>/rpm/RPMS/x86_64/* /shared/
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h2 id="dockerrpm">4. Dockerコンテナ内でrpmビルド</h2>
-
-<p>Dockerfile</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">FROM centos:6.4
-</span><span class="line">
-</span><span class="line"><span class="c"># setup</span>
-</span><span class="line">RUN yum update -y
-</span><span class="line">RUN yum install -y rpm-build gcc
-</span><span class="line">
-</span><span class="line"><span class="c"># epel</span>
-</span><span class="line">RUN rpm --import http://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-6
-</span><span class="line">RUN rpm -ihv http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
-</span><span class="line">
-</span><span class="line"><span class="c"># ruby-depends</span>
-</span><span class="line">RUN yum install —enablerepo<span class="o">=</span>epel -y libyaml-devel
-</span><span class="line">RUN yum install -y byacc readline-devel ncourses-devel tcl-devel openssl-devel gdbm-devel db4-devel
-</span><span class="line">
-</span><span class="line"><span class="c"># build rpm</span>
-</span><span class="line">WORKDIR /opt/rpmbuild
-</span><span class="line">ADD rubybuild.sh /opt/rpmbuild/rubybuild.sh
-</span><span class="line">ADD ruby-2.0.0-p481.spec /opt/rpmbuild/ruby-2.0.0-p481.spec
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h2 id="rpm">コンテナ起動してrpmをビルド</h2>
-
-<p>コンテナを起動する際に、カレントディレクトリをマウントしておきます。</p>
-
-<p><em>※<code>--rm</code>オプションでrpm作成完了したらコンテナは破棄します</em></p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo docker build -t &lt;USERNAME&gt;/rpmbuild .
-</span><span class="line"><span class="nv">$ </span>sudo docker run --rm -v <span class="nv">$PWD</span>:/shared:rw -it &lt;CONTAINER_ID&gt; /bin/sh ./rubybuild.sh
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>成功すれば、ゲストOSのカレントディレクトリにrpmができてます。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>ls *.rpm
-</span><span class="line">ruby-2.0.0p481-2.el6.x86_64.rpm
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>これで、rpmコマンド一発で最新のrubyをインストールできます。</p>
-
-<p>rubyインストール済みコンテナを作るなら、Dockerfileに以下のように書けばruby実行環境のできあがりです。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">FROM centos:6.4
-</span><span class="line">
-</span><span class="line"><span class="c"># EPEL</span>
-</span><span class="line">RUN rpm --import http://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-6
-</span><span class="line">RUN rpm -ihv http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
-</span><span class="line">
-</span><span class="line"><span class="c"># Install ruby rpm</span>
-</span><span class="line">ADD ruby-2.0.0p481-2.el6.x86_64.rpm ruby-2.0.0p481-2.el6.x86_64.rpm
-</span><span class="line">RUN yum install -y --enablerepo<span class="o">=</span>epel libyaml-devel
-</span><span class="line">RUN rpm -ihv ruby-2.0.0p481-2.el6.x86_64.rpm
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-</div>
-  
-  
-
-
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/page/6/">&larr; Older</a>
@@ -713,6 +672,10 @@ APIが安定してくると他のフレームワーク等への導入なども�
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2016/02/17/ergodox-ez/">ErgoDox EZを注文した(けどまだ届いてない)</a>
+      </li>
+    
+      <li class="post">
         <a href="/2015/12/31/things-of-2015/">2015年ふりかえり</a>
       </li>
     
@@ -726,10 +689,6 @@ APIが安定してくると他のフレームワーク等への導入なども�
     
       <li class="post">
         <a href="/2015/03/09/consul-cluster-with-docker/">DockerとWeaveを使って1台のマシンでConsulを複数動かしてみる</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/01/18/peek-for-profiling-rails-app/">Peek - Railsアプリのプロファイリングツール</a>
       </li>
     
   </ul>

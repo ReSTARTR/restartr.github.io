@@ -11,8 +11,9 @@
   <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="第一回 にこにこテキストマイニングに参加してきました。 第1回 にこにこテキストマイニング勉強会 主催は@NLP_PRMさんと@toilet_luhchさん。会場はオラクル青山センターさん。
-懇親会と二次会にも参加させていただき、皆様の豊富な知識に圧倒されて参りました。精進しようと思います。 &hellip;">
+  <meta name="description" content="Hadoop conference japan 2011に参加してきました。 Hadoop Conference Japan 2011 - Eventbrite 今回の個人的トピック AWSがHBaseサポート予定
+DremelはHadoopの補完的位置づけ
+DSLとしてのAsakusaの魅力 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -117,6 +118,430 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2011/02/24/attended-hadoop-conference-japan-2011-hcj2011/">Hadoop Conference Japan 2011に参加してきた #hcj2011</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-02-24T09:09:42+09:00" pubdate data-updated="true">2011-02-24 (Thu)</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Hadoop conference japan 2011に参加してきました。</p>
+
+<ul>
+  <li><a href="http://hadoop-conference-japan-2011.eventbrite.com/">Hadoop Conference Japan 2011 - Eventbrite</a></li>
+</ul>
+
+<p>今回の個人的トピック</p>
+
+<ul>
+<li>AWSがHBaseサポート予定</li>
+<li>DremelはHadoopの補完的位置づけ</li>
+<li>DSLとしてのAsakusaの魅力</li>
+<li>AmebaのpatriotはRubyDSLで簡単ジョブ記述</li>
+<li>MySQLでもMapReduceできるよ</li>
+<li>HBaseを使うとシステムがシンプルになるよ</li>
+</ul>
+<p>以下、メモ書きです。
+<a id="more"></a><a id="more-703"></a></p>
+
+<h3 id="hadoop-on---amazon-elastic-mapreduce">Hadoop on クラウド / Amazon Elastic MapReduceの真価</h3>
+
+<div style="width:425px" id="__ss_7006529"> <strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/kentamagawa/amazon-elastic-mapreduce" title="Amazon Elastic MapReduceの紹介(英語)">Amazon Elastic MapReduceの紹介(英語)</a></strong> <object id="__sse7006529" width="425" height="355"><param name="movie" value="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=aws2011q1elasticmapreducev2-110221205244-phpapp01&amp;stripped_title=amazon-elastic-mapreduce&amp;userName=kentamagawa" /><param name="allowFullScreen" value="true" /><param name="allowScriptAccess" value="always" /><embed name="__sse7006529" src="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=aws2011q1elasticmapreducev2-110221205244-phpapp01&amp;stripped_title=amazon-elastic-mapreduce&amp;userName=kentamagawa" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="355" /></object>
+<div style="padding:5px 0 12px"> View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/kentamagawa">玉川憲 (Ken Tamagawa) - Amazon Web Services</a> </div>
+
+</div>
+<ul>
+  <li>11:30?12:05</li>
+  <li>Amazon Web Services, Jeff Barr ( @jeffbarr )</li>
+  <li>EMR removes ‘MUCK’(=ぬかるんだ感じ) from big data operation
+    <ul>
+      <li>hard to manage, tuning, monitoring, debug</li>
+    </ul>
+  </li>
+  <li>issues  prevent operation in cloud</li>
+  <li>instance types
+    <ul>
+      <li>data or I/O intensive</li>
+      <li>compute or I/O intensive</li>
+    </ul>
+  </li>
+  <li>BestBuy
+    <ul>
+      <li>100 node on demand</li>
+      <li>3.5 billion records, 71 million unique cookies.</li>
+      <li>increased ROAS(returns of advertising spend) by 500%</li>
+    </ul>
+  </li>
+  <li>QA
+    <ul>
+      <li>HBaseのサポートもやります。</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="mapreduce">MapReduceによる大規模データを利用した機械学習</h3>
+
+<div style="width:425px" id="__ss_7022974"> <strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/pfi/mapreduce-7022974" title="MapReduceによる大規模データを利用した機械学習">MapReduceによる大規模データを利用した機械学習</a></strong> <object id="__sse7022974" width="425" height="355"><param name="movie" value="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=hadoopconference2011okanohara-110222203754-phpapp01&amp;stripped_title=mapreduce-7022974&amp;userName=pfi" /><param name="allowFullScreen" value="true" /><param name="allowScriptAccess" value="always" /><embed name="__sse7022974" src="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=hadoopconference2011okanohara-110222203754-phpapp01&amp;stripped_title=mapreduce-7022974&amp;userName=pfi" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="355" /></object>
+<div style="padding:5px 0 12px"> View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/pfi">PFI Marketing </a> </div>
+
+</div>
+<ul>
+  <li>12:05?12:40</li>
+  <li>株式会社Preferred Infrastructure, 岡野原 大輔 ( @hillbig )</li>
+  <li>mahout</li>
+  <li>大規模分散並列処理</li>
+  <li>グラフィカルモデル</li>
+  <li>写真の人物切り出しとか、これでできる</li>
+  <li>グラフィカルモデルの推論は一般に困難</li>
+  <li>[S, Singh LCCC 2010]</li>
+  <li>数値最適化の並列分散化</li>
+  <li>最適なのは[Iterative Parameter Mixture]
+    <ol>
+      <li>データ分割してshardに配布</li>
+      <li>shardごとに最適化</li>
+      <li>全部のθの平均をとる</li>
+      <li>θを再度各shardに配り１からくりかえす</li>
+    </ol>
+  </li>
+  <li>Dremel</li>
+  <li>MRにくらべて低レイテンシ</li>
+  <li>簡単な統計処理のみ</li>
+  <li>クエリ言語はSQL</li>
+  <li>top-k, joinなども可能</li>
+  <li>use 6 years in google</li>
+  <li>クロール、障害分析などに利用</li>
+  <li>列志向DB</li>
+  <li>木構造に列志向を導入</li>
+  <li>M/Rの補助にDremel</li>
+  <li>使い分け</li>
+  <li>データの構築コストは高い</li>
+</ul>
+
+<h3 id="hadoop">モバゲーの大規模データマイニング基盤におけるHadoop活用</h3>
+
+<div style="width:425px" id="__ss_7009088"> <strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/hamadakoichi/hadoop-hadoop-conference-japan-2011-hcj2011" title="モバゲーの大規模データマイニング基盤におけるHadoop活用?Hadoop Conference Japan 2011? #hcj2011 ">モバゲーの大規模データマイニング基盤におけるHadoop活用?Hadoop Conference Japan 2011? #hcj2011 </a></strong> <object id="__sse7009088" width="425" height="355"><param name="movie" value="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=dataminingmbgahadoopconference2011-110222022814-phpapp02&amp;stripped_title=hadoop-hadoop-conference-japan-2011-hcj2011&amp;userName=hamadakoichi" /><param name="allowFullScreen" value="true" /><param name="allowScriptAccess" value="always" /><embed name="__sse7009088" src="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=dataminingmbgahadoopconference2011-110222022814-phpapp02&amp;stripped_title=hadoop-hadoop-conference-japan-2011-hcj2011&amp;userName=hamadakoichi" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="355" /></object>
+<div style="padding:5px 0 12px"> View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/hamadakoichi">Koichi Hamada</a> </div>
+
+</div>
+<ul>
+  <li>13:40?14:15</li>
+  <li>株式会社ディー・エヌ・エー,  濱田 晃一( @hamadakoichi )</li>
+  <li>DeNA: 2010/07 23億のアクティビティ</li>
+  <li>データマイニング基盤
+    <ul>
+      <li>KPI定常算出・共有</li>
+      <li>変化の検知基盤</li>
+    </ul>
+  </li>
+  <li>Business Planning
+    <ul>
+      <li>意思決定</li>
+    </ul>
+  </li>
+  <li>Service
+    <ul>
+      <li>Hadoop</li>
+      <li>DFS</li>
+    </ul>
+  </li>
+  <li>全行動ログを統一形式で蓄積</li>
+  <li>適用範囲</li>
+  <li>Pig
+    <ul>
+      <li>一時的なもの、BI</li>
+    </ul>
+  </li>
+  <li>Zebra
+    <ul>
+      <li>スキーマ管理（＋Pig）</li>
+    </ul>
+  </li>
+  <li>M/R
+    <ul>
+      <li>JavaだけでなくPerlでも。</li>
+      <li>ゲームの分散シミュレーション</li>
+    </ul>
+  </li>
+  <li>R
+    <ul>
+      <li>二次集計</li>
+      <li>データマイニング</li>
+      <li>Streamingもあわせて活用</li>
+    </ul>
+  </li>
+  <li>Mahout
+    <ul>
+      <li>データマイニング＆機械学習</li>
+    </ul>
+  </li>
+  <li>DeNA Datamining libraries
+    <ul>
+      <li>独自レコメンドエンジン</li>
+    </ul>
+  </li>
+  <li>Tuning</li>
+  <li>LZOなど最適化</li>
+  <li>Pig
+    <ul>
+      <li>Partitioner実装最適化</li>
+      <li>多段M/RのTempを圧縮</li>
+      <li>独自UDF</li>
+      <li>汎用の日次処理や文字列処理、ソーシャル用の独自Mapも。</li>
+      <li>共通ログ：Loader</li>
+    </ul>
+  </li>
+  <li>Mahout
+    <ul>
+      <li>目的に応じた組み合わせ、ジョブの実装</li>
+    </ul>
+  </li>
+  <li>楽しさ
+    <ul>
+      <li>統計的有意</li>
+      <li>多くの人々への還元（２３００万ユーザー）</li>
+      <li>感情を伴った行動情報</li>
+      <li>ユーザーのソーシャル体験への還元</li>
+      <li>パターン</li>
+      <li>楽しさ：夢中になるきっかけ</li>
+    </ul>
+  </li>
+  <li>健全なプラットフォームへ
+    <ul>
+      <li>不正書きこみの判別、年齢詐称の判別</li>
+      <li>ユーザーの声</li>
+      <li>テキストマイニング</li>
+    </ul>
+  </li>
+  <li>統一の行動記述</li>
+  <li>重要な要素
+    <ul>
+      <li>Hadoop上にすべてある。</li>
+      <li>記述が統一されている</li>
+      <li>すべてがHadoop上に統一されている</li>
+      <li>解析に力を入れることができる</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="enterprise-batch-processing-framework-for-hadoop">Enterprise Batch Processing Framework for Hadoop</h3>
+
+<div style="width:425px" id="__ss_7021975"> <strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/okachimachi/asakusa-enterprise-batch-processing-framework-for-hadoop" title="Asakusa Enterprise Batch Processing Framework for Hadoop">Asakusa Enterprise Batch Processing Framework for Hadoop</a></strong> <object id="__sse7021975" width="425" height="355"><param name="movie" value="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=asakusa2011-2-22disclosed-110222174121-phpapp01&amp;stripped_title=asakusa-enterprise-batch-processing-framework-for-hadoop&amp;userName=okachimachi" /><param name="allowFullScreen" value="true" /><param name="allowScriptAccess" value="always" /><embed name="__sse7021975" src="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=asakusa2011-2-22disclosed-110222174121-phpapp01&amp;stripped_title=asakusa-enterprise-batch-processing-framework-for-hadoop&amp;userName=okachimachi" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="355" /></object>
+<div style="padding:5px 0 12px"> View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/okachimachi">okachimachi</a> </div>
+
+</div>
+<ul>
+  <li>14:15?14:50</li>
+  <li>ウルシステムズ株式会社, 神林 飛志( @okachimachiorz1 )</li>
+  <li>Asakusa
+    <ul>
+      <li>基幹バッチ</li>
+      <li>夜間バッチゼロ。</li>
+      <li>Hadoopは開発手法や運用に問題有り。</li>
+      <li>Pig/Hiveでは足りない</li>
+      <li>DAGベースの多層DSL</li>
+      <li>TX/Rollback制御をHadoopの外（Asakusa）でやる</li>
+      <li>MRコンパイラ
+        <ul>
+          <li>Ashigel</li>
+          <li>運用スクリプトまではく。</li>
+        </ul>
+      </li>
+      <li>ModelGenerator</li>
+      <li>データ層の自動化</li>
+      <li>テストのインテグレーション</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="hiveameba">Hiveを用いたAmebaサービスのログ解析共通基盤</h3>
+
+<div style="width:425px" id="__ss_7014518"> <strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/toutouzone/hadoop-conferencejapan2011" title="Hadoop conferencejapan2011">Hadoop conferencejapan2011</a></strong> <object id="__sse7014518" width="425" height="355"><param name="movie" value="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=hadoopconferencejapan2011-110222063021-phpapp01&amp;stripped_title=hadoop-conferencejapan2011&amp;userName=toutouzone" /><param name="allowFullScreen" value="true" /><param name="allowScriptAccess" value="always" /><embed name="__sse7014518" src="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=hadoopconferencejapan2011-110222063021-phpapp01&amp;stripped_title=hadoop-conferencejapan2011&amp;userName=toutouzone" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="355" /></object>
+<div style="padding:5px 0 12px"> View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/toutouzone">Ichiro Fukuda</a> </div>
+
+</div>
+<ul>
+  <li>14:50?15:25</li>
+  <li>株式会社サイバーエージェント, 福田 一郎( @toutou )</li>
+  <li>Blog: <a href="http://ameblo.jp/principia-ca/entry-10635727790.html">http://ameblo.jp/principia-ca/entry-10635727790.html</a></li>
+  <li>非エンジニア向け</li>
+  <li>hadoop実績</li>
+  <li>pigg：HDFS</li>
+  <li>pico：ログ解析にEMR/Pig</li>
+  <li>アクセス解析(0.13.1)</li>
+  <li>解析基盤partiot</li>
+  <li>独自に解析してるけどだいたい定形</li>
+  <li>サービス全体の統合的な現状把握と未来予測</li>
+  <li>結果の表示にpatriot</li>
+  <li>アドホック集計にhue</li>
+  <li>patriot</li>
+  <li>CDH3b1</li>
+  <li>puppet/nagios/ganglia</li>
+  <li>ext_js/hue/hinemos</li>
+  <li>gzip/sequenceFileのブロック単位圧縮</li>
+  <li>インポート：scp/hdfs get</li>
+  <li>importDSL</li>
+  <li>log</li>
+  <li>600job/daily</li>
+  <li>700job/monthly</li>
+  <li>record 1300万以上</li>
+  <li>前処理を３〜４時間</li>
+  <li>Replication
+    <ul>
+      <li>clusterをmaster/slaveにする</li>
+      <li>slaveを非エンジニアに利用させる</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="section">ライトニングトーク</h3>
+<ul>
+  <li>15:40?16:30</li>
+</ul>
+
+<h4 id="gfarmhadoop-mapreduce">分散ファイルシステムGfarm上でのHadoop MapReduce</h4>
+
+<div style="width:425px" id="__ss_7029061"> <strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/shun0102/h-7029061" title="分散ファイルシステムGfarm上でのHadoop MapReduce">分散ファイルシステムGfarm上でのHadoop MapReduce</a></strong> <object id="__sse7029061" width="425" height="355"><param name="movie" value="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=hcj2011-110223050641-phpapp01&amp;stripped_title=h-7029061&amp;userName=shun0102" /><param name="allowFullScreen" value="true" /><param name="allowScriptAccess" value="always" /><embed name="__sse7029061" src="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=hcj2011-110223050641-phpapp01&amp;stripped_title=h-7029061&amp;userName=shun0102" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="355" /></object>
+<div style="padding:5px 0 12px"> View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/shun0102">shun0102</a> </div>
+
+</div>
+<ul>
+  <li>Shunsuke Mikami( @shun0102 )</li>
+  <li>GlusterFS</li>
+  <li>Ceph: 高負荷で固まる</li>
+  <li>Lustre,PVFS2</li>
+  <li>GFarm: ≒HDFS
+    <ul>
+      <li>複製の作成は同期的</li>
+    </ul>
+  </li>
+  <li>他FSの利用
+    <ul>
+      <li>JNIのlayer　／　マウント</li>
+    </ul>
+  </li>
+  <li>GlusterFS
+    <ul>
+      <li>マスターなし</li>
+      <li>FUSEベース</li>
+    </ul>
+  </li>
+  <li>HDFS&gt;HDFS(3reps)&gt;GlusterFS</li>
+</ul>
+
+<h4 id="mysqlmapreduce">MySQLにMapReduceジョブトラッカを実装する</h4>
+<ul>
+  <li>Sadayuki Furuhashi( @frsyuki )</li>
+</ul>
+
+<h3 id="hadoop-and-hbase-for-ranking-processing-at-rakuten">Hadoop and HBase for ranking processing at Rakuten</h3>
+<ul>
+  <li>Yifeng Jiang( @uprush )</li>
+  <li>Hadoop</li>
+  <li>リアルタイムから年次まで。</li>
+  <li>mutable data?扱いにくい</li>
+  <li>HBase</li>
+  <li>usecase</li>
+  <li>pig: realtime ranking</li>
+  <li>100 pure java jobs per day</li>
+  <li>HBase</li>
+  <li>soft realtime access</li>
+  <li>40x faster on ranking contents</li>
+  <li>before</li>
+  <li>DB -&gt; HDFS</li>
+  <li>table split is boring</li>
+  <li>after</li>
+  <li>data go to hBase, the processed by MR</li>
+  <li>1.5k rows insert /s</li>
+  <li>0.3M rows scan /s</li>
+  <li>system become simple</li>
+  <li>balance</li>
+  <li>HW</li>
+  <li>OS resources</li>
+  <li>config</li>
+  <li>application design</li>
+</ul>
+
+<h4 id="sneak-preview-of-hapyrus--hadoop-on-the-cloud">Sneak Preview of “Hapyrus” ~ Hadoopアプリ開発＆共有サービス on the CLOUD</h4>
+
+<div style="width:425px" id="__ss_7038404"> <strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/fujibee/hadoop-conference-japan-2011-lt-hapyrus" title="Hadoop Conference Japan 2011 LT Hapyrus">Hadoop Conference Japan 2011 LT Hapyrus</a></strong> <object id="__sse7038404" width="425" height="355"><param name="movie" value="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=hadoopconferencejapan2011ltnomovie-110223203652-phpapp02&amp;stripped_title=hadoop-conference-japan-2011-lt-hapyrus&amp;userName=fujibee" /><param name="allowFullScreen" value="true" /><param name="allowScriptAccess" value="always" /><embed name="__sse7038404" src="http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=hadoopconferencejapan2011ltnomovie-110223203652-phpapp02&amp;stripped_title=hadoop-conference-japan-2011-lt-hapyrus&amp;userName=fujibee" type="application/x-shockwave-flash" allowscriptaccess="always" allowfullscreen="true" width="425" height="355" /></object>
+<div style="padding:5px 0 12px"> View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/fujibee">Koichi Fujikawa</a> </div>
+
+</div>
+<ul>
+  <li>Fujikawa Koichi( @fujibee )</li>
+  <li>敷居が高い（セットアップ?M/R?運用の工数）</li>
+  <li>Hapyrus
+    <ul>
+      <li>サイト：<a href="http://hapyrus.com/">http://hapyrus.com/</a></li>
+      <li>デモビデオ: <a href="http://www.youtube.com/watch?v=1cF-1tcapvE">http://www.youtube.com/watch?v=1cF-1tcapvE</a></li>
+      <li>ホスティング（＝EMR）</li>
+      <li>ディストリビューション＝マーケットプレイス</li>
+      <li>基本無料</li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="bonding-">Bonding とネットワークスループット</h4>
+<ul>
+  <li>Takahiro Kaneko</li>
+  <li>802.3ad + src-dst-id</li>
+</ul>
+
+<h4 id="yuuna-kurita-hadoopmongodbrruby">Yuuna Kurita: Hadoop+MongoDBでRで出力する時にRubyでミドルウェアを使う</h4>
+
+<p>※これ以降も有用な発表でしたがバッテリー切れのためメモはなしです…orz※</p>
+
+<h3 id="hadoop-1">マルチユーザーでHadoop環境を利用するためのポイント</h3>
+<ul>
+  <li>16:30?17:05</li>
+  <li>株式会社NTTデータ, 山下 真一</li>
+</ul>
+
+<h3 id="hadoopknime">Hadoopと分析統計ソフトKNIMEを用いた効率的データ活用</h3>
+<ul>
+  <li>17:05?17:40</li>
+  <li>株式会社リクルート, 中野 猛</li>
+</ul>
+
+<h3 id="section-1">関連エントリ</h3>
+<ul>
+  <li><a href="http://togetter.com/li/104169">http://togetter.com/li/104169</a></li>
+  <li><a href="http://d.hatena.ne.jp/nokuno/20110222/1298364343">http://d.hatena.ne.jp/nokuno/20110222/1298364343</a></li>
+  <li><a href="http://d.hatena.ne.jp/hamadakoichi/20110222/p1">http://d.hatena.ne.jp/hamadakoichi/20110222/p1</a></li>
+  <li><a href="http://d.hatena.ne.jp/seikoudoku2000/20110222/1298379932">http://d.hatena.ne.jp/seikoudoku2000/20110222/1298379932</a></li>
+  <li><a href="http://diary.overlasting.net/2011-02-22-1.html">http://diary.overlasting.net/2011-02-22-1.html</a></li>
+</ul>
+
+</div>
+  
+  
+
+
+
+
+    </article>
   
   
     <article>
@@ -397,78 +822,6 @@ nltkとpython-twitterをつかったテキストマイニング。つまづき�
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2011/02/14/cookpad-the-business-that-supported-by-600-million-women/">600万人の女性に支持されるクックパッドというビジネス</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-02-14T08:00:42+09:00" pubdate data-updated="true">2011-02-14 (Mon)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>[tmkm-amazon]4827550719[/tmkm-amazon]</p>
-
-<p>2009年5月発刊なので、2年以上前の本です。発刊時から存在は知ってましたが、ブックオフにてちょうど目に入ってきて、興味があったので購入してみました。ボリュームとしては2時間弱。
-私自身も同じようにWebサイト（うちの場合ポータルですが）を運営している会社に所属していることもあり、双方を重ねて考えてしまいます。私自身はプログラマーなので、サービス云々については疎いので、こういう本の内容にはすぐ看過されてしまいがちです。
-あと、数年前の本ですが、本質的なところは古くなく、今後数年読めるものだと思いました。</p>
-
-<p>ということで私的メモを少々。（※各所レビューの方が100倍的確だと思います。）</p>
-
-<p><a id="more"></a><a id="more-643"></a></p>
-
-<h2 id="section">試行錯誤の過程は無駄ではない</h2>
-<p>p88
-&gt; <em>完成したものから見ると、一見捨てた90パーセントは無駄なように見えるんですが、そうじゃない。ゴールまでの進み方がわかっていないときの90パーセントというのはすごく重要で、これがなかったらゴールには辿りつけない。
-&gt; 〜中略〜
-&gt; とにかく、一発で当てるのではなく、たくさん試す。それが、ゴールに行き着くための最短の方法だと思っています。</em></p>
-
-<p>成功の大きさが試行錯誤の数に比例する、と。私自身サービスは数ヶ月使っていた時期があるだけなのですが、実際どのくらいの頻度でどれだけの試行が繰り返されているのか、非常に気になります。社内で検証する段階での試行錯誤だけでなく、サービス開始した後の試行錯誤もある訳だし。</p>
-
-<h2 id="section-1">コミュニケーションが成功したかどうかという指標</h2>
-<p>本当の広告効果とは何なのか、という文脈のなかで、</p>
-
-<blockquote>
-  <p><em>「本当にどれだけファンが作れて、毎月、商品を買ってくれてる人がどれだけ増やせたか、それこそが、コミュニケーションが成功したかどうか、だと思うんです。”この商品を教えてくれてありがとう”という人を、どれだけ作れたか。それを広告効果として追求していたなければいけないと思っています。」</em></p>
-</blockquote>
-
-<p>とあります。
-この「コミュニケーションが成功したかどうか」という表現がすごく響いてきました。形式は違えど、電話やメールなどと同じコミュニケーションの手段であるということでしょうか。うん、良い言葉です。</p>
-
-<h2 id="section-2">シンプルなサービスと複雑なサービス</h2>
-<p>Twitterのようなシンプルなものがあれば、Facebookのように複雑なものもあったりして。結局サービスって何が受け入れられるのでしょう。
-できることを説明書なしにユーザーが気持よく目的を果たせるように工夫した結果として、機能をシンプルにしたのがクックパッドの今の形な訳で。だとすれば、「徹底的に」目的を追求すれば、おのずとサイトの複雑性は決まるのでしょうか。
-もう少し視野を広げて見識を深める必要がありそうです。</p>
-
-<p>ここ1年程ちゃんとした料理をしていない私ですが、簡単につくれるレシピをクックパッドで探してみようかな。</p>
-
-</div>
-  
-  
-
-
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/page/23/">&larr; Older</a>
@@ -524,6 +877,10 @@ nltkとpython-twitterをつかったテキストマイニング。つまづき�
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2016/02/17/ergodox-ez/">ErgoDox EZを注文した(けどまだ届いてない)</a>
+      </li>
+    
+      <li class="post">
         <a href="/2015/12/31/things-of-2015/">2015年ふりかえり</a>
       </li>
     
@@ -537,10 +894,6 @@ nltkとpython-twitterをつかったテキストマイニング。つまづき�
     
       <li class="post">
         <a href="/2015/03/09/consul-cluster-with-docker/">DockerとWeaveを使って1台のマシンでConsulを複数動かしてみる</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/01/18/peek-for-profiling-rails-app/">Peek - Railsアプリのプロファイリングツール</a>
       </li>
     
   </ul>

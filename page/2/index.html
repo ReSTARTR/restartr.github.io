@@ -11,7 +11,7 @@
   <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="Go Programming Blueprints - Solving Development Challenges with Golang 最近Kindleで購入したので、でひととおり読んで写経してみました。 概要と雑感 2015年1月に発売された書籍であり、Goのバージョンでいうと1. &hellip;">
+  <meta name="description" content="ISUCON5予選の参考実装を、Elixir/Phoenixで実装してみました。 It (partially) works! #myelixirstatus pic.twitter.com/NuhhufXAwC&mdash; Masaki YOSHIDA (@ReSTARTR) 2015, 10月 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -116,6 +116,217 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix/">Elixir/PhoenixでISUCON5予選の参考実装を書いた</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2015-10-21T19:32:17+09:00" pubdate data-updated="true">2015-10-21 (Wed)</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><a href="https://github.com/isucon/isucon5-qualify">ISUCON5予選の参考実装</a>を、Elixir/Phoenixで実装してみました。</p>
+
+<blockquote class="twitter-tweet" lang="ja"><p lang="en" dir="ltr">It (partially) works! <a href="https://twitter.com/hashtag/myelixirstatus?src=hash">#myelixirstatus</a> <a href="https://t.co/NuhhufXAwC">pic.twitter.com/NuhhufXAwC</a></p>&mdash; Masaki YOSHIDA (@ReSTARTR) <a href="https://twitter.com/ReSTARTR/status/656434698730639360">2015, 10月 20</a></blockquote>
+<script async="" src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+<p>汚いながらもとりあえずひととおり動いたので現時点でのコードをGithubにpush。</p>
+
+<ul>
+  <li><a href="https://github.com/ReSTARTR/isucon5-qualify-elixir">github.com/ReSTARTR/isucon5-qualify-elixir</a></li>
+</ul>
+
+<h3 id="section">実装について補足</h3>
+
+<p>まずは他言語の初期実装と同等のSQLを再現することを目標としました。</p>
+
+<p>Goの実装を参考に、まずは各ページを実装してブラウザでひととおり機能が実装できているか確認。
+その後ベンチマークをすべて通過するまでひたすら修正するという手順ですすめました。</p>
+
+<p>そのため、テンプレートの細かい表示(時刻フォーマット等)の不備や、ベンチマーカーがチェックしない機能が抜けている可能性があります。</p>
+
+<h3 id="section-1">注意点</h3>
+
+<p>ベンチマーカーがCSSファイルのサイズを厳密にチェックしていて、なぜか1バイト余計に増えてしまってパスしない問題が発生します。
+<a href="https://github.com/isucon/isucon5-qualify/blob/42cec755d41b1573af3dd4735d78523494fd42dd/bench/src/main/java/net/isucon/isucon5q/bench/scenario/BootstrapChecker.java#L186">チェック箇所のサイズ</a>を<code>122540</code>から<code>122541</code>にすることで無理やりとおしました。
+原因は追って調査ですが、機能的に問題ないはずなので一時しのぎです。</p>
+
+<h3 id="section-2">ベンチマーク結果</h3>
+
+<p>気になる性能ですが、Goと比較すると以下のような結果となりました。</p>
+
+<p>※VirtualBox上にたてたMySQLにたいして、ホストのMacOSX上でアプリケーションを実行しています</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">Lang</th>
+      <th style="text-align: right">requests</th>
+      <th style="text-align: right">elapsed</th>
+      <th style="text-align: right">success</th>
+      <th style="text-align: right">redirect</th>
+      <th style="text-align: right">failure</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left">Elixir/Phoenix</td>
+      <td style="text-align: right">333</td>
+      <td style="text-align: right">76093</td>
+      <td style="text-align: right">239</td>
+      <td style="text-align: right">93</td>
+      <td style="text-align: right">1</td>
+    </tr>
+    <tr>
+      <td style="text-align: left">Go</td>
+      <td style="text-align: right">138</td>
+      <td style="text-align: right">106728</td>
+      <td style="text-align: right">98</td>
+      <td style="text-align: right">39</td>
+      <td style="text-align: right">1</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><a href="https://github.com/isucon/isucon5-qualify/blob/master/eventapp/lib/score.rb">スコア計算式</a>をもとに計算してみると以下のようなスコアとなります(eror, exception, violationsはないので減点は無し)</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1"># Elixir/Phoenix</span>
+</span><span class="line"><span class="n">irb</span><span class="p">(</span><span class="n">main</span><span class="p">):</span><span class="mo">001</span><span class="p">:</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">base_score</span> <span class="o">=</span> <span class="mi">239</span> <span class="o">+</span> <span class="mi">93</span> <span class="o">*</span> <span class="mi">0</span><span class="o">.</span><span class="mi">1</span>
+</span><span class="line"><span class="o">=&gt;</span> <span class="mi">248</span><span class="o">.</span><span class="mi">3</span>
+</span><span class="line"><span class="c1"># Go</span>
+</span><span class="line"><span class="n">irb</span><span class="p">(</span><span class="n">main</span><span class="p">):</span><span class="mo">002</span><span class="p">:</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">base_score</span> <span class="o">=</span> <span class="mi">98</span> <span class="o">+</span> <span class="mi">39</span> <span class="o">*</span> <span class="mi">0</span><span class="o">.</span><span class="mi">1</span>
+</span><span class="line"><span class="o">=&gt;</span> <span class="mi">101</span><span class="o">.</span><span class="mi">9</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>同じクエリを再現したうえで、だいたい2.5倍くらいの性能差？でしょうか。
+が、完全に模倣できているか自信はないのであくまで参考程度ということで…</p>
+
+<p>以下にベンチマーカーの出力内容も貼っておきます。</p>
+
+<p>elixir/phoenix版の結果</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+</pre></td><td class="code"><pre><code class="json"><span class="line"><span class="p">{</span>
+</span><span class="line">  <span class="nt">&quot;valid&quot;</span> <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span><span class="line">  <span class="nt">&quot;requests&quot;</span> <span class="p">:</span> <span class="mi">333</span><span class="p">,</span>
+</span><span class="line">  <span class="nt">&quot;elapsed&quot;</span> <span class="p">:</span> <span class="mi">76093</span><span class="p">,</span>
+</span><span class="line">  <span class="nt">&quot;done&quot;</span> <span class="p">:</span> <span class="s2">&quot;[{Isucon5InitExecutor},{BootstrapChecker},{Isucon5Load,Isucon5Load,Isucon5Load,Isucon5Load,Isucon5Checker}]&quot;</span><span class="p">,</span>
+</span><span class="line">  <span class="nt">&quot;responses&quot;</span> <span class="p">:</span> <span class="p">{</span>
+</span><span class="line">    <span class="nt">&quot;success&quot;</span> <span class="p">:</span> <span class="mi">239</span><span class="p">,</span>
+</span><span class="line">    <span class="nt">&quot;redirect&quot;</span> <span class="p">:</span> <span class="mi">93</span><span class="p">,</span>
+</span><span class="line">    <span class="nt">&quot;failure&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span class="line">    <span class="nt">&quot;error&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+</span><span class="line">    <span class="nt">&quot;exception&quot;</span> <span class="p">:</span> <span class="mi">0</span>
+</span><span class="line">  <span class="p">},</span>
+</span><span class="line">  <span class="nt">&quot;violations&quot;</span> <span class="p">:</span> <span class="p">[</span> <span class="p">]</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="err">BUILD</span> <span class="err">SUCCESSFUL</span>
+</span><span class="line">
+</span><span class="line"><span class="err">Total</span> <span class="err">time:</span> <span class="mi">1</span> <span class="err">mins</span> <span class="mf">27.449</span> <span class="err">secs</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>go版の結果</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+</pre></td><td class="code"><pre><code class="json"><span class="line"><span class="p">{</span>
+</span><span class="line">  <span class="nt">&quot;valid&quot;</span> <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span><span class="line">  <span class="nt">&quot;requests&quot;</span> <span class="p">:</span> <span class="mi">138</span><span class="p">,</span>
+</span><span class="line">  <span class="nt">&quot;elapsed&quot;</span> <span class="p">:</span> <span class="mi">106728</span><span class="p">,</span>
+</span><span class="line">  <span class="nt">&quot;done&quot;</span> <span class="p">:</span> <span class="s2">&quot;[{Isucon5InitExecutor},{BootstrapChecker},{Isucon5Load,Isucon5Load,Isucon5Load,Isucon5Load,Isucon5Checker}]&quot;</span><span class="p">,</span>
+</span><span class="line">  <span class="nt">&quot;responses&quot;</span> <span class="p">:</span> <span class="p">{</span>
+</span><span class="line">    <span class="nt">&quot;success&quot;</span> <span class="p">:</span> <span class="mi">98</span><span class="p">,</span>
+</span><span class="line">    <span class="nt">&quot;redirect&quot;</span> <span class="p">:</span> <span class="mi">39</span><span class="p">,</span>
+</span><span class="line">    <span class="nt">&quot;failure&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span><span class="line">    <span class="nt">&quot;error&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+</span><span class="line">    <span class="nt">&quot;exception&quot;</span> <span class="p">:</span> <span class="mi">0</span>
+</span><span class="line">  <span class="p">},</span>
+</span><span class="line">  <span class="nt">&quot;violations&quot;</span> <span class="p">:</span> <span class="p">[</span> <span class="p">]</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="err">BUILD</span> <span class="err">SUCCESSFUL</span>
+</span><span class="line">
+</span><span class="line"><span class="err">Total</span> <span class="err">time:</span> <span class="mi">1</span> <span class="err">mins</span> <span class="mf">54.937</span> <span class="err">secs</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="section-3">今後</h3>
+
+<p>今回のISUCONアプリは結構機能を積んでいるため、Elixir/Phoenixに慣れるにはちょうど良いテーマなのではないかと思います。</p>
+
+<p>ただPhoenix初心者ということもあり、実装していたほとんどの時間は”Ectoでどうやってクエリを再現するか”に使っていて、
+ロジックの書き方とか各モジュールの使い分けとかまであまり気にできてません。
+Phoenix/Ectoの有効性を台無しにしていること間違いなし…
+まぁ、そこんところはおいおい感覚をつかんでいこうかな、と。</p>
+
+<p>このあとはEctoの抽象化を活かしつつさらに最適化をすすめていったときに、どのような性能を発揮するのか気になるところです。</p>
+</div>
+  
+  
+
+
+
+
+    </article>
   
   
     <article>
@@ -265,199 +476,6 @@
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2015/03/09/consul-cluster-with-docker/">DockerとWeaveを使って1台のマシンでConsulを複数動かしてみる</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2015-03-09T00:22:13+09:00" pubdate data-updated="true">2015-03-09 (Mon)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>軽くConsulを試してみたくて、でもVagrantで複数台仮想マシンを立ち上げるのはちょっと気が重い…ということでUbuntu14.10 on MacBookAirにDockerコンテナを複数立ち上げてクラスタを構築してみるテストをしました。</p>
-
-<p>Dockerfileとか簡単な動かし方(を適当英語で書いたもの)をgithubにあげてあります</p>
-
-<ul>
-  <li><a href="https://github.com/ReSTARTR/test-consul-with-docker">ReSTARTR/test-consul-with-docker</a></li>
-</ul>
-
-<p>Docker内のプロセスがLISTENするポートに対してコンテナ外から接続する場合、<code>-p</code>でホストのポートにひもづけるか、<code>--link</code>でコンテナ同士をつなぐのが最も手軽な方法です。が、consulは複数のポート（HTTP API用、DNS用、ゴシッププロトコル用等）を使うため、この手軽な方法でクラスタを構築することができません。</p>
-
-<p>Dockerコンテナの接続パターンとしてはいくつかあって、deeeetさんのブログ記事に詳しく書かれています。</p>
-
-<ul>
-  <li><a href="http://deeeet.com/writing/2014/12/01/docker-link-pattern/">Dockerコンテナ接続パターン (2014年冬) | SOTA</a></li>
-</ul>
-
-<p>今回は手元のMacBook Airだけで完結させたかったので、weaveを使ったコンテナ間ネットワークを利用することにしました。</p>
-
-<h3 id="weave">weave</h3>
-
-<ul>
-  <li><a href="http://zettio.github.io/weave/">weave  | weave, the Docker network</a></li>
-</ul>
-
-<p>dockerコンテナ間の内部ネットワークを構築するものです。詳しくはjacopenさんのSlideShareを。</p>
-
-<ul>
-  <li><a href="http://www.slideshare.net/jacopen/weave-40871981">Weaveを試してみた</a></li>
-</ul>
-
-<p>使い方はとても簡単で、weaveコンテナを立ち上げて、weaveコマンド経由でdockerコマンドを実行するだけ。
-これならVagrantのような仮想マシンのためにメモリとディスク容量を割く必要もなくなります。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo weave launch
-</span><span class="line"><span class="nv">$ </span>sudo docker ps
-</span><span class="line">CONTAINER ID        IMAGE                COMMAND                CREATED             STATUS              PORTS                                            NAMES
-</span><span class="line">2eda921c011e        zettio/weave:0.9.0   <span class="err">&quot;</span>/home/weave/weaver    31 seconds ago      Up 30 seconds       0.0.0.0:6783-&gt;6783/tcp, 0.0.0.0:6783-&gt;6783/udp   weave
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>これだけで仮想ネットワークができあがります。ホストOSで必要なポートは6783だけです。</p>
-
-<p>あとはweaveコマンドにIPを指定しつつdockerコマンドのオプションを付けて起動すればOK。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ C</span><span class="o">=</span><span class="k">$(</span>sudo weave run 10.0.0.1/24 -it ubuntu<span class="k">)</span>
-</span><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec</span> <span class="nv">$C</span> -it /bin/bash
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>ただ、さくらVPSのCentOS6では動きませんでした。面倒なので深く追ってません。。。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo /usr/local/bin/weave launch
-</span><span class="line">WARNING: Linux kernel version 3.5 or newer is required <span class="o">(</span>you have 2.6<span class="o">)</span>
-</span><span class="line">ERROR: ip utility, iproute2-ss091226 does not support network namespaces.
-</span><span class="line">       Please install iproute2-ss111010 or later.
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h3 id="consul">consul</h3>
-
-<ul>
-  <li><a href="https://www.consul.io/">consul</a></li>
-</ul>
-
-<p>Hashicorp謹製クラスタのオーケストレーションツール。今更説明する必要もないと思うので詳細は省略します。
-consul（と周辺ツールのconsul-templateやenvconsul)を使えば複数のホスト間で設定を共有できる、というのを試すのが今回の目的でしたが、とりあえず複数のconsulを動かすところまでを書きます。</p>
-
-<h3 id="consul-1">consulを起動してクラスタを構築する</h3>
-
-<p>weaveネットワークに接続したコンテナを4台立ち上げて、consul1, consul2をserverとして、consul3, consul4をclientとして起動します。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo weave run 10.0.0.1/24 -it -v <span class="k">$(</span><span class="nb">pwd</span> -P<span class="k">)</span>:/opt --name<span class="o">=</span>consul1 restartr/consul-ready
-</span><span class="line"><span class="nv">$ </span>sudo weave run 10.0.0.2/24 -it -v <span class="k">$(</span><span class="nb">pwd</span> -P<span class="k">)</span>:/opt --name<span class="o">=</span>consul2 restartr/consul-ready
-</span><span class="line"><span class="nv">$ </span>sudo weave run 10.0.0.3/24 -it -v <span class="k">$(</span><span class="nb">pwd</span> -P<span class="k">)</span>:/opt --name<span class="o">=</span>consul3 restartr/consul-ready
-</span><span class="line"><span class="nv">$ </span>sudo weave run 10.0.0.4/24 -it -v <span class="k">$(</span><span class="nb">pwd</span> -P<span class="k">)</span>:/opt --name<span class="o">=</span>consul4 restartr/consul-ready
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>あとはconsul agentを順に起動するだけ。</p>
-
-<p>ここで注意するのが<code>-bind</code>オプション。
-これを指定しないとdockerデフォルトのeth0のでクラスタにjoinすることになってしまい、このネットワークは他のコンテナとつながっていないためにクラスタ構築に失敗します。
-必ず<code>weave run 10.0.0.X/24</code>で指定したIPにbindしておきましょう。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec</span> -d consul1 consul agent -server -data-dir<span class="o">=</span>/tmp/consul -bootstrap-expect 1 -bind 10.0.0.1
-</span><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec</span> -d consul2 consul agent -server -data-dir<span class="o">=</span>/tmp/consul -config-dir<span class="o">=</span>/opt/consul.d/web.json -bind 10.0.0.2
-</span><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec</span> -d consul3 consul agent -data-dir<span class="o">=</span>/tmp/consul -config-dir<span class="o">=</span>/opt/consul.d/web.json -bind 10.0.0.3
-</span><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec</span> -d consul4 consul agent -data-dir<span class="o">=</span>/tmp/consul -config-dir<span class="o">=</span>/opt/consul.d/web.json -bind 10.0.0.4
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>で、先に起動したconsul1に対して残りのコンテナ内のconsul agentをjoinさせていきます。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec </span>consul2 consul join 10.0.0.1
-</span><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec </span>consul3 consul join 10.0.0.1
-</span><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec </span>consul4 consul join 10.0.0.1
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>と、<code>consul members</code>でjoinしている一覧が見えるようになります。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec </span>consul1 consul members
-</span><span class="line">Node          Address        Status  Type    Build  Protocol
-</span><span class="line">725dca3980ea  10.0.0.1:8301  alive   server  0.5.0  2
-</span><span class="line">f82001d6a7b4  10.0.0.2:8301  alive   server  0.5.0  2
-</span><span class="line">dcf304f77fdf  10.0.0.3:8301  alive   client  0.5.0  2
-</span><span class="line">3be672bd18b1  10.0.0.4:8301  alive   client  0.5.0  2
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>クラスタから離れるときは<code>consul leave</code>です。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec </span>consul4 consul leave
-</span><span class="line">Graceful leave <span class="nb">complete</span>
-</span><span class="line">
-</span><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec </span>consul1 consul members
-</span><span class="line">Node          Address        Status  Type    Build  Protocol
-</span><span class="line">dcf304f77fdf  10.0.0.3:8301  alive   client  0.5.0  2
-</span><span class="line">3be672bd18b1  10.0.0.4:8301  left    client  0.5.0  2       <span class="c"># &lt;- Statusが&#39;alive&#39;から&#39;left&#39;に変わる</span>
-</span><span class="line">725dca3980ea  10.0.0.1:8301  alive   server  0.5.0  2
-</span><span class="line">f82001d6a7b4  10.0.0.2:8301  alive   server  0.5.0  2
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>という感じで、複数のマシンをいじってる感じがまったくしないくらい<code>weave</code> &amp; <code>docker exec</code>は便利です。
-weaveがプロダクション環境で使えるか、という点については未知ですが。</p>
-
-<p>次回（があれば）consulを使った設定の管理について試したメモを書きたいと思います。</p>
-</div>
-  
-  
-
-
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/page/3/">&larr; Older</a>
@@ -513,6 +531,10 @@ weaveがプロダクション環境で使えるか、という点については
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2016/02/17/ergodox-ez/">ErgoDox EZを注文した(けどまだ届いてない)</a>
+      </li>
+    
+      <li class="post">
         <a href="/2015/12/31/things-of-2015/">2015年ふりかえり</a>
       </li>
     
@@ -526,10 +548,6 @@ weaveがプロダクション環境で使えるか、という点については
     
       <li class="post">
         <a href="/2015/03/09/consul-cluster-with-docker/">DockerとWeaveを使って1台のマシンでConsulを複数動かしてみる</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/01/18/peek-for-profiling-rails-app/">Peek - Railsアプリのプロファイリングツール</a>
       </li>
     
   </ul>
