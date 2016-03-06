@@ -4,7 +4,7 @@
   <title><![CDATA[Category: golang | I Will Survive]]></title>
   <link href="http://blog.restartr.com/category/golang/atom.xml" rel="self"/>
   <link href="http://blog.restartr.com/"/>
-  <updated>2016-02-20T00:10:22+09:00</updated>
+  <updated>2016-03-06T14:14:17+09:00</updated>
   <id>http://blog.restartr.com/</id>
   <author>
     <name><![CDATA[ReSTARTR]]></name>
@@ -12,6 +12,139 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[ec2-ls-hosts: EC2インスタンスを一覧するだけのシンプルツール]]></title>
+    <link href="http://blog.restartr.com/2016/02/27/ec2-ls-hosts/"/>
+    <updated>2016-02-27T17:28:53+09:00</updated>
+    <id>http://blog.restartr.com/2016/02/27/ec2-ls-hosts</id>
+    <content type="html"><![CDATA[<p>EC2インスタンスの一覧を表示するツールをgolangでつくりました。</p>
+
+<ul>
+  <li><a href="https://github.com/ReSTARTR/ec2-ls-hosts">ReSTARTR/ec2-ls-hosts</a></li>
+</ul>
+
+<p>以下のように、ただインスタンスの情報を列挙するだけのシンプルなツールです。</p>
+
+<p><code>bash
+$ ls-hosts
+i-00001 10.0.0.1 app01
+i-00002 10.0.0.2 app02
+i-00003 10.0.0.3 app03
+i-00004 10.0.0.4 app04
+</code></p>
+
+<h3 id="section">何がうれしいか</h3>
+
+<p>以下のような状況において、多少便利になるツールです。</p>
+
+<ul>
+  <li>EC2インスタンスを複数台運用している</li>
+  <li>台数が数十台規模である</li>
+  <li>AutoScalingを利用していて、IPやドメインが頻繁に変わる</li>
+  <li><code>aws ec2 describe-instances</code>のレスポンスが遅い</li>
+  <li><code>aws ec2 describe-instances</code>のオプション指定が複雑かつ指定が面倒</li>
+</ul>
+
+<p>このような状況を改善するため、ec2-ls-hostsをつくりました。
+このツールは、<code>aws ec2 describe-instances</code>に変わる、シンプルなオプションを備えたCLIツールになります。</p>
+
+<h3 id="ec2-ls-hosts">ec2-ls-hostsで出来ること</h3>
+
+<p>主に以下のオプションを備えています</p>
+
+<ul>
+  <li><code>-filters</code>: 絞込み条件</li>
+  <li><code>-tags</code>   : タグによる絞込み</li>
+  <li><code>-fileds</code> : 表示項目の設定</li>
+</ul>
+
+<p>実行時のオプションでも指定できるのですが、いちいち指定するのは面倒なので、<code>~/.ls-hosts</code> か <code>/etc/ls-hosts</code> に設定を保存できます。
+このファイルが存在していたらそれを読み込みます。(両方ある場合は<code>~/.ls-hosts</code>のほうが優先されます)
+設定はこんなかんじで。</p>
+
+<p><code>
+[options]
+tags   = Env:production,Role:app
+fields = instance-id,tag:Name,public-ip,instance-state
+</code></p>
+
+<p>認証は以下の優先順位で可能なものを利用します。</p>
+
+<ul>
+  <li>環境変数 <code>AWS_ACCESS_KEY_ID</code>, <code>AWS_SECRET_ACCESS_KEY</code></li>
+  <li>SharedCredentials (<code>~/.aws/credentials</code>のdefaultプロファイルを利用)</li>
+  <li>EC2 Instance Profile</li>
+</ul>
+
+<p>インスタンスプロファイルに対応しているので、たとえばEC2のReadOnly権限をを付与してあるゲートウェイインスタンスに配置することで、認証情報を直接管理せずに利用することもできます。</p>
+
+<h3 id="section-1">インストール方法</h3>
+
+<p><code>
+git clone https://github.com/ReSTARTR/ec2-ls-hosts.git
+cd ./ec2-ls-hosts
+make build -B
+cp ./build/ls-hosts /path/to/bin/ls-hosts
+</code></p>
+
+<ul>
+  <li>コマンド名は<code>ls-hosts</code>にしています。</li>
+  <li><code>$PATH</code>の通っているところに配置してください:bow:</li>
+</ul>
+
+<h3 id="zsh--pecossh">zsh + pecoでインタラクティブにSSHする</h3>
+
+<p>ec2-ls-hosts単体でも多少便利にはなるのですが、ツールを組み合わせた応用例も書いておきます。</p>
+
+<p>たとえば以下のような結果が得られるEC2環境があったとします。</p>
+
+<p><code>
+$ ls-hosts -filters instance-state-name:running -tags Env:production,Role:app -fields private-ip,tag:Name,tag:Role
+10.0.0.1 app app01
+10.0.0.2 app app02
+10.0.0.3 app app03
+</code></p>
+
+<p>これをpecoでインタラクティブに選択してそのままSSHするには、以下のようにzshrcを設定しておきます。</p>
+
+<p><code>
+function peco-ec2-ls-hosts () {
+  # NOTE: ~/.ls-hostsに設定したほうがより良いです
+  BUFFER=$(
+    ls-hosts -filters instance-state-name:running -tags Env:production,Role:app -fields private-ip,tag:Name,tag:Role | \
+    peco --prompt "EC2 &gt;" --query "$LBUFFER" | \
+    awk '{echo "Login to %s; printf "ssh %s\n", $3,$1}'
+  )
+  CURSOR=$#BUFFER
+  zle accept-line
+  zle clear-screen
+}
+zle -N peco-ec2-ls-hosts
+# キーバインドはおこのみで
+bindkey '^oo' peco-ec2-ls-hosts
+</code></p>
+
+<p>とすることで、インタラクティブにSSHできてヒストリーにも残ります。
+以下キャプチャでは対象インスタンスがダミーなのでSSできてませんがちゃんと使えます。
+(実環境の実行結果は載せられないので泣く泣くダミーです…)</p>
+
+<p><a href="https://gyazo.com/ae45206ad8215934f5e0a897b91b3d2a"><img src="https://i.gyazo.com/ae45206ad8215934f5e0a897b91b3d2a.gif" alt="https://gyazo.com/ae45206ad8215934f5e0a897b91b3d2a" /></a></p>
+
+<p>※クライアントPCからパブリックIPとかで直接SSHできない場合はプロキシコマンドを利用して踏み台経由とかでプライベートIPできるssh-configを設定しておくと、この応用例を使って透過的にSSHできます（これは別記事としたほうがよいかも？)</p>
+
+<h3 id="section-2">余談</h3>
+
+<p>さいごの応用例はもともとaws-cli + jq + pecoで実現していたのですが、管理台数が増えるに連れてレスポンスが極端に劣化。
+キャッシュ機構を入れてみたりしたものの、快適とはいえない状況になったので、「aws-sdk-goで書くだけで軽くなるのでは？」という発想から開発に至りました。</p>
+
+<p>mackerel導入環境であれば<code>mkr</code>でも似たようなことができるかもしれないですが、mackerel前提ではないソリューションとしても十分使えるかな、と。</p>
+
+<p>社内利用に特化したかたちでつくったものの、ちょっとだけ汎用化すればべつに誰でも使えるようなきがしたので、手を加えたうえでgithubにて公開となりました。
+まだまだ貧弱ですが、最低限役目は果たしています。</p>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Docker謹製ライブラリのlibchanについて調べてみた]]></title>

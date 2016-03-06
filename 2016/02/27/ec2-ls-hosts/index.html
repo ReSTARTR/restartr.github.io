@@ -5,13 +5,13 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>GoとPythonをZeroMQで繋ぐ - I Will Survive</title>
+  <title>ec2-ls-hosts: EC2インスタンスを一覧するだけのシンプルツール - I Will Survive</title>
   <meta name="author" content="ReSTARTR">
   <link rel="author" href="https://plus.google.com/103216164658230535238" />
   <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="GoとPythonをZeroMQで繋ぐ .sharing { clear: both; } .sharing li{ display: inline; list-style-type: none; float: left; height: 1em; line-height: 1em; &hellip;">
+  <meta name="description" content="EC2インスタンスの一覧を表示するツールをgolangでつくりました。">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -20,7 +20,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://blog.restartr.com/2013/04/26/connect-go-and-python-with-zeromq/">
+  <link rel="canonical" href="http://blog.restartr.com/2016/02/27/ec2-ls-hosts/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
    <link href="/stylesheets/data-table.css" media="screen, projection" rel="stylesheet" type="text/css" />
@@ -119,7 +119,7 @@
   
   <header>
     
-      <h1 class="entry-title">GoとPythonをZeroMQで繋ぐ</h1>
+      <h1 class="entry-title">Ec2-ls-hosts: EC2インスタンスを一覧するだけのシンプルツール</h1>
       
       <style type="text/css">
   .sharing {
@@ -141,9 +141,9 @@
 </style>
 <div class="sharing">
   <ul>
-  <li><a href="http://blog.restartr.com/2013/04/26/connect-go-and-python-with-zeromq/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+  <li><a href="http://blog.restartr.com/2016/02/27/ec2-ls-hosts/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
   
-  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2013/04/26/connect-go-and-python-with-zeromq/" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2013/04/26/connect-go-and-python-with-zeromq/" >Tweet</a></li>
+  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2016/02/27/ec2-ls-hosts/" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2016/02/27/ec2-ls-hosts/" >Tweet</a></li>
   
   <li><a data-pocket-label="pocket" data-pocket-count="horizontal" class="pocket-btn" data-lang="en"></a><script type="text/javascript">!function(d,i){if(!d.getElementById(i)){var j=d.createElement("script");j.id=i;j.src="https://widgets.getpocket.com/v1/j/btn.js?v=1";var w=d.getElementById(i);d.body.appendChild(j);}}(document,"pocket-btn-js");</script></li>
   
@@ -168,18 +168,114 @@
   
 
 
-<time datetime="2013-04-26T23:34:48+09:00" pubdate data-updated="true">2013-04-26 (Fri)</time>
+<time datetime="2016-02-27T17:28:53+09:00" pubdate data-updated="true">2016-02-27 (Sat)</time>
         
       </p>
     
   </header>
 
 
-  <div class="entry-content"><p>最近Rubyでプロジェクトオイラーを解きながらRubyに慣れようとしてるのですが、ちょっと飽きてきたので息抜きにGoを書いたりしています。</p>
+  <div class="entry-content"><p>EC2インスタンスの一覧を表示するツールをgolangでつくりました。</p>
 
-<p>ついでにZeroMQも試してみたかったので、GoとPythonをZeroMQで繋いでみました。</p>
+<ul>
+  <li><a href="https://github.com/ReSTARTR/ec2-ls-hosts">ReSTARTR/ec2-ls-hosts</a></li>
+</ul>
 
-<p>構成はこんな感じで、Python(かGo)clientを起動し、Goで動くmonitorq経由でGoのserverにつながります。PUB/SUBでmonitorからモニタリングできるのがミソです。</p>
+<p>以下のように、ただインスタンスの情報を列挙するだけのシンプルなツールです。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>ls-hosts
+</span><span class="line">i-00001 10.0.0.1 app01
+</span><span class="line">i-00002 10.0.0.2 app02
+</span><span class="line">i-00003 10.0.0.3 app03
+</span><span class="line">i-00004 10.0.0.4 app04
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="section">何がうれしいか</h3>
+
+<p>以下のような状況において、多少便利になるツールです。</p>
+
+<ul>
+  <li>EC2インスタンスを複数台運用している</li>
+  <li>台数が数十台規模である</li>
+  <li>AutoScalingを利用していて、IPやドメインが頻繁に変わる</li>
+  <li><code>aws ec2 describe-instances</code>のレスポンスが遅い</li>
+  <li><code>aws ec2 describe-instances</code>のオプション指定が複雑かつ指定が面倒</li>
+</ul>
+
+<p>このような状況を改善するため、ec2-ls-hostsをつくりました。
+このツールは、<code>aws ec2 describe-instances</code>に変わる、シンプルなオプションを備えたCLIツールになります。</p>
+
+<h3 id="ec2-ls-hosts">ec2-ls-hostsで出来ること</h3>
+
+<p>主に以下のオプションを備えています</p>
+
+<ul>
+  <li><code>-filters</code>: 絞込み条件</li>
+  <li><code>-tags</code>   : タグによる絞込み</li>
+  <li><code>-fileds</code> : 表示項目の設定</li>
+</ul>
+
+<p>実行時のオプションでも指定できるのですが、いちいち指定するのは面倒なので、<code>~/.ls-hosts</code> か <code>/etc/ls-hosts</code> に設定を保存できます。
+このファイルが存在していたらそれを読み込みます。(両方ある場合は<code>~/.ls-hosts</code>のほうが優先されます)
+設定はこんなかんじで。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="o">[</span>options<span class="o">]</span>
+</span><span class="line"><span class="nv">tags</span>   <span class="o">=</span> Env:production,Role:app
+</span><span class="line"><span class="nv">fields</span> <span class="o">=</span> instance-id,tag:Name,public-ip,instance-state
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>認証は以下の優先順位で可能なものを利用します。</p>
+
+<ul>
+  <li>環境変数 <code>AWS_ACCESS_KEY_ID</code>, <code>AWS_SECRET_ACCESS_KEY</code></li>
+  <li>SharedCredentials (<code>~/.aws/credentials</code>のdefaultプロファイルを利用)</li>
+  <li>EC2 Instance Profile</li>
+</ul>
+
+<p>インスタンスプロファイルに対応しているので、たとえばEC2のReadOnly権限をを付与してあるゲートウェイインスタンスに配置することで、認証情報を直接管理せずに利用することもできます。</p>
+
+<h3 id="section-1">インストール方法</h3>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">git clone https://github.com/ReSTARTR/ec2-ls-hosts.git
+</span><span class="line"><span class="nb">cd</span> ./ec2-ls-hosts
+</span><span class="line">make build -B
+</span><span class="line">cp ./build/ls-hosts /path/to/bin/ls-hosts
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<ul>
+  <li>コマンド名は<code>ls-hosts</code>にしています。</li>
+  <li><code>$PATH</code>の通っているところに配置してください:bow:</li>
+</ul>
+
+<h3 id="zsh--pecossh">zsh + pecoでインタラクティブにSSHする</h3>
+
+<p>ec2-ls-hosts単体でも多少便利にはなるのですが、ツールを組み合わせた応用例も書いておきます。</p>
+
+<p>たとえば以下のような結果が得られるEC2環境があったとします。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>ls-hosts -filters instance-state-name:running -tags Env:production,Role:app -fields private-ip,tag:Name,tag:Role
+</span><span class="line">10.0.0.1 app app01
+</span><span class="line">10.0.0.2 app app02
+</span><span class="line">10.0.0.3 app app03
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>これをpecoでインタラクティブに選択してそのままSSHするには、以下のようにzshrcを設定しておきます。</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
@@ -195,89 +291,40 @@
 <span class="line-number">12</span>
 <span class="line-number">13</span>
 <span class="line-number">14</span>
-</pre></td><td class="code"><pre><code class="ruby"><span class="line">              <span class="o">+----------------------------------------+</span>
-</span><span class="line">              <span class="o">|</span>                                        <span class="o">|</span>
-</span><span class="line">  <span class="o">+------+</span>        <span class="o">|--------------------------+</span>     <span class="o">+-----+</span> <span class="o">|</span>
-</span><span class="line">  <span class="o">|</span><span class="n">client</span><span class="o">|--------|</span><span class="mi">9001</span>     <span class="n">monitorq</span>     <span class="mi">9002</span><span class="o">|-----|</span><span class="n">serv</span> <span class="o">|</span> <span class="o">|</span>
-</span><span class="line">  <span class="o">|</span><span class="p">(</span><span class="no">REQ</span><span class="p">)</span> <span class="o">|</span>        <span class="o">|</span><span class="p">(</span><span class="no">ROUTER</span><span class="p">)</span>   <span class="mi">9003</span>   <span class="p">(</span><span class="no">DEALER</span><span class="p">)</span><span class="o">|</span>     <span class="o">|</span><span class="p">(</span><span class="no">REP</span><span class="p">)</span><span class="o">|</span> <span class="o">|</span>
-</span><span class="line">  <span class="o">+------+</span>        <span class="o">|--------------------------+</span>     <span class="o">+-----+</span> <span class="o">|</span>
-</span><span class="line">              <span class="o">|</span>          <span class="o">|</span><span class="p">(</span><span class="no">PUB</span><span class="p">)</span>                        <span class="o">|</span>
-</span><span class="line">              <span class="o">|</span>          <span class="o">|</span>                             <span class="o">|</span>
-</span><span class="line">              <span class="o">|</span>          <span class="o">|</span>                             <span class="o">|</span>
-</span><span class="line">              <span class="o">|</span>          <span class="o">|</span><span class="p">(</span><span class="no">SUB</span><span class="p">)</span>                        <span class="o">|</span>
-</span><span class="line">              <span class="o">|</span>      <span class="o">+-------+</span>                         <span class="o">|</span>
-</span><span class="line">              <span class="o">|</span>      <span class="o">|</span><span class="n">monitor</span><span class="o">|</span>                         <span class="o">|</span>
-</span><span class="line">              <span class="o">|</span>      <span class="o">+-------+</span>                         <span class="o">|</span>
-</span><span class="line">              <span class="o">+----------------------------------------+</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="k">function </span>peco-ec2-ls-hosts <span class="o">()</span> <span class="o">{</span>
+</span><span class="line">  <span class="c"># NOTE: ~/.ls-hostsに設定したほうがより良いです</span>
+</span><span class="line">  <span class="nv">BUFFER</span><span class="o">=</span><span class="k">$(</span>
+</span><span class="line">    ls-hosts -filters instance-state-name:running -tags Env:production,Role:app -fields private-ip,tag:Name,tag:Role | <span class="se">\</span>
+</span><span class="line">    peco --prompt <span class="s2">&quot;EC2 &gt;&quot;</span> --query <span class="s2">&quot;$LBUFFER&quot;</span> | <span class="se">\</span>
+</span><span class="line">    awk <span class="s1">&#39;{echo &quot;Login to %s; printf &quot;ssh %s\n&quot;, $3,$1}&#39;</span>
+</span><span class="line">  <span class="k">)</span>
+</span><span class="line">  <span class="nv">CURSOR</span><span class="o">=</span><span class="nv">$#BUFFER</span>
+</span><span class="line">  zle accept-line
+</span><span class="line">  zle clear-screen
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">zle -N peco-ec2-ls-hosts
+</span><span class="line"><span class="c"># キーバインドはおこのみで</span>
+</span><span class="line">bindkey <span class="s1">&#39;^oo&#39;</span> peco-ec2-ls-hosts
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p><em>※client/server/monitorは複数たちあげるとよしなに振り分けてくれます。</em></p>
+<p>とすることで、インタラクティブにSSHできてヒストリーにも残ります。
+以下キャプチャでは対象インスタンスがダミーなのでSSできてませんがちゃんと使えます。
+(実環境の実行結果は載せられないので泣く泣くダミーです…)</p>
 
-<ul>
-  <li>monitorqでfan-in/outする</li>
-</ul>
+<p><a href="https://gyazo.com/ae45206ad8215934f5e0a897b91b3d2a"><img src="https://i.gyazo.com/ae45206ad8215934f5e0a897b91b3d2a.gif" alt="https://gyazo.com/ae45206ad8215934f5e0a897b91b3d2a" /></a></p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>go run queue.go monitorq
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>※クライアントPCからパブリックIPとかで直接SSHできない場合はプロキシコマンドを利用して踏み台経由とかでプライベートIPできるssh-configを設定しておくと、この応用例を使って透過的にSSHできます（これは別記事としたほうがよいかも？)</p>
 
-<ul>
-  <li>clientから”PING”を投げる(と、”PONG#<pid>&#8220;が帰る)</pid></li>
-</ul>
+<h3 id="section-2">余談</h3>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>python run queue.py client
-</span><span class="line">PONG#&lt;28870&gt;
-</span><span class="line">PONG#&lt;28870&gt;
-</span><span class="line"> :
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>さいごの応用例はもともとaws-cli + jq + pecoで実現していたのですが、管理台数が増えるに連れてレスポンスが極端に劣化。
+キャッシュ機構を入れてみたりしたものの、快適とはいえない状況になったので、「aws-sdk-goで書くだけで軽くなるのでは？」という発想から開発に至りました。</p>
 
-<ul>
-  <li>serverから”PONG”を返す(clientからのPINGを表示)</li>
-</ul>
+<p>mackerel導入環境であれば<code>mkr</code>でも似たようなことができるかもしれないですが、mackerel前提ではないソリューションとしても十分使えるかな、と。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>go run queue.go serv
-</span><span class="line">Recv: PING#&lt;73835&gt;
-</span><span class="line">Recv: PING#&lt;73835&gt;
-</span><span class="line"> :
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<p>社内利用に特化したかたちでつくったものの、ちょっとだけ汎用化すればべつに誰でも使えるようなきがしたので、手を加えたうえでgithubにて公開となりました。
+まだまだ貧弱ですが、最低限役目は果たしています。</p>
 
-<ul>
-  <li>monitorでリクエスト総数をモニタリング</li>
-</ul>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>go run queue.go monitor
-</span><span class="line">MONITOR: IN: 2082, OUT 2082
-</span><span class="line">MONITOR: IN: 2083, OUT 2083
-</span><span class="line"> :
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>コードはgistにあげてます。</p>
-
-<ul>
-  <li><a href="https://gist.github.com/ReSTARTR/5467656">gist</a></li>
-</ul>
-
-<p>ZeroMQなら他にもいろんな構成がとれるので、使いどころは結構あるのではないかと。</p>
-
-<p>今回、不慣れなGoで書いてみましたが、これくらいであればもわりと素直にかけるなぁという印象です。</p>
-
-<p>Goで書かれたZeroMQのサンプルは以下githubリポジトリにたくさんあるので、覗いてみると色々勉強になります。</p>
-
-<ul>
-  <li><a href="https://github.com/imatix/zguide/tree/master/examples/Go">zguide/examples/Go at master ? imatix/zguide</a></li>
-</ul>
 </div>
 
 
@@ -303,9 +350,9 @@
 </style>
 <div class="sharing">
   <ul>
-  <li><a href="http://blog.restartr.com/2013/04/26/connect-go-and-python-with-zeromq/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+  <li><a href="http://blog.restartr.com/2016/02/27/ec2-ls-hosts/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
   
-  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2013/04/26/connect-go-and-python-with-zeromq/" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2013/04/26/connect-go-and-python-with-zeromq/" >Tweet</a></li>
+  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2016/02/27/ec2-ls-hosts/" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2016/02/27/ec2-ls-hosts/" >Tweet</a></li>
   
   <li><a data-pocket-label="pocket" data-pocket-count="horizontal" class="pocket-btn" data-lang="en"></a><script type="text/javascript">!function(d,i){if(!d.getElementById(i)){var j=d.createElement("script");j.id=i;j.src="https://widgets.getpocket.com/v1/j/btn.js?v=1";var w=d.getElementById(i);d.body.appendChild(j);}}(document,"pocket-btn-js");</script></li>
   
@@ -336,12 +383,12 @@
   
 
 
-<time datetime="2013-04-26T23:34:48+09:00" pubdate data-updated="true">2013-04-26 (Fri)</time>
+<time datetime="2016-02-27T17:28:53+09:00" pubdate data-updated="true">2016-02-27 (Sat)</time>
       
 
 <span class="categories">
   
-    <a class='category' href='/category/golang/'>golang</a>, <a class='category' href='/category/python/'>python</a>
+    <a class='category' href='/category/go/'>go</a>, <a class='category' href='/category/golang/'>golang</a>
   
 </span>
 
@@ -350,10 +397,8 @@
     <hr />
     <p class="meta">
       
-        <a class="basic-alignment left" href="/2013/04/17/bind-a-variable-to-closure-in-python/" title="Previous Post: pythonのクロージャに変数を束縛する方法">&laquo; pythonのクロージャに変数を束縛する方法</a>
+        <a class="basic-alignment left" href="/2016/02/17/ergodox-ez/" title="Previous Post: ErgoDox EZを注文した(けどまだ届いてない)">&laquo; ErgoDox EZを注文した(けどまだ届いてない)</a>
       
-      
-        <a class="basic-alignment right" href="/2014/04/06/move-from-wordpress-to-octopress/" title="Next Post: WordpressからOctopressに移行">WordpressからOctopressに移行 &raquo;</a>
       
     </p>
   </footer>

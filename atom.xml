@@ -4,7 +4,7 @@
   <title><![CDATA[I Will Survive]]></title>
   <link href="http://blog.restartr.com/atom.xml" rel="self"/>
   <link href="http://blog.restartr.com/"/>
-  <updated>2016-02-20T00:10:22+09:00</updated>
+  <updated>2016-03-06T14:14:17+09:00</updated>
   <id>http://blog.restartr.com/</id>
   <author>
     <name><![CDATA[ReSTARTR]]></name>
@@ -12,6 +12,164 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[ec2-ls-hosts: EC2インスタンスを一覧するだけのシンプルツール]]></title>
+    <link href="http://blog.restartr.com/2016/02/27/ec2-ls-hosts/"/>
+    <updated>2016-02-27T17:28:53+09:00</updated>
+    <id>http://blog.restartr.com/2016/02/27/ec2-ls-hosts</id>
+    <content type="html"><![CDATA[<p>EC2インスタンスの一覧を表示するツールをgolangでつくりました。</p>
+
+<ul>
+  <li><a href="https://github.com/ReSTARTR/ec2-ls-hosts">ReSTARTR/ec2-ls-hosts</a></li>
+</ul>
+
+<p>以下のように、ただインスタンスの情報を列挙するだけのシンプルなツールです。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>ls-hosts
+</span><span class="line">i-00001 10.0.0.1 app01
+</span><span class="line">i-00002 10.0.0.2 app02
+</span><span class="line">i-00003 10.0.0.3 app03
+</span><span class="line">i-00004 10.0.0.4 app04
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="section">何がうれしいか</h3>
+
+<p>以下のような状況において、多少便利になるツールです。</p>
+
+<ul>
+  <li>EC2インスタンスを複数台運用している</li>
+  <li>台数が数十台規模である</li>
+  <li>AutoScalingを利用していて、IPやドメインが頻繁に変わる</li>
+  <li><code>aws ec2 describe-instances</code>のレスポンスが遅い</li>
+  <li><code>aws ec2 describe-instances</code>のオプション指定が複雑かつ指定が面倒</li>
+</ul>
+
+<p>このような状況を改善するため、ec2-ls-hostsをつくりました。
+このツールは、<code>aws ec2 describe-instances</code>に変わる、シンプルなオプションを備えたCLIツールになります。</p>
+
+<h3 id="ec2-ls-hosts">ec2-ls-hostsで出来ること</h3>
+
+<p>主に以下のオプションを備えています</p>
+
+<ul>
+  <li><code>-filters</code>: 絞込み条件</li>
+  <li><code>-tags</code>   : タグによる絞込み</li>
+  <li><code>-fileds</code> : 表示項目の設定</li>
+</ul>
+
+<p>実行時のオプションでも指定できるのですが、いちいち指定するのは面倒なので、<code>~/.ls-hosts</code> か <code>/etc/ls-hosts</code> に設定を保存できます。
+このファイルが存在していたらそれを読み込みます。(両方ある場合は<code>~/.ls-hosts</code>のほうが優先されます)
+設定はこんなかんじで。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="o">[</span>options<span class="o">]</span>
+</span><span class="line"><span class="nv">tags</span>   <span class="o">=</span> Env:production,Role:app
+</span><span class="line"><span class="nv">fields</span> <span class="o">=</span> instance-id,tag:Name,public-ip,instance-state
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>認証は以下の優先順位で可能なものを利用します。</p>
+
+<ul>
+  <li>環境変数 <code>AWS_ACCESS_KEY_ID</code>, <code>AWS_SECRET_ACCESS_KEY</code></li>
+  <li>SharedCredentials (<code>~/.aws/credentials</code>のdefaultプロファイルを利用)</li>
+  <li>EC2 Instance Profile</li>
+</ul>
+
+<p>インスタンスプロファイルに対応しているので、たとえばEC2のReadOnly権限をを付与してあるゲートウェイインスタンスに配置することで、認証情報を直接管理せずに利用することもできます。</p>
+
+<h3 id="section-1">インストール方法</h3>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">git clone https://github.com/ReSTARTR/ec2-ls-hosts.git
+</span><span class="line"><span class="nb">cd</span> ./ec2-ls-hosts
+</span><span class="line">make build -B
+</span><span class="line">cp ./build/ls-hosts /path/to/bin/ls-hosts
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<ul>
+  <li>コマンド名は<code>ls-hosts</code>にしています。</li>
+  <li><code>$PATH</code>の通っているところに配置してください:bow:</li>
+</ul>
+
+<h3 id="zsh--pecossh">zsh + pecoでインタラクティブにSSHする</h3>
+
+<p>ec2-ls-hosts単体でも多少便利にはなるのですが、ツールを組み合わせた応用例も書いておきます。</p>
+
+<p>たとえば以下のような結果が得られるEC2環境があったとします。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>ls-hosts -filters instance-state-name:running -tags Env:production,Role:app -fields private-ip,tag:Name,tag:Role
+</span><span class="line">10.0.0.1 app app01
+</span><span class="line">10.0.0.2 app app02
+</span><span class="line">10.0.0.3 app app03
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>これをpecoでインタラクティブに選択してそのままSSHするには、以下のようにzshrcを設定しておきます。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="k">function </span>peco-ec2-ls-hosts <span class="o">()</span> <span class="o">{</span>
+</span><span class="line">  <span class="c"># NOTE: ~/.ls-hostsに設定したほうがより良いです</span>
+</span><span class="line">  <span class="nv">BUFFER</span><span class="o">=</span><span class="k">$(</span>
+</span><span class="line">    ls-hosts -filters instance-state-name:running -tags Env:production,Role:app -fields private-ip,tag:Name,tag:Role | <span class="se">\</span>
+</span><span class="line">    peco --prompt <span class="s2">&quot;EC2 &gt;&quot;</span> --query <span class="s2">&quot;$LBUFFER&quot;</span> | <span class="se">\</span>
+</span><span class="line">    awk <span class="s1">&#39;{echo &quot;Login to %s; printf &quot;ssh %s\n&quot;, $3,$1}&#39;</span>
+</span><span class="line">  <span class="k">)</span>
+</span><span class="line">  <span class="nv">CURSOR</span><span class="o">=</span><span class="nv">$#BUFFER</span>
+</span><span class="line">  zle accept-line
+</span><span class="line">  zle clear-screen
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">zle -N peco-ec2-ls-hosts
+</span><span class="line"><span class="c"># キーバインドはおこのみで</span>
+</span><span class="line">bindkey <span class="s1">&#39;^oo&#39;</span> peco-ec2-ls-hosts
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>とすることで、インタラクティブにSSHできてヒストリーにも残ります。
+以下キャプチャでは対象インスタンスがダミーなのでSSできてませんがちゃんと使えます。
+(実環境の実行結果は載せられないので泣く泣くダミーです…)</p>
+
+<p><a href="https://gyazo.com/ae45206ad8215934f5e0a897b91b3d2a"><img src="https://i.gyazo.com/ae45206ad8215934f5e0a897b91b3d2a.gif" alt="https://gyazo.com/ae45206ad8215934f5e0a897b91b3d2a" /></a></p>
+
+<p>※クライアントPCからパブリックIPとかで直接SSHできない場合はプロキシコマンドを利用して踏み台経由とかでプライベートIPできるssh-configを設定しておくと、この応用例を使って透過的にSSHできます（これは別記事としたほうがよいかも？)</p>
+
+<h3 id="section-2">余談</h3>
+
+<p>さいごの応用例はもともとaws-cli + jq + pecoで実現していたのですが、管理台数が増えるに連れてレスポンスが極端に劣化。
+キャッシュ機構を入れてみたりしたものの、快適とはいえない状況になったので、「aws-sdk-goで書くだけで軽くなるのでは？」という発想から開発に至りました。</p>
+
+<p>mackerel導入環境であれば<code>mkr</code>でも似たようなことができるかもしれないですが、mackerel前提ではないソリューションとしても十分使えるかな、と。</p>
+
+<p>社内利用に特化したかたちでつくったものの、ちょっとだけ汎用化すればべつに誰でも使えるようなきがしたので、手を加えたうえでgithubにて公開となりました。
+まだまだ貧弱ですが、最低限役目は果たしています。</p>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[ErgoDox EZを注文した(けどまだ届いてない)]]></title>
@@ -2716,60 +2874,6 @@ pytestはかなり詳細に表示してくれるので、レポートの内容�
 <iframe src="http://www.slideshare.net/slideshow/embed_code/14006990" width="427" height="356" frameborder="0" marginwidth="0" marginheight="0" scrolling="no" style="border:1px solid #CCC;border-width:1px 1px 0;margin-bottom:5px" allowfullscreen="" webkitallowfullscreen="" mozallowfullscreen=""> </iframe>
 <div style="margin-bottom:5px"> <strong> <a href="http://www.slideshare.net/pfctdayelise/funcargs-other-fun-with-pytest" title="Funcargs &amp; other fun with pytest" target="_blank">Funcargs &amp; other fun with pytest</a> </strong> from <strong><a href="http://www.slideshare.net/pfctdayelise" target="_blank">Brianna Laugher</a></strong> </div>
 <p>他の機能は触りながらおいおい掴んでいければなと。</p>
-
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Kauli株式会社を退職しました]]></title>
-    <link href="http://blog.restartr.com/2013/04/02/retirement201303/"/>
-    <updated>2013-04-02T22:45:29+09:00</updated>
-    <id>http://blog.restartr.com/2013/04/02/retirement201303</id>
-    <content type="html"><![CDATA[<p><a href="http://www.flickr.com/photos/53244662@N04/8599680561/" title="Cleanup my keyboard by ReSTARTR_y, on Flickr"><img src="http://farm9.staticflickr.com/8106/8599680561_da30653690.jpg" width="500" height="333" alt="Cleanup my keyboard" /></a></p>
-
-<p><em>※2013/04/04 更新:会社名を公開しました</em></p>
-
-<p>3月末付で<a href="http://kau.li">Kauli株式会社</a>を退職しました。</p>
-
-<p>4月1日だと嘘っぽくなるかなと思い、1日ずらしてのご報告です。</p>
-
-<p>2012年01月入社なので、1年3ヶ月という短い間でしたが、これまでで最も充実した1年だったように思います。</p>
-
-<p>大規模な広告配信という技術的に非常に挑戦しがいのある分野で、非常に技術力の高いエンジニアと共にPythonプログラマーとして充実した日々を過ごさせてもらいました。</p>
-
-<p>「大規模なトラフィックを直に感じながらアプリケーション開発に取り組みたい」という希望を胸に入った会社で、</p>
-
-<ul>
-  <li>データストアの検証(結果的にRedisを採用)</li>
-  <li>合計数十台自作サーバーの組立(参考：<a href="https://gist.github.com/nekoya/3749146" title="Kauli自作サーバ組み立てマニュアル" target="_blank">Kauli自作サーバ組み立てマニュアル</a>)</li>
-  <li>開発部総出でデータセンターでサーバーラッキング</li>
-  <li>某社SOAP APIに難儀</li>
-  <li>開発のベースをgithubに移行</li>
-  <li>nginx + Python(werkzeug+uWSGI) + Redisによる広告配信システムの開発</li>
-  <li>アプリケーションのパフォーマンスチューニング</li>
-</ul>
-
-<p>等々、これまでにない経験を1年ちょっとという短い期間に経験できました。</p>
-
-<p>正直離れるのが勿体無いとも思うのですが、キャリアの見直しをしたかったとか諸々の理由により、退職することを決意しました。</p>
-
-<p>同僚の方々には大変お世話になりました。どうもありがとうございました。</p>
-
-<p>転職先はまだ決まっていないので、転職活動を進めつつ、じっくり勉強しておきたかったことに１つずつ取り組んでいこうかという感じです。</p>
-
-<p>良い会社があればぜひ<a href="https://twitter.com/restartr">@ReSTARTR</a>にご紹介ください＞＜</p>
-
-<p>…</p>
-
-<p>なお、Kauli株式会社は継続してエンジニアを募集中のようですので、</p>
-
-<p>大規模広告配信システムをPythonで開発したい方々は下記からぜひぜひご応募を。</p>
-
-<ul>
-  <li><b><a href="http://kau.li/jp/pages/recruit">Kauli - 採用情報</a></b></li>
-</ul>
-
-<p>それでは。</p>
 
 ]]></content>
   </entry>

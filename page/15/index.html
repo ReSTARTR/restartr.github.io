@@ -11,7 +11,8 @@
   <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="ScalaのORMとしてSquerylってのがあります。 Squeryl - A Scala ORM for SQL Databases 使い方は上記リンク先を見ればだいたいわかります。 あと、@jugyoさんのブログに導入あたりはまとまっていますし、 &hellip;">
+  <meta name="description" content="2011.08.31 kmizushimaさんから頂いたコメントを元に、下記の記述を修正＆追記しました。 Twitterのutil-evalの一時ファイル生成について AkkaのConfigファイルのパース手法について
+&lt;/em&gt; TwitterのOAuthの鍵やDB接続情報など、 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -116,6 +117,257 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2011/08/30/config-libraries-in-scala/">Scalaで設定ファイルを使いたい時どうしたらいいの？</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2011-08-30T00:02:15+09:00" pubdate data-updated="true">2011-08-30 (Tue)</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p><em style="color:red">2011.08.31 kmizushimaさんから頂いた<a href="http://blog.restartr.com/2011/08/30/config-libraries-in-scala/?preview=true&amp;preview_id=1049&amp;preview_nonce=ad0bbeeef6#comment-108">コメント</a>を元に、下記の記述を修正＆追記しました。</em></p>
+
+<ul>
+  <li>Twitterのutil-evalの一時ファイル生成について</li>
+  <li>AkkaのConfigファイルのパース手法について
+&lt;/em&gt;</li>
+</ul>
+
+<p>TwitterのOAuthの鍵やDB接続情報など、アプリを書く上で環境によって切り替える設定が大抵の場合あると思います。普段使っているPHPの場合、設定を外部ファイルに書きだす場合、ini,yaml,xml,phpのいずれかを使うことが多いのですが、Scalaの場合、設定ファイルってどうするのか気になりました。</p>
+
+<p>ということで、適当に思いついたライブラリやフレームワークがどのように対応しているのか調査。</p>
+
+<h2 id="section">ライブラリ</h2>
+
+<h3 id="properties">propertiesファイル</h3>
+
+<ul>
+  <li>javaの古くから使われている</li>
+  <li>キーと値のみ設定可能</li>
+  <li>依存関係がないので手軽。</li>
+  <li>すべてが文字列</li>
+  <li>例えばこんな感じ</li>
+</ul>
+
+<p>path/to/conf.properties</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="n">hoge</span> <span class="k">=</span> <span class="s">&quot;moge&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">val</span> <span class="n">p</span> <span class="k">=</span> <span class="k">new</span> <span class="n">java</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="nc">Properties</span><span class="o">()</span>
+</span><span class="line"><span class="k">val</span> <span class="n">config</span> <span class="k">=</span> <span class="n">p</span><span class="o">.</span><span class="n">load</span><span class="o">(</span><span class="k">new</span> <span class="n">java</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="nc">FileInputStream</span><span class="o">(</span><span class="s">&quot;path/to/conf.properties&quot;</span><span class="o">);</span>
+</span><span class="line"><span class="n">config</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="s">&quot;hoge&quot;</span><span class="o">)</span> <span class="c1">// &quot;moge&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="twitterconfiggy">twitterのconfiggy</h3>
+
+<ul>
+  <li><a href="https://github.com/robey/configgy">https://github.com/robey/configgy</a></li>
+  <li>独自フォーマット</li>
+  <li>オワコン</li>
+</ul>
+
+<h3 id="twitterutil-eval">twitterのutil-eval</h3>
+
+<ul>
+  <li><a href="http://twitter.github.com/util/">http://twitter.github.com/util/</a></li>
+  <li>Evalした値をそのまま利用</li>
+  <li>Scalaのコンパイラに任せられる。つまりScalaコードがそのまま設定ファイルに。</li>
+  <li>型安全</li>
+  <li>詳しいことはこちらを参照
+    <ul>
+      <li><a href="http://d.hatena.ne.jp/xuwei/20110805/1312551980">twitter が Scala 大好きすぎて (?) 設定ファイルまで Scala のソースコードな件 - scalaとか・・・</a></li>
+      <li><a href="http://blog.youhei.jp/scala-util-eval">Scala アプリケーションのコンフィグレーションに Twitter 製の util-eval を使ってみた - blog.youhei.jp</a></li>
+    </ul>
+  </li>
+  <li>下記処理にて設定クラスインスタンスをapply経由で取り出せる
+    <ul>
+      <li><a href="https://github.com/twitter/util/blob/master/util-eval/src/main/scala/com/twitter/util/Eval.scala#L247">com.twitter.util.Eval#L247</a></li>
+    </ul>
+  </li>
+  <li><del>一時的にjarファイルを生成するので環境に制約あるとダメ（たぶん）</del>
+    <ul>
+      <li>一時ファイルを生成するのは、ローカルにcloneした古いままのバージョン（1.2.5）で動作確認していたためでした。</li>
+      <li>古いコード: <a href="https://github.com/twitter/util/blob/7c81842286f30aee4b2176bceb8c79ded710c88e/src/main/scala/com/twitter/util/Evaluator.scala">com.twitter.util.Evaluator</a>のコメントに<a href="https://github.com/twitter/util/blob/7c81842286f30aee4b2176bceb8c79ded710c88e/src/main/scala/com/twitter/util/Evaluator.scala#L57">All generated .scala and .class files are stored, by default, in System.getProperty(“java.io.tmpdir”)</a>と書いてあったので、「一時ファイルが生成される」と認識し、実際の動作確認でもその一時ファイルが確認できていました。</li>
+      <li>しかし、新しいコード: <a href="https://github.com/twitter/util/blob/master/util-eval/src/main/scala/com/twitter/util/Eval.scala">com.twitter.util.Eval</a>のコメントには<a href="https://github.com/twitter/util/blob/master/util-eval/src/main/scala/com/twitter/util/Eval.scala#L50">If target is None, the results are compiled to memory (and are therefore ephemeral)</a>とある通り、パス指定がない場合はメモリ上の仮想ディレクトリに対して操作を行う模様です。</li>
+    </ul>
+  </li>
+  <li>使い方</li>
+</ul>
+
+<p>設定のtraitを定義</p>
+
+<p>src/main/scala/com/restartr/utilSample/MyConfig.scala</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">package</span> <span class="nn">com.restartr.utilSample</span>
+</span><span class="line">
+</span><span class="line"><span class="k">trait</span> <span class="nc">MyConfig</span> <span class="o">{</span>
+</span><span class="line">  <span class="k">val</span> <span class="n">num</span><span class="k">:</span> <span class="kt">Int</span>
+</span><span class="line">  <span class="k">val</span> <span class="n">str</span><span class="k">:</span> <span class="kt">String</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>実際の設定ファイルでは、設定のTraitを継承してインスタンス生成</p>
+
+<p>※クラスインスタンスでなくても文字列やリストでもOK。</p>
+
+<p>path/to/config/MyConfig.scala</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">import</span> <span class="nn">com.restartr.utilSample.MyConfig</span>
+</span><span class="line"><span class="k">new</span> <span class="nc">MyConfig</span> <span class="o">{</span>
+</span><span class="line">  <span class="k">val</span> <span class="n">num</span> <span class="k">=</span> <span class="mi">1</span>
+</span><span class="line">  <span class="k">val</span> <span class="n">str</span> <span class="k">=</span> <span class="s">&quot;san&quot;</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>使いたい場所でEval。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">val</span> <span class="n">conf</span> <span class="k">=</span> <span class="nc">Eval</span><span class="o">[</span><span class="kt">MyConfig</span><span class="o">](</span><span class="k">new</span> <span class="n">java</span><span class="o">.</span><span class="n">io</span><span class="o">.</span><span class="nc">File</span><span class="o">(</span><span class="s">&quot;path/to/config/MyConfig.scala&quot;</span><span class="o">))</span>
+</span><span class="line"><span class="n">conf</span><span class="o">.</span><span class="n">num</span> <span class="c1">// 1</span>
+</span><span class="line"><span class="n">conf</span><span class="o">.</span><span class="n">str</span> <span class="c1">// &quot;san&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="configrity">configrity</h3>
+
+<ul>
+  <li><a href="https://github.com/paradigmatic/Configrity">https://github.com/paradigmatic/Configrity</a></li>
+  <li>akkaのフォーマットと同等
+    <ul>
+      <li><a href="https://github.com/paradigmatic/Configrity/wiki/Formats">設定のフォーマット</a></li>
+      <li>Scala 2.9以上対象。</li>
+      <li>configファイルの<strong>読み書き</strong>ができる
+        <ul>
+          <li>immutable, thread safe, allow functional design pattern</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="section-1">各種フレームワーク</h2>
+
+<p>以下のフレームワークはすべて独自実装でした。Propertiesじゃ役不足だし、かといってデファクトな設定用ライブラリがないからなのでしょうか。</p>
+
+<h3 id="akkaconfig">akkaのconfig</h3>
+
+<ul>
+  <li>akka.confとかがそれ。</li>
+  <li>独自パーサーを使用
+    <ul>
+      <li>70行程度のシンプルなパーサー</li>
+      <li><a href="https://github.com/jboner/akka/blob/master/akka-actor/src/main/scala/akka/config/ConfigParser.scala">akka.config.ConfigParser</a></li>
+      <li><del>正規表現で定義されてる</del>Scalaのパーザコンビネータ(RegexParsersを継承)で定義されている</li>
+      <li>”{“と”}”で階層構造を表現</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="n">akka</span> <span class="o">{</span>
+</span><span class="line">  <span class="n">cluster</span><span class="o">{</span>
+</span><span class="line">    <span class="n">name</span> <span class="k">=</span> <span class="s">&quot;test-cluster&quot;</span>
+</span><span class="line">  <span class="o">}</span>
+</span><span class="line"><span class="o">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<ul>
+  <li>使える型</li>
+  <li>数値</li>
+  <li>文字列</li>
+  <li>真偽値（on/off , true/false)</li>
+  <li>リスト [1,2,3] / [“hoge”,”moge”]</li>
+</ul>
+
+<h3 id="playframeworkconfig">play!frameworkのconfig</h3>
+
+<ul>
+  <li>独自パーサー
+    <ul>
+      <li><a href="https://github.com/playframework/play/blob/master/framework/src/play/utils/OrderSafeProperties.java">play.utils.OrderSafeProperties</a></li>
+    </ul>
+  </li>
+  <li>java.util.propertiesを継承したもの。</li>
+  <li>環境ごとにIDを割り当てられる
+    <ul>
+      <li>http://playdocja.appspot.com/documentation/1.2.1/production</li>
+      <li>http://playdocja.appspot.com/documentation/1.2.1/guide11</li>
+      <li>IDごとに%{ID}を頭につければ切り替えてくれるみたい</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="lift">Lift</h3>
+
+<ul>
+  <li>LiftRulesが設定をもつ
+    <ul>
+      <li><a href="http://simply.liftweb.net/index-3.1.html#toc-Subsection-3.1.2">http://simply.liftweb.net/index-3.1.html#toc-Subsection-3.1.2</a></li>
+      <li>実装はここ
+*<a href="https://github.com/lift/framework/blob/master/web/webkit/src/main/scala/net/liftweb/http/LiftRules.scala">net.liftweb.http.LiftRules</a></li>
+      <li>たぶんこのへん
+        <ul>
+          <li><a href="https://github.com/lift/framework/blob/master/core/util/src/main/scala/net/liftweb/util/Props.scala">net.liftweb.util.Props</a></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<p>ざっと調べて使ってみたところ、手軽にやるならProperties、フレームワークを使うならそれに則り、厳密にやるならTwitterのEvalや、設定ファイルを読み書きできる独特なConfigrityなんかがよさそうです。</p>
+
+<p>XMLは…まぁないでしょうね。</p>
+
+</div>
+  
+  
+
+
+
+
+    </article>
   
   
     <article>
@@ -302,261 +554,6 @@
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2011/06/21/go-to-varnish-study-tokyovc/">Varnish勉強会 #tokyovcl に行ってきた</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-06-21T23:56:40+09:00" pubdate data-updated="true">2011-06-21 (Tue)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><a href="http://www.flickr.com/photos/53244662@N04/5856931526/" title="IMAG0053 by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5029/5856931526_1119c53a87.jpg" width="500" height="299" alt="IMAG0053" /></a></p>
-
-<p>6/18(土)に開催された<a href="http://atnd.org/events/16681">Varnish勉強会 Tokyo.vcl : ATND</a>に行ってきました。
-初のクックパッドさんオフィス訪問です。</p>
-
-<p>Varnish3のリリースパーティーも兼ねての開催だったようで、ステッカーもいただいてしまいました。
-インフラ屋じゃない上に、Varnish触ったのは前日の晩という超初心者だったので結構不安でしたが、
-ビアバッシュを含め色々な話しが聞けた実りある良い勉強会でした。</p>
-
-<p>主催の@hmskさんをはじめ登壇者の皆様、ならびにビアバッシュで交流してくださった皆様ありがとうございました。</p>
-
-<h3 id="section">雑感</h3>
-<ul>
-  <li>Varnishは画像配信の事例が多い</li>
-  <li>HTTPサーバーの前だけじゃなくてSolrのような内部ネットワーク間の通信にも適用できる。</li>
-  <li>Varnish落ちたときにApacheの負荷を避けるためにSquidが使える。</li>
-  <li>拡張次第でHTTPサーバーにもKVSにも化ける（やりすぎ注意？）。</li>
-  <li>クラウドでの運用はフロンティア。</li>
-  <li>設定ファイルのvclはもはやプログラム</li>
-  <li>ESIの事例なかったけど使いにくいのかな？</li>
-  <li>とりあえず実戦投入して様子見ないとわからないことが多そう。</li>
-  <li>あ、どれだけ高速化したかについての言及がなかったような…</li>
-</ul>
-
-<h2 id="section-1">各発表メモ</h2>
-<p>スライドと、その丸写しみたいな感じのメモをペタペタ。</p>
-
-<h3 id="varnishcache30vupxcir">VarnishCache3.0新機能とVUPの仕方(@xcir)</h3>
-
-<div style="width:425px" id="__ss_8344516"> <strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/xcir/tokyovclvarnishcache30vup" title="tokyo.vcl発表資料（VarnishCache3.0新機能とVUPの仕方）">tokyo.vcl発表資料（VarnishCache3.0新機能とVUPの仕方）</a></strong> <iframe src="http://www.slideshare.net/slideshow/embed_code/8344516" width="425" height="355" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
-<div style="padding:5px 0 12px"> View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/xcir">xcir</a> </div>
-
-</div>
-<ul>
-  <li>ESIでのgzip
-    <ul>
-      <li>ブロックが圧縮されているとESIできなかった(~2）</li>
-      <li>defaultパラメータが改善された</li>
-    </ul>
-  </li>
-  <li>stream support
-    <ul>
-      <li>別のストリームは待機させられる（？</li>
-    </ul>
-  </li>
-</ul>
-
-<h3 id="varnishphji">イカ娘も終わったしVarnishでも使うか(@phji)</h3>
-
-<div style="width:425px" id="__ss_8366215"> <strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/phji/varnishika" title="イカ娘も終わったしVarnishでも使うか">イカ娘も終わったしVarnishでも使うか</a></strong> <iframe src="http://www.slideshare.net/slideshow/embed_code/8366215" width="425" height="355" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
-<div style="padding:5px 0 12px"> View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/phji">Kazutoshi Fujimoto</a> </div>
-
-</div>
-<ul>
-  <li>[RAM8G Xeon 4core SSD256GB ] x 20servers</li>
-  <li>pixiv
-    <ul>
-      <li>nginx -&gt; (consistent hash) -&gt; quid -&gt; nginx -&gt; apache</li>
-      <li>lookupとかかないとキャッシュされないｗ</li>
-    </ul>
-  </li>
-</ul>
-
-<h3 id="twitteryatsvarnishpenguinana">twitter検索(yats)でvarnish使ってみた(@PENGUINANA_)</h3>
-<ul>
-  <li>API 7000M req/month</li>
-  <li>PV 150Mreq/month</li>
-  <li>varnish(vps) -&gt; nginx[ webAPI -&gt; varnish -&gt; Solr ]</li>
-  <li>service : cache + failover</li>
-  <li>Solr: slaveのキャッシュクリアーが重いので、その前面にVarnishをおいている(ラウンドロビンとFailover）</li>
-  <li>autocomplete
-    <ul>
-      <li>キャッシュと相性よさそう</li>
-    </ul>
-  </li>
-</ul>
-
-<h3 id="ec2varnishmirakui">EC2とvarnishで画像配信(@mirakui)</h3>
-
-<div style="width:425px" id="__ss_8352369"> <strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/mirakui/ec2varnish" title="EC2とVarnishで画像配信">EC2とVarnishで画像配信</a></strong> <iframe src="http://www.slideshare.net/slideshow/embed_code/8352369" width="425" height="355" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
-<div style="padding:5px 0 12px"> View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/mirakui">Issei Naruta</a> </div>
-
-</div>
-<ul>
-  <li>失敗談</li>
-  <li>TOFU
-    <ul>
-      <li>アップロード時ではなくオンデマンドでリサイズ</li>
-      <li>akamai（CDN)に7000RPSのうち、ELBには700RPSくる。60%受けるリクエストをキャッシュできればApache負荷軽減できるのでは？
-        <ul>
-          <li>という導入経緯（からの失敗</li>
-        </ul>
-      </li>
-      <li>1st challenge
-        <ul>
-          <li>EC2(M2.XLARGE[17.1GB RAM] + EBS[100GB for swap])</li>
-          <li>300rps</li>
-          <li>結果：オンメモリだけなら順調だけど、あふれてきてOSにSWAPさせたとたんLOADAVERAGEが爆発して死亡。</li>
-        </ul>
-      </li>
-      <li>2nd challenge
-        <ul>
-          <li>EC2(M2.XLARGE[17.1GB RAM] + EBS[100GB for ext3])</li>
-          <li>“file storage”を使っても結局メモリ容量が大量に必要</li>
-        </ul>
-      </li>
-      <li>ec2のxlargeインスタンスには、IO性能「標準」と「高」がある
-        <ul>
-          <li>今回は「標準」を利用して失敗</li>
-          <li>「高」ならうまくいくかも</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li>varnish3
-    <ul>
-      <li>hash director
-        <ul>
-          <li>consistent hashingができるかも？</li>
-          <li>nginxいらずに複数varnish運用ができるかも？</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-</ul>
-
-<h3 id="puppetvarnishsquidar1">Puppetでvarnishもsquidも面倒みる(@ar1)</h3>
-<ul>
-  <li>ふつうはvarnishは落ちるのでLBつかって並列で運用</li>
-  <li>varnishおちるとWebサーバーが負荷かかってしまう
-    <ul>
-      <li>LB -&gt; varnish -&gt; squid -&gt; apache</li>
-      <li>squidどうしでキャッシュを共有できるので、１つSquidおちてもWebサーバーにききにいかずにすむ。</li>
-    </ul>
-  </li>
-  <li>puppet
-    <ul>
-      <li>設定をらくにする</li>
-      <li>cacheのExpire</li>
-      <li>サーバーのぬきさし</li>
-    </ul>
-  </li>
-</ul>
-
-<h3 id="varnishspchidren">楽天でvarnish(@spchidren)</h3>
-<ul>
-  <li>L7 balancingがやりたくてVarnish導入
-    <ul>
-      <li>URLによってWebサーバーのグループを切り替えたい</li>
-    </ul>
-  </li>
-  <li>akamai -&gt; LB -&gt; varnish(RAM24G[malloc18G/hitrate 75%] -&gt; apache(+mod_thumb)</li>
-  <li>LBからVarnishを切り離すのはどうやる？</li>
-  <li>CDNやVarnishのcache clearをどうやるか
-    <ul>
-      <li>画像登録されたときにMQに登録して、必要に応じて消す</li>
-      <li>CDNは常にExpireされない状態にしておける。</li>
-    </ul>
-  </li>
-  <li>ImageMagicおもい
-    <ul>
-      <li>varnishにサムネイルをつくるしくみを組み込んでみれば？（FreeImage)</li>
-      <li>cc_commandでインクルードさせて、C言語でサムネイルつくるしくみをくみこむ</li>
-    </ul>
-  </li>
-  <li>varnishのいくさき
-    <ul>
-      <li>nginxにも近いしredisにもちかづいてきてる</li>
-      <li>どこにいくんでしょ</li>
-    </ul>
-  </li>
-</ul>
-
-<h3 id="tddvclhmsk">TDDでVCL書いてデプロイ(@hmsk)</h3>
-<ul>
-  <li>varnishtest
-    <ul>
-      <li>RSpecぽい書き方できる</li>
-      <li>xxx.vcltestファイルにケースを記述</li>
-    </ul>
-  </li>
-  <li>vmod
-    <ul>
-      <li>vclの設定をC言語っぽく描ける</li>
-      <li>パージや圧縮、エラーなどに使える</li>
-      <li>モバイル端末のリストのチェックにもVCLから外出しできる</li>
-    </ul>
-  </li>
-</ul>
-
-<h2 id="section-2">関連リンク</h2>
-<ul>
-  <li>ATND
-    <ul>
-      <li><a href="http://atnd.org/events/16681">Varnish勉強会 Tokyo.vcl : ATND</a></li>
-    </ul>
-  </li>
-  <li>Ustream
-    <ul>
-      <li><a href="http://www.ustream.tv/recorded/15453305">http://www.ustream.tv/recorded/15453305</a></li>
-      <li><a href="http://www.ustream.tv/recorded/15453834">http://www.ustream.tv/recorded/15453834</a></li>
-    </ul>
-  </li>
-  <li>Togetter
-    <ul>
-      <li><a href="http://togetter.com/li/151585">Togetter - 「第一回 Varnish勉強会 Tokyo.vcl」</a></li>
-    </ul>
-  </li>
-  <li>勉強会レポート
-    <ul>
-      <li><a href="http://d.hatena.ne.jp/hxmasaki/20110620/1308547067">Varnish勉強会 Tokyo.vclを行いました - ククラフト</a></li>
-      <li><a href="http://d.hatena.ne.jp/mirakui/20110619/1308497959">私がクックパッドの画像配信野郎です - 床のトルストイ、ゲイとするとのこと</a></li>
-      <li><a href="http://blog.xcir.net/?p=438">Tokyo.vclでVarnishCache3の新機能とVUPの仕方を話してきました « cat /dev/random &gt; /dev/null &amp;</a></li>
-      <li><a href="http://blog.udzura.jp/2011/06/20/summary-of-tokyo-varnish-study-on-20110618/">東京varnish勉強会(Tokyo.vcl)まとめ «  blog.udzura.jp</a></li>
-    </ul>
-  </li>
-</ul>
-
-</div>
-  
-  
-
-
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/page/16/">&larr; Older</a>
@@ -612,6 +609,10 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2016/02/27/ec2-ls-hosts/">ec2-ls-hosts: EC2インスタンスを一覧するだけのシンプルツール</a>
+      </li>
+    
+      <li class="post">
         <a href="/2016/02/17/ergodox-ez/">ErgoDox EZを注文した(けどまだ届いてない)</a>
       </li>
     
@@ -625,10 +626,6 @@
     
       <li class="post">
         <a href="/2015/10/15/go-programming-blueprints/">&#8220;Go Programming Blueprints&#8221;を読んだ</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/03/09/consul-cluster-with-docker/">DockerとWeaveを使って1台のマシンでConsulを複数動かしてみる</a>
       </li>
     
   </ul>

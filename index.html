@@ -11,7 +11,14 @@
   <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="大きなプロジェクトが一区切りついたこともあって、勢いでErgoDox EZを買いました。 お高めキーボード遍歴としては、FILCO Majestouch(黒軸)を1年程使った後、ここ5年くらいずっとHHKBpro2(墨黒無刻印)を使っていました。が、 &hellip;">
+  <meta name="description" content="EC2インスタンスの一覧を表示するツールをgolangでつくりました。 ReSTARTR/ec2-ls-hosts 以下のように、ただインスタンスの情報を列挙するだけのシンプルなツールです。 1
+2
+3
+4
+5
+$ ls-hosts
+i-00001 10.0.0.1 app01
+i-00002 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -116,6 +123,193 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/2016/02/27/ec2-ls-hosts/">Ec2-ls-hosts: EC2インスタンスを一覧するだけのシンプルツール</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2016-02-27T17:28:53+09:00" pubdate data-updated="true">2016-02-27 (Sat)</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>EC2インスタンスの一覧を表示するツールをgolangでつくりました。</p>
+
+<ul>
+  <li><a href="https://github.com/ReSTARTR/ec2-ls-hosts">ReSTARTR/ec2-ls-hosts</a></li>
+</ul>
+
+<p>以下のように、ただインスタンスの情報を列挙するだけのシンプルなツールです。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>ls-hosts
+</span><span class="line">i-00001 10.0.0.1 app01
+</span><span class="line">i-00002 10.0.0.2 app02
+</span><span class="line">i-00003 10.0.0.3 app03
+</span><span class="line">i-00004 10.0.0.4 app04
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<h3 id="section">何がうれしいか</h3>
+
+<p>以下のような状況において、多少便利になるツールです。</p>
+
+<ul>
+  <li>EC2インスタンスを複数台運用している</li>
+  <li>台数が数十台規模である</li>
+  <li>AutoScalingを利用していて、IPやドメインが頻繁に変わる</li>
+  <li><code>aws ec2 describe-instances</code>のレスポンスが遅い</li>
+  <li><code>aws ec2 describe-instances</code>のオプション指定が複雑かつ指定が面倒</li>
+</ul>
+
+<p>このような状況を改善するため、ec2-ls-hostsをつくりました。
+このツールは、<code>aws ec2 describe-instances</code>に変わる、シンプルなオプションを備えたCLIツールになります。</p>
+
+<h3 id="ec2-ls-hosts">ec2-ls-hostsで出来ること</h3>
+
+<p>主に以下のオプションを備えています</p>
+
+<ul>
+  <li><code>-filters</code>: 絞込み条件</li>
+  <li><code>-tags</code>   : タグによる絞込み</li>
+  <li><code>-fileds</code> : 表示項目の設定</li>
+</ul>
+
+<p>実行時のオプションでも指定できるのですが、いちいち指定するのは面倒なので、<code>~/.ls-hosts</code> か <code>/etc/ls-hosts</code> に設定を保存できます。
+このファイルが存在していたらそれを読み込みます。(両方ある場合は<code>~/.ls-hosts</code>のほうが優先されます)
+設定はこんなかんじで。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="o">[</span>options<span class="o">]</span>
+</span><span class="line"><span class="nv">tags</span>   <span class="o">=</span> Env:production,Role:app
+</span><span class="line"><span class="nv">fields</span> <span class="o">=</span> instance-id,tag:Name,public-ip,instance-state
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>認証は以下の優先順位で可能なものを利用します。</p>
+
+<ul>
+  <li>環境変数 <code>AWS_ACCESS_KEY_ID</code>, <code>AWS_SECRET_ACCESS_KEY</code></li>
+  <li>SharedCredentials (<code>~/.aws/credentials</code>のdefaultプロファイルを利用)</li>
+  <li>EC2 Instance Profile</li>
+</ul>
+
+<p>インスタンスプロファイルに対応しているので、たとえばEC2のReadOnly権限をを付与してあるゲートウェイインスタンスに配置することで、認証情報を直接管理せずに利用することもできます。</p>
+
+<h3 id="section-1">インストール方法</h3>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line">git clone https://github.com/ReSTARTR/ec2-ls-hosts.git
+</span><span class="line"><span class="nb">cd</span> ./ec2-ls-hosts
+</span><span class="line">make build -B
+</span><span class="line">cp ./build/ls-hosts /path/to/bin/ls-hosts
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<ul>
+  <li>コマンド名は<code>ls-hosts</code>にしています。</li>
+  <li><code>$PATH</code>の通っているところに配置してください:bow:</li>
+</ul>
+
+<h3 id="zsh--pecossh">zsh + pecoでインタラクティブにSSHする</h3>
+
+<p>ec2-ls-hosts単体でも多少便利にはなるのですが、ツールを組み合わせた応用例も書いておきます。</p>
+
+<p>たとえば以下のような結果が得られるEC2環境があったとします。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>ls-hosts -filters instance-state-name:running -tags Env:production,Role:app -fields private-ip,tag:Name,tag:Role
+</span><span class="line">10.0.0.1 app app01
+</span><span class="line">10.0.0.2 app app02
+</span><span class="line">10.0.0.3 app app03
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>これをpecoでインタラクティブに選択してそのままSSHするには、以下のようにzshrcを設定しておきます。</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="k">function </span>peco-ec2-ls-hosts <span class="o">()</span> <span class="o">{</span>
+</span><span class="line">  <span class="c"># NOTE: ~/.ls-hostsに設定したほうがより良いです</span>
+</span><span class="line">  <span class="nv">BUFFER</span><span class="o">=</span><span class="k">$(</span>
+</span><span class="line">    ls-hosts -filters instance-state-name:running -tags Env:production,Role:app -fields private-ip,tag:Name,tag:Role | <span class="se">\</span>
+</span><span class="line">    peco --prompt <span class="s2">&quot;EC2 &gt;&quot;</span> --query <span class="s2">&quot;$LBUFFER&quot;</span> | <span class="se">\</span>
+</span><span class="line">    awk <span class="s1">&#39;{echo &quot;Login to %s; printf &quot;ssh %s\n&quot;, $3,$1}&#39;</span>
+</span><span class="line">  <span class="k">)</span>
+</span><span class="line">  <span class="nv">CURSOR</span><span class="o">=</span><span class="nv">$#BUFFER</span>
+</span><span class="line">  zle accept-line
+</span><span class="line">  zle clear-screen
+</span><span class="line"><span class="o">}</span>
+</span><span class="line">zle -N peco-ec2-ls-hosts
+</span><span class="line"><span class="c"># キーバインドはおこのみで</span>
+</span><span class="line">bindkey <span class="s1">&#39;^oo&#39;</span> peco-ec2-ls-hosts
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>とすることで、インタラクティブにSSHできてヒストリーにも残ります。
+以下キャプチャでは対象インスタンスがダミーなのでSSできてませんがちゃんと使えます。
+(実環境の実行結果は載せられないので泣く泣くダミーです…)</p>
+
+<p><a href="https://gyazo.com/ae45206ad8215934f5e0a897b91b3d2a"><img src="https://i.gyazo.com/ae45206ad8215934f5e0a897b91b3d2a.gif" alt="https://gyazo.com/ae45206ad8215934f5e0a897b91b3d2a" /></a></p>
+
+<p>※クライアントPCからパブリックIPとかで直接SSHできない場合はプロキシコマンドを利用して踏み台経由とかでプライベートIPできるssh-configを設定しておくと、この応用例を使って透過的にSSHできます（これは別記事としたほうがよいかも？)</p>
+
+<h3 id="section-2">余談</h3>
+
+<p>さいごの応用例はもともとaws-cli + jq + pecoで実現していたのですが、管理台数が増えるに連れてレスポンスが極端に劣化。
+キャッシュ機構を入れてみたりしたものの、快適とはいえない状況になったので、「aws-sdk-goで書くだけで軽くなるのでは？」という発想から開発に至りました。</p>
+
+<p>mackerel導入環境であれば<code>mkr</code>でも似たようなことができるかもしれないですが、mackerel前提ではないソリューションとしても十分使えるかな、と。</p>
+
+<p>社内利用に特化したかたちでつくったものの、ちょっとだけ汎用化すればべつに誰でも使えるようなきがしたので、手を加えたうえでgithubにて公開となりました。
+まだまだ貧弱ですが、最低限役目は果たしています。</p>
+
+</div>
+  
+  
+
+
+
+
+    </article>
   
   
     <article>
@@ -320,112 +514,6 @@ HHKB pro2が荷重45gなので、赤軸がいちばん近いです。REALFORCE�
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2015/12/31/things-of-2015/">2015年ふりかえり</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2015-12-31T18:59:46+09:00" pubdate data-updated="true">2015-12-31 (Thu)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>2015年も終わりが近づいているということでご報告もかねてふりかえりを…</p>
-
-<h3 id="section">個人的トピック</h3>
-
-<p>ブログには書いてませんでしたが、8月で2年とすこしお世話になった株式会社VASILYを退職しました。
-それからいくつかの会社とお話した後、11月から<a href="https://www.wantedly.com/companies/hitomedia">株式会社ヒトメディア</a>に転職しました。
-(あらためて転職エントリを書こうとおもっていたのに年末になってしまい、完全にタイミングを逃した感じです…)</p>
-
-<p>といってもあまり本社にはおらず、もっぱら新宿で勤務している日々です。やっていることもいまのところ前職とあまり変わっておらず、アプリケーションの改善やインフラまわり全般をやっています。個人的にはもっとアプリケーションよりの仕事をしていきたいのですが、まずは目先の改善からということで。</p>
-
-<p>あと、今年とかやったこととか読んだ本のまとめです。</p>
-
-<h3 id="section-1">やったこと</h3>
-
-<h4 id="section-2">仕事</h4>
-
-<ul>
-  <li>Railsアプリのチューニング</li>
-  <li>Docker, AWS ECS</li>
-  <li>AWSまわり全般</li>
-</ul>
-
-<p>2014年にくらべるとセキュリティまわりの脆弱性対応もめっきり少なくなって、インフラ的にはありがたい年でした。</p>
-
-<h4 id="section-3">個人</h4>
-
-<ul>
-  <li>Consul</li>
-  <li>GCE</li>
-  <li>ISUCON5予選のElixir実装</li>
-</ul>
-
-<p>ElixirConfあたりで興味もちはじめて、そのあと爆発的にElixirがヒットしていったのが印象的でした。Goはすでにスタンダード化しているためか、大きな話題はあまりなかったように思います。年末ギリギリにラズパイ入門したので、来年はフィジカルコンピューティングもやっていく所存です。Rails5は普及するかな？</p>
-
-<h3 id="section-4">書籍</h3>
-
-<p>プログラミング・設計</p>
-
-<ul>
-  <li><a href="http://www.amazon.co.jp//dp/4774171417/">WEB+DB PRESS vol.85</a></li>
-  <li><a href="http://www.amazon.co.jp/dp/4873115892/">SQLアンチパターン</a></li>
-  <li><a href="http://www.amazon.co.jp//dp/4774171972/">理論から学ぶ データベース実践入門</a></li>
-  <li><a href="http://www.amazon.co.jp/dp/B00SY2UKHY/1">Webエンジニアが知っておきたいインフラの基本 </a></li>
-  <li><a href="http://www.amazon.co.jp/dp/B00UX9VJGW/">実践ドメイン駆動設計</a></li>
-  <li><a href="http://www.amazon.co.jp//dp/B00PKTGM9O/">Programming Elixir</a></li>
-  <li><a href="http://www.amazon.co.jp/dp/4774173010/">SQL実践入門</a></li>
-  <li><a href="https://www.manning.com/books/the-little-elixir-and-otp-guidebook">The Little Elixir &amp; OTP Guidebook</a></li>
-  <li><a href="http://www.amazon.co.jp/dp/4873116937/">ZooKeeperによる分散システム管理 </a></li>
-  <li><a href="http://www.amazon.co.jp/dp/B00T4ACPA0/">Go Programming Blueprints</a></li>
-</ul>
-
-<p>開発体制</p>
-
-<ul>
-  <li><a href="http://www.amazon.co.jp/dp/4774172367/">スクラム実践入門</a></li>
-  <li><a href="http://www.amazon.co.jp//dp/B00MGGW9MI/">DevOps 逆転だ！究極の継続的デリバリー</a></li>
-  <li><a href="http://www.amazon.co.jp//dp/B00O8GIJ1E/">カンバン-ソフトウェア開発の変革</a></li>
-  <li><a href="http://www.amazon.co.jp/dp/B00DIM6BMI/">SCRUM BOOT CAMP THE BOOK</a></li>
-</ul>
-
-<p>その他</p>
-
-<ul>
-  <li><a href="http://www.amazon.co.jp/dp/1617292397">Soft Skills</a></li>
-  <li><a href="http://www.amazon.co.jp//dp/4121022823/">地方消滅-東京一極集中が招く人口急減</a></li>
-</ul>
-
-<p>ということで、2015年中はお世話になりました。
-2016年もどうぞよろしくおねがいします :bow:</p>
-</div>
-  
-  
-
-
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/page/2/">&larr; Older</a>
@@ -479,6 +567,10 @@ HHKB pro2が荷重45gなので、赤軸がいちばん近いです。REALFORCE�
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/2016/02/27/ec2-ls-hosts/">ec2-ls-hosts: EC2インスタンスを一覧するだけのシンプルツール</a>
+      </li>
+    
+      <li class="post">
         <a href="/2016/02/17/ergodox-ez/">ErgoDox EZを注文した(けどまだ届いてない)</a>
       </li>
     
@@ -492,10 +584,6 @@ HHKB pro2が荷重45gなので、赤軸がいちばん近いです。REALFORCE�
     
       <li class="post">
         <a href="/2015/10/15/go-programming-blueprints/">&#8220;Go Programming Blueprints&#8221;を読んだ</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/03/09/consul-cluster-with-docker/">DockerとWeaveを使って1台のマシンでConsulを複数動かしてみる</a>
       </li>
     
   </ul>
