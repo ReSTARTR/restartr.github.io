@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Netty on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/netty/</link>
+    <description>Recent content in Netty on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Wed, 29 Dec 2010 18:45:53 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/netty/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>NettyでWebSocketサーバーを実装する</title>
+      <link>http://blog.restartr.com/2010/12/29/websocket-server-written-in-scala-with-netty</link>
+      <pubDate>Wed, 29 Dec 2010 18:45:53 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2010/12/29/websocket-server-written-in-scala-with-netty</guid>
+      <description>&lt;p&gt;この記事は &lt;a href=&#34;http://atnd.org/events/10683&#34;&gt;Scala Advent Calendar JP 2010&lt;/a&gt; 23 日目(12/29)です。&lt;/p&gt;
+&lt;p&gt;前日の &lt;a href=&#34;http://twitter.com/cooldaemon&#34;&gt;@cooldaemon&lt;/a&gt; さんが&lt;a href=&#34;http://d.hatena.ne.jp/cooldaemon/20101228&#34;&gt;Scala Actor + NIO&lt;/a&gt;という、ものすごい記事を書いていらっしゃったのでこの流れの中で投稿するのが忍びないくらいです。&lt;br /&gt;
+＃まさか前日にNIOネタがくるとはぁぁぁ…&lt;/p&gt;
+&lt;p&gt;さて、今回はNettyを使ってWebSocketサーバーを実装してみました。&lt;br /&gt;
+JavaではなくScalaで、です。&lt;br /&gt;
+とはいっても、目的はJavaコードをScalaに直す練習も兼ねて、公式サンプルにあるJavaコードをScalaに書きなおしただけですが。&lt;br /&gt;
+ご指摘などありましたら謹んでお受けいたします…&lt;br /&gt;
+&lt;a id=&#34;more&#34;&gt;&lt;/a&gt;&lt;a id=&#34;more-465&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;h3&gt;Netty&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.jboss.org/netty/&#34;&gt;Netty - the Java NIO Client Server Socket Framework - JBoss Community&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Nettyの概要はこのへんで。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://ameblo.jp/principia-ca/entry-10629939611.html&#34;&gt;JavaネットワークアプリケーションフレームワークNettyの紹介｜サイバーエージェント 公式エンジニアブログ&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;開発環境&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Scala-2.8.0&lt;/li&gt;
+&lt;li&gt;Netty-3.2.3.Final&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;Echoサーバー&lt;/h3&gt;
+&lt;p&gt;サンプル的にEchoサーバーから書いてみます。&lt;/p&gt;
+&lt;h4&gt;やること&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;Echoハンドラを実装&lt;/li&gt;
+&lt;li&gt;NioChannelFactoryにスレッドプールを登録&lt;/li&gt;
+&lt;li&gt;BootstrapにNioChannelFactoryを登録&lt;/li&gt;
+&lt;li&gt;PipelineFactoryにEchoハンドラを登録&lt;/li&gt;
+&lt;li&gt;BootstrapにPipelineFactoryを登録&lt;/li&gt;
+&lt;li&gt;InetSocketAddressに（ホストと）ポート番号を指定してBootstrapに登録してサービス開始&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/ReSTARTR/nettyws/blob/master/src/main/scala/com/restartr/nettyws/EchoServer.scala&#34;&gt;EchoServer.scala&lt;/a&gt;&lt;br /&gt;
+まずは起動元から。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;object EchoServer {
+  @throws(classOf[Exception])
+  def main(args:Array[String]) {
+    // サーバーのセットアップ
+    val bootstrap = new ServerBootstrap(
+      new NioServerSocketChannelFactory(
+        Executors.newCachedThreadPool(), // bossExecutor
+        Executors.newCachedThreadPool()  // workerExecutor
+      ))
+
+    bootstrap.setPipelineFactory(
+      // リクエストをそのまま返すハンドラを実装して登録
+      new ChannelPipelineFactory() {
+        def getPipeline() = Channels.pipeline(new EchoServerHandler())
+      }
+    )
+
+    // 8080番で待ち受け開始
+    bootstrap.bind(new InetSocketAddress(8080))
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;で、ハンドラ側がこんなかんじ。&lt;br /&gt;
+
+SimpleChannelUpstreamHandlerの&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;messageReceived(ctx:ChannelHandlerContext, e:MessageEvent)&lt;/li&gt;
+&lt;li&gt;def exceptionCaught(ctx: ChannelHandlerContext, e: ExceptionEvent) &lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;をオーバーライドして処理内容を定義すればOK。&lt;br /&gt;
+何かを呼び出し元に返すには、&#34;e.getChannel().write( {レスポンス} )&#34;で。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;class EchoServerHandler extends SimpleChannelUpstreamHandler {
+  val logger = java.util.logging.Logger.getLogger(&amp;quot;EchoServerHandler&amp;quot;)
+  val transferredBytes = new AtomicLong()
+
+  // そのまま返す
+  override def messageReceived(ctx:ChannelHandlerContext, e:MessageEvent) {
+    transferredBytes.addAndGet(
+      e.getMessage().asInstanceOf[ChannelBuffer].readableBytes())
+
+    println(&amp;quot;echo_server: message received: &amp;quot; + e.getMessage())
+    // レスポンスを返す
+    e.getChannel().write(e.getMessage())
+  }
+
+  // 例外発生時はここにくる
+  override def exceptionCaught(ctx: ChannelHandlerContext, e: ExceptionEvent) {
+    logger.log(Level.WARNING,
+               &amp;quot;Unexpected exception from downstream.&amp;quot;,
+               e.getCause())
+
+    e.getChannel().close()
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;h3&gt;WebSocketサーバー&lt;/h3&gt;
+&lt;p&gt;本題のWebSocketサーバーです。&lt;br /&gt;
+Echoサーバーの応用で、WebSocket用のハンドラを作成して、Bootstrapに登録すれば良い訳です。&lt;/p&gt;
+&lt;h4&gt;仕様&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;WebSocketServer: 起動元&lt;/li&gt;
+&lt;li&gt;WebSocketServerHandler: プロトコルハンドラ。肝の部分。&lt;/li&gt;
+&lt;li&gt;WebSocketServerPipelineFactory: パイプライン生成。&lt;/li&gt;
+&lt;li&gt;WebSocketServeIndexPage: WebSocketクライアント用HTMLの生成&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;実装&lt;/h4&gt;
+&lt;p&gt;すべて書くと冗長なので要所だけ抜き出しました。&lt;br /&gt;
+&lt;a href=&#34;https://github.com/ReSTARTR/nettyws/tree/master/src/main/scala/com/restartr/nettyws&#34;&gt;全ソースはGithubを見てください。&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;b&gt;WebSocketServerIndexPage.scala&lt;/b&gt;&lt;br /&gt;
+まずはクライアント側はこんな感じで、インプットフォームに入力した文字列をWebSocketサーバーに投げ、結果をdivに追記するだけです。&lt;/p&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;      var socket;
+      if (window.WebSocket) {
+        socket = new WebSocket( &#39;ws://localhost:8080/uppercase&#39; );
+        socket.onmessage = function(event) { log(event.data) }
+        socket.onopen = function(event) { log(&#39;web socket opened&#39;) }
+        socket.onclose = function(event) { log(&#39;web socket closed&#39;) }
+      } else {
+        alert(&#39;your browser does not supported web socket&#39;)
+      }
+      function log(message) {
+        p = document.createElement(&#39;p&#39;);
+        p.innerHTML = message
+        document.getElementById(&#39;log&#39;).appendChild(p) ;
+      }
+      function send(message) {
+        if (!window.WebSocket) { return; }
+        if (socket.readyState == WebSocket.OPEN) {
+          socket.send(message)
+        } else {
+          alert(&#39;the socket is not open.&#39;)
+        }
+      }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;b&gt;WebSocketServer.scala&lt;/b&gt;&lt;br /&gt;
+サーバー起動オブジェクトです。&lt;br /&gt;
+HTML/WebSocketを扱うハンドラを登録してポートで待ち受けます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;    // WebSocket用ハンドラを含むPipelineFactoryを登録
+    bootstrap.setPipelineFactory(new WebSocketServerPipelineFactory())
+
+    // 8080番で待ち受け開始
+    bootstrap.bind(new InetSocketAddress(&amp;quot;localhost&amp;quot;, 8080))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;b&gt;WebSocketServerHandler.scala&lt;/b&gt;&lt;br /&gt;
+実装するのは、Echoサーバーと同じく、messageReceived()とexceptionCaught()の２つ。&lt;br /&gt;
+処理を分割しているのですこしだけメソッド多めです。&lt;br /&gt;
+messageRecieved()で受信内容によって実際のハンドラをHttp/WebSocketのどちらかに切り替えます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;class WebSocketServerHandler extends SimpleChannelUpstreamHandler {
+  val WEBSOCKET_PATH = &amp;quot;/uppercase&amp;quot;
+
+  /**
+   * メッセージ受信時の処理
+   *   メッセージの内容によってWebSocketかHttpかハンドラを切り替える
+   */
+  @throws(classOf[Exception])
+  override def messageReceived(ctx: ChannelHandlerContext, e: MessageEvent) {
+    val msg:Object = e.getMessage()
+    msg match {
+      case frame: WebSocketFrame =&amp;gt; {
+          handleWebSocketFrame(ctx, frame)
+        }
+      case req: HttpRequest =&amp;gt; {
+          handleHttpRequest(ctx, req)
+        }
+    }
+  }
+  /**
+   * HTTPリクエスト時の処理
+   */
+  @throws(classOf[Exception])
+  def handleHttpRequest(ctx: ChannelHandlerContext, req: HttpRequest) {
+    // DEBUG
+    println(&amp;quot;handleHttpRequest: &amp;quot; + Thread.currentThread().getName())
+
+    // GETリクエスト以外は処理しない
+    // &amp;quot;/&amp;quot;にきたらWebSocketクライアント用ページを送信
+    // &amp;quot;/uppercase&amp;quot;にきたらリクエスト文字列を大文字に変換して返す
+    if (req.getMethod() != GET) {
+      sendHttpResponse(
+        ctx,
+        req,
+        new DefaultHttpResponse(HTTP_1_1, FORBIDDEN))
+    } else if (req.getUri().equalsIgnoreCase(&amp;quot;/&amp;quot;)) {
+
+      // (中略) デフォルトHTMLの送信
+
+    } else if (req.getUri().equalsIgnoreCase(WEBSOCKET_PATH) &amp;amp;&amp;amp;
+               Values.UPGRADE.equalsIgnoreCase(req.getHeader(Names.CONNECTION)) &amp;amp;&amp;amp;
+               Values.WEBSOCKET.equalsIgnoreCase(req.getHeader(Names.UPGRADE))) {
+
+      // (中略) WebSocket接続処理
+
+      // ハンドラをHTTPからWebSocketに切り替えて、
+      // send the handshake response
+      val p = ctx.getChannel().getPipeline()
+      p.remove(&amp;quot;aggregator&amp;quot;)
+      p.replace(&amp;quot;decoder&amp;quot;, &amp;quot;wsdecoder&amp;quot;, new WebSocketFrameDecoder())
+
+      ctx.getChannel().write(res)
+
+      p.replace(&amp;quot;encoder&amp;quot;, &amp;quot;wsencoder&amp;quot;, new WebSocketFrameEncoder())
+    } else {
+      sendHttpResponse(
+        ctx, req, new DefaultHttpResponse(HTTP_1_1, FORBIDDEN))
+    }
+  }
+  /**
+   * WebSocketリクエスト時の処理
+   */
+  @throws(classOf[Exception])
+  def handleWebSocketFrame(ctx: ChannelHandlerContext, frame: WebSocketFrame) {
+    // 大文字に変換するして、WebSocketFrameにのせてレスポンスを返す。
+    ctx.getChannel().write(
+      new DefaultWebSocketFrame(
+        frame.getTextData().toUpperCase))
+  }
+  /**
+   * HTTPレスポンスの送信
+   */
+  @throws(classOf[Exception])
+  def sendHttpResponse(ctx: ChannelHandlerContext, req: HttpRequest, res: HttpResponse) {
+    // ステータスコードが200じゃなければエラーページの表示
+    if (res.getStatus().getCode() != 200) {
+      res.setContent(
+        ChannelBuffers.copiedBuffer(
+          res.getStatus().toString(), CharsetUtil.UTF_8))
+      HttpHeaders.setContentLength(res, res.getContent().readableBytes())
+    }
+
+    // keep-aliveでなければ接続を閉じる
+    val f = ctx.getChannel().write(res)
+    if (!HttpHeaders.isKeepAlive(req) || res.getStatus().getCode() != 200) {
+      f.addListener(ChannelFutureListener.CLOSE)
+    }
+  }
+  /**
+   * 例外発生時の処理
+   */
+  @throws(classOf[Exception])
+  override def exceptionCaught(ctx: ChannelHandlerContext, e: ExceptionEvent) {
+    println(&amp;quot;server: exception caught: &amp;quot;)
+    e.getCause().printStackTrace()
+    e.getChannel().close()
+  }
+  /**
+   * WebSocket接続情報
+   */
+  def getWebSocketLocation(req: HttpRequest) =
+    &amp;quot;ws://&amp;quot; + req.getHeader(HttpHeaders.Names.HOST) + WEBSOCKET_PATH
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;b&gt;WebSocketServerPipelineFactory.scala&lt;/b&gt;&lt;br /&gt;
+パイプラインへの登録を定義します。&lt;br /&gt;
+リクエストはDecoderを通り、ハンドラで処理され、Encoderを通って返される、という流れです。&lt;br /&gt;
+ここでは初期状態としてHttp用の設定になっていますが、一旦WebSocket通信開始のリクエストを受け取ると、そのあとはWebSocketのDecoder/Encoderに切り替わります。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;&amp;lt;pre class=&amp;quot;brush:scala&amp;quot;&amp;gt;
+class WebSocketServerPipelineFactory extends ChannelPipelineFactory{
+  @throws(classOf[Exception])
+  def getPipeline(): ChannelPipeline = {
+    val pipeline = Channels.pipeline()
+
+    pipeline.addLast(&amp;quot;decoder&amp;quot;    , new HttpRequestDecoder())
+    pipeline.addLast(&amp;quot;aggregator&amp;quot; , new HttpChunkAggregator(65536))
+    pipeline.addLast(&amp;quot;encoder&amp;quot;    , new HttpResponseEncoder())
+    pipeline.addLast(&amp;quot;handler&amp;quot;    , new WebSocketServerHandler())
+
+    pipeline
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;実際、ブラウザでひらいてみると、Webフォームに入力されている「hello, world」が大文字に変換されてフォーム下部に追記されていきます。&lt;br /&gt;
+まぁWebSocketサーバーを実装するだけなら、jetty7を使ったほうがシンプルに早くかけると思います。&lt;br /&gt;
+Memcacheプロトコルを話すサービスをつくる場合とかには便利ですね。（messagepack-rpcでもnetty使っているとか。)&lt;/p&gt;
+
+&lt;p&gt;参考：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://gihyo.jp/dev/feature/01/websocket&#34;&gt;Jettyで始めるWebSocket超入門&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://d.hatena.ne.jp/yuroyoro/20100316/1268735022&#34;&gt;Jetty7のWebSocketをScalaから使う - ゆろよろ日記&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;以上、お粗末様でした。。。&lt;/p&gt;
+&lt;p&gt;# あれ？Scalaあんまり関係ない？？&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

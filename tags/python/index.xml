@@ -1,0 +1,916 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Python on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/python/</link>
+    <description>Recent content in Python on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Fri, 26 Apr 2013 23:34:48 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/python/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>GoとPythonをZeroMQで繋ぐ</title>
+      <link>http://blog.restartr.com/2013/04/26/connect-go-and-python-with-zeromq</link>
+      <pubDate>Fri, 26 Apr 2013 23:34:48 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2013/04/26/connect-go-and-python-with-zeromq</guid>
+      <description>&lt;p&gt;最近Rubyでプロジェクトオイラーを解きながらRubyに慣れようとしてるのですが、ちょっと飽きてきたので息抜きにGoを書いたりしています。&lt;/p&gt;
+
+&lt;p&gt;ついでにZeroMQも試してみたかったので、GoとPythonをZeroMQで繋いでみました。&lt;/p&gt;
+
+&lt;p&gt;構成はこんな感じで、Python(かGo)clientを起動し、Goで動くmonitorq経由でGoのserverにつながります。PUB/SUBでmonitorからモニタリングできるのがミソです。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-ruby&#34;&gt;                  +----------------------------------------+
+                  |                                        |
+  +------+        |--------------------------+     +-----+ |
+  |client|--------|9001     monitorq     9002|-----|serv | |
+  |(REQ) |        |(ROUTER)   9003   (DEALER)|     |(REP)| |
+  +------+        |--------------------------+     +-----+ |
+                  |          |(PUB)                        |
+                  |          |                             |
+                  |          |                             |
+                  |          |(SUB)                        |
+                  |      +-------+                         |
+                  |      |monitor|                         |
+                  |      +-------+                         |
+                  +----------------------------------------+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;em&gt;※client/server/monitorは複数たちあげるとよしなに振り分けてくれます。&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;monitorqでfan-in/outする&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ go run queue.go monitorq
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;clientから&amp;rdquo;PING&amp;rdquo;を投げる(と、&amp;rdquo;PONG#&lt;pid&gt;&amp;ldquo;が帰る)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ python run queue.py client
+PONG#&amp;lt;28870&amp;gt;
+PONG#&amp;lt;28870&amp;gt;
+ :
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;serverから&amp;rdquo;PONG&amp;rdquo;を返す(clientからのPINGを表示)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ go run queue.go serv
+Recv: PING#&amp;lt;73835&amp;gt;
+Recv: PING#&amp;lt;73835&amp;gt;
+ :
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;monitorでリクエスト総数をモニタリング&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ go run queue.go monitor
+MONITOR: IN: 2082, OUT 2082
+MONITOR: IN: 2083, OUT 2083
+ :
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;コードはgistにあげてます。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://gist.github.com/ReSTARTR/5467656&#34;&gt;gist&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;ZeroMQなら他にもいろんな構成がとれるので、使いどころは結構あるのではないかと。&lt;/p&gt;
+
+&lt;p&gt;今回、不慣れなGoで書いてみましたが、これくらいであればもわりと素直にかけるなぁという印象です。&lt;/p&gt;
+
+&lt;p&gt;Goで書かれたZeroMQのサンプルは以下githubリポジトリにたくさんあるので、覗いてみると色々勉強になります。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/imatix/zguide/tree/master/examples/Go&#34;&gt;zguide/examples/Go at master ? imatix/zguide&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>pythonのクロージャに変数を束縛する方法</title>
+      <link>http://blog.restartr.com/2013/04/17/bind-a-variable-to-closure-in-python</link>
+      <pubDate>Wed, 17 Apr 2013 22:19:14 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2013/04/17/bind-a-variable-to-closure-in-python</guid>
+      <description>
+
+&lt;p&gt;ハマったので。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;a = 2
+double = lambda x: x*a
+double(4)  # 8 (=4*2)
+double(10) # 20 (=10*3)
+a = 3
+double(4)  # 12 # WTF?
+double(10) # 30
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;doubleというクロージャ内の変数aを、クロージャ宣言時のaで束縛したいのです。&lt;/p&gt;
+
+&lt;p&gt;対応は２つ。&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;lambdaのデフォルト引数で束縛する&lt;/li&gt;
+&lt;li&gt;functools.partialで束縛する&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;1-lambdaのデフォルト引数で束縛する:0f6d0773b05936b8e8cf05eb2d87ac67&#34;&gt;1. lambdaのデフォルト引数で束縛する&lt;/h3&gt;
+
+&lt;p&gt;参考：&lt;a href=&#34;http://stackoverflow.com/questions/10452770/python-lambdas-binding-to-local-values&#34;&gt;closures - Python lambda&amp;rsquo;s binding to local values - Stack Overflow&lt;/a&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;a = 2
+double = lambda x, y=a: x*y
+double(4)  # 8 (=4*2)
+double(10) # 20 (=10*3)
+a = 3
+double(4)  # 12 (=4*2)
+double(10) # 30 (=10*2)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;2-functools-partialで束縛する:0f6d0773b05936b8e8cf05eb2d87ac67&#34;&gt;2. functools.partialで束縛する&lt;/h3&gt;
+
+&lt;p&gt;やってることは1と同じなのですが、一応動くよねということで。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from functools import partial
+a = 2
+double = partial(lambda x, y=None: x*y, y=a)
+double(4) # 8 (=8*2)
+double(10) # 30 (=10*2)
+a = 3
+double(4)  # 12 (=4*2)
+double(10) # 30 (=10*2)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;そもそも変数上書きしなければ良いんじゃない:0f6d0773b05936b8e8cf05eb2d87ac67&#34;&gt;そもそも変数上書きしなければ良いんじゃない？&lt;/h3&gt;
+
+&lt;p&gt;普段は変数の上書きは基本的にやりません。なので変数の束縛とかあまり意識してませんでした。&lt;/p&gt;
+
+&lt;p&gt;今回、プロジェクトオイラーを解くにあたって、素数ジェネレータをつくろうとした結果、ハマったのでした。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from itertools import ifilter, count
+def gen_primes():
+    it = count(2)  # [2, 3, 4, ...]
+    while True:
+        v = it.next()
+        yield v
+        it = ifilter(lambda x, y=v: x % y &amp;gt; 0, it)
+        # 当初は以下のようにしていた
+        # これだと次のループ時のifilter内でvの値が変わってしまう
+        # it = ifilter(lambda x: x % v &amp;gt; 0, it)
+for v in gen_primes():
+    print v
+    if v &amp;gt; 100:
+        break
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;余談1-functools-partialの使いどころ:0f6d0773b05936b8e8cf05eb2d87ac67&#34;&gt;余談1: functools.partialの使いどころ&lt;/h3&gt;
+
+&lt;p&gt;ちょくちょく&lt;a href=&#34;http://docs.python.jp/2.7/library/functools.html#functools.partial&#34;&gt;functools.partial&lt;/a&gt;使ってましたが、そんなの使わなくてもlambdaで事足りますね。今更気づきました&amp;hellip;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;mul = lambda a, b: a * b
+mul(3,2)  # 6
+# lambda
+double = lambda a, b=2: mul(a,b)
+double(3)  # 6
+# functools.partial
+import functools
+double = functools.partial(mul, 2)
+double(3)  # 6
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;こうなると、functools.partialの使いどころが難しいですね。
+戻り値がpartialオブジェクトなので、あとで引数とかが参照できることくらいでしょうか&amp;hellip;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; f = functools.partial(lambda a, b=0:a+b, b=0)
+&amp;gt;&amp;gt;&amp;gt; f
+&amp;lt;functools.partial object at 0x1092b2ec0&amp;gt;
+&amp;gt;&amp;gt;&amp;gt; f.args
+()
+&amp;gt;&amp;gt;&amp;gt; f.keywords
+{&#39;b&#39;: 0}
+&amp;gt;&amp;gt;&amp;gt; f.func
+&amp;lt;function &amp;lt;lambda&amp;gt; at 0x1092eab18&amp;gt;
+&amp;gt;&amp;gt;&amp;gt; f.args = (1,)  # 引数を後から上書きはできない
+Traceback (most recent call last):
+  File &amp;quot;&amp;lt;stdin&amp;gt;&amp;quot;, line 1, in &amp;lt;module&amp;gt;
+TypeError: readonly attribute
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>はてなダイアリーからTumblrへデータ移行するpythonスクリプト</title>
+      <link>http://blog.restartr.com/2012/03/25/python-script-for-moving-from-movabletype-to-tumblr</link>
+      <pubDate>Sun, 25 Mar 2012 02:30:19 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2012/03/25/python-script-for-moving-from-movabletype-to-tumblr</guid>
+      <description>
+
+&lt;p&gt;どうも。もうすぐ入社３ヶ月が経って試用期間が終わろうとしている状況な僕です。&lt;/p&gt;
+
+&lt;p&gt;すっかり停滞気味のブログですが保守も兼ねて投稿を。&lt;/p&gt;
+
+&lt;h3 id=&#34;はてダから-del-はてブロ-del-tumblrへ:6c3b29414222a1fdabb7cd29c4dfee48&#34;&gt;はてダから&lt;del&gt;はてブロ&lt;/del&gt;Tumblrへ&lt;/h3&gt;
+
+&lt;p&gt;とあるブログをはてなダイアリーで書いていたのですが、Tumblrへブログのデータを移行したいという要求が出てきました。ということでpythonで移行スクリプトを書いてみました。&lt;/p&gt;
+
+&lt;h3 id=&#34;ソースコード:6c3b29414222a1fdabb7cd29c4dfee48&#34;&gt;ソースコード&lt;/h3&gt;
+
+&lt;p&gt;例によってGitHubにて公開しておきます。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/ReSTARTR/mt2tumblr&#34;&gt;https://github.com/ReSTARTR/mt2tumblr&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;python2.6以外はテストしてません( ｰ`дｰ´)ｷﾘｯ&lt;/p&gt;
+
+&lt;h3 id=&#34;使い方:6c3b29414222a1fdabb7cd29c4dfee48&#34;&gt;使い方&lt;/h3&gt;
+
+&lt;p&gt;oauth2に依存しているので、実行前にインストールしておいてください。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;pip install oauth2
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;使い方はREADMEどおりです。いつもどおりのテキトー英文です。&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;はてなダイアリーの管理画面から&amp;rdquo;管理 &amp;gt; インポート/エクスポート&amp;rdquo;でMovableType形式のファイルをダウンロード&lt;/li&gt;
+&lt;li&gt;ダウンロードしたファイルをresourcesディレクトリに配置&lt;/li&gt;
+&lt;li&gt;tumblrにアプリケーションを登録( &lt;a href=&#34;http://www.tumblr.com/oauth/apps&#34;&gt;http://www.tumblr.com/oauth/apps&lt;/a&gt; )&lt;/li&gt;
+&lt;li&gt;consumer_keyとconsumer_secretを入手&lt;/li&gt;
+&lt;li&gt;config.pyを編集する&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;CONSUMER_KEY = &#39;&amp;lt;consumer_key&amp;gt;&#39;
+CONSUMER_SECRET = &#39;&amp;lt;consumer_secret&amp;gt;&#39;
+BASE_HOSTNAME = &#39;&amp;lt;your_tumblr_url&amp;gt;&#39; # &#39;&amp;lt;your-id&amp;gt;.tumblr.com&#39;のように&amp;quot;http://&amp;quot;は抜きで。
+PARSE_FILE_PATH = &#39;path/to/movable_type_data.txt&#39;
+POST_STATE = &#39;publish&#39; # 動作テストしたいなら&#39;draft&#39;にすると良いです。
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;実行する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;python run.py
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;まずはファイルの内容を読み込んで、日時、カテゴリ、タイトルが表示されるので問題ないか確認&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;OAuth認証する。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;下記のようにURLが表示されるのでブラウザでアクセス。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;open in browser:http://www.tumblr.com/oauth/authorize?oauth_token={OAUTH_TOKEN}
+
+oauth_verifier:
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;リダイレクト先のURLに含まれる&amp;rdquo;oauth_verifier&amp;rdquo;の値をコピーしてターミナルにペースト。
+
+&lt;ul&gt;
+&lt;li&gt;リダイレクト先は404になりますが、oauth_verifierが欲しいだけなのでそれで問題なしです。&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;これで、Tumblerへのインポートが始まります。&lt;/p&gt;
+
+&lt;p&gt;(ﾟдﾟ)ｳﾏｰ&lt;/p&gt;
+
+&lt;h3 id=&#34;注意事項:6c3b29414222a1fdabb7cd29c4dfee48&#34;&gt;注意事項&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;APIの呼び出し回数の制限に引っかかるかもしれませんがそのへんのエラー制御はできていません。&lt;/li&gt;
+&lt;li&gt;MovableType形式のデータをTumblrに移行するスクリプトとしてつくっていますが、実際にははてなダイアリーからMovableType形式でエクスポートしたデータでしかテストしていません。それ以外で動くかは保証できません…&lt;/li&gt;
+&lt;li&gt;投稿時間はJSTからGMTに変換してます。不要なら適当に編集してください。&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>EventStatsはherokuとMongoLabとさくらVPSで動いている</title>
+      <link>http://blog.restartr.com/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps</link>
+      <pubDate>Wed, 28 Dec 2011 21:27:52 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps</guid>
+      <description>
+
+&lt;p&gt;今月頭に&lt;a href=&#34;http://blog.restartr.com/2011/12/10/eventststs&#34;&gt;ブログ書きました&lt;/a&gt;が、EventStatsという勉強会の参加者の推移が見れるサービスを公開しました。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://eventstats.restartr.com&#34;&gt;EventStats - イベントの統計情報が見れます&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;まぁ自分が欲しかっただけなんですけど、使ってみて頂ければ幸いです。
+今回はそのサービスの構成とかについて書いてみます。&lt;/p&gt;
+
+&lt;h3 id=&#34;アジェンダ:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;アジェンダ&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;全体像&lt;/li&gt;
+&lt;li&gt;システム構成&lt;/li&gt;
+&lt;li&gt;Gitリポジトリ&lt;/li&gt;
+&lt;li&gt;MongoDBのPaaS&lt;/li&gt;
+&lt;li&gt;各イベント管理サービスAPIの違い&lt;/li&gt;
+&lt;li&gt;開発メモ&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;1-全体像:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;1.全体像&lt;/h3&gt;
+
+&lt;p&gt;開発環境も含めて全体像を図にしてみました。(初Cacooですが超べんりですね！)&lt;/p&gt;
+
+&lt;p&gt;赤い線がGit操作で、黒い点線がMongoDBへのアクセスです。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://cacoo.com/diagrams/Cp2yo6tQNlxCm5av&#34;&gt;&lt;img border=&#34;1&#34; alt=&#34;全体像&#34; src=&#34;https://cacoo.com/diagrams/Cp2yo6tQNlxCm5av-2260A.png&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;2-システム構成:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;2.システム構成&lt;/h3&gt;
+
+&lt;p&gt;大きく分けてwebとクローラーの２つです。
+webはherokuに、クローラーはさくらのVPSに配置。&lt;/p&gt;
+
+&lt;p&gt;まずは優先してデータ蓄積を…ということでクローラーをpythonとmongodbで作成しました。
+(サービス的にはやいとこデータためないと意味ないので。)&lt;/p&gt;
+
+&lt;p&gt;クローラーは５分おきに起動するのでScalaよりPythonを選択しました。起動コスト重視です。
+(Scalaでサクサク開発できる程のスキルではないというのもありますが… )&lt;/p&gt;
+
+&lt;p&gt;実行場所はherokuのworkerも考えたましたが、最終的に既に利用していたさくらVPSでcronジョブとして運用することに。&lt;/p&gt;
+
+&lt;p&gt;ということでScalaのWebはデータ参照のみで、データの更新はしません。&lt;/p&gt;
+
+&lt;h3 id=&#34;3-gitリポジトリ:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;3.Gitリポジトリ&lt;/h3&gt;
+
+&lt;p&gt;webとクローラーは分けてGitで管理。リモートリポジトリはどちらもさくらのVPS上においています。
+ただし、本番リリースは開発PCからherokuに別途pushします。&lt;/p&gt;
+
+&lt;p&gt;※webもさくらVPSにリモートリポジトリを持って、本番データを参照するステージング環境として利用しています。&lt;/p&gt;
+
+&lt;h4 id=&#34;eventstats-web:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;eventstats-web&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;host: &lt;a href=&#34;http://www.heroku.com/&#34;&gt;heroku&lt;/a&gt; (Chedar)&lt;/li&gt;
+&lt;li&gt;scala
+
+&lt;ul&gt;
+&lt;li&gt;フレームワーク: &lt;a href=&#34;https://github.com/unfiltered/unfiltered&#34;&gt;unfiltered&lt;/a&gt; 0.5.1&lt;/li&gt;
+&lt;li&gt;mongodb接続: &lt;a href=&#34;http://api.mongodb.org/scala/casbah/2.1.5.0/&#34;&gt;casbah&lt;/a&gt; 2.1.5-1&lt;/li&gt;
+&lt;li&gt;テンプレートエンジン: &lt;a href=&#34;https://github.com/unfiltered/unfiltered/tree/master/scalate&#34;&gt;unfiltered-scalate&lt;/a&gt; (ssp)&lt;/li&gt;
+&lt;li&gt;テスティングライブラリ: &lt;a href=&#34;https://github.com/unfiltered/unfiltered/tree/master/spec&#34;&gt;unfiltered-specs&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;チャートのレンダリング: &lt;a href=&#34;http://code.google.com/apis/chart/index.html&#34;&gt;Google Chart Tools&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;eventstats-crawler:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;eventstats-crawler&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;host: さくらのvps&lt;/li&gt;
+&lt;li&gt;python 2.6
+
+&lt;ul&gt;
+&lt;li&gt;フレームワーク: なし&lt;/li&gt;
+&lt;li&gt;mongodb接続: &lt;a href=&#34;http://api.mongodb.org/python/1.11/&#34;&gt;pymongo&lt;/a&gt; 1.11&lt;/li&gt;
+&lt;li&gt;テスティングライブラリ: &lt;a href=&#34;http://readthedocs.org/docs/nose/en/latest/&#34;&gt;nose&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;その他: &lt;a href=&#34;http://www.crummy.com/software/BeautifulSoup/&#34;&gt;BeautifulSoup&lt;/a&gt; (&lt;em&gt;partake.inのwebスクレイピングに利用&lt;/em&gt;)&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;4-mongodbのpaas:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;4.MongoDBのPaas&lt;/h3&gt;
+
+&lt;p&gt;herokuプラグインとして&lt;a href=&#34;https://addons.heroku.com/mongolab&#34;&gt;MongoLab&lt;/a&gt;と&lt;a href=&#34;https://addons.heroku.com/mongohq&#34;&gt;MongoHQ&lt;/a&gt;の２つが提供されています。どちらも無料枠があるのですが、MongoLabの方が無料で利用できる容量が大きいのでこちらを選択。&lt;/p&gt;
+
+&lt;p&gt;月額の利用料金は以下です。（括弧内は1MBあたりの金額の目安です）
+&lt;em&gt;これ以上の容量も利用可能ですが個人で払う範囲ではないと思い除外してます。&lt;/em&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;mongolab:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;MongoLab&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;$ 0.00/240MB&lt;/li&gt;
+&lt;li&gt;$10.00/0.5GB  ($0.020/MB)&lt;/li&gt;
+&lt;li&gt;$20.00/2.0GB  ($0.009/MB)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;mongohq:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;MongoHQ&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;$ 0.00/ 16MB&lt;/li&gt;
+&lt;li&gt;$ 5.00/256MB  ($0.019/MB)&lt;/li&gt;
+&lt;li&gt;$15.00/2.0GB  ($0.007/MB)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;5-各イベント管理サービスapiの違い:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;5.各イベント管理サービスAPIの違い&lt;/h3&gt;
+
+&lt;p&gt;まずは&lt;strong&gt;atnd, zusaar, partake.inの３サービスに対応&lt;/strong&gt;。&lt;/p&gt;
+
+&lt;p&gt;それぞれ検索APIを提供してくれているのですが、当然ながら規格とかもないのでリクエストもレスポンスも違いがあります。&lt;/p&gt;
+
+&lt;p&gt;データ蓄積する際にそのAPIの差異を吸収して、webアプリから参照する際は気にしなくていい戦略をとりました。
+APIの違い検索のみに特化して違いをまとめると以下の通りです。&lt;/p&gt;
+
+&lt;h4 id=&#34;atnd:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;atnd&lt;/h4&gt;
+
+&lt;p&gt;イベント数も多いので、このAPIをスタンダードに設定。
+* API仕様
+ * &lt;a href=&#34;http://api.atnd.org/&#34;&gt;http://api.atnd.org/&lt;/a&gt;
+* リクエストパス
+ * &lt;a href=&#34;http://api.atnd.org/events/&#34;&gt;/events/&lt;/a&gt;
+   * イベントの検索
+ * &lt;a href=&#34;http://api.atnd.org/events/users/&#34;&gt;/events/users/&lt;/a&gt;
+   * イベントに参加しているユーザーの検索&lt;/p&gt;
+
+&lt;h4 id=&#34;zusaar:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;zusaar&lt;/h4&gt;
+
+&lt;p&gt;基本的にはatnd準拠っぽい感じだけど細かい違いがあります。
+ * API仕様
+   * &lt;a href=&#34;http://www.zusaar.com/doc/api.html&#34;&gt;http://www.zusaar.com/doc/api.html&lt;/a&gt;
+ * リクエストパス
+   * &lt;a href=&#34;http://www.zusaar.com/api/event/&#34;&gt;/api/event/&lt;/a&gt;
+     * イベントの検索
+   * &lt;a href=&#34;http://www.zusaar.com/api/event/user/&#34;&gt;/api/event/user/&lt;/a&gt;
+     * イベントに参加しているユーザーの検索
+atndとの違い
+ * エントリポイントやデータのキー名が単数形
+   * events→event
+   * users→user
+ * 明確なフィールドとしてのtwitter_idが無い
+    * 管理者も参加ユーザーも
+ * ハッシュタグがない
+ * レスポンスはjson一択&lt;/p&gt;
+
+&lt;h4 id=&#34;partake-in:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;partake.in&lt;/h4&gt;
+
+&lt;p&gt;全然違うAPI。APIリストにあっても未実装がほとんどなので、利用する際はソースを確認したほうが良いです。
+今回必要になりそうなAPIは２つくらいでした。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;API仕様
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://code.google.com/p/partakein/wiki/PublicWebAPI&#34;&gt;http://code.google.com/p/partakein/wiki/PublicWebAPI&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;リクエストパス
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://partake.in/api/event/search/&#34;&gt;/api/event/search&lt;/a&gt;
+
+&lt;ul&gt;
+&lt;li&gt;イベントの検索&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://partake.in/api/event/get/&#34;&gt;/api/event/get&lt;/a&gt;
+
+&lt;ul&gt;
+&lt;li&gt;イベントの詳細データ取得&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;APIのソース(抜粋)
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://code.google.com/p/partakein/source/browse/trunk/Partake/src/main/java/in/partake/controller/api/event/SearchAction.java&#34;&gt;in.partake.controller.api.event.SearchAction.java&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://code.google.com/p/partakein/source/browse/trunk/Partake/src/main/java/in/partake/controller/api/event/EventAction.java&#34;&gt;in.partake.controller.api.event.EventAction.java&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;その他の特徴は以下。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;複数イベントを特定して一括取得するAPIはない&lt;/li&gt;
+&lt;li&gt;フィールド名がcamelCase形式&lt;/li&gt;
+&lt;li&gt;レスポンスはjson一択&lt;/li&gt;
+&lt;li&gt;検索パラメータも特殊かつ少数&lt;/li&gt;
+&lt;li&gt;検索APIで取得できるのはイベントの固定情報のみ
+
+&lt;ul&gt;
+&lt;li&gt;参加枠数はAPIから取得可能&lt;/li&gt;
+&lt;li&gt;変動するユーザー数は取得不可能&lt;/li&gt;
+&lt;li&gt;→Webページをスクレイピングするしかないという結論&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;上記をふまえ、atnd/zusaarはJSON形式でAPIからデータ取得。&lt;/p&gt;
+
+&lt;p&gt;partake.inのみイベントのリストをAPIから取得して、ユーザー数はWebページのスクレイピングで対応しました。&lt;/p&gt;
+
+&lt;h3 id=&#34;6-開発メモ:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;6.開発メモ&lt;/h3&gt;
+
+&lt;h4 id=&#34;web-heroku-からもクローラー-さくらのvps-からも離れた場所にある:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;web(heroku)からもクローラー(さくらのvps)からも離れた場所にある&lt;/h4&gt;
+
+&lt;p&gt;開発PC上だと気にならなかったのですが、1件1件findしてinsertやupdateをしていると当然遅いです。なのである程度まとめて一気にinsertする方針に変更しました(ベンチ結果はありません ^^;)。
+更新はクローラーの１プロセスからのみ実行されるので、トランザクションとか意識しなくて良いです。なので比較的自由な構成がとれます。&lt;/p&gt;
+
+&lt;h4 id=&#34;scalaでjson-api:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;ScalaでJSON API&lt;/h4&gt;
+
+&lt;p&gt;まずはUnfilteredでJSON APIを作成。けど、jsでjson取得〜チャート生成の実行時間が思いの外大きいので、jsonも１枚のHTMLに埋め込む方針に変更。&lt;/p&gt;
+
+&lt;h3 id=&#34;さいごに:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;さいごに&lt;/h3&gt;
+
+&lt;p&gt;ざっと書きだすとこんな感じです。まぁこんな構成もあるよ、ってくらいにしか言えませんが。&lt;/p&gt;
+
+&lt;p&gt;webとクローラーを分けたことで、開発中のスキーマ変更が柔軟に行えたのは良かったのですが、スキーマ定義を共通で管理していないので、そのあたりうまく管理できると良いなと思ったり。
+当初はもう少しwebの機能も多かったのですが、効率化をしているうちにシンプルな形に落ち着きました。Scalaのコードもかなり小規模なものになっています。
+イベント管理者の方からのご意見ご要望などいただけると嬉しいです :)&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://eventstats.restartr.com&#34;&gt;EventStats - イベントの統計情報が見れます&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>入門 自然言語処理 第一章</title>
+      <link>http://blog.restartr.com/2011/02/13/analysing-text-with-the-natual-language-toolkit-chap1</link>
+      <pubDate>Sun, 13 Feb 2011 09:00:29 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2011/02/13/analysing-text-with-the-natual-language-toolkit-chap1</guid>
+      <description>
+
+&lt;p&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/4873114705/&#34;&gt;入門 自然言語処理&lt;/a&gt;は11月に購入してから寝かせたままでしたが、本日より読み始めることにしました。&lt;/p&gt;
+
+&lt;p&gt;本日は第一章です。内容は大きく以下2点。&lt;/p&gt;
+
+&lt;p&gt;&lt;ul&gt;
+&lt;li&gt;pythonとnltkでの簡単なテキスト処理方法&lt;/li&gt;
+&lt;li&gt;自然言語処理を俯瞰する&lt;/li&gt;
+&lt;/ul&gt;
+内容は本に任せるとして、ここでは演習問題の解答をしようと思います。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;more&#34;&gt;&lt;/a&gt;&lt;a id=&#34;more-588&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;問題文は簡潔に記述するため、本書に記載されているものとは異なる表記をしています。&lt;/p&gt;
+
+&lt;p&gt;&lt;h3&gt;納得いかない問題&lt;/h3&gt;
+ひとつだけ納得いかない問題がありました。
+「&lt;i&gt;17. text9からtext.9.index()を使って’sunset’を含む一文を抜き出す&lt;/i&gt;」です。&lt;/p&gt;
+
+&lt;p&gt;解答をググっても、こちらしか出てこず。
+&lt;a href=&#34;http://sojin.kyoto-math.jp/nlp/1-3.html#id1&#34;&gt;1-15. bで始まる単語抽出 &amp;mdash; 入門自然言語処理&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;たしかに、&lt;/p&gt;
+
+&lt;p&gt;&lt;pre class=&#34;brush:python&#34;&gt;
+&amp;gt;&amp;gt;&amp;gt; text9.index(&amp;lsquo;sunset&amp;rsquo;)
+629
+&lt;/pre&gt;
+と帰ってきます。でも、実際には&amp;rsquo;sunset&amp;rsquo;を含む一文は複数あるわけです。
+確認するとこんな感じ。&lt;/p&gt;
+
+&lt;p&gt;&lt;pre class=&#34;brush:python&#34;&gt;
+&amp;gt;&amp;gt;&amp;gt; [t for t in text9 if t==&amp;lsquo;sunset&amp;rsquo;]
+[&amp;lsquo;sunset&amp;rsquo;, &amp;lsquo;sunset&amp;rsquo;, &amp;lsquo;sunset&amp;rsquo;, &amp;lsquo;sunset&amp;rsquo;, &amp;lsquo;sunset&amp;rsquo;, &amp;lsquo;sunset&amp;rsquo;, &amp;lsquo;sunset&amp;rsquo;, &amp;lsquo;sunset&amp;rsquo;, &amp;lsquo;sunset&amp;rsquo;, &amp;lsquo;sunset&amp;rsquo;, &amp;lsquo;sunset&amp;rsquo;, &amp;lsquo;sunset&amp;rsquo;, &amp;lsquo;sunset&amp;rsquo;, &amp;lsquo;sunset&amp;rsquo;]
+&lt;/pre&gt;
+複数ある一文を抽出しなくていいの？という疑問が出てきました。すべての文を抽出する方法はさておき、今回はひとつだけ抽出する解答だけを書きました。&lt;/p&gt;
+
+&lt;p&gt;&lt;h3&gt;演習問題&lt;/h3&gt;
+&lt;h4&gt;準備&lt;/h4&gt;
+nltkとmatplotlibがインポートできていれば、以下コードだけですみます。&lt;/p&gt;
+
+&lt;p&gt;&lt;pre class=&#34;brush:python&#34;&gt;from nltk.book import *&lt;/pre&gt;
+以下が、すべての問題の解答です。
+(私個人の解答であり、正解の保証はどこにもありません。）&lt;/p&gt;
+
+&lt;p&gt;&lt;h4&gt;1. Pythonインタプリタを電卓として、12 / (4 + 1)のような計算を入力してみよう&lt;/h4&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; 12 / 4 + 1
+2.3999999999999999&lt;/pre&gt;
+&lt;h4&gt;2. 26文字のアルファベットが与えられたとき、10字の文字列は26の10乗（あるいは26**10）種類も作ることができるが、100文字だったら何種類か。&lt;/h4&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; 26 ** 100
+3142930641582938830174357788501626427282669988762475256374173175398995908420104023465432599069702289330964075081611719197835869803511992549376L&lt;/pre&gt;
+&lt;h4&gt;3. [&amp;lsquo;Monty&amp;rsquo;, &amp;lsquo;Python&amp;rsquo;] * 20や 3 * sent1を実行すると何が起こるか&lt;/h4&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; [&amp;lsquo;Monty&amp;rsquo;, &amp;lsquo;Python&amp;rsquo;] * 3
+[&amp;lsquo;Monty&amp;rsquo;, &amp;lsquo;Python&amp;rsquo;, &amp;lsquo;Monty&amp;rsquo;, &amp;lsquo;Python&amp;rsquo;, &amp;lsquo;Monty&amp;rsquo;, &amp;lsquo;Python&amp;rsquo;]&lt;/pre&gt;
+&lt;h4&gt;4. text2には単語がいくつ含まれているか。また重複を除くといくつか。&lt;/h4&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; #単語数
+&amp;gt;&amp;gt;&amp;gt; len(text2)
+141576
+&amp;gt;&amp;gt;&amp;gt; #重複除いた単語数
+&amp;gt;&amp;gt;&amp;gt; len(set(text2))
+6833&lt;/pre&gt;
+&lt;h4&gt;5. ユーモア小説とロマンス小説の間で、どちらが語彙の多様性が高いか。&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;ユーモア小説：多様性＝6.9&lt;/li&gt;
+&lt;li&gt;ロマンス小説：多様性＝8.3&lt;/li&gt;
+&lt;/ul&gt;
+?ロマンス小説が高い。&lt;/p&gt;
+
+&lt;p&gt;&lt;h4&gt;6. Sense and Sensibilityのなかで、エリナ、マリアン、エドワード、ウィロビーの分散プロットを表示してみよう。&lt;/h4&gt;
+名前まで日本語表記されていて元の綴りがわからない…
+なのでまず探すところから。&lt;/p&gt;
+
+&lt;p&gt;&lt;pre class=&#34;brush:python&#34;&gt;&amp;gt;&amp;gt;&amp;gt;[t for t in set(text2) if t.startswith(&amp;lsquo;El&amp;rsquo;)]
+[&amp;lsquo;Elinor&amp;rsquo;, &amp;lsquo;Eliza&amp;rsquo;]&lt;/pre&gt;
+な感じで4人分探します。
+で、プロットする&lt;/p&gt;
+
+&lt;p&gt;&lt;pre class=&#34;brush:python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; text2.dispersion_plot([&amp;lsquo;Elinor&amp;rsquo;, &amp;lsquo;Mrianne&amp;rsquo;, &amp;lsquo;Edward&amp;rsquo;, &amp;lsquo;Willoughbys&amp;rsquo;])&lt;/p&gt;
+
+&lt;h1 id=&#34;ここでプロットウインドウが表示される:4148d9cc55906c2cc8991c3bd49169cb&#34;&gt;※ここでプロットウインドウが表示される&lt;/h1&gt;
+
+&lt;p&gt;&lt;/pre&gt;
+&lt;h5&gt;男女の役割の違い&lt;/h5&gt;
+女性が高頻度に出現&lt;/p&gt;
+
+&lt;p&gt;&lt;h5&gt;カップルの特定は可能か&lt;/h5&gt;
+できない。どうしろと…&lt;/p&gt;
+
+&lt;p&gt;&lt;h4&gt;7. text5のコロケーションを探してみよう。&lt;/h4&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; text5.collocations()
+Building collocations list
+wanna chat; PART JOIN; MODE #14-19teens; JOIN PART; PART PART;
+cute.-ass MP3; MP3 player; JOIN JOIN; times .. .; ACTION watches; guys
+wanna; song lasts; last night; ACTION sits; -&amp;hellip;)&amp;hellip;- S.M.R.; Lime
+Player; Player 12%; dont know; lez gurls; long time&lt;/pre&gt;
+&lt;h4&gt;8. len(set(text4))の目的&lt;/h4&gt;
+単語のユニーク数を求める&lt;/p&gt;
+
+&lt;p&gt;&lt;h4&gt;9. リストと文字列&lt;/h4&gt;
+&lt;h5&gt;(a) 変数の定義と2種類の出力を試してみよう&lt;/h5&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; my_string = &amp;lsquo;My String&amp;rsquo;
+&amp;gt;&amp;gt;&amp;gt; my_string
+My String
+&amp;gt;&amp;gt;&amp;gt; print my_string
+My String
+&lt;/pre&gt;
+&lt;h5&gt;(b). 連結と演算&lt;/h5&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; my_string + my_string
+&amp;lsquo;My StringMyString&amp;rsquo;
+&amp;gt;&amp;gt;&amp;gt; my_string * 3
+&amp;lsquo;My StringMy StringMy String&amp;rsquo;
+&lt;/pre&gt;
+&lt;h4&gt;10. 単語のリストを保持するmy_sentという変数を定義しよう&lt;/h4&gt;
+&lt;h5&gt;(a) &amp;lsquo; &amp;lsquo;.joiin(my_sent)を使ってリストを文字列に変換してみよう。&lt;/h5&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; &amp;lsquo; &amp;lsquo;.join(my_string.split(&amp;rsquo; &amp;lsquo;))
+&amp;lsquo;My String&amp;rsquo;
+&lt;/pre&gt;
+&lt;h5&gt;(b) split()を使ってできた&lt;/h5&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; my_sent = [&amp;lsquo;My&amp;rsquo;, &amp;lsquo;Sent&amp;rsquo;]
+&amp;gt;&amp;gt;&amp;gt; &amp;lsquo; &amp;lsquo;.join(my_sent)
+&amp;lsquo;My Sent&amp;rsquo;
+&amp;gt;&amp;gt;&amp;gt; &amp;lsquo; &amp;lsquo;.join(&amp;lsquo;hoge moge&amp;rsquo;.split(&amp;rsquo; &amp;lsquo;))
+&amp;lsquo;My Sent&amp;rsquo;
+&lt;/pre&gt;
+&lt;h4&gt;11. リストの連結&lt;/h4&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; phrase1 = [&amp;lsquo;hoge&amp;rsquo;]
+&amp;gt;&amp;gt;&amp;gt; phrase1 += [&amp;lsquo;moge&amp;rsquo;]
+&amp;gt;&amp;gt;&amp;gt; phrase2 = [&amp;lsquo;foo&amp;rsquo;]
+&amp;gt;&amp;gt;&amp;gt; phrase2 += [&amp;lsquo;bar&amp;rsquo;]
+&amp;gt;&amp;gt;&amp;gt; phrase1 + phrase2
+[&amp;lsquo;hoge&amp;rsquo;, &amp;lsquo;moge&amp;rsquo;, &amp;lsquo;foo&amp;rsquo;, &amp;lsquo;bar&amp;rsquo;]&lt;/pre&gt;
+&lt;h5&gt;len(phrase1 + phrase2)とlen(phrase1) + len(phrase2)の違いはなにか。&lt;/h5&gt;
+連結した後の長さと、それぞれの長さの加算&lt;/p&gt;
+
+&lt;p&gt;&lt;h4&gt;12. NLPと関連あるものはどれか。&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;[&amp;lsquo;Monty Python&amp;rsquo;][6:12]&lt;/li&gt;
+&lt;li&gt;[&amp;lsquo;Monty&amp;rsquo;, &amp;lsquo;Python&amp;rsquo;][1]&lt;/li&gt;
+&lt;/ul&gt;
+?b&lt;/p&gt;
+
+&lt;p&gt;&lt;h4&gt;13. sent1[2][2]はなにを表しているだろうか。&lt;/h4&gt;
+2要素目の2文字目&lt;/p&gt;
+
+&lt;p&gt;&lt;h4&gt;14.  要素のインデックス取得&lt;/h4&gt;
+微妙だけど。&lt;/p&gt;
+
+&lt;p&gt;&lt;pre class=&#34;brush:python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; i = 0
+&amp;gt;&amp;gt;&amp;gt; for t in sent3:
+&amp;hellip;   if t==&amp;lsquo;the&amp;rsquo;:
+&amp;hellip;     print i
+&amp;hellip;   i += 1
+&amp;hellip;
+1
+5
+8&lt;/pre&gt;
+&lt;h4&gt;15. bから始まる単語の取得&lt;/h4&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; sorted(set([t for t in text5 if t.startswith(&amp;lsquo;b&amp;rsquo;)]))
+[&amp;lsquo;b&amp;rsquo;, &amp;lsquo;b-day&amp;rsquo;, &amp;lsquo;b/c&amp;rsquo;, &amp;lsquo;b4&amp;rsquo;,&amp;hellip;&amp;hellip;&lt;/pre&gt;
+&lt;h4&gt;16. range()について&lt;/h4&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; range(10)
+[1,2,3&amp;hellip;.9]
+&amp;gt;&amp;gt;&amp;gt; range(10,20)
+[10,11,12,&amp;hellip;., 20]
+&amp;gt;&amp;gt;&amp;gt; range(10,20,2)
+[10, 12, &amp;hellip;, 18]
+&amp;gt;&amp;gt;&amp;gt; range(20,10,-2)
+[20, 18, &amp;hellip;, 12]&lt;/pre&gt;
+&lt;h4&gt;17. text9からtext.9.index()を使って&amp;rsquo;sunset&amp;rsquo;を含む一文を抜き出す&lt;/h4&gt;
+これで良いのかわかりませんが、ひとまずの解答として。&lt;/p&gt;
+
+&lt;p&gt;&lt;pre class=&#34;brush:python&#34;&gt;
+dot_pre = 0 # 直前の&amp;rsquo;.&amp;lsquo;の位置
+dot_aft = 0 # 直後の&amp;rsquo;.&amp;lsquo;の位置
+found = False # &amp;lsquo;.&amp;lsquo;が見つかったかどうか
+i = 0 # 現在位置
+for t in text9:
+  if t==&amp;lsquo;sunset&amp;rsquo;:
+    found = True
+  if t==&amp;lsquo;.&amp;rsquo;:
+    if found==True:
+      dot_aft = i
+      break
+    else:
+      dot_pre = i
+  i += 1&lt;/p&gt;
+
+&lt;h1 id=&#34;sunset-を含む一文を生成する:4148d9cc55906c2cc8991c3bd49169cb&#34;&gt;&amp;lsquo;sunset&amp;rsquo;を含む一文を生成する。&lt;/h1&gt;
+
+&lt;p&gt;&amp;rsquo; &amp;lsquo;.join([text9[t] for t in range(dot_pre+1, dot_aft+1)])&lt;/p&gt;
+
+&lt;h1 id=&#34;chapter-i-the-two-poets-of-saffron-park-the-suburb-of-saffron-park-lay-on-the-sunset-side-of-london-as-red-and-ragged-as-a-cloud-of-sunset:4148d9cc55906c2cc8991c3bd49169cb&#34;&gt;&amp;lsquo;CHAPTER I THE TWO POETS OF SAFFRON PARK THE suburb of Saffron Park lay on the sunset side of London , as red and ragged as a cloud of sunset .&amp;rsquo;&lt;/h1&gt;
+
+&lt;p&gt;&lt;/pre&gt;
+&lt;h4&gt;18. sent1からsent8までに含まれる語彙を計算&lt;/h4&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;len(set(sent1 + sent2 + sent3 + sent4 + sent5 + sent6 + sent7 + sent8))&lt;/pre&gt;
+&lt;h4&gt;19. 以下2行の違いは何か。&lt;/h4&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;sorted(set([w.lower() for w in text1]))
+sorted([w.lower() for w in set(text1)])&lt;/pre&gt;
+&lt;h5&gt;sorted(set([w.lower() for w in text1]))&lt;/h5&gt;
+小文字のリストを作ってからユニークにしてソート&lt;/p&gt;
+
+&lt;p&gt;&lt;h5&gt;sorted([w.lower() for w in set(text1)])&lt;/h5&gt;
+ユニークリストから小文字にしてソート
+こちらが大きい。重複をふくんでいるので。&lt;/p&gt;
+
+&lt;p&gt;&lt;h4&gt;20. w.isupper()とw.islower()の違いは何か&lt;/h4&gt;
+大文字ならTrueと小文字ならTrue&lt;/p&gt;
+
+&lt;p&gt;&lt;h4&gt;21. 最後の2単語を取り出すスライス式を書いてみよう。&lt;/h4&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; text2[-2:]
+&lt;/pre&gt;
+&lt;h4&gt;21. 4文字の単語のうち、頻度の高い順に取得してみよう。&lt;/h4&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;
+&amp;gt;&amp;gt;&amp;gt; FreqDist([t for t in text4 if len(t)==4]).keys()
+&lt;/pre&gt;
+&lt;h4&gt;21. 大文字の単語を一行ずつ表示&lt;/h4&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;
+&amp;gt;&amp;gt;&amp;gt;  for str in [t for t in text6 if t.isupper()]:
+&amp;gt;&amp;gt;&amp;gt;   print str
+&lt;/pre&gt;
+&lt;h4&gt;24. 条件にあったものを含むリスト&lt;/h4&gt;
+&lt;h5&gt;a: izeで終わる&lt;/h5&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;[t for t in text6 if t.endswith(&amp;lsquo;ize&amp;rsquo;)]&lt;/pre&gt;
+&lt;h5&gt;b: zを含む&lt;/h5&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;[t for t in text6 if &amp;lsquo;z&amp;rsquo; in t]&lt;/pre&gt;
+&lt;h5&gt;c: ptを含む&lt;/h5&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;[t for t in text6 if &amp;lsquo;pt&amp;rsquo; in t]&lt;/pre&gt;
+&lt;h5&gt;d: 先頭大文字あと小文字（＝タイトルケース)&lt;/h5&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;[t for t in text6 if t.isalpha()==True and t==t.title()]&lt;/pre&gt;
+&lt;h4&gt;25. listed = [&amp;lsquo;she&amp;rsquo;, &amp;lsquo;sells&amp;rsquo;, &amp;lsquo;sea&amp;rsquo;, &amp;lsquo;shells&amp;rsquo;, &amp;lsquo;by&amp;rsquo;, &amp;lsquo;the&amp;rsquo;, &amp;lsquo;sea&amp;rsquo;, &amp;lsquo;shore&amp;rsquo;]&lt;/h4&gt;
+&lt;h4&gt;&lt;/h4&gt;
+&lt;h5&gt;shではじまる単語&lt;/h5&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;[t for t in listed if t.startswith(&amp;lsquo;sh&amp;rsquo;)]&lt;/pre&gt;
+&lt;h5&gt;4文字より大きい単語&lt;/h5&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;[t for t in listed if len(t)&amp;gt;=4]&lt;/pre&gt;
+&lt;h4&gt;26. sum([len(w) for w in text1])について&lt;/h4&gt;
+&lt;h5&gt;どんな処理？&lt;/h5&gt;
+リスト中のすべての単語長の合計&lt;/p&gt;
+
+&lt;p&gt;&lt;h5&gt;これをつかって平均はだせる？&lt;/h5&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;
+&amp;gt;&amp;gt;&amp;gt; sum([len(w) for w in text1])/len(text1)
+3.8304111280236488&lt;/pre&gt;
+&lt;h4&gt;27. 語彙サイズを返すvocab_size(text)を定義&lt;/h4&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;
+&amp;gt;&amp;gt;&amp;gt; def vocab_size(text):
+&amp;hellip;  return len(set(text))
+&amp;hellip;
+&amp;gt;&amp;gt;&amp;gt; vocab(text1)
+19317
+&lt;/pre&gt;
+&lt;h4&gt;28. percent(word, text)を定義&lt;/h4&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;
+&amp;gt;&amp;gt;&amp;gt; def percent(word, text):
+&amp;hellip;  return len([t for t in text if t==word]) / len(text)
+&lt;/pre&gt;
+&lt;h4&gt;29. set(sent3) &amp;lt; set(text1)について&lt;/h4&gt;
+&lt;h5&gt;実行してみる&lt;/h5&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;True&lt;/pre&gt;
+&lt;h5&gt;29. 異なるテキストで実行して何が起こるか&lt;/h5&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; set(sent3) &amp;lt; set(text3)
+True&lt;/pre&gt;
+&lt;h5&gt;実用的な応用は何があるか&lt;/h5&gt;
+ドキュメント間の語彙数の比較&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/4873114705&#34;&gt;入門 自然言語処理 [大型本]&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>pythonとscalaのファイルの自動クローズ</title>
+      <link>http://blog.restartr.com/2011/02/07/automatically-close-the-file-in-python-and-scala</link>
+      <pubDate>Mon, 07 Feb 2011 00:10:22 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2011/02/07/automatically-close-the-file-in-python-and-scala</guid>
+      <description>&lt;p&gt;エキスパートPythonプログラミングを少しずつ読み進めています。といっても気になるタイトルを拾い読みですが。&lt;/p&gt;
+
+&lt;p&gt;そのなかの&amp;rdquo;2.4 withとcontextlib&amp;rdquo;の章のwith文の例としてファイル読み込みのコードが書いてました。
+&lt;script src=&#34;https://gist.github.com/813385.js?file=read_file_using_with.py&#34;&gt;&lt;/script&gt;
+たったこれだけで、自動クローズまでやってくれるみたい。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;more&#34;&gt;&lt;/a&gt;&lt;a id=&#34;more-576&#34;&gt;&lt;/a&gt;
+さらに、with文を使うためのクラス定義も可能らしい。
+&lt;script src=&#34;https://gist.github.com/813385.js?file=Reader.py&#34;&gt;&lt;/script&gt;&lt;/p&gt;
+
+&lt;p&gt;実装すべきは下記２メソッドのみ。&lt;/p&gt;
+
+&lt;p&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;enter&lt;/strong&gt;(self)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;exit&lt;/strong&gt;(self, exception_type, exception_value, exception_traceback)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;strong&gt;enter&lt;/strong&gt;の戻り値はasで受けとれます。
+&lt;strong&gt;exit&lt;/strong&gt;で例外処理のfinallyに当たる処理を書きます。何も返さないと例外はその呼び出し元に伝播します。&lt;/p&gt;
+
+&lt;p&gt;さらにさらに、contextlibというモジュールを使えば、もっと自然に書けます。
+&lt;script src=&#34;https://gist.github.com/813385.js?file=read_file_with_closing.py&#34;&gt;&lt;/script&gt;
+※これは、contextmanager内のfinally句でcloseを書くのと同じ。(&lt;a href=&#34;http://www.python.jp/doc/nightly/library/contextlib.html#contextlib.closing&#34;&gt;参考&lt;/a&gt;)&lt;/p&gt;
+
+&lt;p&gt;&lt;h4&gt;Scalaでwith（っぽいもの）を実装&lt;/h4&gt;
+pythonのwith文と同様の記述方法をScalaでやるとしたら…こんな感じでしょうか。
+&lt;script src=&#34;https://gist.github.com/813385.js?file=FileReader.scala&#34;&gt;&lt;/script&gt;&lt;/p&gt;
+
+&lt;p&gt;ファイルの自動クローズについてはこちらを参考にさせていただきました。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://d.hatena.ne.jp/syttru/20080322/1206212125&#34;&gt;Scalaでファイル操作 - syttruの日記&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>pythonをはじめるために</title>
+      <link>http://blog.restartr.com/2011/01/30/how-to-start-learning-python-programming</link>
+      <pubDate>Sun, 30 Jan 2011 22:04:12 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2011/01/30/how-to-start-learning-python-programming</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;http://blog.restartr.com/2011/01/10/6-targets-i-want-to-achieve-in-2011/&#34;&gt;今年の目標&lt;/a&gt;として&lt;/p&gt;
+&lt;blockquote&gt;&lt;p&gt;3.pythonに手を出す&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;というのを掲げていて、「エキスパートPythonプログラミング」を買ったので、pythonの学習をこんな感じではじめてみるつもり、というのを書いておきます。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/4048686291&#34;&gt;エキスパートPythonプログラミング&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a id=&#34;more&#34;&gt;&lt;/a&gt;&lt;a id=&#34;more-544&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;h3&gt;1.リファレンスを用意する&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;基礎文法：&lt;a href=&#34;http://www.python.jp/doc/release/reference/&#34;&gt;Python 言語リファレンス &amp;mdash; Python v2.6.2 documentation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;チュートリアル：&lt;a href=&#34;http://www.python.jp/doc/release/tutorial/index.html&#34;&gt;Python チュートリアル &amp;mdash; Python v2.6.2 documentation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;痒いところ向け：エキスパートPythonプログラミング&lt;/li&gt;
+&lt;li&gt;PHPから逆引き：&lt;a href=&#34;http://www.php2python.com/&#34;&gt;Php2Python - Python alternatives to PHP functions, classes and librarie&lt;/a&gt;
+&lt;/ul&gt;
+&lt;p&gt;基礎文法は公式リファレンスで大体まかなえますし、ググれば大体の情報は手に入るので、あえて購入していません。オライリーの「初めてのpython 第3版」は古い上にゴツイので却下しました。（「初めてのpython第4版が洋書は最近出ましたが日本語訳はまだ）&lt;/p&gt;
+&lt;p&gt;PHP2Pythonは、PHP関数をPythonに置き換えると…というのを投稿できるサイトです。PHP関数から逆引きできるので、目的がはっきりしていれば探しやすくてかなり便利です。&lt;/p&gt;
+&lt;h3&gt;2.目標を決める&lt;/h3&gt;
+&lt;p&gt;pythonを学び始めるにあたっては、何をどこまで学ぶのか、というのは明確にすべきでしょう。&lt;br /&gt;
+私の場合は、こんな感じ。&lt;/p&gt;
+&lt;h4&gt;他言語との違いを探る&lt;/h4&gt;
+&lt;p&gt;新しい言語を学んだほうが良いというのはよく言われるところだと思います。たとえ直接的に必要性がなくても。その言語やコミュニティの特徴を知ることで、新しい視点が生まれます。&lt;br /&gt;
+普段のプログラミングに良い部分を取り入れることができると期待しています。&lt;/p&gt;
+&lt;p&gt;&lt;b&gt;python界隈で知りたいこと&lt;/b&gt;&lt;br /&gt;
+その言語に求めるものは、言語毎に異なるもの。私が気になっているのは以下のとおり。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;オブジェクト指向プログラミング&lt;/li&gt;
+&lt;li&gt;関数型プログラミング&lt;/li&gt;
+&lt;li&gt;アプリ開発フロー
+&lt;li&gt;
+&lt;li&gt;アジャイルへの取り組みやテスト手法&lt;/li&gt;
+&lt;li&gt;メタプログラミング&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;これを知るために最適だったのが、上述の「エキスパートPythonプログラミング」でした。&lt;/p&gt;
+&lt;p&gt;また、特定の目的も一応あって、以下の２つを予定しています。&lt;/p&gt;
+&lt;p&gt;&lt;b&gt;自然言語処理入門&lt;/b&gt;&lt;br /&gt;
+積読中の書籍に「入門　自然言語処理」があるのですが、pythonで解説されていますので、コードでつまづかない程度に基礎体力をつけておきます。&lt;br /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://amazon.co.jp/dp/4873114705&#34;&gt;入門　自然言語処理&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;必要そうな技術はこんな感じ。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;文字列の取り扱い&lt;/li&gt;
+&lt;li&gt;NLTK(pythonの言語処理モジュール)の取り扱い&lt;/li&gt;
+&lt;li&gt;統計処理ライブラリの取り扱い&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;b&gt;GAEアプリ開発&lt;/b&gt;&lt;br /&gt;
+Scalaでも少し手をつけていたりますが、JMV系とPythonでどのような違いがあるのかも見てみたいところ。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Webフレームワーク(Django, Kay等)の取り扱い&lt;/lI&gt;
+&lt;li&gt;連携する各サービスAPIの取り扱い&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;当分は言語仕様と戯れようと思います。&lt;/p&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

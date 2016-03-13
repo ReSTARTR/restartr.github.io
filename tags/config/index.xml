@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Config on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/config/</link>
+    <description>Recent content in Config on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Tue, 30 Aug 2011 00:02:15 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/config/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Scalaで設定ファイルを使いたい時どうしたらいいの？</title>
+      <link>http://blog.restartr.com/2011/08/30/config-libraries-in-scala</link>
+      <pubDate>Tue, 30 Aug 2011 00:02:15 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2011/08/30/config-libraries-in-scala</guid>
+      <description>
+
+&lt;p&gt;&lt;em style=&#34;color:red&#34;&gt;2011.08.31 kmizushimaさんから頂いた&lt;a href=&#34;http://blog.restartr.com/2011/08/30/config-libraries-in-scala/?preview=true&amp;preview_id=1049&amp;preview_nonce=ad0bbeeef6#comment-108&#34;&gt;コメント&lt;/a&gt;を元に、下記の記述を修正＆追記しました。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Twitterのutil-evalの一時ファイル生成について&lt;/li&gt;
+&lt;li&gt;AkkaのConfigファイルのパース手法について
+&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;TwitterのOAuthの鍵やDB接続情報など、アプリを書く上で環境によって切り替える設定が大抵の場合あると思います。普段使っているPHPの場合、設定を外部ファイルに書きだす場合、ini,yaml,xml,phpのいずれかを使うことが多いのですが、Scalaの場合、設定ファイルってどうするのか気になりました。&lt;/p&gt;
+
+&lt;p&gt;ということで、適当に思いついたライブラリやフレームワークがどのように対応しているのか調査。&lt;/p&gt;
+
+&lt;h2 id=&#34;ライブラリ:480a52d1b0b037e3923545808ab81cf8&#34;&gt;ライブラリ&lt;/h2&gt;
+
+&lt;h3 id=&#34;propertiesファイル:480a52d1b0b037e3923545808ab81cf8&#34;&gt;propertiesファイル&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;javaの古くから使われている&lt;/li&gt;
+&lt;li&gt;キーと値のみ設定可能&lt;/li&gt;
+&lt;li&gt;依存関係がないので手軽。&lt;/li&gt;
+&lt;li&gt;すべてが文字列&lt;/li&gt;
+&lt;li&gt;例えばこんな感じ&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;path/to/conf.properties&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;hoge = &amp;quot;moge&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;val p = new java.util.Properties()
+val config = p.load(new java.io.FileInputStream(&amp;quot;path/to/conf.properties&amp;quot;);
+config.get(&amp;quot;hoge&amp;quot;) // &amp;quot;moge&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;twitterのconfiggy:480a52d1b0b037e3923545808ab81cf8&#34;&gt;twitterのconfiggy&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/robey/configgy&#34;&gt;https://github.com/robey/configgy&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;独自フォーマット&lt;/li&gt;
+&lt;li&gt;オワコン&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;twitterのutil-eval:480a52d1b0b037e3923545808ab81cf8&#34;&gt;twitterのutil-eval&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://twitter.github.com/util/&#34;&gt;http://twitter.github.com/util/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Evalした値をそのまま利用&lt;/li&gt;
+&lt;li&gt;Scalaのコンパイラに任せられる。つまりScalaコードがそのまま設定ファイルに。&lt;/li&gt;
+&lt;li&gt;型安全&lt;/li&gt;
+&lt;li&gt;詳しいことはこちらを参照
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://d.hatena.ne.jp/xuwei/20110805/1312551980&#34;&gt;twitter が Scala 大好きすぎて (?) 設定ファイルまで Scala のソースコードな件 - scalaとか・・・&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.youhei.jp/scala-util-eval&#34;&gt;Scala アプリケーションのコンフィグレーションに Twitter 製の util-eval を使ってみた - blog.youhei.jp&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;下記処理にて設定クラスインスタンスをapply経由で取り出せる
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/twitter/util/blob/master/util-eval/src/main/scala/com/twitter/util/Eval.scala#L247&#34;&gt;com.twitter.util.Eval#L247&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;del&gt;一時的にjarファイルを生成するので環境に制約あるとダメ（たぶん）&lt;/del&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;一時ファイルを生成するのは、ローカルにcloneした古いままのバージョン（1.2.5）で動作確認していたためでした。&lt;/li&gt;
+&lt;li&gt;古いコード: &lt;a href=&#34;https://github.com/twitter/util/blob/7c81842286f30aee4b2176bceb8c79ded710c88e/src/main/scala/com/twitter/util/Evaluator.scala&#34;&gt;com.twitter.util.Evaluator&lt;/a&gt;のコメントに&lt;a href=&#34;https://github.com/twitter/util/blob/7c81842286f30aee4b2176bceb8c79ded710c88e/src/main/scala/com/twitter/util/Evaluator.scala#L57&#34;&gt;All generated .scala and .class files are stored, by default, in System.getProperty(&amp;ldquo;java.io.tmpdir&amp;rdquo;)&lt;/a&gt;と書いてあったので、「一時ファイルが生成される」と認識し、実際の動作確認でもその一時ファイルが確認できていました。&lt;/li&gt;
+&lt;li&gt;しかし、新しいコード: &lt;a href=&#34;https://github.com/twitter/util/blob/master/util-eval/src/main/scala/com/twitter/util/Eval.scala&#34;&gt;com.twitter.util.Eval&lt;/a&gt;のコメントには&lt;a href=&#34;https://github.com/twitter/util/blob/master/util-eval/src/main/scala/com/twitter/util/Eval.scala#L50&#34;&gt;If target is None, the results are compiled to memory (and are therefore ephemeral)&lt;/a&gt;とある通り、パス指定がない場合はメモリ上の仮想ディレクトリに対して操作を行う模様です。&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;使い方&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;設定のtraitを定義&lt;/p&gt;
+
+&lt;p&gt;src/main/scala/com/restartr/utilSample/MyConfig.scala&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;package com.restartr.utilSample
+
+trait MyConfig {
+  val num: Int
+  val str: String
+}
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;実際の設定ファイルでは、設定のTraitを継承してインスタンス生成&lt;/p&gt;
+
+&lt;p&gt;※クラスインスタンスでなくても文字列やリストでもOK。&lt;/p&gt;
+
+&lt;p&gt;path/to/config/MyConfig.scala&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;import com.restartr.utilSample.MyConfig
+new MyConfig {
+  val num = 1
+  val str = &amp;quot;san&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;使いたい場所でEval。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;val conf = Eval[MyConfig](new java.io.File(&amp;quot;path/to/config/MyConfig.scala&amp;quot;))
+conf.num // 1
+conf.str // &amp;quot;san&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;configrity:480a52d1b0b037e3923545808ab81cf8&#34;&gt;configrity&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/paradigmatic/Configrity&#34;&gt;https://github.com/paradigmatic/Configrity&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;akkaのフォーマットと同等
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/paradigmatic/Configrity/wiki/Formats&#34;&gt;設定のフォーマット&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Scala 2.9以上対象。&lt;/li&gt;
+&lt;li&gt;configファイルの&lt;strong&gt;読み書き&lt;/strong&gt;ができる
+
+&lt;ul&gt;
+&lt;li&gt;immutable, thread safe, allow functional design pattern&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;各種フレームワーク:480a52d1b0b037e3923545808ab81cf8&#34;&gt;各種フレームワーク&lt;/h2&gt;
+
+&lt;p&gt;以下のフレームワークはすべて独自実装でした。Propertiesじゃ役不足だし、かといってデファクトな設定用ライブラリがないからなのでしょうか。&lt;/p&gt;
+
+&lt;h3 id=&#34;akkaのconfig:480a52d1b0b037e3923545808ab81cf8&#34;&gt;akkaのconfig&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;akka.confとかがそれ。&lt;/li&gt;
+&lt;li&gt;独自パーサーを使用
+
+&lt;ul&gt;
+&lt;li&gt;70行程度のシンプルなパーサー&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/jboner/akka/blob/master/akka-actor/src/main/scala/akka/config/ConfigParser.scala&#34;&gt;akka.config.ConfigParser&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;del&gt;正規表現で定義されてる&lt;/del&gt;Scalaのパーザコンビネータ(RegexParsersを継承)で定義されている
+
+&lt;ul&gt;
+&lt;li&gt;&amp;rdquo;{&amp;ldquo;と&amp;rdquo;}&amp;ldquo;で階層構造を表現&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;akka {
+  cluster{
+    name = &amp;quot;test-cluster&amp;quot;
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;使える型
+
+&lt;ul&gt;
+&lt;li&gt;数値&lt;/li&gt;
+&lt;li&gt;文字列&lt;/li&gt;
+&lt;li&gt;真偽値（on/off , true/false)&lt;/li&gt;
+&lt;li&gt;リスト [1,2,3] / [&amp;ldquo;hoge&amp;rdquo;,&amp;ldquo;moge&amp;rdquo;]&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;play-frameworkのconfig:480a52d1b0b037e3923545808ab81cf8&#34;&gt;play!frameworkのconfig&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;独自パーサー
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/playframework/play/blob/master/framework/src/play/utils/OrderSafeProperties.java&#34;&gt;play.utils.OrderSafeProperties&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;java.util.propertiesを継承したもの。&lt;/li&gt;
+&lt;li&gt;環境ごとにIDを割り当てられる
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://playdocja.appspot.com/documentation/1.2.1/production&#34;&gt;http://playdocja.appspot.com/documentation/1.2.1/production&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://playdocja.appspot.com/documentation/1.2.1/guide11&#34;&gt;http://playdocja.appspot.com/documentation/1.2.1/guide11&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;IDごとに%{ID}を頭につければ切り替えてくれるみたい&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;lift:480a52d1b0b037e3923545808ab81cf8&#34;&gt;Lift&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;LiftRulesが設定をもつ
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://simply.liftweb.net/index-3.1.html#toc-Subsection-3.1.2&#34;&gt;http://simply.liftweb.net/index-3.1.html#toc-Subsection-3.1.2&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;実装はここ
+*&lt;a href=&#34;https://github.com/lift/framework/blob/master/web/webkit/src/main/scala/net/liftweb/http/LiftRules.scala&#34;&gt;net.liftweb.http.LiftRules&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;たぶんこのへん
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/lift/framework/blob/master/core/util/src/main/scala/net/liftweb/util/Props.scala&#34;&gt;net.liftweb.util.Props&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;ざっと調べて使ってみたところ、手軽にやるならProperties、フレームワークを使うならそれに則り、厳密にやるならTwitterのEvalや、設定ファイルを読み書きできる独特なConfigrityなんかがよさそうです。&lt;/p&gt;
+
+&lt;p&gt;XMLは…まぁないでしょうね。&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

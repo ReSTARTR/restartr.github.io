@@ -1,0 +1,555 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Nlp on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/nlp/</link>
+    <description>Recent content in Nlp on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 20 Feb 2011 09:30:52 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/nlp/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>第一回 にこにこテキストマイニングに参加してきた #nicoTextMining</title>
+      <link>http://blog.restartr.com/2011/02/20/attended-nicotextmining-1st</link>
+      <pubDate>Sun, 20 Feb 2011 09:30:52 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2011/02/20/attended-nicotextmining-1st</guid>
+      <description>
+
+&lt;p&gt;第一回 にこにこテキストマイニングに参加してきました。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://atnd.org/events/12264&#34;&gt;第1回 にこにこテキストマイニング勉強会&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;主催は@NLP_PRMさんと@toilet_luhchさん。会場はオラクル青山センターさん。
+懇親会と二次会にも参加させていただき、皆様の豊富な知識に圧倒されて参りました。精進しようと思います。いろいろな話しをありがとうございました。&lt;/p&gt;
+
+&lt;p&gt;当日の内容はTogetterにまとめられています。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://togetter.com/li/102922&#34;&gt;Togetter - 「第１回 にこにこテキストマイニング勉強会 #nicoTextMining #1&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;以下、勉強会の資料と私的メモです。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;more&#34;&gt;&lt;/a&gt;&lt;a id=&#34;more-667&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;antibayesian-http-twitter-com-antibayesian-テキストマイニングの歩き方:46ce7914bf680f923bef9f791c574602&#34;&gt;&lt;a href=&#34;http://twitter.com/#!/AntiBayesian&#34;&gt;@AntiBayesian&lt;/a&gt; : 「テキストマイニングの歩き方」&lt;/h3&gt;
+
+&lt;p&gt;発表資料：&lt;a href=&#34;http://www24.atpages.jp/antibayesian/up/src/up0006.pdf&#34;&gt;テキストマイニングの歩き方&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;「技術云々ではなく、どのようにテキストマイニングを活かすか」、という今回の勉強会の趣旨に沿った発表内容。ナレッジの自動蓄積のために、Wikiとかを使うのではなく日報メールを解析するというのは面白いですね。情報共有ツールの導入ってほとんどが失敗に終わる気がします。それよりは慣れたフォーマットを活かす方向に考えてみる、と。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;アンケート
+
+&lt;ul&gt;
+&lt;li&gt;封書解答で20%の回答率&lt;/li&gt;
+&lt;li&gt;個人情報を求めると10%の回答率&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;言語処理における様々な解析
+
+&lt;ul&gt;
+&lt;li&gt;押さえるべきところ&lt;/li&gt;
+&lt;li&gt;形態素解析&lt;/li&gt;
+&lt;li&gt;構文解析&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;toilet-lunch-http-twitter-com-toilet-lunch-ゆるふわテキストマイニングをしてみよう:46ce7914bf680f923bef9f791c574602&#34;&gt;&lt;a href=&#34;http://twitter.com/#!/toilet_lunch&#34;&gt;@toilet_lunch&lt;/a&gt; : 「ゆるふわテキストマイニングをしてみよう」&lt;/h3&gt;
+
+&lt;p&gt;発表資料：
+&lt;a href=&#34;http://toilet-lunch.sakura.ne.jp/nicoTextMining01.pdf&#34;&gt;ゆるふわテキストマイニングをしてみよう&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;「ゆるふわ」というよりはけっこうガチな内容。私はNLPを少しかじったことがあったので、なんとかひと通りの用語は理解できました。現在の自然言語処理では何ができて、何が問題になるのか、というのがよくわかりました。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;評判分析ツール
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://toilet-lunch.shisobu.in/search.cgi&#34;&gt;http://toilet-lunch.shisobu.in/search.cgi&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;一日でつくった&lt;/li&gt;
+&lt;li&gt;評価表現（ポジティブ、ネガティブの二種）&lt;/li&gt;
+&lt;li&gt;形態素解析
+
+&lt;ul&gt;
+&lt;li&gt;辞書とマッチさせる&lt;/li&gt;
+&lt;li&gt;活用語幹を用いる&lt;/li&gt;
+&lt;li&gt;単語感情極性対応表&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;精度問題
+
+&lt;ul&gt;
+&lt;li&gt;ジャンルごとにネガポジが反転する場合も（「薄い」とか）&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;クリーニング&lt;/li&gt;
+&lt;li&gt;言語の困難さ
+
+&lt;ul&gt;
+&lt;li&gt;否定表現
+
+&lt;ul&gt;
+&lt;li&gt;「わからない訳でもなくない？」&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;未知語
+
+&lt;ul&gt;
+&lt;li&gt;ヤバい、素で&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;助詞の省略&lt;/li&gt;
+&lt;li&gt;複合表現&lt;/li&gt;
+&lt;li&gt;表記ゆれ&lt;/li&gt;
+&lt;li&gt;複数評価の混在
+
+&lt;ul&gt;
+&lt;li&gt;一文に含まれる結論が読みにくい&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;「テキストマイニング」の定義があいまい
+
+&lt;ul&gt;
+&lt;li&gt;目的によって手法が異なる
+
+&lt;ul&gt;
+&lt;li&gt;目的を決め手手法を選ぶこと。&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;QA
+
+&lt;ul&gt;
+&lt;li&gt;名詞より形容詞のほうが未知語になりにくい&lt;/li&gt;
+&lt;li&gt;皮肉とか大変。&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;langstat-http-twitter-com-langstat-コピー-ペーストのみで始めるテキストマイニング超入門:46ce7914bf680f923bef9f791c574602&#34;&gt;&lt;a href=&#34;http://twitter.com/#!/langstat&#34;&gt;@langstat&lt;/a&gt; ： 「コピー＆ペーストのみで始めるテキストマイニング超入門」&lt;/h3&gt;
+
+&lt;p&gt;&lt;div style=&#34;width:425px&#34; id=&#34;__ss_6973454&#34;&gt;&lt;strong style=&#34;display:block;margin:12px 0 4px&#34;&gt;&lt;a href=&#34;http://www.slideshare.net/langstat/nicoteki1&#34; title=&#34;Nicoteki_1&#34;&gt;Nicoteki_1&lt;/a&gt;&lt;/strong&gt;&lt;object id=&#34;__sse6973454&#34; width=&#34;425&#34; height=&#34;355&#34;&gt;&lt;param name=&#34;movie&#34; value=&#34;http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=nicoteki1-110218081836-phpapp02&amp;stripped_title=nicoteki1&amp;userName=langstat&#34; /&gt;&lt;param name=&#34;allowFullScreen&#34; value=&#34;true&#34;/&gt;&lt;param name=&#34;allowScriptAccess&#34; value=&#34;always&#34;/&gt;&lt;embed name=&#34;__sse6973454&#34; src=&#34;http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=nicoteki1-110218081836-phpapp02&amp;stripped_title=nicoteki1&amp;userName=langstat&#34; type=&#34;application/x-shockwave-flash&#34; allowscriptaccess=&#34;always&#34; allowfullscreen=&#34;true&#34; width=&#34;425&#34; height=&#34;355&#34;&gt;&lt;/embed&gt;&lt;/object&gt;
+&lt;div style=&#34;padding:5px 0 12px&#34;&gt;View more &lt;a href=&#34;http://www.slideshare.net/&#34;&gt;presentations&lt;/a&gt; from &lt;a href=&#34;http://www.slideshare.net/langstat&#34;&gt;Yuichiro Kobayashi&lt;/a&gt;.&lt;/div&gt;
+&lt;/div&gt;
+自然言語処理における一連の解析を、無料のWebサービスを使ってコピペでやってみよう、というもの。
+これらのツールがひと通り用意されていることに驚き。ただし、すべて統合したものはないようなので、ぜひ欲しいなと思います。（※APIとかあれば良いのですが…)&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;無料の解析用テキスト
+
+&lt;ul&gt;
+&lt;li&gt;青空文庫&lt;/li&gt;
+&lt;li&gt;首相のスピーチテキストとかパブリックドメインのもの&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;用例検索&lt;/li&gt;
+&lt;li&gt;日本語形態素解析
+
+&lt;ul&gt;
+&lt;li&gt;形態素解析
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://cgi.geocities.jp/ydevnet/sample/jlp/sample2/ma_sample.php&#34;&gt;日本語形態素解析&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.langrid.org/playground/morphological-analyzer.html&#34;&gt;Morphological Analyzer - Language Grid Playground&lt;/a&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Mecab/ChaSenとかで試せる&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;構文解析
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.langrid.org/playground/dependency-parser.html&#34;&gt;Dependency Parser - Language Grid Playground&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;構文解析器
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://chasen.org/~taku/software/cabocha/&#34;&gt;CaboCha&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www-lab25.kuee.kyoto-u.ac.jp/nl-resource/knp.html&#34;&gt;KNP&lt;/a&gt;：格文法
+
+&lt;ul&gt;
+&lt;li&gt;どちらがよいかは好みの問題&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://hp.vector.co.jp/authors/VA035840/vba/vbafreq.htm&#34;&gt;日本語文章の頻度分析&lt;/a&gt;
+
+&lt;ul&gt;
+&lt;li&gt;VBAツール&lt;/li&gt;
+&lt;li&gt;Webサービスではない。&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://aoki2.si.gunma-u.ac.jp/calculator/&#34;&gt;多機能 WEB 計算機&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;gepuro-http-twitter-com-gepuro-初めてのnltk:46ce7914bf680f923bef9f791c574602&#34;&gt;&lt;a href=&#34;http://twitter.com/#!/gepuro&#34;&gt;@gepuro&lt;/a&gt; ： 「初めてのnltk」&lt;/h3&gt;
+
+&lt;p&gt;&lt;div style=&#34;width:425px&#34; id=&#34;__ss_6979340&#34;&gt;&lt;strong style=&#34;display:block;margin:12px 0 4px&#34;&gt;&lt;a href=&#34;http://www.slideshare.net/gepuro/nltk-for-biginer-6979340&#34; title=&#34;Nltk for biginer&#34;&gt;Nltk for biginer&lt;/a&gt;&lt;/strong&gt;&lt;object id=&#34;__sse6979340&#34; width=&#34;425&#34; height=&#34;355&#34;&gt;&lt;param name=&#34;movie&#34; value=&#34;http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=nltkforbiginer-110218204954-phpapp01&amp;stripped_title=nltk-for-biginer-6979340&amp;userName=gepuro&#34; /&gt;&lt;param name=&#34;allowFullScreen&#34; value=&#34;true&#34;/&gt;&lt;param name=&#34;allowScriptAccess&#34; value=&#34;always&#34;/&gt;&lt;embed name=&#34;__sse6979340&#34; src=&#34;http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=nltkforbiginer-110218204954-phpapp01&amp;stripped_title=nltk-for-biginer-6979340&amp;userName=gepuro&#34; type=&#34;application/x-shockwave-flash&#34; allowscriptaccess=&#34;always&#34; allowfullscreen=&#34;true&#34; width=&#34;425&#34; height=&#34;355&#34;&gt;&lt;/embed&gt;&lt;/object&gt;
+&lt;div style=&#34;padding:5px 0 12px&#34;&gt;View more &lt;a href=&#34;http://www.slideshare.net/&#34;&gt;presentations&lt;/a&gt; from &lt;a href=&#34;http://www.slideshare.net/gepuro&#34;&gt;gepuro&lt;/a&gt;.&lt;/div&gt;
+&lt;/div&gt;
+学部二年生の発表。
+nltkとpython-twitterをつかったテキストマイニング。つまづきにもめげず、テキストマイニングをしてみたようです。Tweetもしたんですけど、挫折も含めて発表するのは、これからはじめてみたい方にとって有益な情報だと思いました。同じつまづきをしないためにも。&lt;/p&gt;
+
+&lt;h3 id=&#34;bob3bob3-http-twitter-com-bob3bob3-アンケート自由回答のテキストマイニング事例:46ce7914bf680f923bef9f791c574602&#34;&gt;&lt;a href=&#34;http://twitter.com/#!/bob3bob3&#34;&gt;@bob3bob3&lt;/a&gt; ： 「アンケート自由回答のテキストマイニング事例」&lt;/h3&gt;
+
+&lt;p&gt;発表資料：
+  * &lt;a href=&#34;http://www.ikic.co.jp/service/pdf/marketing_6.pdf&#34;&gt;「楽しい食事」ってどんな食事？
+? Text Mining Studio を用いた自由回答の分析事例 ?&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;テキストマイニングをどう活用して何を達成するのか、というとても具体的な活用事例でした。私の場合、仕事がWebサービスなのでそっちに興味が偏りがちですが、こういう実生活における分析にも興味を頂きました。アンケートという自由回答形式だからこそ得られるものもあるんですね。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;商用テキストマイニングツール
+
+&lt;ul&gt;
+&lt;li&gt;一番安いワードマイナーでも３０万する。&lt;/li&gt;
+&lt;li&gt;野村総研のツールが６割のシェア。&lt;/li&gt;
+&lt;li&gt;単語出現頻度分析
+
+&lt;ul&gt;
+&lt;li&gt;表記の違いは辞書つくる
+
+&lt;ul&gt;
+&lt;li&gt;ゴールデンウィークとGWなど&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;名詞、形容詞、動詞に絞る&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;特徴語分析
+
+&lt;ul&gt;
+&lt;li&gt;補完類似度&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;コレスポンデンス分析&lt;/li&gt;
+&lt;li&gt;QA1
+
+&lt;ul&gt;
+&lt;li&gt;コレスポンデンス分析のグルーピングが困難な場合はグルーピングしない&lt;/li&gt;
+&lt;li&gt;今回はうまくいった&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;QA2
+
+&lt;ul&gt;
+&lt;li&gt;あとで「状況」をグループ化しにくい
+
+&lt;ul&gt;
+&lt;li&gt;アンケートなら質問を工夫する「〜な時はどうですか？」&lt;/li&gt;
+&lt;li&gt;ブログとかあとから集めて分析する場合は難しい。&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;QA3
+
+&lt;ul&gt;
+&lt;li&gt;女性より男性のほうがアンケートに含まれる単語数が多い傾向
+
+&lt;ul&gt;
+&lt;li&gt;グラフで見ると女性のほうが全体的に上回る（単語出現頻度の分析において）&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;QA4
+
+&lt;ul&gt;
+&lt;li&gt;ツールのよしあし
+
+&lt;ul&gt;
+&lt;li&gt;TRUE TELLERは完成されているが、機能は限定されている。&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;関連エントリ:46ce7914bf680f923bef9f791c574602&#34;&gt;関連エントリ&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://d.hatena.ne.jp/hamadakoichi/20110219/p1&#34;&gt;第１回 にこにこテキストマイニング勉強会 ( #nicoTextMining #1) に参加してきた - hamadakoichi blog&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://d.hatena.ne.jp/nokuno/20110220/1298102734&#34;&gt;第1回にこにこテキストマイニング勉強会に参加しました #nicotextmining - nokunoの日記&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://d.hatena.ne.jp/yokkuns/20110219/1298102645&#34;&gt;第1回 にこにこテキストマイニング勉強会（#nicoTextMining）に参加してきた - yokkunsの日記&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://d.hatena.ne.jp/langstat/20110219/p1&#34;&gt;にこテキ #1 - コーパスいぢり ?langstatの研究日誌?&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;みなさん日記を書くの早すぎです…勉強会が終わった、と思ったらもうエントリされていましたｗ
+そのスピード感、見習いたいです。&lt;/p&gt;
+
+&lt;h3 id=&#34;余談:46ce7914bf680f923bef9f791c574602&#34;&gt;余談&lt;/h3&gt;
+
+&lt;p&gt;今回からTwitter名刺を用意していきました。Twitterアイコンがプリントされているので、初めてお会いする方もアイコンは見たことあると言って頂けたのが良かったです。勉強会には、会社の名詞よりTwitter名刺が重要ですね。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>入門 自然言語処理 第一章</title>
+      <link>http://blog.restartr.com/2011/02/13/analysing-text-with-the-natual-language-toolkit-chap1</link>
+      <pubDate>Sun, 13 Feb 2011 09:00:29 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2011/02/13/analysing-text-with-the-natual-language-toolkit-chap1</guid>
+      <description>
+
+&lt;p&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/4873114705/&#34;&gt;入門 自然言語処理&lt;/a&gt;は11月に購入してから寝かせたままでしたが、本日より読み始めることにしました。&lt;/p&gt;
+
+&lt;p&gt;本日は第一章です。内容は大きく以下2点。&lt;/p&gt;
+
+&lt;p&gt;&lt;ul&gt;
+&lt;li&gt;pythonとnltkでの簡単なテキスト処理方法&lt;/li&gt;
+&lt;li&gt;自然言語処理を俯瞰する&lt;/li&gt;
+&lt;/ul&gt;
+内容は本に任せるとして、ここでは演習問題の解答をしようと思います。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;more&#34;&gt;&lt;/a&gt;&lt;a id=&#34;more-588&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;問題文は簡潔に記述するため、本書に記載されているものとは異なる表記をしています。&lt;/p&gt;
+
+&lt;p&gt;&lt;h3&gt;納得いかない問題&lt;/h3&gt;
+ひとつだけ納得いかない問題がありました。
+「&lt;i&gt;17. text9からtext.9.index()を使って’sunset’を含む一文を抜き出す&lt;/i&gt;」です。&lt;/p&gt;
+
+&lt;p&gt;解答をググっても、こちらしか出てこず。
+&lt;a href=&#34;http://sojin.kyoto-math.jp/nlp/1-3.html#id1&#34;&gt;1-15. bで始まる単語抽出 &amp;mdash; 入門自然言語処理&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;たしかに、&lt;/p&gt;
+
+&lt;p&gt;&lt;pre class=&#34;brush:python&#34;&gt;
+&amp;gt;&amp;gt;&amp;gt; text9.index(&amp;lsquo;sunset&amp;rsquo;)
+629
+&lt;/pre&gt;
+と帰ってきます。でも、実際には&amp;rsquo;sunset&amp;rsquo;を含む一文は複数あるわけです。
+確認するとこんな感じ。&lt;/p&gt;
+
+&lt;p&gt;&lt;pre class=&#34;brush:python&#34;&gt;
+&amp;gt;&amp;gt;&amp;gt; [t for t in text9 if t==&amp;lsquo;sunset&amp;rsquo;]
+[&amp;lsquo;sunset&amp;rsquo;, &amp;lsquo;sunset&amp;rsquo;, &amp;lsquo;sunset&amp;rsquo;, &amp;lsquo;sunset&amp;rsquo;, &amp;lsquo;sunset&amp;rsquo;, &amp;lsquo;sunset&amp;rsquo;, &amp;lsquo;sunset&amp;rsquo;, &amp;lsquo;sunset&amp;rsquo;, &amp;lsquo;sunset&amp;rsquo;, &amp;lsquo;sunset&amp;rsquo;, &amp;lsquo;sunset&amp;rsquo;, &amp;lsquo;sunset&amp;rsquo;, &amp;lsquo;sunset&amp;rsquo;, &amp;lsquo;sunset&amp;rsquo;]
+&lt;/pre&gt;
+複数ある一文を抽出しなくていいの？という疑問が出てきました。すべての文を抽出する方法はさておき、今回はひとつだけ抽出する解答だけを書きました。&lt;/p&gt;
+
+&lt;p&gt;&lt;h3&gt;演習問題&lt;/h3&gt;
+&lt;h4&gt;準備&lt;/h4&gt;
+nltkとmatplotlibがインポートできていれば、以下コードだけですみます。&lt;/p&gt;
+
+&lt;p&gt;&lt;pre class=&#34;brush:python&#34;&gt;from nltk.book import *&lt;/pre&gt;
+以下が、すべての問題の解答です。
+(私個人の解答であり、正解の保証はどこにもありません。）&lt;/p&gt;
+
+&lt;p&gt;&lt;h4&gt;1. Pythonインタプリタを電卓として、12 / (4 + 1)のような計算を入力してみよう&lt;/h4&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; 12 / 4 + 1
+2.3999999999999999&lt;/pre&gt;
+&lt;h4&gt;2. 26文字のアルファベットが与えられたとき、10字の文字列は26の10乗（あるいは26**10）種類も作ることができるが、100文字だったら何種類か。&lt;/h4&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; 26 ** 100
+3142930641582938830174357788501626427282669988762475256374173175398995908420104023465432599069702289330964075081611719197835869803511992549376L&lt;/pre&gt;
+&lt;h4&gt;3. [&amp;lsquo;Monty&amp;rsquo;, &amp;lsquo;Python&amp;rsquo;] * 20や 3 * sent1を実行すると何が起こるか&lt;/h4&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; [&amp;lsquo;Monty&amp;rsquo;, &amp;lsquo;Python&amp;rsquo;] * 3
+[&amp;lsquo;Monty&amp;rsquo;, &amp;lsquo;Python&amp;rsquo;, &amp;lsquo;Monty&amp;rsquo;, &amp;lsquo;Python&amp;rsquo;, &amp;lsquo;Monty&amp;rsquo;, &amp;lsquo;Python&amp;rsquo;]&lt;/pre&gt;
+&lt;h4&gt;4. text2には単語がいくつ含まれているか。また重複を除くといくつか。&lt;/h4&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; #単語数
+&amp;gt;&amp;gt;&amp;gt; len(text2)
+141576
+&amp;gt;&amp;gt;&amp;gt; #重複除いた単語数
+&amp;gt;&amp;gt;&amp;gt; len(set(text2))
+6833&lt;/pre&gt;
+&lt;h4&gt;5. ユーモア小説とロマンス小説の間で、どちらが語彙の多様性が高いか。&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;ユーモア小説：多様性＝6.9&lt;/li&gt;
+&lt;li&gt;ロマンス小説：多様性＝8.3&lt;/li&gt;
+&lt;/ul&gt;
+?ロマンス小説が高い。&lt;/p&gt;
+
+&lt;p&gt;&lt;h4&gt;6. Sense and Sensibilityのなかで、エリナ、マリアン、エドワード、ウィロビーの分散プロットを表示してみよう。&lt;/h4&gt;
+名前まで日本語表記されていて元の綴りがわからない…
+なのでまず探すところから。&lt;/p&gt;
+
+&lt;p&gt;&lt;pre class=&#34;brush:python&#34;&gt;&amp;gt;&amp;gt;&amp;gt;[t for t in set(text2) if t.startswith(&amp;lsquo;El&amp;rsquo;)]
+[&amp;lsquo;Elinor&amp;rsquo;, &amp;lsquo;Eliza&amp;rsquo;]&lt;/pre&gt;
+な感じで4人分探します。
+で、プロットする&lt;/p&gt;
+
+&lt;p&gt;&lt;pre class=&#34;brush:python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; text2.dispersion_plot([&amp;lsquo;Elinor&amp;rsquo;, &amp;lsquo;Mrianne&amp;rsquo;, &amp;lsquo;Edward&amp;rsquo;, &amp;lsquo;Willoughbys&amp;rsquo;])&lt;/p&gt;
+
+&lt;h1 id=&#34;ここでプロットウインドウが表示される:4148d9cc55906c2cc8991c3bd49169cb&#34;&gt;※ここでプロットウインドウが表示される&lt;/h1&gt;
+
+&lt;p&gt;&lt;/pre&gt;
+&lt;h5&gt;男女の役割の違い&lt;/h5&gt;
+女性が高頻度に出現&lt;/p&gt;
+
+&lt;p&gt;&lt;h5&gt;カップルの特定は可能か&lt;/h5&gt;
+できない。どうしろと…&lt;/p&gt;
+
+&lt;p&gt;&lt;h4&gt;7. text5のコロケーションを探してみよう。&lt;/h4&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; text5.collocations()
+Building collocations list
+wanna chat; PART JOIN; MODE #14-19teens; JOIN PART; PART PART;
+cute.-ass MP3; MP3 player; JOIN JOIN; times .. .; ACTION watches; guys
+wanna; song lasts; last night; ACTION sits; -&amp;hellip;)&amp;hellip;- S.M.R.; Lime
+Player; Player 12%; dont know; lez gurls; long time&lt;/pre&gt;
+&lt;h4&gt;8. len(set(text4))の目的&lt;/h4&gt;
+単語のユニーク数を求める&lt;/p&gt;
+
+&lt;p&gt;&lt;h4&gt;9. リストと文字列&lt;/h4&gt;
+&lt;h5&gt;(a) 変数の定義と2種類の出力を試してみよう&lt;/h5&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; my_string = &amp;lsquo;My String&amp;rsquo;
+&amp;gt;&amp;gt;&amp;gt; my_string
+My String
+&amp;gt;&amp;gt;&amp;gt; print my_string
+My String
+&lt;/pre&gt;
+&lt;h5&gt;(b). 連結と演算&lt;/h5&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; my_string + my_string
+&amp;lsquo;My StringMyString&amp;rsquo;
+&amp;gt;&amp;gt;&amp;gt; my_string * 3
+&amp;lsquo;My StringMy StringMy String&amp;rsquo;
+&lt;/pre&gt;
+&lt;h4&gt;10. 単語のリストを保持するmy_sentという変数を定義しよう&lt;/h4&gt;
+&lt;h5&gt;(a) &amp;lsquo; &amp;lsquo;.joiin(my_sent)を使ってリストを文字列に変換してみよう。&lt;/h5&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; &amp;lsquo; &amp;lsquo;.join(my_string.split(&amp;rsquo; &amp;lsquo;))
+&amp;lsquo;My String&amp;rsquo;
+&lt;/pre&gt;
+&lt;h5&gt;(b) split()を使ってできた&lt;/h5&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; my_sent = [&amp;lsquo;My&amp;rsquo;, &amp;lsquo;Sent&amp;rsquo;]
+&amp;gt;&amp;gt;&amp;gt; &amp;lsquo; &amp;lsquo;.join(my_sent)
+&amp;lsquo;My Sent&amp;rsquo;
+&amp;gt;&amp;gt;&amp;gt; &amp;lsquo; &amp;lsquo;.join(&amp;lsquo;hoge moge&amp;rsquo;.split(&amp;rsquo; &amp;lsquo;))
+&amp;lsquo;My Sent&amp;rsquo;
+&lt;/pre&gt;
+&lt;h4&gt;11. リストの連結&lt;/h4&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; phrase1 = [&amp;lsquo;hoge&amp;rsquo;]
+&amp;gt;&amp;gt;&amp;gt; phrase1 += [&amp;lsquo;moge&amp;rsquo;]
+&amp;gt;&amp;gt;&amp;gt; phrase2 = [&amp;lsquo;foo&amp;rsquo;]
+&amp;gt;&amp;gt;&amp;gt; phrase2 += [&amp;lsquo;bar&amp;rsquo;]
+&amp;gt;&amp;gt;&amp;gt; phrase1 + phrase2
+[&amp;lsquo;hoge&amp;rsquo;, &amp;lsquo;moge&amp;rsquo;, &amp;lsquo;foo&amp;rsquo;, &amp;lsquo;bar&amp;rsquo;]&lt;/pre&gt;
+&lt;h5&gt;len(phrase1 + phrase2)とlen(phrase1) + len(phrase2)の違いはなにか。&lt;/h5&gt;
+連結した後の長さと、それぞれの長さの加算&lt;/p&gt;
+
+&lt;p&gt;&lt;h4&gt;12. NLPと関連あるものはどれか。&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;[&amp;lsquo;Monty Python&amp;rsquo;][6:12]&lt;/li&gt;
+&lt;li&gt;[&amp;lsquo;Monty&amp;rsquo;, &amp;lsquo;Python&amp;rsquo;][1]&lt;/li&gt;
+&lt;/ul&gt;
+?b&lt;/p&gt;
+
+&lt;p&gt;&lt;h4&gt;13. sent1[2][2]はなにを表しているだろうか。&lt;/h4&gt;
+2要素目の2文字目&lt;/p&gt;
+
+&lt;p&gt;&lt;h4&gt;14.  要素のインデックス取得&lt;/h4&gt;
+微妙だけど。&lt;/p&gt;
+
+&lt;p&gt;&lt;pre class=&#34;brush:python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; i = 0
+&amp;gt;&amp;gt;&amp;gt; for t in sent3:
+&amp;hellip;   if t==&amp;lsquo;the&amp;rsquo;:
+&amp;hellip;     print i
+&amp;hellip;   i += 1
+&amp;hellip;
+1
+5
+8&lt;/pre&gt;
+&lt;h4&gt;15. bから始まる単語の取得&lt;/h4&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; sorted(set([t for t in text5 if t.startswith(&amp;lsquo;b&amp;rsquo;)]))
+[&amp;lsquo;b&amp;rsquo;, &amp;lsquo;b-day&amp;rsquo;, &amp;lsquo;b/c&amp;rsquo;, &amp;lsquo;b4&amp;rsquo;,&amp;hellip;&amp;hellip;&lt;/pre&gt;
+&lt;h4&gt;16. range()について&lt;/h4&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; range(10)
+[1,2,3&amp;hellip;.9]
+&amp;gt;&amp;gt;&amp;gt; range(10,20)
+[10,11,12,&amp;hellip;., 20]
+&amp;gt;&amp;gt;&amp;gt; range(10,20,2)
+[10, 12, &amp;hellip;, 18]
+&amp;gt;&amp;gt;&amp;gt; range(20,10,-2)
+[20, 18, &amp;hellip;, 12]&lt;/pre&gt;
+&lt;h4&gt;17. text9からtext.9.index()を使って&amp;rsquo;sunset&amp;rsquo;を含む一文を抜き出す&lt;/h4&gt;
+これで良いのかわかりませんが、ひとまずの解答として。&lt;/p&gt;
+
+&lt;p&gt;&lt;pre class=&#34;brush:python&#34;&gt;
+dot_pre = 0 # 直前の&amp;rsquo;.&amp;lsquo;の位置
+dot_aft = 0 # 直後の&amp;rsquo;.&amp;lsquo;の位置
+found = False # &amp;lsquo;.&amp;lsquo;が見つかったかどうか
+i = 0 # 現在位置
+for t in text9:
+  if t==&amp;lsquo;sunset&amp;rsquo;:
+    found = True
+  if t==&amp;lsquo;.&amp;rsquo;:
+    if found==True:
+      dot_aft = i
+      break
+    else:
+      dot_pre = i
+  i += 1&lt;/p&gt;
+
+&lt;h1 id=&#34;sunset-を含む一文を生成する:4148d9cc55906c2cc8991c3bd49169cb&#34;&gt;&amp;lsquo;sunset&amp;rsquo;を含む一文を生成する。&lt;/h1&gt;
+
+&lt;p&gt;&amp;rsquo; &amp;lsquo;.join([text9[t] for t in range(dot_pre+1, dot_aft+1)])&lt;/p&gt;
+
+&lt;h1 id=&#34;chapter-i-the-two-poets-of-saffron-park-the-suburb-of-saffron-park-lay-on-the-sunset-side-of-london-as-red-and-ragged-as-a-cloud-of-sunset:4148d9cc55906c2cc8991c3bd49169cb&#34;&gt;&amp;lsquo;CHAPTER I THE TWO POETS OF SAFFRON PARK THE suburb of Saffron Park lay on the sunset side of London , as red and ragged as a cloud of sunset .&amp;rsquo;&lt;/h1&gt;
+
+&lt;p&gt;&lt;/pre&gt;
+&lt;h4&gt;18. sent1からsent8までに含まれる語彙を計算&lt;/h4&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;len(set(sent1 + sent2 + sent3 + sent4 + sent5 + sent6 + sent7 + sent8))&lt;/pre&gt;
+&lt;h4&gt;19. 以下2行の違いは何か。&lt;/h4&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;sorted(set([w.lower() for w in text1]))
+sorted([w.lower() for w in set(text1)])&lt;/pre&gt;
+&lt;h5&gt;sorted(set([w.lower() for w in text1]))&lt;/h5&gt;
+小文字のリストを作ってからユニークにしてソート&lt;/p&gt;
+
+&lt;p&gt;&lt;h5&gt;sorted([w.lower() for w in set(text1)])&lt;/h5&gt;
+ユニークリストから小文字にしてソート
+こちらが大きい。重複をふくんでいるので。&lt;/p&gt;
+
+&lt;p&gt;&lt;h4&gt;20. w.isupper()とw.islower()の違いは何か&lt;/h4&gt;
+大文字ならTrueと小文字ならTrue&lt;/p&gt;
+
+&lt;p&gt;&lt;h4&gt;21. 最後の2単語を取り出すスライス式を書いてみよう。&lt;/h4&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; text2[-2:]
+&lt;/pre&gt;
+&lt;h4&gt;21. 4文字の単語のうち、頻度の高い順に取得してみよう。&lt;/h4&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;
+&amp;gt;&amp;gt;&amp;gt; FreqDist([t for t in text4 if len(t)==4]).keys()
+&lt;/pre&gt;
+&lt;h4&gt;21. 大文字の単語を一行ずつ表示&lt;/h4&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;
+&amp;gt;&amp;gt;&amp;gt;  for str in [t for t in text6 if t.isupper()]:
+&amp;gt;&amp;gt;&amp;gt;   print str
+&lt;/pre&gt;
+&lt;h4&gt;24. 条件にあったものを含むリスト&lt;/h4&gt;
+&lt;h5&gt;a: izeで終わる&lt;/h5&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;[t for t in text6 if t.endswith(&amp;lsquo;ize&amp;rsquo;)]&lt;/pre&gt;
+&lt;h5&gt;b: zを含む&lt;/h5&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;[t for t in text6 if &amp;lsquo;z&amp;rsquo; in t]&lt;/pre&gt;
+&lt;h5&gt;c: ptを含む&lt;/h5&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;[t for t in text6 if &amp;lsquo;pt&amp;rsquo; in t]&lt;/pre&gt;
+&lt;h5&gt;d: 先頭大文字あと小文字（＝タイトルケース)&lt;/h5&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;[t for t in text6 if t.isalpha()==True and t==t.title()]&lt;/pre&gt;
+&lt;h4&gt;25. listed = [&amp;lsquo;she&amp;rsquo;, &amp;lsquo;sells&amp;rsquo;, &amp;lsquo;sea&amp;rsquo;, &amp;lsquo;shells&amp;rsquo;, &amp;lsquo;by&amp;rsquo;, &amp;lsquo;the&amp;rsquo;, &amp;lsquo;sea&amp;rsquo;, &amp;lsquo;shore&amp;rsquo;]&lt;/h4&gt;
+&lt;h4&gt;&lt;/h4&gt;
+&lt;h5&gt;shではじまる単語&lt;/h5&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;[t for t in listed if t.startswith(&amp;lsquo;sh&amp;rsquo;)]&lt;/pre&gt;
+&lt;h5&gt;4文字より大きい単語&lt;/h5&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;[t for t in listed if len(t)&amp;gt;=4]&lt;/pre&gt;
+&lt;h4&gt;26. sum([len(w) for w in text1])について&lt;/h4&gt;
+&lt;h5&gt;どんな処理？&lt;/h5&gt;
+リスト中のすべての単語長の合計&lt;/p&gt;
+
+&lt;p&gt;&lt;h5&gt;これをつかって平均はだせる？&lt;/h5&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;
+&amp;gt;&amp;gt;&amp;gt; sum([len(w) for w in text1])/len(text1)
+3.8304111280236488&lt;/pre&gt;
+&lt;h4&gt;27. 語彙サイズを返すvocab_size(text)を定義&lt;/h4&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;
+&amp;gt;&amp;gt;&amp;gt; def vocab_size(text):
+&amp;hellip;  return len(set(text))
+&amp;hellip;
+&amp;gt;&amp;gt;&amp;gt; vocab(text1)
+19317
+&lt;/pre&gt;
+&lt;h4&gt;28. percent(word, text)を定義&lt;/h4&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;
+&amp;gt;&amp;gt;&amp;gt; def percent(word, text):
+&amp;hellip;  return len([t for t in text if t==word]) / len(text)
+&lt;/pre&gt;
+&lt;h4&gt;29. set(sent3) &amp;lt; set(text1)について&lt;/h4&gt;
+&lt;h5&gt;実行してみる&lt;/h5&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;True&lt;/pre&gt;
+&lt;h5&gt;29. 異なるテキストで実行して何が起こるか&lt;/h5&gt;
+&lt;pre class=&#34;brush:python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; set(sent3) &amp;lt; set(text3)
+True&lt;/pre&gt;
+&lt;h5&gt;実用的な応用は何があるか&lt;/h5&gt;
+ドキュメント間の語彙数の比較&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/4873114705&#34;&gt;入門 自然言語処理 [大型本]&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Json on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/json/</link>
+    <description>Recent content in Json on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Wed, 13 Aug 2014 00:02:42 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/json/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Goのjson.Marshal/Unmarshalの仕様を整理してみる</title>
+      <link>http://blog.restartr.com/2014/08/13/golang-json-marshal-unmarshal</link>
+      <pubDate>Wed, 13 Aug 2014 00:02:42 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2014/08/13/golang-json-marshal-unmarshal</guid>
+      <description>
+
+&lt;h3 id=&#34;tl-dr:95b5ef122b0628eff42f880d34516c78&#34;&gt;TL;DR&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;goの構造体につけるタグは、フォーマットが不正だと読み込まれない(当然)&lt;/li&gt;
+&lt;li&gt;json.Marshalは、構造体のjsonタグがあればその値をキーとしてJSON文字列を生成する&lt;/li&gt;
+&lt;li&gt;json.Unmarshalは、構造体のjsonタグがあればその値を対応するフィールドにマッピングする
+
+&lt;ul&gt;
+&lt;li&gt;jsonタグがなければ、完全一致もしくはcase-insensitiveなフィールドにマッピングする&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;では、ひとつづつ確認していきます。&lt;/p&gt;
+
+&lt;h3 id=&#34;goの構造体につけるタグは-フォーマットが不正だと読み込まれない-当然:95b5ef122b0628eff42f880d34516c78&#34;&gt;goの構造体につけるタグは、フォーマットが不正だと読み込まれない(当然)&lt;/h3&gt;
+
+&lt;p&gt;goの構造体にはタグの機能があって、型の後に特定のフォーマットでアノテーションが記述できます&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;type MyType struct {
+  Hoge string `foo:&amp;quot;1&amp;quot; bar:&amp;quot;2&amp;quot;`
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;key:&amp;quot;value&amp;quot;&lt;/code&gt;をスペース区切りで複数かけます。
+で、アクセスするにはリフレクションを使います。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;t := reflect.TypeOf(MyType{})
+tagFoo := t.Field(0).Get(&amp;quot;foo&amp;quot;)
+tagBar := t.Field(0).Get(&amp;quot;bar&amp;quot;)
+fmt.Printf(&amp;quot;foo=%s, bar=%s\n&amp;quot;, tagFoo, tagBar)
+// foo=1, bar=2
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;タグのフォーマットが不正な場合は、値が空になります。コンパイルエラーにはなりません。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;type MyType struct {
+  Hoge string `foo:1`
+}
+t := reflect.TypeOf(MyType{})
+tagFoo := t.Field(0).Get(&amp;quot;foo&amp;quot;)
+fmt.Printf(&amp;quot;foo=%#v\n&amp;quot;, tagFoo)
+// foo=&amp;quot;&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;このエラーをコンパイルする前に検知するには、&lt;code&gt;go vet&lt;/code&gt;コマンドが使えます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ go vet my_type.go
+my_type.go:10: struct field tag `foo:1` not compatible with reflect.StructTag.Get
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;できれば&lt;code&gt;go compile&lt;/code&gt;実行したときに自動的にチェックしてほしいところですが…&lt;/p&gt;
+
+&lt;p&gt;で、jsonパッケージのMarshal/Unmarshalは、このタグを使ってアノテーションを記述することができます。&lt;/p&gt;
+
+&lt;h3 id=&#34;json-marshalは-構造体のjsonタグがあればその値をキーとしてjson文字列を生成する:95b5ef122b0628eff42f880d34516c78&#34;&gt;json.Marshalは、構造体のjsonタグがあればその値をキーとしてJSON文字列を生成する&lt;/h3&gt;
+
+&lt;p&gt;json.Marshalは構造体からJSON文字列への変換する関数です。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;type MyType struct {
+  A string
+  FooBar string
+}
+
+mt := MyType{&amp;quot;aaaa&amp;quot;, &amp;quot;baz&amp;quot;}
+b, _ := json.Marshal(mt)
+fmt.Printf(&amp;quot;%s\n&amp;quot;, string(b))
+// {&amp;quot;A&amp;quot;:&amp;quot;aaaa&amp;quot;,&amp;quot;FooBar&amp;quot;:&amp;quot;baz&amp;quot;}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;普通にやると、フィールド名がそのままJSONのキーになります。&lt;/p&gt;
+
+&lt;p&gt;ここで構造体のタグ機能をつかって、フィールド名のアノテーションを書くことで、任意のフィールド名でJSONが生成できます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;type MyType struct {
+  A string `json:&amp;quot;a&amp;quot;`
+  FooBar string `json:&amp;quot;foo_bar&amp;quot;`
+}
+
+mt := MyType{&amp;quot;aaaa&amp;quot;, &amp;quot;baz&amp;quot;}
+b, _ := json.Marshal(mt)
+fmt.Printf(&amp;quot;%s\n&amp;quot;, string(b))
+// {&amp;quot;a&amp;quot;:&amp;quot;aaaa&amp;quot;,&amp;quot;foo_bar&amp;quot;:&amp;quot;baz&amp;quot;}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;アノテーション指定した&amp;rdquo;a&amp;rdquo;がJSONのキーとして使用されていることが確認できます。&lt;/p&gt;
+
+&lt;h3 id=&#34;json-unmarshalは-構造体のjsonタグがあればその値を対応するフィールドにマッピングする:95b5ef122b0628eff42f880d34516c78&#34;&gt;json.Unmarshalは、構造体のjsonタグがあればその値を対応するフィールドにマッピングする&lt;/h3&gt;
+
+&lt;p&gt;json.UnmarshalはJSON文字列から構造体へ変換する関数です。&lt;/p&gt;
+
+&lt;p&gt;まずはタグなしのパターン&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;type MyType struct {
+  A string
+  FooBar string
+}
+
+var mt MyType
+json.Unarshal([]byte(`{&amp;quot;A&amp;quot;:&amp;quot;aaa&amp;quot;, &amp;quot;FooBar&amp;quot;:&amp;quot;baz&amp;quot;}`, &amp;amp;mt)
+fmt.Printf(&amp;quot;%#v\n&amp;quot;, mt) // main.MyType{A:&amp;quot;aaaa&amp;quot;,FooBar:&amp;quot;baz&amp;quot;}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;JSONのフィールド名がsnake_caseのパターン&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var mt MyType
+json.Unarshal([]byte(`{&amp;quot;a&amp;quot;:&amp;quot;aaa&amp;quot;,&amp;quot;foo_bar&amp;quot;:&amp;quot;baz&amp;quot;}`, &amp;amp;mt)
+fmt.Printf(&amp;quot;%#v\n&amp;quot;, mt) // main.MyType{A:&amp;quot;aaaa&amp;quot;, FooBar:&amp;quot;&amp;quot;}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ここで「ん？」となるわけです。タグによるアノテーションがないのになぜ小文字のフィールドがちゃんと読み込まれているのか…と。&lt;/p&gt;
+
+&lt;p&gt;この仕様、json.Unmarshalのgodocにちゃんと書いてあります。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://golang.org/pkg/encoding/json/#Unmarshal&#34;&gt;func Unmarshal&lt;/a&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;To unmarshal JSON into a struct, Unmarshal matches incoming object keys to the keys used by Marshal (either the struct field name or its tag), preferring an exact match but also accepting a case-insensitive match.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;どうやら、json.Unmarshalは、JSONに含まれるキーと完全一致か、case-insensitiveに一致する構造体のフィールドにマッピングする仕様となっているようです。もちろん、snake_caseなJSONのキーはアノテーションがないとマッピングされず無視されます。（構造体のフィールドとしてsnale_caseが存在しない限りは)&lt;/p&gt;
+
+&lt;h3 id=&#34;経緯:95b5ef122b0628eff42f880d34516c78&#34;&gt;経緯&lt;/h3&gt;
+
+&lt;p&gt;先日、&lt;a href=&#34;http://connpass.com/event/7914/&#34;&gt;ヒカルのGO! hikarie.go #2&lt;/a&gt;で&lt;a href=&#34;https://twitter.com/yosuke_furukawa&#34;&gt;@yosuke_furukawa&lt;/a&gt;さんによるGoでJSON APIを書いてみるというハンズオンを体験してきました。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/yosuke-furukawa/golang-study&#34;&gt;yosuke-furukawa/golang-study&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;そこで、アノテーションをつけた構造体を使ってMarshalした時に、書いたコードがこれです。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;type User struct {
+  Name string `json:name`
+}
+user := User{&amp;quot;restartr&amp;quot;}
+b, _ := json.Marshal(user)
+fmt.Printf(&amp;quot;%s\n&amp;quot;, string(b)) // {&amp;quot;Name&amp;quot;:&amp;quot;restartr&amp;quot;}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;小文字で出力してほしいのに、アノテーションが効かない…となったわけです。
+他の参加者が&lt;code&gt;json:&amp;quot;name&amp;quot;&lt;/code&gt;でないといけないことに気づいて、この件は一件落着。&lt;/p&gt;
+
+&lt;p&gt;だったのですが、もう少し詳しく調べると上に整理したような仕様が見えてきたというわけです。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;type User struct {
+  Name string `json:name` // 実際は無視されている
+}
+var user User
+json.Unmarshal([]byte(`{&amp;quot;name&amp;quot;:&amp;quot;restartr&amp;quot;}`, &amp;amp;user)
+fmt.Printf(&amp;quot;%s\n&amp;quot;, user) // main.User{Name:&amp;quot;restartr&amp;quot;}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;実はこの時書いた&lt;code&gt;json:name&lt;/code&gt;というアノテーションは不正なフォーマットとして無視されていて、たまたまUser.Nameというフィールドにcase-insensitiveでUnmarshalした時にマッピングができていたにすぎなかったようです。&lt;/p&gt;
+
+&lt;p&gt;とまぁそんな感じでJSONの取り扱いについて正しい知識を得られたのですが、一人でやってた時には気づかなかった疑問とか知識として不足している点に気付けるので、ハンズオン形式も良いものですね。&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

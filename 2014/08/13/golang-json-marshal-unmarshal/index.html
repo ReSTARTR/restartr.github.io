@@ -1,334 +1,190 @@
-
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+	<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <meta charset="utf-8">
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.15" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
   <title>Goのjson.Marshal/Unmarshalの仕様を整理してみる - I Will Survive</title>
-  <meta name="author" content="ReSTARTR">
-  <link rel="author" href="https://plus.google.com/103216164658230535238" />
-  <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="Goのjson.Marshal/Unmarshalの仕様を整理してみる .sharing { clear: both; } .sharing li{ display: inline; list-style-type: none; float: left; height: 1em; line- &hellip;">
-  
-
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/poole.css">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/syntax.css">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/hyde.css">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/custom.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
 
   
-  <link rel="canonical" href="http://blog.restartr.com/2014/08/13/golang-json-marshal-unmarshal/">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-   <link href="/stylesheets/data-table.css" media="screen, projection" rel="stylesheet" type="text/css" />
-  <script src="/javascripts/modernizr-2.0.js"></script>
-  <script src="/javascripts/ender.js"></script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  <link href="/atom.xml" rel="alternate" title="I Will Survive" type="application/atom+xml">
-  <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
-
-<!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
-<link href='http://fonts.googleapis.com/css?family=Lato:400,100,100italic,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
-<link href='http://fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
-<link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:200,300,400,500,600,700,900' rel='stylesheet' type='text/css'>
-
-
-	<!-- mathjax config similar to math.stackexchange -->
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    tex2jax: {
-      inlineMath: [ ['$$','$$'], ["\\(","\\)"] ],
-      processEscapes: true
-    }
-  });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      tex2jax: {
-        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-      }
-    });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax(), i;
-        for(i=0; i < all.length; i += 1) {
-            all[i].SourceElement().parentNode.className += ' has-jax';
-        }
-    });
-</script>
-
-<script type="text/javascript"
-   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
-
-
-
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://blog.restartr.com/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="http://blog.restartr.com/favicon.png">
 
   
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-894530-10']);
-    _gaq.push(['_trackPageview']);
-
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
-
-
-  <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
-  <style>html{background: url("/images/background.png") no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;}</style>
+  <link href="" rel="alternate" type="application/rss+xml" title="I Will Survive" />
 </head>
 
-<body   >
-  <header role="banner"><hgroup>
-</hgroup>
+	<body class="theme-base-0d">
+		<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="http://blog.restartr.com"><h1>I Will Survive</h1></a>
+      <p class="lead">
+       An application depelopper&#39;s blog. 
+      </p>
+    </div>
 
-</header>
-  <!-- <nav role="navigation"><ul class="subscription" data-subscription="rss">
-  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-  
-</ul>
-  
-<form action="https://www.google.com/search" method="get">
-  <fieldset role="search">
-    <input type="hidden" name="q" value="site:blog.restartr.com" />
-    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
-  </fieldset>
-</form>
-  
-<ul class="main-navigation">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives">Archives</a></li>
-</ul>
-
-</nav> -->
-  <div id="main">
-    <div id="content">
-      <div>
-<article class="hentry" role="article">
-  
-  <header>
-    
-      <h1 class="entry-title">Goのjson.Marshal/Unmarshalの仕様を整理してみる</h1>
+    <ul class="sidebar-nav">
+      <li><a href="http://blog.restartr.com/">Home</a> </li>
       
-      <style type="text/css">
-  .sharing {
-     clear: both;
-  }
-  .sharing li{
-    display: inline;
-    list-style-type: none;
-    float: left;
-    height: 1em;
-    line-height: 1em;
-    padding: 0 10px 0 0 ;
-    margin: 10px 0;
-  }
-  .sharing ul {
-    margin: 1em 0;
-    padding: 1em 0;
-  }
-</style>
-<div class="sharing">
+        <li><a href="http://blog.restartr.com/about/"> About </a></li>
+      
+        <li><a href="http://blog.restartr.com/index.xml"> Feed </a></li>
+      
+        <li><a href="https://github.com/ReSTARTR"> GitHub </a></li>
+      
+        <li><a href="https://twitter.com/ReSTARTR"> Twitter </a></li>
+      
+    </ul>
+
+    <p>Copyright ©2016 - ReSTARTR. All rights reserved.</p>
+  </div>
+</div>
+
+
+		<div class="content container">
+			<div class="post">
+			 	<h1>Goのjson.Marshal/Unmarshalの仕様を整理してみる</h1>
+        <span class="post-date">2014-08-13(Wed) - [golang]</span>
+			  <div class="sharing">
   <ul>
-  <li><a href="http://blog.restartr.com/2014/08/13/golang-json-marshal-unmarshal/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
-  
-  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2014/08/13/golang-json-marshal-unmarshal/" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2014/08/13/golang-json-marshal-unmarshal/" >Tweet</a></li>
-  
+  <li><a href="http://blog.restartr.com/2014/08/13/golang-json-marshal-unmarshal" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2014/08/13/golang-json-marshal-unmarshal" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2014/08/13/golang-json-marshal-unmarshal" >Tweet</a></li>
   <li><a data-pocket-label="pocket" data-pocket-count="horizontal" class="pocket-btn" data-lang="en"></a><script type="text/javascript">!function(d,i){if(!d.getElementById(i)){var j=d.createElement("script");j.id=i;j.src="https://widgets.getpocket.com/v1/j/btn.js?v=1";var w=d.getElementById(i);d.body.appendChild(j);}}(document,"pocket-btn-js");</script></li>
-  
-  
   </ul>
 </div>
-<p />
+<script type="text/javascript">
+  (function(){
+    var twitterWidgets = document.createElement('script');
+    twitterWidgets.type = 'text/javascript';
+    twitterWidgets.async = true;
+    twitterWidgets.src = '//platform.twitter.com/widgets.js';
+    document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+  })();
+</script>
+<hr />
 
-      
-    
-    
-      <p class="meta">
-        
+			      
 
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-08-13T00:02:42+09:00" pubdate data-updated="true">2014-08-13 (Wed)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h3 id="tldr">TL;DR</h3>
+<h3 id="tl-dr:95b5ef122b0628eff42f880d34516c78">TL;DR</h3>
 
 <ul>
-  <li>goの構造体につけるタグは、フォーマットが不正だと読み込まれない(当然)</li>
-  <li>json.Marshalは、構造体のjsonタグがあればその値をキーとしてJSON文字列を生成する</li>
-  <li>json.Unmarshalは、構造体のjsonタグがあればその値を対応するフィールドにマッピングする
-    <ul>
-      <li>jsonタグがなければ、完全一致もしくはcase-insensitiveなフィールドにマッピングする</li>
-    </ul>
-  </li>
+<li>goの構造体につけるタグは、フォーマットが不正だと読み込まれない(当然)</li>
+<li>json.Marshalは、構造体のjsonタグがあればその値をキーとしてJSON文字列を生成する</li>
+<li>json.Unmarshalは、構造体のjsonタグがあればその値を対応するフィールドにマッピングする
+
+<ul>
+<li>jsonタグがなければ、完全一致もしくはcase-insensitiveなフィールドにマッピングする</li>
+</ul></li>
 </ul>
 
 <p>では、ひとつづつ確認していきます。</p>
 
-<h3 id="go">goの構造体につけるタグは、フォーマットが不正だと読み込まれない(当然)</h3>
+<h3 id="goの構造体につけるタグは-フォーマットが不正だと読み込まれない-当然:95b5ef122b0628eff42f880d34516c78">goの構造体につけるタグは、フォーマットが不正だと読み込まれない(当然)</h3>
 
 <p>goの構造体にはタグの機能があって、型の後に特定のフォーマットでアノテーションが記述できます</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">type</span> <span class="nx">MyType</span> <span class="kd">struct</span> <span class="p">{</span>
-</span><span class="line">  <span class="nx">Hoge</span> <span class="kt">string</span> <span class="s">`foo:&quot;1&quot; bar:&quot;2&quot;`</span>
-</span><span class="line"><span class="p">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<pre><code class="language-go">type MyType struct {
+  Hoge string `foo:&quot;1&quot; bar:&quot;2&quot;`
+}
+</code></pre>
 
-<p><code>key:"value"</code>をスペース区切りで複数かけます。
+<p><code>key:&quot;value&quot;</code>をスペース区切りで複数かけます。
 で、アクセスするにはリフレクションを使います。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="nx">t</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nx">TypeOf</span><span class="p">(</span><span class="nx">MyType</span><span class="p">{})</span>
-</span><span class="line"><span class="nx">tagFoo</span> <span class="o">:=</span> <span class="nx">t</span><span class="p">.</span><span class="nx">Field</span><span class="p">(</span><span class="mi">0</span><span class="p">).</span><span class="nx">Get</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">)</span>
-</span><span class="line"><span class="nx">tagBar</span> <span class="o">:=</span> <span class="nx">t</span><span class="p">.</span><span class="nx">Field</span><span class="p">(</span><span class="mi">0</span><span class="p">).</span><span class="nx">Get</span><span class="p">(</span><span class="s">&quot;bar&quot;</span><span class="p">)</span>
-</span><span class="line"><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;foo=%s, bar=%s\n&quot;</span><span class="p">,</span> <span class="nx">tagFoo</span><span class="p">,</span> <span class="nx">tagBar</span><span class="p">)</span>
-</span><span class="line"><span class="c1">// foo=1, bar=2</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<pre><code class="language-go">t := reflect.TypeOf(MyType{})
+tagFoo := t.Field(0).Get(&quot;foo&quot;)
+tagBar := t.Field(0).Get(&quot;bar&quot;)
+fmt.Printf(&quot;foo=%s, bar=%s\n&quot;, tagFoo, tagBar)
+// foo=1, bar=2
+</code></pre>
 
 <p>タグのフォーマットが不正な場合は、値が空になります。コンパイルエラーにはなりません。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">type</span> <span class="nx">MyType</span> <span class="kd">struct</span> <span class="p">{</span>
-</span><span class="line">  <span class="nx">Hoge</span> <span class="kt">string</span> <span class="s">`foo:1`</span>
-</span><span class="line"><span class="p">}</span>
-</span><span class="line"><span class="nx">t</span> <span class="o">:=</span> <span class="nx">reflect</span><span class="p">.</span><span class="nx">TypeOf</span><span class="p">(</span><span class="nx">MyType</span><span class="p">{})</span>
-</span><span class="line"><span class="nx">tagFoo</span> <span class="o">:=</span> <span class="nx">t</span><span class="p">.</span><span class="nx">Field</span><span class="p">(</span><span class="mi">0</span><span class="p">).</span><span class="nx">Get</span><span class="p">(</span><span class="s">&quot;foo&quot;</span><span class="p">)</span>
-</span><span class="line"><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;foo=%#v\n&quot;</span><span class="p">,</span> <span class="nx">tagFoo</span><span class="p">)</span>
-</span><span class="line"><span class="c1">// foo=&quot;&quot;</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<pre><code class="language-go">type MyType struct {
+  Hoge string `foo:1`
+}
+t := reflect.TypeOf(MyType{})
+tagFoo := t.Field(0).Get(&quot;foo&quot;)
+fmt.Printf(&quot;foo=%#v\n&quot;, tagFoo)
+// foo=&quot;&quot;
+</code></pre>
 
 <p>このエラーをコンパイルする前に検知するには、<code>go vet</code>コマンドが使えます。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>go vet my_type.go
-</span><span class="line">my_type.go:10: struct field tag <span class="sb">`</span>foo:1<span class="sb">`</span> not compatible with reflect.StructTag.Get
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<pre><code class="language-bash">$ go vet my_type.go
+my_type.go:10: struct field tag `foo:1` not compatible with reflect.StructTag.Get
+</code></pre>
 
 <p>できれば<code>go compile</code>実行したときに自動的にチェックしてほしいところですが…</p>
 
 <p>で、jsonパッケージのMarshal/Unmarshalは、このタグを使ってアノテーションを記述することができます。</p>
 
-<h3 id="jsonmarshaljsonjson">json.Marshalは、構造体のjsonタグがあればその値をキーとしてJSON文字列を生成する</h3>
+<h3 id="json-marshalは-構造体のjsonタグがあればその値をキーとしてjson文字列を生成する:95b5ef122b0628eff42f880d34516c78">json.Marshalは、構造体のjsonタグがあればその値をキーとしてJSON文字列を生成する</h3>
 
 <p>json.Marshalは構造体からJSON文字列への変換する関数です。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">type</span> <span class="nx">MyType</span> <span class="kd">struct</span> <span class="p">{</span>
-</span><span class="line">  <span class="nx">A</span> <span class="kt">string</span>
-</span><span class="line">  <span class="nx">FooBar</span> <span class="kt">string</span>
-</span><span class="line"><span class="p">}</span>
-</span><span class="line">
-</span><span class="line"><span class="nx">mt</span> <span class="o">:=</span> <span class="nx">MyType</span><span class="p">{</span><span class="s">&quot;aaaa&quot;</span><span class="p">,</span> <span class="s">&quot;baz&quot;</span><span class="p">}</span>
-</span><span class="line"><span class="nx">b</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nx">Marshal</span><span class="p">(</span><span class="nx">mt</span><span class="p">)</span>
-</span><span class="line"><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%s\n&quot;</span><span class="p">,</span> <span class="nb">string</span><span class="p">(</span><span class="nx">b</span><span class="p">))</span>
-</span><span class="line"><span class="c1">// {&quot;A&quot;:&quot;aaaa&quot;,&quot;FooBar&quot;:&quot;baz&quot;}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<pre><code class="language-go">type MyType struct {
+  A string
+  FooBar string
+}
+
+mt := MyType{&quot;aaaa&quot;, &quot;baz&quot;}
+b, _ := json.Marshal(mt)
+fmt.Printf(&quot;%s\n&quot;, string(b))
+// {&quot;A&quot;:&quot;aaaa&quot;,&quot;FooBar&quot;:&quot;baz&quot;}
+</code></pre>
 
 <p>普通にやると、フィールド名がそのままJSONのキーになります。</p>
 
 <p>ここで構造体のタグ機能をつかって、フィールド名のアノテーションを書くことで、任意のフィールド名でJSONが生成できます。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">type</span> <span class="nx">MyType</span> <span class="kd">struct</span> <span class="p">{</span>
-</span><span class="line">  <span class="nx">A</span> <span class="kt">string</span> <span class="s">`json:&quot;a&quot;`</span>
-</span><span class="line">  <span class="nx">FooBar</span> <span class="kt">string</span> <span class="s">`json:&quot;foo_bar&quot;`</span>
-</span><span class="line"><span class="p">}</span>
-</span><span class="line">
-</span><span class="line"><span class="nx">mt</span> <span class="o">:=</span> <span class="nx">MyType</span><span class="p">{</span><span class="s">&quot;aaaa&quot;</span><span class="p">,</span> <span class="s">&quot;baz&quot;</span><span class="p">}</span>
-</span><span class="line"><span class="nx">b</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nx">Marshal</span><span class="p">(</span><span class="nx">mt</span><span class="p">)</span>
-</span><span class="line"><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%s\n&quot;</span><span class="p">,</span> <span class="nb">string</span><span class="p">(</span><span class="nx">b</span><span class="p">))</span>
-</span><span class="line"><span class="c1">// {&quot;a&quot;:&quot;aaaa&quot;,&quot;foo_bar&quot;:&quot;baz&quot;}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<pre><code class="language-go">type MyType struct {
+  A string `json:&quot;a&quot;`
+  FooBar string `json:&quot;foo_bar&quot;`
+}
 
-<p>アノテーション指定した”a”がJSONのキーとして使用されていることが確認できます。</p>
+mt := MyType{&quot;aaaa&quot;, &quot;baz&quot;}
+b, _ := json.Marshal(mt)
+fmt.Printf(&quot;%s\n&quot;, string(b))
+// {&quot;a&quot;:&quot;aaaa&quot;,&quot;foo_bar&quot;:&quot;baz&quot;}
+</code></pre>
 
-<h3 id="jsonunmarshaljson">json.Unmarshalは、構造体のjsonタグがあればその値を対応するフィールドにマッピングする</h3>
+<p>アノテーション指定した&rdquo;a&rdquo;がJSONのキーとして使用されていることが確認できます。</p>
+
+<h3 id="json-unmarshalは-構造体のjsonタグがあればその値を対応するフィールドにマッピングする:95b5ef122b0628eff42f880d34516c78">json.Unmarshalは、構造体のjsonタグがあればその値を対応するフィールドにマッピングする</h3>
 
 <p>json.UnmarshalはJSON文字列から構造体へ変換する関数です。</p>
 
 <p>まずはタグなしのパターン</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">type</span> <span class="nx">MyType</span> <span class="kd">struct</span> <span class="p">{</span>
-</span><span class="line">  <span class="nx">A</span> <span class="kt">string</span>
-</span><span class="line">  <span class="nx">FooBar</span> <span class="kt">string</span>
-</span><span class="line"><span class="p">}</span>
-</span><span class="line">
-</span><span class="line"><span class="kd">var</span> <span class="nx">mt</span> <span class="nx">MyType</span>
-</span><span class="line"><span class="nx">json</span><span class="p">.</span><span class="nx">Unarshal</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="s">`{&quot;A&quot;:&quot;aaa&quot;, &quot;FooBar&quot;:&quot;baz&quot;}`</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">mt</span><span class="p">)</span>
-</span><span class="line"><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%#v\n&quot;</span><span class="p">,</span> <span class="nx">mt</span><span class="p">)</span> <span class="c1">// main.MyType{A:&quot;aaaa&quot;,FooBar:&quot;baz&quot;}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<pre><code>type MyType struct {
+  A string
+  FooBar string
+}
+
+var mt MyType
+json.Unarshal([]byte(`{&quot;A&quot;:&quot;aaa&quot;, &quot;FooBar&quot;:&quot;baz&quot;}`, &amp;mt)
+fmt.Printf(&quot;%#v\n&quot;, mt) // main.MyType{A:&quot;aaaa&quot;,FooBar:&quot;baz&quot;}
+</code></pre>
 
 <p>JSONのフィールド名がsnake_caseのパターン</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">var</span> <span class="nx">mt</span> <span class="nx">MyType</span>
-</span><span class="line"><span class="nx">json</span><span class="p">.</span><span class="nx">Unarshal</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="s">`{&quot;a&quot;:&quot;aaa&quot;,&quot;foo_bar&quot;:&quot;baz&quot;}`</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">mt</span><span class="p">)</span>
-</span><span class="line"><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%#v\n&quot;</span><span class="p">,</span> <span class="nx">mt</span><span class="p">)</span> <span class="c1">// main.MyType{A:&quot;aaaa&quot;, FooBar:&quot;&quot;}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<pre><code>var mt MyType
+json.Unarshal([]byte(`{&quot;a&quot;:&quot;aaa&quot;,&quot;foo_bar&quot;:&quot;baz&quot;}`, &amp;mt)
+fmt.Printf(&quot;%#v\n&quot;, mt) // main.MyType{A:&quot;aaaa&quot;, FooBar:&quot;&quot;}
+</code></pre>
 
 <p>ここで「ん？」となるわけです。タグによるアノテーションがないのになぜ小文字のフィールドがちゃんと読み込まれているのか…と。</p>
 
@@ -337,287 +193,79 @@
 <p><a href="http://golang.org/pkg/encoding/json/#Unmarshal">func Unmarshal</a></p>
 
 <blockquote>
-  <p>To unmarshal JSON into a struct, Unmarshal matches incoming object keys to the keys used by Marshal (either the struct field name or its tag), preferring an exact match but also accepting a case-insensitive match.</p>
+<p>To unmarshal JSON into a struct, Unmarshal matches incoming object keys to the keys used by Marshal (either the struct field name or its tag), preferring an exact match but also accepting a case-insensitive match.</p>
 </blockquote>
 
 <p>どうやら、json.Unmarshalは、JSONに含まれるキーと完全一致か、case-insensitiveに一致する構造体のフィールドにマッピングする仕様となっているようです。もちろん、snake_caseなJSONのキーはアノテーションがないとマッピングされず無視されます。（構造体のフィールドとしてsnale_caseが存在しない限りは)</p>
 
-<h3 id="section">経緯</h3>
+<h3 id="経緯:95b5ef122b0628eff42f880d34516c78">経緯</h3>
 
 <p>先日、<a href="http://connpass.com/event/7914/">ヒカルのGO! hikarie.go #2</a>で<a href="https://twitter.com/yosuke_furukawa">@yosuke_furukawa</a>さんによるGoでJSON APIを書いてみるというハンズオンを体験してきました。</p>
 
 <ul>
-  <li><a href="https://github.com/yosuke-furukawa/golang-study">yosuke-furukawa/golang-study</a></li>
+<li><a href="https://github.com/yosuke-furukawa/golang-study">yosuke-furukawa/golang-study</a></li>
 </ul>
 
 <p>そこで、アノテーションをつけた構造体を使ってMarshalした時に、書いたコードがこれです。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">type</span> <span class="nx">User</span> <span class="kd">struct</span> <span class="p">{</span>
-</span><span class="line">  <span class="nx">Name</span> <span class="kt">string</span> <span class="s">`json:name`</span>
-</span><span class="line"><span class="p">}</span>
-</span><span class="line"><span class="nx">user</span> <span class="o">:=</span> <span class="nx">User</span><span class="p">{</span><span class="s">&quot;restartr&quot;</span><span class="p">}</span>
-</span><span class="line"><span class="nx">b</span><span class="p">,</span> <span class="nx">_</span> <span class="o">:=</span> <span class="nx">json</span><span class="p">.</span><span class="nx">Marshal</span><span class="p">(</span><span class="nx">user</span><span class="p">)</span>
-</span><span class="line"><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%s\n&quot;</span><span class="p">,</span> <span class="nb">string</span><span class="p">(</span><span class="nx">b</span><span class="p">))</span> <span class="c1">// {&quot;Name&quot;:&quot;restartr&quot;}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<pre><code class="language-go">type User struct {
+  Name string `json:name`
+}
+user := User{&quot;restartr&quot;}
+b, _ := json.Marshal(user)
+fmt.Printf(&quot;%s\n&quot;, string(b)) // {&quot;Name&quot;:&quot;restartr&quot;}
+</code></pre>
 
 <p>小文字で出力してほしいのに、アノテーションが効かない…となったわけです。
-他の参加者が<code>json:"name"</code>でないといけないことに気づいて、この件は一件落着。</p>
+他の参加者が<code>json:&quot;name&quot;</code>でないといけないことに気づいて、この件は一件落着。</p>
 
 <p>だったのですが、もう少し詳しく調べると上に整理したような仕様が見えてきたというわけです。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-</pre></td><td class="code"><pre><code class="go"><span class="line"><span class="kd">type</span> <span class="nx">User</span> <span class="kd">struct</span> <span class="p">{</span>
-</span><span class="line">  <span class="nx">Name</span> <span class="kt">string</span> <span class="s">`json:name`</span> <span class="c1">// 実際は無視されている</span>
-</span><span class="line"><span class="p">}</span>
-</span><span class="line"><span class="kd">var</span> <span class="nx">user</span> <span class="nx">User</span>
-</span><span class="line"><span class="nx">json</span><span class="p">.</span><span class="nx">Unmarshal</span><span class="p">([]</span><span class="nb">byte</span><span class="p">(</span><span class="s">`{&quot;name&quot;:&quot;restartr&quot;}`</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">user</span><span class="p">)</span>
-</span><span class="line"><span class="nx">fmt</span><span class="p">.</span><span class="nx">Printf</span><span class="p">(</span><span class="s">&quot;%s\n&quot;</span><span class="p">,</span> <span class="nx">user</span><span class="p">)</span> <span class="c1">// main.User{Name:&quot;restartr&quot;}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<pre><code class="language-go">type User struct {
+  Name string `json:name` // 実際は無視されている
+}
+var user User
+json.Unmarshal([]byte(`{&quot;name&quot;:&quot;restartr&quot;}`, &amp;user)
+fmt.Printf(&quot;%s\n&quot;, user) // main.User{Name:&quot;restartr&quot;}
+</code></pre>
 
 <p>実はこの時書いた<code>json:name</code>というアノテーションは不正なフォーマットとして無視されていて、たまたまUser.Nameというフィールドにcase-insensitiveでUnmarshalした時にマッピングができていたにすぎなかったようです。</p>
 
 <p>とまぁそんな感じでJSONの取り扱いについて正しい知識を得られたのですが、一人でやってた時には気づかなかった疑問とか知識として不足している点に気付けるので、ハンズオン形式も良いものですね。</p>
-</div>
 
-
-
-
-<style type="text/css">
-  .sharing {
-     clear: both;
-  }
-  .sharing li{
-    display: inline;
-    list-style-type: none;
-    float: left;
-    height: 1em;
-    line-height: 1em;
-    padding: 0 10px 0 0 ;
-    margin: 10px 0;
-  }
-  .sharing ul {
-    margin: 1em 0;
-    padding: 1em 0;
-  }
-</style>
-<div class="sharing">
+			  <div class="sharing">
   <ul>
-  <li><a href="http://blog.restartr.com/2014/08/13/golang-json-marshal-unmarshal/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
-  
-  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2014/08/13/golang-json-marshal-unmarshal/" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2014/08/13/golang-json-marshal-unmarshal/" >Tweet</a></li>
-  
+  <li><a href="http://blog.restartr.com/2014/08/13/golang-json-marshal-unmarshal" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2014/08/13/golang-json-marshal-unmarshal" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2014/08/13/golang-json-marshal-unmarshal" >Tweet</a></li>
   <li><a data-pocket-label="pocket" data-pocket-count="horizontal" class="pocket-btn" data-lang="en"></a><script type="text/javascript">!function(d,i){if(!d.getElementById(i)){var j=d.createElement("script");j.id=i;j.src="https://widgets.getpocket.com/v1/j/btn.js?v=1";var w=d.getElementById(i);d.body.appendChild(j);}}(document,"pocket-btn-js");</script></li>
-  
-  
   </ul>
 </div>
-<p />
+<script type="text/javascript">
+  (function(){
+    var twitterWidgets = document.createElement('script');
+    twitterWidgets.type = 'text/javascript';
+    twitterWidgets.async = true;
+    twitterWidgets.src = '//platform.twitter.com/widgets.js';
+    document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+  })();
+</script>
+<hr />
 
-
-
-
-  <footer>
-    <p class="meta">
-      
-  
-
-<span class="byline author vcard">Posted by <span class="fn">ReSTARTR</span></span>
-
-      
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-08-13T00:02:42+09:00" pubdate data-updated="true">2014-08-13 (Wed)</time>
-      
-
-<span class="categories">
-  
-    <a class='category' href='/category/go/'>go</a>
-  
-</span>
-
-
-    </p>
-    <hr />
-    <p class="meta">
-      
-        <a class="basic-alignment left" href="/2014/06/28/about-docker-libchan/" title="Previous Post: Docker謹製ライブラリのlibchanについて調べてみた">&laquo; Docker謹製ライブラリのlibchanについて調べてみた</a>
-      
-      
-        <a class="basic-alignment right" href="/2014/08/20/microservices-architecture/" title="Next Post: InfoQ eMAG: Microservicesを少し読んだまとめと感想">InfoQ eMAG: Microservicesを少し読んだまとめと感想 &raquo;</a>
-      
-    </p>
-  </footer>
-</article>
-
-</div>
-
-<aside class="sidebar">
-  
-    <section id="titles">
-  <a href="http://blog.restartr.com" title="I Will Survive"><img id="logo" src="http://blog.restartr.com/images/portrait.jpg" /></a>
-  <h1 id="site_title"><a href="http://blog.restartr.com" title="I Will Survive">I Will Survive</a></h1>
-  <h3 id="site_subtitle">An application depelopper's blog.</h3>
-</section>
-
-<section id="menu">
-  <ul>
-    <li><i class="fa fa-home fa-lg"></i><a href="http://blog.restartr.com"> Home </a></li>
-    <li><i class="fa fa-calendar fa-lg"></i><a href="http://blog.restartr.com/blog/archives/"> Archives </a></li>
-    <li><i class="fa fa-user fa-lg"></i><a href="http://blog.restartr.com/about/"> About </a></li>
-    <li><i class="fa fa-rss fa-lg"></i><a href="http://blog.restartr.com/atom.xml"> Feed </a></li>
-  </ul>
-</section>
-
-<section id="social">
-  
-
-  
-
-  
-    <a href="" title="g+#103216164658230535238"><i class="fa fa-google-plus fa-2x"></i></a>
-  
-
-  
-    <a href="https://github.com/ReSTARTR" title="ReSTARTR"><i class="fa fa-github fa-2x"></i></a>
-  
-
-  
-
-  
-    <a href="https://twitter.com/ReSTARTR" title="ReSTARTR"><i class="fa fa-twitter fa-2x"></i></a>
-  
-
-  
-</section>
-
-
-<section>
-  <h1>Recent Posts</h1>
-  <ul id="recent_posts">
-    
-      <li class="post">
-        <a href="/2016/02/27/ec2-ls-hosts/">ec2-ls-hosts: EC2インスタンスを一覧するだけのシンプルツール</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2016/02/17/ergodox-ez/">ErgoDox EZを注文した(けどまだ届いてない)</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/12/31/things-of-2015/">2015年ふりかえり</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix/">Elixir/PhoenixでISUCON5予選の参考実装を書いた</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/10/15/go-programming-blueprints/">"Go Programming Blueprints"を読んだ</a>
-      </li>
-    
-  </ul>
-</section>
-<section>
-  <h1>Categories</h1>
-  <ul id="categories">
-    <li><a href='/category/architecture/'>architecture</a></li><li><a href='/category/docker/'>docker</a></li><li><a href='/category/elixir/'>Elixir</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/go/'>go</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/ruby/'>ruby</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
-  </ul>
-</section>
-<section>
-  <h1>GitHub Repos</h1>
-  <ul id="gh_repos">
-    <li class="loading">Status updating...</li>
-  </ul>
-  
-  <a href="https://github.com/ReSTARTR">@ReSTARTR</a> on GitHub
-  
-  <script type="text/javascript">
-    $.domReady(function(){
-        if (!window.jXHR){
-            var jxhr = document.createElement('script');
-            jxhr.type = 'text/javascript';
-            jxhr.src = '/javascripts/libs/jXHR.js';
-            var s = document.getElementsByTagName('script')[0];
-            s.parentNode.insertBefore(jxhr, s);
-        }
-
-        github.showRepos({
-            user: 'ReSTARTR',
-            count: 4,
-            skip_forks: true,
-            target: '#gh_repos'
-        });
-    });
-  </script>
-  <script src="/javascripts/github.js" type="text/javascript"> </script>
-</section>
-
-
-
-<section class="googleplus">
-  <h1>
-    <a href="https://plus.google.com/103216164658230535238?rel=author">
-      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
-      Google+
-    </a>
-  </h1>
-</section>
-
-
-
-  
-</aside>
-
-
-    </div>
-  </div>
-  <footer role="contentinfo"><p>
-  Copyright &copy; 2016 - ReSTARTR -
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
-</p>
-
+			   <footer>
+  <p class="meta">
+    <ul class="params">
+    <li>Category: [golang]</li>
+    <li class="">Tags: [go golang json]</li>
+    <li><span class="byline author vcard">Posted by <span class="fn">ReSTARTR</span></span></li>
+    <li><time datetime="2014-08-13 00:02:42 &#43;0900 JST" pubdate data-updated="true">2014-08-13(Wed)</time></li>
+    </ul>
+  </p>
 </footer>
-  
 
+			</div>
 
+			
+		</div>
 
-
-
-
-
-  <script type="text/javascript">
-    (function(){
-      var twitterWidgets = document.createElement('script');
-      twitterWidgets.type = 'text/javascript';
-      twitterWidgets.async = true;
-      twitterWidgets.src = '//platform.twitter.com/widgets.js';
-      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
-    })();
-  </script>
-
-
-
-
-
-</body>
+  </body>
 </html>

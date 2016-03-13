@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Twig on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/twig/</link>
+    <description>Recent content in Twig on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Thu, 31 Dec 2009 02:10:55 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/twig/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>phpのテンプレートエンジンtwigとは</title>
+      <link>http://blog.restartr.com/2009/12/31/twig-is-the-template-engine-written-in-php</link>
+      <pubDate>Thu, 31 Dec 2009 02:10:55 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2009/12/31/twig-is-the-template-engine-written-in-php</guid>
+      <description>&lt;p&gt;&lt;div&gt;最近、PHPのテンプレートエンジン&lt;a href=&#34;http://www.twig-project.org/&#34; target=&#34;_blank&#34;&gt;Twig&lt;/a&gt;の紹介記事をちらほら見かけるようになってきました。&lt;/div&gt;
+&lt;div&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;span style=&#34;font-family: Consolas, Monaco, &#39;Courier New&#39;, Courier, monospace; line-height: 18px; font-size: 12px; white-space: pre;&#34;&gt;&lt;a href=&#34;http://labs.unoh.net/2009/12/phptwig.html&#34; target=&#34;_blank&#34;&gt;ウノウラボ Unoh Labs: PHPテンプレートエンジンTwigをいじってみました&lt;/a&gt;&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;&lt;span style=&#34;font-family: Consolas, Monaco, &#39;Courier New&#39;, Courier, monospace; line-height: 18px; font-size: 12px; white-space: pre;&#34;&gt;&lt;a href=&#34;http://d.hatena.ne.jp/anatoo/20091225/1261749843&#34; target=&#34;_blank&#34;&gt;テンプレートエンジンを素のPHPからTwigに乗り換えた理由 - id:anatooのブログ&lt;/a&gt;&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.nully.org/archives/154&#34;&gt;[Twig]なにやら話題のテンプレートエンジンTwigを使ってみた | Nullyのぶろぐ&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div&gt;自分自身も気になってはいたのですが、試してみるきっかけがなく今に至ってしまいました。現在のプロジェクトではviewは関わらないのですが、それまではSmarty2を使っていました。Smarty3や他テンプレートエンジンも気になるところですが、次はTwigがくるだろうと勝手に予測しています。&lt;/div&gt;
+&lt;div&gt;とりあえず今回はTwigの特徴と他テンプレートエンジンとの比較をまとめてみます。&lt;/div&gt;
+&lt;div&gt;&lt;a id=&#34;more&#34;&gt;&lt;/a&gt;&lt;a id=&#34;more-3&#34;&gt;&lt;/a&gt;&lt;/div&gt;
+&lt;h2&gt;Twigの特徴&lt;/h2&gt;
+&lt;p&gt;公式サイトから英訳（適当に）してみました。&lt;/p&gt;
+&lt;div&gt;
+&lt;ul&gt;
+&lt;li&gt;簡潔に書ける&lt;/li&gt;
+&lt;li&gt;テンプレート指向文法である&lt;/li&gt;
+&lt;li&gt;自動エスケープなど必要なものをすべてサポートしている&lt;/li&gt;
+&lt;li&gt;文法を簡単に学習できる（※他テンプレートエンジンはPHP4ベースで作られていたりして、web開発においてベストプラクティスとして採用できない。）&lt;/li&gt;
+&lt;li&gt;高い拡張性で独自DSLも作れる&lt;/li&gt;
+&lt;li&gt;ユニットテストされているのでライブラリは堅牢で、大きなプロジェクトにもすぐに使える。&lt;/li&gt;
+&lt;li&gt;ちゃんとドキュメント化されている：&lt;/li&gt;
+&lt;li&gt;セキュリティでは自動出力エスケープやsandboxモードによって安全性を確保&lt;/li&gt;
+&lt;li&gt;詳細なエラーメッセージでデバッグもカンタン&lt;/li&gt;
+&lt;li&gt;テンプレートを素のPHPコードにコンパイルするので、普通のPHPコードに比べてオーバーヘッドを最小限に抑えることができる。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;h2&gt;開発者について&lt;/h2&gt;
+&lt;div&gt;Symfony開発者でもある&lt;a href=&#34;http://fabien.potencier.org/article/34/templating-engines-in-php&#34; target=&#34;_blank&#34;&gt;Fabienのブログ記事&lt;/a&gt;（と&lt;a href=&#34;http://fabien.potencier.org/article/35/templating-engines-in-php-follow-up&#34; target=&#34;_blank&#34;&gt;そのフォロー記事&lt;/a&gt;）を見れば、開発の経緯や他テンプレートエンジンとの比較、それからPHP自体テンプレートエンジンじゃないかという点について言及しています。&lt;/div&gt;
+&lt;div&gt;素のPHPをViewとして使いたい人はSymfonyTemplateComponentがスタンドアロンで動作するのでそれを使うと良いと。ViewでPHP的な文法を用いることに疑問を持っていたようです。&lt;/div&gt;
+&lt;div&gt;
+&lt;h2&gt;既存テンプレートエンジンとの比較&lt;/h2&gt;
+&lt;/div&gt;
+&lt;div&gt;
+&lt;div&gt;もともと彼は以下機能を求めてテンプレートエンジンを探していたので、この観点でそれぞれのテンプレートエンジンを評価しています。(なのでこれがそのままTwigの特徴になっています。）&lt;/div&gt;
+&lt;div&gt;
+&lt;div&gt;
+&lt;ul&gt;
+&lt;li&gt;Concision (記述が簡潔)&lt;/li&gt;
+&lt;li&gt;Template oriented syntax (テンプレート指向な文法)&lt;/li&gt;
+&lt;li&gt;Reusability (再利用性)&lt;/li&gt;
+&lt;li&gt;Security (安全性)&lt;/li&gt;
+&lt;li&gt;Sandbox mode (砂場モード)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div&gt;
+&lt;div&gt;&lt;strong&gt;&lt;a href=&#34;http://www.smarty.net/&#34; target=&#34;_blank&#34;&gt;Smarty&lt;/a&gt;&lt;/strong&gt;&lt;strong&gt;:&lt;span style=&#34;font-weight: normal;&#34;&gt;Smarty3で機能要求を満たしているものの、パフォーマンスが悪い。&lt;br /&gt;
+&lt;strong&gt;&lt;a href=&#34;http://phptal.org/&#34; target=&#34;_blank&#34;&gt;PHPTAL&lt;/a&gt;&lt;/strong&gt;&lt;strong&gt;:&lt;span style=&#34;font-weight: normal;&#34;&gt;よく設計されていて、機能もあるが、webデザイナにはとっつきにくく、テンプレートの継承的なことは特にそう。&lt;/span&gt;&lt;/strong&gt;&lt;/span&gt;&lt;/strong&gt;&lt;/div&gt;
+&lt;div&gt;&lt;strong&gt;&lt;span style=&#34;font-weight: normal;&#34;&gt;&lt;strong&gt;&lt;a href=&#34;http://www.ezcomponents.org/docs/tutorials/Template&#34; target=&#34;_blank&#34;&gt;ezComponents Template&lt;/a&gt;&lt;/strong&gt;&lt;strong&gt;:&lt;span style=&#34;font-weight: normal;&#34;&gt;よく設計されていて、多くの機能を持つが、継承をサポートしていないのと、パフォーマンスが他よりかなり劣る。&lt;br /&gt;
+&lt;strong&gt;&lt;a href=&#34;http://dwoo.org/&#34; target=&#34;_blank&#34;&gt;Dowoo&lt;/a&gt;&lt;/strong&gt;&lt;strong&gt;:&lt;span style=&#34;font-weight: normal;&#34;&gt;Smartyの代替プロジェクトとしてSmartyを真似てつくられていて、継承などの新機能も追加されている。パフォーマンスもSmartyより良いけど、sandboxがないのと、コアシステムの拡張性が十分でない。&lt;br /&gt;
+&lt;strong&gt;&lt;a href=&#34;http://www.beberlei.de/calypso/&#34; target=&#34;_blank&#34;&gt;Calyps&lt;/a&gt;&lt;/strong&gt;&lt;strong&gt;&lt;a href=&#34;http://www.beberlei.de/calypso/&#34; target=&#34;_blank&#34;&gt;o&lt;/a&gt;&lt;/strong&gt;&lt;strong&gt;:&lt;/strong&gt;DjangoのPHPクローンだけど諸問題により開発停止している。&lt;/span&gt;&lt;/strong&gt;&lt;/span&gt;&lt;/strong&gt;&lt;/span&gt;&lt;/strong&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;h3&gt;ベンチマーク&lt;/h3&gt;
+&lt;p&gt;既存のテンプレートエンジンに関するベンチマーク結果です。&lt;/p&gt;
+&lt;h4&gt;ベンチマーク方法&lt;/h4&gt;
+&lt;div&gt;
+&lt;div id=&#34;_mcePaste&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;３つのアイテムをループさせ、シンプルな装飾のレイアウト出力の比較。&lt;/li&gt;
+&lt;li&gt;10000回表示するテストを１０回実行した平均値。&lt;/li&gt;
+&lt;li&gt;継承はヘッダとフィッタを代わりに使用。&lt;/li&gt;
+&lt;li&gt;自動出力エスケープができないものは手動でエスケープ処理。&lt;/li&gt;
+&lt;li&gt;コマンドラインでPHPAcceleratorなどを使用しない環境で実行&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;h4&gt;処理時間とメモリ消費&lt;/h4&gt;
+&lt;/div&gt;
+&lt;div&gt;
+&lt;table border=&#34;1&#34;&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;th&gt;Library&lt;/th&gt;
+&lt;th&gt;Time (sec)&lt;/th&gt;
+&lt;th&gt;Memory (Ko)&lt;/th&gt;
+&lt;th&gt;Templates rendered per second&lt;/th&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;th&gt;Twig&lt;/th&gt;
+&lt;td&gt;3&lt;/td&gt;
+&lt;td&gt;1,190&lt;/td&gt;
+&lt;td&gt;3,333&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;th&gt;PHPTAL&lt;/th&gt;
+&lt;td&gt;3.8&lt;/td&gt;
+&lt;td&gt;2,100&lt;/td&gt;
+&lt;td&gt;2,632&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;th&gt;Dwoo&lt;/th&gt;
+&lt;td&gt;6.9&lt;/td&gt;
+&lt;td&gt;1,870&lt;/td&gt;
+&lt;td&gt;1,449&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;th&gt;Smarty 2&lt;/th&gt;
+&lt;td&gt;12.9&lt;/td&gt;
+&lt;td&gt;2,350&lt;/td&gt;
+&lt;td&gt;775&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;th&gt;Smarty 3&lt;/th&gt;
+&lt;td&gt;14.9&lt;/td&gt;
+&lt;td&gt;3,230&lt;/td&gt;
+&lt;td&gt;671&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;th&gt;Calypso&lt;/th&gt;
+&lt;td&gt;34.3&lt;/td&gt;
+&lt;td&gt;620&lt;/td&gt;
+&lt;td&gt;292&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;th&gt;eZ Templates&lt;/th&gt;
+&lt;td&gt;53&lt;/td&gt;
+&lt;td&gt;5,850&lt;/td&gt;
+&lt;td&gt;189&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;h4&gt;コンパイル後のメモリ消費&lt;/h4&gt;
+&lt;p&gt;※フォロー記事の方がSmartyの数値が妥当らしいのでそっちを引用しています。&lt;/p&gt;
+&lt;table border=&#34;1&#34;&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;th&gt;Library&lt;/th&gt;
+&lt;td&gt;Time(sec)&lt;/td&gt;
+&lt;td&gt;Memory without compilation (Ko)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;th&gt;Plain PHP&lt;/th&gt;
+&lt;td&gt;2.4&lt;/td&gt;
+&lt;td&gt;114&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;th&gt;Twig&lt;/th&gt;
+&lt;td&gt;3&lt;/td&gt;
+&lt;td&gt;383&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;th&gt;PHPTAL&lt;/th&gt;
+&lt;td&gt;3.8&lt;/td&gt;
+&lt;td&gt;598&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;th&gt;Dwoo&lt;/th&gt;
+&lt;td&gt;6.9&lt;/td&gt;
+&lt;td&gt;1,645&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;th&gt;Smarty 2&lt;/th&gt;
+&lt;td&gt;12.9&lt;/td&gt;
+&lt;td&gt;610&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;th&gt;Smarty 3&lt;/th&gt;
+&lt;td&gt;14.9&lt;/td&gt;
+&lt;td&gt;799&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;th&gt;Calypso&lt;/th&gt;
+&lt;td&gt;34.3&lt;/td&gt;
+&lt;td&gt;614&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;th&gt;eZ Templates&lt;/th&gt;
+&lt;td&gt;53&lt;/td&gt;
+&lt;td&gt;2,783&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2&gt;まとめ&lt;/h2&gt;
+&lt;div&gt;機能性だけでなく速さも兼ね備えたテンプレートエンジンTwig。&lt;/div&gt;
+&lt;div&gt;便利なテンプレートエンジンはSmartyがデファクトでしたが、Twigはそれを追い抜くかもしれませんね。&lt;/div&gt;
+&lt;div&gt;Symfony2.0でオプションのViewとして用意するかも、とFabienは個人的見解として言っているので、そうなると日本語圏でも利用が加速するかもしれません。ただ、Symfony2.0はPHP5.3以上必須なのでPHP5.3への移行に依存しますかね。Smarty3が正式リリースまでにどこまでパフォーマンス改善してくるかも楽しみなところです。&lt;/div&gt;
+&lt;div&gt;
+&lt;p&gt;Smartyから乗り換える場合はプログラマよりデザイナの移行コストが高いと思われるのですが、それがクリアできるならぜひ移行してみたいですね。素のPHPよりは断然読みやすく理解しやすですし。&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;次は機能的なところをまとめたいと思います。&lt;/p&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

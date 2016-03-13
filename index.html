@@ -1,673 +1,243 @@
-
 <!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>I Will Survive</title>
-  <meta name="author" content="ReSTARTR">
-  <link rel="author" href="https://plus.google.com/103216164658230535238" />
-  <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.15" />
 
   
-  <meta name="description" content="EC2インスタンスの一覧を表示するツールをgolangでつくりました。 ReSTARTR/ec2-ls-hosts 以下のように、ただインスタンスの情報を列挙するだけのシンプルなツールです。 1
-2
-3
-4
-5
-$ ls-hosts
-i-00001 10.0.0.1 app01
-i-00002 &hellip;">
-  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>I Will Survive - I Will Survive</title>
 
   
-  <link rel="canonical" href="http://blog.restartr.com/">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-   <link href="/stylesheets/data-table.css" media="screen, projection" rel="stylesheet" type="text/css" />
-  <script src="/javascripts/modernizr-2.0.js"></script>
-  <script src="/javascripts/ender.js"></script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  <link href="/atom.xml" rel="alternate" title="I Will Survive" type="application/atom+xml">
-  <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
-
-<!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
-<link href='http://fonts.googleapis.com/css?family=Lato:400,100,100italic,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
-<link href='http://fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
-<link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:200,300,400,500,600,700,900' rel='stylesheet' type='text/css'>
-
-
-	<!-- mathjax config similar to math.stackexchange -->
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    tex2jax: {
-      inlineMath: [ ['$$','$$'], ["\\(","\\)"] ],
-      processEscapes: true
-    }
-  });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      tex2jax: {
-        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-      }
-    });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax(), i;
-        for(i=0; i < all.length; i += 1) {
-            all[i].SourceElement().parentNode.className += ' has-jax';
-        }
-    });
-</script>
-
-<script type="text/javascript"
-   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
-
-
-
+  <link rel="stylesheet" href="http://blog.restartr.comcss/poole.css">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/syntax.css">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/hyde.css">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/custom.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
 
   
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-894530-10']);
-    _gaq.push(['_trackPageview']);
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://blog.restartr.com/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="http://blog.restartr.com/favicon.png">
 
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
-
-
-  <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
-  <style>html{background: url("/images/background.png") no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;}</style>
+  
+  <link href="http://blog.restartr.com/index.xml" rel="alternate" type="application/rss+xml" title="I Will Survive" />
 </head>
 
-<body   >
-  <header role="banner"><hgroup>
-</hgroup>
+<body class="theme-base-0d">
 
-</header>
-  <!-- <nav role="navigation"><ul class="subscription" data-subscription="rss">
-  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-  
-</ul>
-  
-<form action="https://www.google.com/search" method="get">
-  <fieldset role="search">
-    <input type="hidden" name="q" value="site:blog.restartr.com" />
-    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
-  </fieldset>
-</form>
-  
-<ul class="main-navigation">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives">Archives</a></li>
-</ul>
-
-</nav> -->
-  <div id="main">
-    <div id="content">
-      <div class="blog-index">
-  
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2016/02/27/ec2-ls-hosts/">Ec2-ls-hosts: EC2インスタンスを一覧するだけのシンプルツール</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2016-02-27T17:28:53+09:00" pubdate data-updated="true">2016-02-27 (Sat)</time>
-        
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="http://blog.restartr.com"><h1>I Will Survive</h1></a>
+      <p class="lead">
+       An application depelopper&#39;s blog. 
       </p>
-    
-  </header>
+    </div>
 
-
-  <div class="entry-content"><p>EC2インスタンスの一覧を表示するツールをgolangでつくりました。</p>
-
-<ul>
-  <li><a href="https://github.com/ReSTARTR/ec2-ls-hosts">ReSTARTR/ec2-ls-hosts</a></li>
-</ul>
-
-<p>以下のように、ただインスタンスの情報を列挙するだけのシンプルなツールです。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>ls-hosts
-</span><span class="line">i-00001 10.0.0.1 app01
-</span><span class="line">i-00002 10.0.0.2 app02
-</span><span class="line">i-00003 10.0.0.3 app03
-</span><span class="line">i-00004 10.0.0.4 app04
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h3 id="section">何がうれしいか</h3>
-
-<p>以下のような状況において、多少便利になるツールです。</p>
-
-<ul>
-  <li>EC2インスタンスを複数台運用している</li>
-  <li>台数が数十台規模である</li>
-  <li>AutoScalingを利用していて、IPやドメインが頻繁に変わる</li>
-  <li><code>aws ec2 describe-instances</code>のレスポンスが遅い</li>
-  <li><code>aws ec2 describe-instances</code>のオプション指定が複雑かつ指定が面倒</li>
-</ul>
-
-<p>このような状況を改善するため、ec2-ls-hostsをつくりました。
-このツールは、<code>aws ec2 describe-instances</code>に変わる、シンプルなオプションを備えたCLIツールになります。</p>
-
-<h3 id="ec2-ls-hosts">ec2-ls-hostsで出来ること</h3>
-
-<p>主に以下のオプションを備えています</p>
-
-<ul>
-  <li><code>-filters</code>: 絞込み条件</li>
-  <li><code>-tags</code>   : タグによる絞込み</li>
-  <li><code>-fileds</code> : 表示項目の設定</li>
-</ul>
-
-<p>実行時のオプションでも指定できるのですが、いちいち指定するのは面倒なので、<code>~/.ls-hosts</code> か <code>/etc/ls-hosts</code> に設定を保存できます。
-このファイルが存在していたらそれを読み込みます。(両方ある場合は<code>~/.ls-hosts</code>のほうが優先されます)
-設定はこんなかんじで。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="o">[</span>options<span class="o">]</span>
-</span><span class="line"><span class="nv">tags</span>   <span class="o">=</span> Env:production,Role:app
-</span><span class="line"><span class="nv">fields</span> <span class="o">=</span> instance-id,tag:Name,public-ip,instance-state
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>認証は以下の優先順位で可能なものを利用します。</p>
-
-<ul>
-  <li>環境変数 <code>AWS_ACCESS_KEY_ID</code>, <code>AWS_SECRET_ACCESS_KEY</code></li>
-  <li>SharedCredentials (<code>~/.aws/credentials</code>のdefaultプロファイルを利用)</li>
-  <li>EC2 Instance Profile</li>
-</ul>
-
-<p>インスタンスプロファイルに対応しているので、たとえばEC2のReadOnly権限をを付与してあるゲートウェイインスタンスに配置することで、認証情報を直接管理せずに利用することもできます。</p>
-
-<h3 id="section-1">インストール方法</h3>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">git clone https://github.com/ReSTARTR/ec2-ls-hosts.git
-</span><span class="line"><span class="nb">cd</span> ./ec2-ls-hosts
-</span><span class="line">make build -B
-</span><span class="line">cp ./build/ls-hosts /path/to/bin/ls-hosts
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<ul>
-  <li>コマンド名は<code>ls-hosts</code>にしています。</li>
-  <li><code>$PATH</code>の通っているところに配置してください:bow:</li>
-</ul>
-
-<h3 id="zsh--pecossh">zsh + pecoでインタラクティブにSSHする</h3>
-
-<p>ec2-ls-hosts単体でも多少便利にはなるのですが、ツールを組み合わせた応用例も書いておきます。</p>
-
-<p>たとえば以下のような結果が得られるEC2環境があったとします。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>ls-hosts -filters instance-state-name:running -tags Env:production,Role:app -fields private-ip,tag:Name,tag:Role
-</span><span class="line">10.0.0.1 app app01
-</span><span class="line">10.0.0.2 app app02
-</span><span class="line">10.0.0.3 app app03
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>これをpecoでインタラクティブに選択してそのままSSHするには、以下のようにzshrcを設定しておきます。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="k">function </span>peco-ec2-ls-hosts <span class="o">()</span> <span class="o">{</span>
-</span><span class="line">  <span class="c"># NOTE: ~/.ls-hostsに設定したほうがより良いです</span>
-</span><span class="line">  <span class="nv">BUFFER</span><span class="o">=</span><span class="k">$(</span>
-</span><span class="line">    ls-hosts -filters instance-state-name:running -tags Env:production,Role:app -fields private-ip,tag:Name,tag:Role | <span class="se">\</span>
-</span><span class="line">    peco --prompt <span class="s2">&quot;EC2 &gt;&quot;</span> --query <span class="s2">&quot;$LBUFFER&quot;</span> | <span class="se">\</span>
-</span><span class="line">    awk <span class="s1">&#39;{echo &quot;Login to %s; printf &quot;ssh %s\n&quot;, $3,$1}&#39;</span>
-</span><span class="line">  <span class="k">)</span>
-</span><span class="line">  <span class="nv">CURSOR</span><span class="o">=</span><span class="nv">$#BUFFER</span>
-</span><span class="line">  zle accept-line
-</span><span class="line">  zle clear-screen
-</span><span class="line"><span class="o">}</span>
-</span><span class="line">zle -N peco-ec2-ls-hosts
-</span><span class="line"><span class="c"># キーバインドはおこのみで</span>
-</span><span class="line">bindkey <span class="s1">&#39;^oo&#39;</span> peco-ec2-ls-hosts
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>とすることで、インタラクティブにSSHできてヒストリーにも残ります。
-以下キャプチャでは対象インスタンスがダミーなのでSSできてませんがちゃんと使えます。
-(実環境の実行結果は載せられないので泣く泣くダミーです…)</p>
-
-<p><a href="https://gyazo.com/ae45206ad8215934f5e0a897b91b3d2a"><img src="https://i.gyazo.com/ae45206ad8215934f5e0a897b91b3d2a.gif" alt="https://gyazo.com/ae45206ad8215934f5e0a897b91b3d2a" /></a></p>
-
-<p>※クライアントPCからパブリックIPとかで直接SSHできない場合はプロキシコマンドを利用して踏み台経由とかでプライベートIPできるssh-configを設定しておくと、この応用例を使って透過的にSSHできます（これは別記事としたほうがよいかも？)</p>
-
-<h3 id="section-2">余談</h3>
-
-<p>さいごの応用例はもともとaws-cli + jq + pecoで実現していたのですが、管理台数が増えるに連れてレスポンスが極端に劣化。
-キャッシュ機構を入れてみたりしたものの、快適とはいえない状況になったので、「aws-sdk-goで書くだけで軽くなるのでは？」という発想から開発に至りました。</p>
-
-<p>mackerel導入環境であれば<code>mkr</code>でも似たようなことができるかもしれないですが、mackerel前提ではないソリューションとしても十分使えるかな、と。</p>
-
-<p>社内利用に特化したかたちでつくったものの、ちょっとだけ汎用化すればべつに誰でも使えるようなきがしたので、手を加えたうえでgithubにて公開となりました。
-まだまだ貧弱ですが、最低限役目は果たしています。</p>
-
-</div>
-  
-  
-
-
-
-
-    </article>
-  
-  
-    <article>
+    <ul class="sidebar-nav">
+      <li><a href="http://blog.restartr.com/">Home</a> </li>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/2016/02/17/ergodox-ez/">ErgoDox EZを注文した(けどまだ届いてない)</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2016-02-17T22:57:45+09:00" pubdate data-updated="true">2016-02-17 (Wed)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><img src="http://res.cloudinary.com/indiegogo-media-prod-cld/image/upload/c_limit,w_620/v1435062448/e209onukdbrkpy4fygew.png" alt="ErgoDox EZ" /></p>
-
-<p>大きなプロジェクトが一区切りついたこともあって、勢いでErgoDox EZを買いました。</p>
-
-<p>お高めキーボード遍歴としては、FILCO Majestouch(黒軸)を1年程使った後、ここ5年くらいずっとHHKBpro2(墨黒無刻印)を使っていました。が、ずっとこれに変わるコンパクトかつ親指をもてあまさない最高なキーボードがないかなと思ってました。</p>
-
-<p>つい最近「<a href="http://nippondanji.blogspot.jp/2016/01/ergodox.html">漢(オトコ)のコンピュータ道: キーボードを新しくした話(ErgoDox)</a>」を目にしたこともあって、また理想のキーボードを探してみることにした結果、ErgoDox EZに行き着いた、といういきさつです。</p>
-
-<p>本当なら届いてからポストしようと考えてたのですが、確認したら4月あたりまで1ヶ月程かかるらしいので、とりあえず注文するまでに調べたことを書いておきます。</p>
-
-<blockquote class="twitter-tweet" data-lang="ja"><p lang="en" dir="ltr"><a href="https://twitter.com/ReSTARTR">@restartr</a> Hello, and thank you for supporting us! We expect to ship current orders around April, working hard to cut down lead times.</p>&mdash; ErgoDox EZ (@ErgoDoxEZ) <a href="https://twitter.com/ErgoDoxEZ/status/699937511099863041">2016, 2月 17</a></blockquote>
-<script async="" src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
-
-<p>まじか…orz</p>
-
-<h2 id="ergodox">ErgoDoxを買えるところ</h2>
-
-<p><a href="http://ergodox.org">ErgoDox</a>そのものは<a href="http://www.key64.org">The Key64 Keyboard</a>の流れから生まれた設計とかコードが公開されたプロジェクトであり、実際にはパーツを揃えて組み立てたりしないといけないのが敷居の高いところ。
-ですが、クラウドファンディングで製造販売する流れができていて非常にありがたいです。</p>
-
-<ul>
-  <li><a href="https://www.indiegogo.com/projects/ergodox-ez-an-incredible-mechanical-keyboard#/">ErgoDox EZ: An incredible mechanical keyboard | Indiegogo</a></li>
-  <li><a href="http://falbatech.pl/prestashop/index.php">FalbaTech</a></li>
-  <li><a href="https://www.massdrop.com/buy/ergodox">ErgoDox Ergonomic Mechanical Keyboard Kit Drop - Massdrop</a>(今は買えない)</li>
-  <li><a href="https://www.massdrop.com/buy/infinity-ergodox">Infinity ErgoDox Ergonomic Keyboard Kit Drop - Massdrop</a>(今は買えない)</li>
-</ul>
-
-<p>完成形だったり、組み立て式だったり、細部の造形がイマイチだったり様々です。</p>
-
-<p>ErgoDox EZが写真で見る限りかなり質感よさそうですし、傾斜できるスタンドが用意されていたりキートップとスイッチ(後述)を6種類から選べるのが気の利いている点が気に入ってこれにしました。</p>
-
-<h2 id="ergodox-ez">ErgoDox EZについて</h2>
-
-<p>サイトを眺めているといろいろ知らない要素が出てきて「はて?」となったので、ざっと重要なポイントを抜き出しつつ軽く補足をくわえて以下に書き出してみます。</p>
-
-<h3 id="section">概要</h3>
-
-<ul>
-  <li>完成形（組み立てでない）</li>
-  <li>2年保証</li>
-  <li><a href="http://www.maruichirubber.co.jp/rubber/newpage2-2.htm">インジェクションモールドABS製</a>フレーム
-    <ul>
-      <li>他の成形手法より大量生産に向いているが高価、らしい</li>
+        <li><a href="http://blog.restartr.com/about/"> About </a></li>
+      
+        <li><a href="http://blog.restartr.com/index.xml"> Feed </a></li>
+      
+        <li><a href="https://github.com/ReSTARTR"> GitHub </a></li>
+      
+        <li><a href="https://twitter.com/ReSTARTR"> Twitter </a></li>
+      
     </ul>
-  </li>
-  <li>刻印のあるキーキャップも選択可能
-    <ul>
-      <li>基本は無刻印</li>
-    </ul>
-  </li>
-  <li>アクセサリー
-    <ul>
-      <li>Tilt/Tentキット</li>
-      <li>リストレスト</li>
-    </ul>
-  </li>
-  <li>強力なカスタマイズ力、オープンソースなファームウェア(QMK)</li>
-  <li>Nキーロールオーバーと<a href="https://ja.wikipedia.org/wiki/マウスキー">マウスキー</a>に対応</li>
-</ul>
 
-<h3 id="section-1">価格</h3>
-
-<ul>
-  <li>本体、Tilt/Tentキット、リストレスト $295</li>
-  <li>本体のみ(キースイッチあり、キーキャップなし) $205</li>
-  <li>本体のみ(無刻印キートップ) $240</li>
-  <li>本体のみ(刻印キートップ) $240</li>
-  <li>本体のみ(キースイッチあり、キーキャップなし)、Tilt/Tent Kit、リストレスト $260</li>
-  <li>Tilt/Tentキット、リストレスト $85</li>
-  <li>Tilt/Tentキット $45</li>
-  <li>リストレスト $45</li>
-</ul>
-
-<p>バラで買うと$240 + $45 + $45の$330なので、全部入りを買うのが良いかと。
-あとでキーキャップを変えるにしても揃えるのが大変そうなので。</p>
-
-<p>全部入りの場合、120円/ドル換算で約35,000円程度です。HHKBpro2とかREALFORCEが2万円強なので、それより1.5倍くらいお高めです。が、Kinesisが定価45,000を超えることを考えるとなかなか良いポジションではないかと思います。(一般的なキーボードからしたら十分すぎるほど高価ですけど…)</p>
-
-<h3 id="section-2">キーキャップ</h3>
-
-<ul>
-  <li>PBT樹脂DCS キーキャップ
-    <ul>
-      <li>刻印ありの場合はDSA(DCSよりもフラットな並び)</li>
-    </ul>
-  </li>
-  <li>PBTは樹脂の種類で、ABSに比べて耐久性に優れている
-    <ul>
-      <li>HHKBpro2のキーキャップはPBTでケースはABS<a href="https://www.pfu.fujitsu.com/hhkeyboard/notice.html">とのこと</a></li>
-    </ul>
-  </li>
-  <li>DCSはキーキャップ形状の一種
-    <ul>
-      <li><a href="http://www.keycapsdirect.com/pdfs/DCSFamily.pdf">DCS FAMILY(PDF)</a></li>
-    </ul>
-  </li>
-</ul>
-
-<p>おそらく<a href="http://www.gateron.com/page153?product_id=57">Gateron製</a>ではないかと思います(キースイッチがgateron製なので)</p>
-
-<h3 id="section-3">キースイッチ（軸）</h3>
-
-<ul>
-  <li>Gateron製キースイッチ
-    <ul>
-      <li><a href="http://www.gateron.com/page152?product_category=1&amp;brd=1">机械键盘轴开关，国产cherry轴开关，gateron轴青轴红轴茶轴黑轴gateron官网官方网站</a></li>
-      <li>Cherryスイッチクローン(中国製?)</li>
-      <li>Cherryに比べて滑らか</li>
-    </ul>
-  </li>
-</ul>
-
-<p>ErgoDox EZでは6つのスイッチから選べます。
-このスイッチについてさんざん調べまわった結果、僕は”Gateron White”を選択しました。</p>
-
-<p>ちなみに、注文した後のメールに各スイッチの仕様書(PDF)が添付されていますので、そちらも見つつ選ぶと良いです。
-(すべての注文処理が終わった後にこの添付ファイルに気づきました…)</p>
-
-<ul>
-  <li>Gateron White(リニア・35g)</li>
-  <li>Gateron Red(リニア・45g =<a href="https://deskthority.net/wiki/Cherry_MX_Red">Cherry MX赤軸</a>)</li>
-  <li>Gateron Black(リニア・50g, =<a href="https://deskthority.net/wiki/Cherry_MX_Black">Cherry MX黒軸</a>)</li>
-  <li>Gateron Yellow(リニア・50g)</li>
-  <li>Gateron Brown(タクタイル・45g =<a href="https://deskthority.net/wiki/Cherry_MX_Brown">Cherry MX茶軸</a>)</li>
-  <li>Gateron Blue(タクタイル・55g =<a href="https://deskthority.net/wiki/Cherry_MX_Blue">Cherry MX青軸</a>)</li>
-</ul>
-
-<p>PDFに表記されていた図を雑に並べてみました。</p>
-
-<p><a href="https://gyazo.com/c6e7e025230e6c79b0727c506b93fff4"><img src="https://i.gyazo.com/c6e7e025230e6c79b0727c506b93fff4.png" alt="https://gyazo.com/c6e7e025230e6c79b0727c506b93fff4" /></a></p>
-
-<p>参考までに、他のキースイッチの数値はこんな感じ。</p>
-
-<ul>
-  <li>HHKB Pro2 荷重45g 4mmストローク</li>
-  <li>REALFORCE 荷重30~45g(変荷重と固定の3種)  4mmストローク</li>
-</ul>
-
-<p>自分の場合、クリック感があるタクタイルより、リニアが好き（FILCO時代は黒軸でした)なので、白、赤、黄、黒あたりが選択肢となります。
-HHKB pro2が荷重45gなので、赤軸がいちばん近いです。REALFORCEなら白軸35gが近いでしょうか。</p>
-
-<p>Youtubeにもいろいろがあがっていましたので、こちらも参考に。</p>
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/gy2C1Of0oQk" frameborder="0" allowfullscreen=""></iframe>
-
-<iframe width="560" height="315" src="https://www.youtube.com/embed/A2Px2f6A5dM" frameborder="0" allowfullscreen=""></iframe>
-
-<p>とまぁそんな感じの製品です。到着までまだまだ待たないといけないのがつらいです。。。
-いまのところ注文してから到着まで1ヶ月とのことなので、はやめに注文したほうが良いかと思います。
-購入してみようかな？と思った方はこちらからどうぞ:-)</p>
-
-<iframe src="https://www.indiegogo.com/project/ergodox-ez-an-incredible-mechanical-keyboard/embedded" width="222px" height="445px" frameborder="0" scrolling="no"></iframe>
-
-<p>ちなみに、<a href="http://www.jw-shop.com/menu-row/keyboard.htm">キーボード カスタム制作</a>というサービスもあるみたいです。</p>
-
-<h2 id="section-4">参考にしたところ</h2>
-
-<ul>
-  <li><a href="http://nippondanji.blogspot.jp/2016/01/ergodox.html">漢(オトコ)のコンピュータ道: キーボードを新しくした話(ErgoDox)</a></li>
-  <li><a href="http://kammers.aa0.netvolante.jp/20150928201048/">ergodoxを買いました | kammers</a></li>
-  <li><a href="https://deskthority.net/wiki/ErgoDox">ErgoDox - Deskthority wiki</a></li>
-  <li><a href="https://www.massdrop.com/buy/gateron-switches">Gateron Switches Drop - Massdrop</a></li>
-  <li><a href="https://deskthority.net/wiki/Gateron_KS-3_series">Gateron KS-3 series - Deskthority wiki</a></li>
-  <li><a href="http://g-chan.dip.jp/square/archives/2016/02/nisse_nisse.html">G-chan Square - [キーボード][NISSE] エスリルのキーボード”NISSE” 3台目を購入しました</a></li>
-</ul>
-
+    <p>Copyright ©2016 - ReSTARTR. All rights reserved.</p>
+  </div>
 </div>
+
+
+    <div class="content container">
+<div class="posts">
+
   
+  <div class="post">
+    <h1 class="post-title">
+      <a href="http://blog.restartr.com/2016/03/13/from-octopress-to-hugo">
+        OctopressからHugoに移行
+      </a>
+    </h1>
+
+    <span class="post-date">2016-03-13(Sun) - [雑記]</span>
+
+    <blockquote>Octopressを使い始めて約2年。Hugoに乗り換えました。</blockquote>
+    <a href="http://blog.restartr.com/2016/03/13/from-octopress-to-hugo">read more</a>
+  </div>
   
+  <div class="post">
+    <h1 class="post-title">
+      <a href="http://blog.restartr.com/2016/02/27/ec2-ls-hosts">
+        ec2-ls-hosts: EC2インスタンスを一覧するだけのシンプルツール
+      </a>
+    </h1>
 
+    <span class="post-date">2016-02-27(Sat) - [golang]</span>
 
+    <blockquote>EC2インスタンスの一覧を表示するツールをgolangでつくりました。</blockquote>
+    <a href="http://blog.restartr.com/2016/02/27/ec2-ls-hosts">read more</a>
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
+      <a href="http://blog.restartr.com/2016/02/17/ergodox-ez">
+        ErgoDox EZを注文した(けどまだ届いてない)
+      </a>
+    </h1>
 
+    <span class="post-date">2016-02-17(Wed) - [gadget]</span>
 
-    </article>
+    <blockquote>大きなプロジェクトが一区切りついたこともあって、勢いでErgoDox EZを買いました。</blockquote>
+    <a href="http://blog.restartr.com/2016/02/17/ergodox-ez">read more</a>
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
+      <a href="http://blog.restartr.com/2015/12/31/things-of-2015">
+        2015年ふりかえり
+      </a>
+    </h1>
+
+    <span class="post-date">2015-12-31(Thu) - [書籍]</span>
+
+    <blockquote>2015年も終わりが近づいているということでご報告もかねてふりかえりを…</blockquote>
+    <a href="http://blog.restartr.com/2015/12/31/things-of-2015">read more</a>
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
+      <a href="http://blog.restartr.com/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix">
+        Elixir/PhoenixでISUCON5予選の参考実装を書いた
+      </a>
+    </h1>
+
+    <span class="post-date">2015-10-21(Wed) - [Elixir]</span>
+
+    <blockquote>ISUCON5予選の参考実装を、Elixir/Phoenixで実装してみました。</blockquote>
+    <a href="http://blog.restartr.com/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix">read more</a>
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
+      <a href="http://blog.restartr.com/2015/10/15/go-programming-blueprints">
+        &#34;Go Programming Blueprints&#34;を読んだ
+      </a>
+    </h1>
+
+    <span class="post-date">2015-10-15(Thu) - [golang]</span>
+
+    <blockquote>最近Kindleで購入したので、でひととおり読んで写経してみました。</blockquote>
+    <a href="http://blog.restartr.com/2015/10/15/go-programming-blueprints">read more</a>
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
+      <a href="http://blog.restartr.com/2015/03/09/consul-cluster-with-docker">
+        DockerとWeaveを使って1台のマシンでConsulを複数動かしてみる
+      </a>
+    </h1>
+
+    <span class="post-date">2015-03-09(Mon) - docker</span>
+
+    <blockquote>軽くConsulを試してみたくて、でもVagrantで複数台仮想マシンを立ち上げるのはちょっと気が重い…ということでUbuntu14.10 on MacBookAirにDockerコンテナを複数立ち上げてクラスタを構築してみるテストをしました。</blockquote>
+    <a href="http://blog.restartr.com/2015/03/09/consul-cluster-with-docker">read more</a>
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
+      <a href="http://blog.restartr.com/2015/01/18/peek-for-profiling-rails-app">
+        Peek - Railsアプリのプロファイリングツール
+      </a>
+    </h1>
+
+    <span class="post-date">2015-01-18(Sun) - ruby</span>
+
+    <blockquote>Peekという、Railsアプリケーションに組み込めるプロファイリングツール（群）があります。</blockquote>
+    <a href="http://blog.restartr.com/2015/01/18/peek-for-profiling-rails-app">read more</a>
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
+      <a href="http://blog.restartr.com/2014/12/31/books-2014">
+        2014年に購入した技術書
+      </a>
+    </h1>
+
+    <span class="post-date">2014-12-31(Wed) - 書籍</span>
+
+    <blockquote>投稿数を稼ぐべく、とりあえず今年購入した（であろう）本をリストアップしつつ、今年の振り返りでも。</blockquote>
+    <a href="http://blog.restartr.com/2014/12/31/books-2014">read more</a>
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
+      <a href="http://blog.restartr.com/2014/08/20/microservices-architecture">
+        InfoQ eMAG: Microservicesを少し読んだまとめと感想
+      </a>
+    </h1>
+
+    <span class="post-date">2014-08-20(Wed) - architecture</span>
+
+    <blockquote>なんだか、世間的にMicroservicesが次の注目対象になりそうな感じです。DockerConでも複数のセッションで言及があったり、はてブにもたまに関連記事があがってきたりしてます。実態はどんなものかイメージしにくかったのですが、最近InfoQで公開されたeMAGが情報としてまとまっている気がしたので、これを読み進めています。</blockquote>
+    <a href="http://blog.restartr.com/2014/08/20/microservices-architecture">read more</a>
+  </div>
   
   <div class="pagination">
     
-      <a class="prev" href="/page/2/">&larr; Older</a>
-    
-    <a href="/blog/archives/"> Archives </a>
-    
-  </div>
-</div>
-<aside class="sidebar">
-  
-    <section id="titles">
-  <a href="http://blog.restartr.com" title="I Will Survive"><img id="logo" src="http://blog.restartr.com/images/portrait.jpg" /></a>
-  <h1 id="site_title"><a href="http://blog.restartr.com" title="I Will Survive">I Will Survive</a></h1>
-  <h3 id="site_subtitle">An application depelopper&#8217;s blog.</h3>
-</section>
-
-<section id="menu">
-  <ul>
-    <li><i class="fa fa-home fa-lg"></i><a href="http://blog.restartr.com"> Home </a></li>
-    <li><i class="fa fa-calendar fa-lg"></i><a href="http://blog.restartr.com/blog/archives/"> Archives </a></li>
-    <li><i class="fa fa-user fa-lg"></i><a href="http://blog.restartr.com/about/"> About </a></li>
-    <li><i class="fa fa-rss fa-lg"></i><a href="http://blog.restartr.com/atom.xml"> Feed </a></li>
-  </ul>
-</section>
-
-<section id="social">
-  
-
-  
-
-  
-    <a href="" title="g+#103216164658230535238"><i class="fa fa-google-plus fa-2x"></i></a>
-  
-
-  
-    <a href="https://github.com/ReSTARTR" title="ReSTARTR"><i class="fa fa-github fa-2x"></i></a>
-  
-
-  
-
-  
-    <a href="https://twitter.com/ReSTARTR" title="ReSTARTR"><i class="fa fa-twitter fa-2x"></i></a>
-  
-
-  
-</section>
-
-
-<section>
-  <h1>Recent Posts</h1>
-  <ul id="recent_posts">
-    
-      <li class="post">
-        <a href="/2016/02/27/ec2-ls-hosts/">ec2-ls-hosts: EC2インスタンスを一覧するだけのシンプルツール</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2016/02/17/ergodox-ez/">ErgoDox EZを注文した(けどまだ届いてない)</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/12/31/things-of-2015/">2015年ふりかえり</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix/">Elixir/PhoenixでISUCON5予選の参考実装を書いた</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/10/15/go-programming-blueprints/">&#8220;Go Programming Blueprints&#8221;を読んだ</a>
-      </li>
-    
-  </ul>
-</section>
-<section>
-  <h1>Categories</h1>
-  <ul id="categories">
-    <li><a href='/category/architecture/'>architecture</a></li><li><a href='/category/docker/'>docker</a></li><li><a href='/category/elixir/'>Elixir</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/go/'>go</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/ruby/'>ruby</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
-  </ul>
-</section>
-<section>
-  <h1>GitHub Repos</h1>
-  <ul id="gh_repos">
-    <li class="loading">Status updating&#8230;</li>
-  </ul>
-  
-  <a href="https://github.com/ReSTARTR">@ReSTARTR</a> on GitHub
-  
-  <script type="text/javascript">
-    $.domReady(function(){
-        if (!window.jXHR){
-            var jxhr = document.createElement('script');
-            jxhr.type = 'text/javascript';
-            jxhr.src = '/javascripts/libs/jXHR.js';
-            var s = document.getElementsByTagName('script')[0];
-            s.parentNode.insertBefore(jxhr, s);
-        }
-
-        github.showRepos({
-            user: 'ReSTARTR',
-            count: 4,
-            skip_forks: true,
-            target: '#gh_repos'
-        });
-    });
-  </script>
-  <script src="/javascripts/github.js" type="text/javascript"> </script>
-</section>
-
-
-
-<section class="googleplus">
-  <h1>
-    <a href="https://plus.google.com/103216164658230535238?rel=author">
-      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
-      Google+
-    </a>
-  </h1>
-</section>
-
-
-
-  
-</aside>
-
+    <ul class="pagination">
+        
+        <li>
+            <a href="http://blog.restartr.com/" aria-label="First"><span aria-hidden="true">&laquo;&laquo;</span></a>
+        </li>
+        
+        <li
+        class="disabled">
+        <a href="" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+        </li>
+        
+        <li
+        class="active"><a href="http://blog.restartr.com/">1</a></li>
+        
+        <li
+        ><a href="http://blog.restartr.com/page/2/">2</a></li>
+        
+        <li
+        ><a href="http://blog.restartr.com/page/3/">3</a></li>
+        
+        <li
+        ><a href="http://blog.restartr.com/page/4/">4</a></li>
+        
+        <li
+        ><a href="http://blog.restartr.com/page/5/">5</a></li>
+        
+        <li
+        ><a href="http://blog.restartr.com/page/6/">6</a></li>
+        
+        <li
+        ><a href="http://blog.restartr.com/page/7/">7</a></li>
+        
+        <li
+        ><a href="http://blog.restartr.com/page/8/">8</a></li>
+        
+        <li
+        >
+        <a href="http://blog.restartr.com/page/2/" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+        </li>
+        
+        <li>
+            <a href="http://blog.restartr.com/page/8/" aria-label="Last"><span aria-hidden="true">&raquo;&raquo;</span></a>
+        </li>
+        
+    </ul>
     </div>
-  </div>
-  <footer role="contentinfo"><p>
-  Copyright &copy; 2016 - ReSTARTR -
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
-</p>
+</div>
+</div>
 
-</footer>
-  
-
-
-
-
-
-
-
-  <script type="text/javascript">
-    (function(){
-      var twitterWidgets = document.createElement('script');
-      twitterWidgets.type = 'text/javascript';
-      twitterWidgets.async = true;
-      twitterWidgets.src = '//platform.twitter.com/widgets.js';
-      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
-    })();
-  </script>
-
-
-
-
-
-</body>
+  </body>
 </html>

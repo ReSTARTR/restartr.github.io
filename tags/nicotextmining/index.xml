@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Nicotextmining on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/nicotextmining/</link>
+    <description>Recent content in Nicotextmining on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 20 Feb 2011 09:30:52 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/nicotextmining/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>第一回 にこにこテキストマイニングに参加してきた #nicoTextMining</title>
+      <link>http://blog.restartr.com/2011/02/20/attended-nicotextmining-1st</link>
+      <pubDate>Sun, 20 Feb 2011 09:30:52 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2011/02/20/attended-nicotextmining-1st</guid>
+      <description>
+
+&lt;p&gt;第一回 にこにこテキストマイニングに参加してきました。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://atnd.org/events/12264&#34;&gt;第1回 にこにこテキストマイニング勉強会&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;主催は@NLP_PRMさんと@toilet_luhchさん。会場はオラクル青山センターさん。
+懇親会と二次会にも参加させていただき、皆様の豊富な知識に圧倒されて参りました。精進しようと思います。いろいろな話しをありがとうございました。&lt;/p&gt;
+
+&lt;p&gt;当日の内容はTogetterにまとめられています。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://togetter.com/li/102922&#34;&gt;Togetter - 「第１回 にこにこテキストマイニング勉強会 #nicoTextMining #1&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;以下、勉強会の資料と私的メモです。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;more&#34;&gt;&lt;/a&gt;&lt;a id=&#34;more-667&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;antibayesian-http-twitter-com-antibayesian-テキストマイニングの歩き方:46ce7914bf680f923bef9f791c574602&#34;&gt;&lt;a href=&#34;http://twitter.com/#!/AntiBayesian&#34;&gt;@AntiBayesian&lt;/a&gt; : 「テキストマイニングの歩き方」&lt;/h3&gt;
+
+&lt;p&gt;発表資料：&lt;a href=&#34;http://www24.atpages.jp/antibayesian/up/src/up0006.pdf&#34;&gt;テキストマイニングの歩き方&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;「技術云々ではなく、どのようにテキストマイニングを活かすか」、という今回の勉強会の趣旨に沿った発表内容。ナレッジの自動蓄積のために、Wikiとかを使うのではなく日報メールを解析するというのは面白いですね。情報共有ツールの導入ってほとんどが失敗に終わる気がします。それよりは慣れたフォーマットを活かす方向に考えてみる、と。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;アンケート
+
+&lt;ul&gt;
+&lt;li&gt;封書解答で20%の回答率&lt;/li&gt;
+&lt;li&gt;個人情報を求めると10%の回答率&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;言語処理における様々な解析
+
+&lt;ul&gt;
+&lt;li&gt;押さえるべきところ&lt;/li&gt;
+&lt;li&gt;形態素解析&lt;/li&gt;
+&lt;li&gt;構文解析&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;toilet-lunch-http-twitter-com-toilet-lunch-ゆるふわテキストマイニングをしてみよう:46ce7914bf680f923bef9f791c574602&#34;&gt;&lt;a href=&#34;http://twitter.com/#!/toilet_lunch&#34;&gt;@toilet_lunch&lt;/a&gt; : 「ゆるふわテキストマイニングをしてみよう」&lt;/h3&gt;
+
+&lt;p&gt;発表資料：
+&lt;a href=&#34;http://toilet-lunch.sakura.ne.jp/nicoTextMining01.pdf&#34;&gt;ゆるふわテキストマイニングをしてみよう&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;「ゆるふわ」というよりはけっこうガチな内容。私はNLPを少しかじったことがあったので、なんとかひと通りの用語は理解できました。現在の自然言語処理では何ができて、何が問題になるのか、というのがよくわかりました。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;評判分析ツール
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://toilet-lunch.shisobu.in/search.cgi&#34;&gt;http://toilet-lunch.shisobu.in/search.cgi&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;一日でつくった&lt;/li&gt;
+&lt;li&gt;評価表現（ポジティブ、ネガティブの二種）&lt;/li&gt;
+&lt;li&gt;形態素解析
+
+&lt;ul&gt;
+&lt;li&gt;辞書とマッチさせる&lt;/li&gt;
+&lt;li&gt;活用語幹を用いる&lt;/li&gt;
+&lt;li&gt;単語感情極性対応表&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;精度問題
+
+&lt;ul&gt;
+&lt;li&gt;ジャンルごとにネガポジが反転する場合も（「薄い」とか）&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;クリーニング&lt;/li&gt;
+&lt;li&gt;言語の困難さ
+
+&lt;ul&gt;
+&lt;li&gt;否定表現
+
+&lt;ul&gt;
+&lt;li&gt;「わからない訳でもなくない？」&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;未知語
+
+&lt;ul&gt;
+&lt;li&gt;ヤバい、素で&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;助詞の省略&lt;/li&gt;
+&lt;li&gt;複合表現&lt;/li&gt;
+&lt;li&gt;表記ゆれ&lt;/li&gt;
+&lt;li&gt;複数評価の混在
+
+&lt;ul&gt;
+&lt;li&gt;一文に含まれる結論が読みにくい&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;「テキストマイニング」の定義があいまい
+
+&lt;ul&gt;
+&lt;li&gt;目的によって手法が異なる
+
+&lt;ul&gt;
+&lt;li&gt;目的を決め手手法を選ぶこと。&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;QA
+
+&lt;ul&gt;
+&lt;li&gt;名詞より形容詞のほうが未知語になりにくい&lt;/li&gt;
+&lt;li&gt;皮肉とか大変。&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;langstat-http-twitter-com-langstat-コピー-ペーストのみで始めるテキストマイニング超入門:46ce7914bf680f923bef9f791c574602&#34;&gt;&lt;a href=&#34;http://twitter.com/#!/langstat&#34;&gt;@langstat&lt;/a&gt; ： 「コピー＆ペーストのみで始めるテキストマイニング超入門」&lt;/h3&gt;
+
+&lt;p&gt;&lt;div style=&#34;width:425px&#34; id=&#34;__ss_6973454&#34;&gt;&lt;strong style=&#34;display:block;margin:12px 0 4px&#34;&gt;&lt;a href=&#34;http://www.slideshare.net/langstat/nicoteki1&#34; title=&#34;Nicoteki_1&#34;&gt;Nicoteki_1&lt;/a&gt;&lt;/strong&gt;&lt;object id=&#34;__sse6973454&#34; width=&#34;425&#34; height=&#34;355&#34;&gt;&lt;param name=&#34;movie&#34; value=&#34;http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=nicoteki1-110218081836-phpapp02&amp;stripped_title=nicoteki1&amp;userName=langstat&#34; /&gt;&lt;param name=&#34;allowFullScreen&#34; value=&#34;true&#34;/&gt;&lt;param name=&#34;allowScriptAccess&#34; value=&#34;always&#34;/&gt;&lt;embed name=&#34;__sse6973454&#34; src=&#34;http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=nicoteki1-110218081836-phpapp02&amp;stripped_title=nicoteki1&amp;userName=langstat&#34; type=&#34;application/x-shockwave-flash&#34; allowscriptaccess=&#34;always&#34; allowfullscreen=&#34;true&#34; width=&#34;425&#34; height=&#34;355&#34;&gt;&lt;/embed&gt;&lt;/object&gt;
+&lt;div style=&#34;padding:5px 0 12px&#34;&gt;View more &lt;a href=&#34;http://www.slideshare.net/&#34;&gt;presentations&lt;/a&gt; from &lt;a href=&#34;http://www.slideshare.net/langstat&#34;&gt;Yuichiro Kobayashi&lt;/a&gt;.&lt;/div&gt;
+&lt;/div&gt;
+自然言語処理における一連の解析を、無料のWebサービスを使ってコピペでやってみよう、というもの。
+これらのツールがひと通り用意されていることに驚き。ただし、すべて統合したものはないようなので、ぜひ欲しいなと思います。（※APIとかあれば良いのですが…)&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;無料の解析用テキスト
+
+&lt;ul&gt;
+&lt;li&gt;青空文庫&lt;/li&gt;
+&lt;li&gt;首相のスピーチテキストとかパブリックドメインのもの&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;用例検索&lt;/li&gt;
+&lt;li&gt;日本語形態素解析
+
+&lt;ul&gt;
+&lt;li&gt;形態素解析
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://cgi.geocities.jp/ydevnet/sample/jlp/sample2/ma_sample.php&#34;&gt;日本語形態素解析&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.langrid.org/playground/morphological-analyzer.html&#34;&gt;Morphological Analyzer - Language Grid Playground&lt;/a&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Mecab/ChaSenとかで試せる&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;構文解析
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.langrid.org/playground/dependency-parser.html&#34;&gt;Dependency Parser - Language Grid Playground&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;構文解析器
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://chasen.org/~taku/software/cabocha/&#34;&gt;CaboCha&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www-lab25.kuee.kyoto-u.ac.jp/nl-resource/knp.html&#34;&gt;KNP&lt;/a&gt;：格文法
+
+&lt;ul&gt;
+&lt;li&gt;どちらがよいかは好みの問題&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://hp.vector.co.jp/authors/VA035840/vba/vbafreq.htm&#34;&gt;日本語文章の頻度分析&lt;/a&gt;
+
+&lt;ul&gt;
+&lt;li&gt;VBAツール&lt;/li&gt;
+&lt;li&gt;Webサービスではない。&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://aoki2.si.gunma-u.ac.jp/calculator/&#34;&gt;多機能 WEB 計算機&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;gepuro-http-twitter-com-gepuro-初めてのnltk:46ce7914bf680f923bef9f791c574602&#34;&gt;&lt;a href=&#34;http://twitter.com/#!/gepuro&#34;&gt;@gepuro&lt;/a&gt; ： 「初めてのnltk」&lt;/h3&gt;
+
+&lt;p&gt;&lt;div style=&#34;width:425px&#34; id=&#34;__ss_6979340&#34;&gt;&lt;strong style=&#34;display:block;margin:12px 0 4px&#34;&gt;&lt;a href=&#34;http://www.slideshare.net/gepuro/nltk-for-biginer-6979340&#34; title=&#34;Nltk for biginer&#34;&gt;Nltk for biginer&lt;/a&gt;&lt;/strong&gt;&lt;object id=&#34;__sse6979340&#34; width=&#34;425&#34; height=&#34;355&#34;&gt;&lt;param name=&#34;movie&#34; value=&#34;http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=nltkforbiginer-110218204954-phpapp01&amp;stripped_title=nltk-for-biginer-6979340&amp;userName=gepuro&#34; /&gt;&lt;param name=&#34;allowFullScreen&#34; value=&#34;true&#34;/&gt;&lt;param name=&#34;allowScriptAccess&#34; value=&#34;always&#34;/&gt;&lt;embed name=&#34;__sse6979340&#34; src=&#34;http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=nltkforbiginer-110218204954-phpapp01&amp;stripped_title=nltk-for-biginer-6979340&amp;userName=gepuro&#34; type=&#34;application/x-shockwave-flash&#34; allowscriptaccess=&#34;always&#34; allowfullscreen=&#34;true&#34; width=&#34;425&#34; height=&#34;355&#34;&gt;&lt;/embed&gt;&lt;/object&gt;
+&lt;div style=&#34;padding:5px 0 12px&#34;&gt;View more &lt;a href=&#34;http://www.slideshare.net/&#34;&gt;presentations&lt;/a&gt; from &lt;a href=&#34;http://www.slideshare.net/gepuro&#34;&gt;gepuro&lt;/a&gt;.&lt;/div&gt;
+&lt;/div&gt;
+学部二年生の発表。
+nltkとpython-twitterをつかったテキストマイニング。つまづきにもめげず、テキストマイニングをしてみたようです。Tweetもしたんですけど、挫折も含めて発表するのは、これからはじめてみたい方にとって有益な情報だと思いました。同じつまづきをしないためにも。&lt;/p&gt;
+
+&lt;h3 id=&#34;bob3bob3-http-twitter-com-bob3bob3-アンケート自由回答のテキストマイニング事例:46ce7914bf680f923bef9f791c574602&#34;&gt;&lt;a href=&#34;http://twitter.com/#!/bob3bob3&#34;&gt;@bob3bob3&lt;/a&gt; ： 「アンケート自由回答のテキストマイニング事例」&lt;/h3&gt;
+
+&lt;p&gt;発表資料：
+  * &lt;a href=&#34;http://www.ikic.co.jp/service/pdf/marketing_6.pdf&#34;&gt;「楽しい食事」ってどんな食事？
+? Text Mining Studio を用いた自由回答の分析事例 ?&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;テキストマイニングをどう活用して何を達成するのか、というとても具体的な活用事例でした。私の場合、仕事がWebサービスなのでそっちに興味が偏りがちですが、こういう実生活における分析にも興味を頂きました。アンケートという自由回答形式だからこそ得られるものもあるんですね。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;商用テキストマイニングツール
+
+&lt;ul&gt;
+&lt;li&gt;一番安いワードマイナーでも３０万する。&lt;/li&gt;
+&lt;li&gt;野村総研のツールが６割のシェア。&lt;/li&gt;
+&lt;li&gt;単語出現頻度分析
+
+&lt;ul&gt;
+&lt;li&gt;表記の違いは辞書つくる
+
+&lt;ul&gt;
+&lt;li&gt;ゴールデンウィークとGWなど&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;名詞、形容詞、動詞に絞る&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;特徴語分析
+
+&lt;ul&gt;
+&lt;li&gt;補完類似度&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;コレスポンデンス分析&lt;/li&gt;
+&lt;li&gt;QA1
+
+&lt;ul&gt;
+&lt;li&gt;コレスポンデンス分析のグルーピングが困難な場合はグルーピングしない&lt;/li&gt;
+&lt;li&gt;今回はうまくいった&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;QA2
+
+&lt;ul&gt;
+&lt;li&gt;あとで「状況」をグループ化しにくい
+
+&lt;ul&gt;
+&lt;li&gt;アンケートなら質問を工夫する「〜な時はどうですか？」&lt;/li&gt;
+&lt;li&gt;ブログとかあとから集めて分析する場合は難しい。&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;QA3
+
+&lt;ul&gt;
+&lt;li&gt;女性より男性のほうがアンケートに含まれる単語数が多い傾向
+
+&lt;ul&gt;
+&lt;li&gt;グラフで見ると女性のほうが全体的に上回る（単語出現頻度の分析において）&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;QA4
+
+&lt;ul&gt;
+&lt;li&gt;ツールのよしあし
+
+&lt;ul&gt;
+&lt;li&gt;TRUE TELLERは完成されているが、機能は限定されている。&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;関連エントリ:46ce7914bf680f923bef9f791c574602&#34;&gt;関連エントリ&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://d.hatena.ne.jp/hamadakoichi/20110219/p1&#34;&gt;第１回 にこにこテキストマイニング勉強会 ( #nicoTextMining #1) に参加してきた - hamadakoichi blog&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://d.hatena.ne.jp/nokuno/20110220/1298102734&#34;&gt;第1回にこにこテキストマイニング勉強会に参加しました #nicotextmining - nokunoの日記&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://d.hatena.ne.jp/yokkuns/20110219/1298102645&#34;&gt;第1回 にこにこテキストマイニング勉強会（#nicoTextMining）に参加してきた - yokkunsの日記&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://d.hatena.ne.jp/langstat/20110219/p1&#34;&gt;にこテキ #1 - コーパスいぢり ?langstatの研究日誌?&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;みなさん日記を書くの早すぎです…勉強会が終わった、と思ったらもうエントリされていましたｗ
+そのスピード感、見習いたいです。&lt;/p&gt;
+
+&lt;h3 id=&#34;余談:46ce7914bf680f923bef9f791c574602&#34;&gt;余談&lt;/h3&gt;
+
+&lt;p&gt;今回からTwitter名刺を用意していきました。Twitterアイコンがプリントされているので、初めてお会いする方もアイコンは見たことあると言って頂けたのが良かったです。勉強会には、会社の名詞よりTwitter名刺が重要ですね。&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

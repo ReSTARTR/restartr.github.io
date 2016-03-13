@@ -1,183 +1,85 @@
-
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+	<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <meta charset="utf-8">
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.15" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
   <title>Varnish勉強会 #tokyovcl に行ってきた - I Will Survive</title>
-  <meta name="author" content="ReSTARTR">
-  <link rel="author" href="https://plus.google.com/103216164658230535238" />
-  <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="Varnish勉強会 #tokyovcl に行ってきた .sharing { clear: both; } .sharing li{ display: inline; list-style-type: none; float: left; height: 1em; line-height: &hellip;">
-  
-
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/poole.css">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/syntax.css">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/hyde.css">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/custom.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
 
   
-  <link rel="canonical" href="http://blog.restartr.com/2011/06/21/go-to-varnish-study-tokyovc/">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-   <link href="/stylesheets/data-table.css" media="screen, projection" rel="stylesheet" type="text/css" />
-  <script src="/javascripts/modernizr-2.0.js"></script>
-  <script src="/javascripts/ender.js"></script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  <link href="/atom.xml" rel="alternate" title="I Will Survive" type="application/atom+xml">
-  <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
-
-<!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
-<link href='http://fonts.googleapis.com/css?family=Lato:400,100,100italic,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
-<link href='http://fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
-<link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:200,300,400,500,600,700,900' rel='stylesheet' type='text/css'>
-
-
-	<!-- mathjax config similar to math.stackexchange -->
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    tex2jax: {
-      inlineMath: [ ['$$','$$'], ["\\(","\\)"] ],
-      processEscapes: true
-    }
-  });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      tex2jax: {
-        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-      }
-    });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax(), i;
-        for(i=0; i < all.length; i += 1) {
-            all[i].SourceElement().parentNode.className += ' has-jax';
-        }
-    });
-</script>
-
-<script type="text/javascript"
-   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
-
-
-
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://blog.restartr.com/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="http://blog.restartr.com/favicon.png">
 
   
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-894530-10']);
-    _gaq.push(['_trackPageview']);
-
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
-
-
-  <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
-  <style>html{background: url("/images/background.png") no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;}</style>
+  <link href="" rel="alternate" type="application/rss+xml" title="I Will Survive" />
 </head>
 
-<body   >
-  <header role="banner"><hgroup>
-</hgroup>
+	<body class="theme-base-0d">
+		<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="http://blog.restartr.com"><h1>I Will Survive</h1></a>
+      <p class="lead">
+       An application depelopper&#39;s blog. 
+      </p>
+    </div>
 
-</header>
-  <!-- <nav role="navigation"><ul class="subscription" data-subscription="rss">
-  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-  
-</ul>
-  
-<form action="https://www.google.com/search" method="get">
-  <fieldset role="search">
-    <input type="hidden" name="q" value="site:blog.restartr.com" />
-    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
-  </fieldset>
-</form>
-  
-<ul class="main-navigation">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives">Archives</a></li>
-</ul>
-
-</nav> -->
-  <div id="main">
-    <div id="content">
-      <div>
-<article class="hentry" role="article">
-  
-  <header>
-    
-      <h1 class="entry-title">Varnish勉強会 #tokyovcl に行ってきた</h1>
+    <ul class="sidebar-nav">
+      <li><a href="http://blog.restartr.com/">Home</a> </li>
       
-      <style type="text/css">
-  .sharing {
-     clear: both;
-  }
-  .sharing li{
-    display: inline;
-    list-style-type: none;
-    float: left;
-    height: 1em;
-    line-height: 1em;
-    padding: 0 10px 0 0 ;
-    margin: 10px 0;
-  }
-  .sharing ul {
-    margin: 1em 0;
-    padding: 1em 0;
-  }
-</style>
-<div class="sharing">
+        <li><a href="http://blog.restartr.com/about/"> About </a></li>
+      
+        <li><a href="http://blog.restartr.com/index.xml"> Feed </a></li>
+      
+        <li><a href="https://github.com/ReSTARTR"> GitHub </a></li>
+      
+        <li><a href="https://twitter.com/ReSTARTR"> Twitter </a></li>
+      
+    </ul>
+
+    <p>Copyright ©2016 - ReSTARTR. All rights reserved.</p>
+  </div>
+</div>
+
+
+		<div class="content container">
+			<div class="post">
+			 	<h1>Varnish勉強会 #tokyovcl に行ってきた</h1>
+        <span class="post-date">2011-06-21(Tue) - [雑記]</span>
+			  <div class="sharing">
   <ul>
-  <li><a href="http://blog.restartr.com/2011/06/21/go-to-varnish-study-tokyovc/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
-  
-  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2011/06/21/go-to-varnish-study-tokyovc/" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2011/06/21/go-to-varnish-study-tokyovc/" >Tweet</a></li>
-  
+  <li><a href="http://blog.restartr.com/2011/06/21/go-to-varnish-study-tokyovc" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2011/06/21/go-to-varnish-study-tokyovc" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2011/06/21/go-to-varnish-study-tokyovc" >Tweet</a></li>
   <li><a data-pocket-label="pocket" data-pocket-count="horizontal" class="pocket-btn" data-lang="en"></a><script type="text/javascript">!function(d,i){if(!d.getElementById(i)){var j=d.createElement("script");j.id=i;j.src="https://widgets.getpocket.com/v1/j/btn.js?v=1";var w=d.getElementById(i);d.body.appendChild(j);}}(document,"pocket-btn-js");</script></li>
-  
-  
   </ul>
 </div>
-<p />
+<script type="text/javascript">
+  (function(){
+    var twitterWidgets = document.createElement('script');
+    twitterWidgets.type = 'text/javascript';
+    twitterWidgets.async = true;
+    twitterWidgets.src = '//platform.twitter.com/widgets.js';
+    document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+  })();
+</script>
+<hr />
 
-      
-    
-    
-      <p class="meta">
-        
+			      
 
+<p><a href="http://www.flickr.com/photos/53244662@N04/5856931526/" title="IMAG0053 by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5029/5856931526_1119c53a87.jpg" width="500" height="299" alt="IMAG0053"></a></p>
 
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-06-21T23:56:40+09:00" pubdate data-updated="true">2011-06-21 (Tue)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><a href="http://www.flickr.com/photos/53244662@N04/5856931526/" title="IMAG0053 by ReSTARTR_y, on Flickr"><img src="http://farm6.static.flickr.com/5029/5856931526_1119c53a87.jpg" width="500" height="299" alt="IMAG0053" /></a></p>
-
-<p>6/18(土)に開催された<a href="http://atnd.org/events/16681">Varnish勉強会 Tokyo.vcl : ATND</a>に行ってきました。
+<p><sup>6</sup>&frasl;<sub>18</sub>(土)に開催された<a href="http://atnd.org/events/16681">Varnish勉強会 Tokyo.vcl : ATND</a>に行ってきました。
 初のクックパッドさんオフィス訪問です。</p>
 
 <p>Varnish3のリリースパーティーも兼ねての開催だったようで、ステッカーもいただいてしまいました。
@@ -186,443 +88,217 @@
 
 <p>主催の@hmskさんをはじめ登壇者の皆様、ならびにビアバッシュで交流してくださった皆様ありがとうございました。</p>
 
-<h3 id="section">雑感</h3>
+<h3 id="雑感:513d68d854003f583ea929a20a7a7c49">雑感</h3>
+
 <ul>
-  <li>Varnishは画像配信の事例が多い</li>
-  <li>HTTPサーバーの前だけじゃなくてSolrのような内部ネットワーク間の通信にも適用できる。</li>
-  <li>Varnish落ちたときにApacheの負荷を避けるためにSquidが使える。</li>
-  <li>拡張次第でHTTPサーバーにもKVSにも化ける（やりすぎ注意？）。</li>
-  <li>クラウドでの運用はフロンティア。</li>
-  <li>設定ファイルのvclはもはやプログラム</li>
-  <li>ESIの事例なかったけど使いにくいのかな？</li>
-  <li>とりあえず実戦投入して様子見ないとわからないことが多そう。</li>
-  <li>あ、どれだけ高速化したかについての言及がなかったような…</li>
+<li>Varnishは画像配信の事例が多い</li>
+<li>HTTPサーバーの前だけじゃなくてSolrのような内部ネットワーク間の通信にも適用できる。</li>
+<li>Varnish落ちたときにApacheの負荷を避けるためにSquidが使える。</li>
+<li>拡張次第でHTTPサーバーにもKVSにも化ける（やりすぎ注意？）。</li>
+<li>クラウドでの運用はフロンティア。</li>
+<li>設定ファイルのvclはもはやプログラム</li>
+<li>ESIの事例なかったけど使いにくいのかな？</li>
+<li>とりあえず実戦投入して様子見ないとわからないことが多そう。</li>
+<li>あ、どれだけ高速化したかについての言及がなかったような…</li>
 </ul>
 
-<h2 id="section-1">各発表メモ</h2>
+<h2 id="各発表メモ:513d68d854003f583ea929a20a7a7c49">各発表メモ</h2>
+
 <p>スライドと、その丸写しみたいな感じのメモをペタペタ。</p>
 
-<h3 id="varnishcache30vupxcir">VarnishCache3.0新機能とVUPの仕方(@xcir)</h3>
+<h3 id="varnishcache3-0新機能とvupの仕方-xcir:513d68d854003f583ea929a20a7a7c49">VarnishCache3.0新機能とVUPの仕方(@xcir)</h3>
 
 <div style="width:425px" id="__ss_8344516"> <strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/xcir/tokyovclvarnishcache30vup" title="tokyo.vcl発表資料（VarnishCache3.0新機能とVUPの仕方）">tokyo.vcl発表資料（VarnishCache3.0新機能とVUPの仕方）</a></strong> <iframe src="http://www.slideshare.net/slideshow/embed_code/8344516" width="425" height="355" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
 <div style="padding:5px 0 12px"> View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/xcir">xcir</a> </div>
 
-</div>
-<ul>
-  <li>ESIでのgzip
-    <ul>
-      <li>ブロックが圧縮されているとESIできなかった(~2）</li>
-      <li>defaultパラメータが改善された</li>
-    </ul>
-  </li>
-  <li>stream support
-    <ul>
-      <li>別のストリームは待機させられる（？</li>
-    </ul>
-  </li>
-</ul>
+<p></div>
+   * ESIでのgzip
+      * ブロックが圧縮されているとESIできなかった(~2）
+      * defaultパラメータが改善された
+   * stream support
+      * 別のストリームは待機させられる（？</p>
 
-<h3 id="varnishphji">イカ娘も終わったしVarnishでも使うか(@phji)</h3>
+<h3 id="イカ娘も終わったしvarnishでも使うか-phji:513d68d854003f583ea929a20a7a7c49">イカ娘も終わったしVarnishでも使うか(@phji)</h3>
 
 <div style="width:425px" id="__ss_8366215"> <strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/phji/varnishika" title="イカ娘も終わったしVarnishでも使うか">イカ娘も終わったしVarnishでも使うか</a></strong> <iframe src="http://www.slideshare.net/slideshow/embed_code/8366215" width="425" height="355" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
 <div style="padding:5px 0 12px"> View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/phji">Kazutoshi Fujimoto</a> </div>
 
-</div>
+<p></div>
+   * [RAM8G Xeon 4core SSD256GB ] x 20servers
+   * pixiv
+      * nginx -&gt; (consistent hash) -&gt; quid -&gt; nginx -&gt; apache
+      * lookupとかかないとキャッシュされないｗ</p>
+
+<h3 id="twitter検索-yats-でvarnish使ってみた-penguinana:513d68d854003f583ea929a20a7a7c49">twitter検索(yats)でvarnish使ってみた(@PENGUINANA_)</h3>
+
 <ul>
-  <li>[RAM8G Xeon 4core SSD256GB ] x 20servers</li>
-  <li>pixiv
-    <ul>
-      <li>nginx -&gt; (consistent hash) -&gt; quid -&gt; nginx -&gt; apache</li>
-      <li>lookupとかかないとキャッシュされないｗ</li>
-    </ul>
-  </li>
+<li>API 7000M req/month</li>
+<li>PV 150Mreq/month</li>
+<li>varnish(vps) -&gt; nginx[ webAPI -&gt; varnish -&gt; Solr ]</li>
+<li>service : cache + failover</li>
+<li>Solr: slaveのキャッシュクリアーが重いので、その前面にVarnishをおいている(ラウンドロビンとFailover）</li>
+<li>autocomplete
+
+<ul>
+<li>キャッシュと相性よさそう</li>
+</ul></li>
 </ul>
 
-<h3 id="twitteryatsvarnishpenguinana">twitter検索(yats)でvarnish使ってみた(@PENGUINANA_)</h3>
-<ul>
-  <li>API 7000M req/month</li>
-  <li>PV 150Mreq/month</li>
-  <li>varnish(vps) -&gt; nginx[ webAPI -&gt; varnish -&gt; Solr ]</li>
-  <li>service : cache + failover</li>
-  <li>Solr: slaveのキャッシュクリアーが重いので、その前面にVarnishをおいている(ラウンドロビンとFailover）</li>
-  <li>autocomplete
-    <ul>
-      <li>キャッシュと相性よさそう</li>
-    </ul>
-  </li>
-</ul>
-
-<h3 id="ec2varnishmirakui">EC2とvarnishで画像配信(@mirakui)</h3>
+<h3 id="ec2とvarnishで画像配信-mirakui:513d68d854003f583ea929a20a7a7c49">EC2とvarnishで画像配信(@mirakui)</h3>
 
 <div style="width:425px" id="__ss_8352369"> <strong style="display:block;margin:12px 0 4px"><a href="http://www.slideshare.net/mirakui/ec2varnish" title="EC2とVarnishで画像配信">EC2とVarnishで画像配信</a></strong> <iframe src="http://www.slideshare.net/slideshow/embed_code/8352369" width="425" height="355" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
 <div style="padding:5px 0 12px"> View more <a href="http://www.slideshare.net/">presentations</a> from <a href="http://www.slideshare.net/mirakui">Issei Naruta</a> </div>
 
-</div>
+<p></div>
+   * 失敗談
+   * TOFU
+      * アップロード時ではなくオンデマンドでリサイズ
+      * akamai（CDN)に7000RPSのうち、ELBには700RPSくる。60%受けるリクエストをキャッシュできればApache負荷軽減できるのでは？
+         * という導入経緯（からの失敗
+      * 1st challenge
+         * EC2(M2.XLARGE[17.1GB RAM] + EBS[100GB for swap])
+         * 300rps
+         * 結果：オンメモリだけなら順調だけど、あふれてきてOSにSWAPさせたとたんLOADAVERAGEが爆発して死亡。
+      * 2nd challenge
+         * EC2(M2.XLARGE[17.1GB RAM] + EBS[100GB for ext3])
+         * &ldquo;file storage&rdquo;を使っても結局メモリ容量が大量に必要
+      * ec2のxlargeインスタンスには、IO性能「標準」と「高」がある
+         * 今回は「標準」を利用して失敗
+         * 「高」ならうまくいくかも
+   * varnish3
+      * hash director
+         * consistent hashingができるかも？
+         * nginxいらずに複数varnish運用ができるかも？</p>
+
+<h3 id="puppetでvarnishもsquidも面倒みる-ar1:513d68d854003f583ea929a20a7a7c49">Puppetでvarnishもsquidも面倒みる(@ar1)</h3>
+
 <ul>
-  <li>失敗談</li>
-  <li>TOFU
-    <ul>
-      <li>アップロード時ではなくオンデマンドでリサイズ</li>
-      <li>akamai（CDN)に7000RPSのうち、ELBには700RPSくる。60%受けるリクエストをキャッシュできればApache負荷軽減できるのでは？
-        <ul>
-          <li>という導入経緯（からの失敗</li>
-        </ul>
-      </li>
-      <li>1st challenge
-        <ul>
-          <li>EC2(M2.XLARGE[17.1GB RAM] + EBS[100GB for swap])</li>
-          <li>300rps</li>
-          <li>結果：オンメモリだけなら順調だけど、あふれてきてOSにSWAPさせたとたんLOADAVERAGEが爆発して死亡。</li>
-        </ul>
-      </li>
-      <li>2nd challenge
-        <ul>
-          <li>EC2(M2.XLARGE[17.1GB RAM] + EBS[100GB for ext3])</li>
-          <li>“file storage”を使っても結局メモリ容量が大量に必要</li>
-        </ul>
-      </li>
-      <li>ec2のxlargeインスタンスには、IO性能「標準」と「高」がある
-        <ul>
-          <li>今回は「標準」を利用して失敗</li>
-          <li>「高」ならうまくいくかも</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
-  <li>varnish3
-    <ul>
-      <li>hash director
-        <ul>
-          <li>consistent hashingができるかも？</li>
-          <li>nginxいらずに複数varnish運用ができるかも？</li>
-        </ul>
-      </li>
-    </ul>
-  </li>
+<li>ふつうはvarnishは落ちるのでLBつかって並列で運用</li>
+<li>varnishおちるとWebサーバーが負荷かかってしまう
+
+<ul>
+<li>LB -&gt; varnish -&gt; squid -&gt; apache</li>
+<li>squidどうしでキャッシュを共有できるので、１つSquidおちてもWebサーバーにききにいかずにすむ。</li>
+</ul></li>
+<li>puppet
+
+<ul>
+<li>設定をらくにする</li>
+<li>cacheのExpire</li>
+<li>サーバーのぬきさし</li>
+</ul></li>
 </ul>
 
-<h3 id="puppetvarnishsquidar1">Puppetでvarnishもsquidも面倒みる(@ar1)</h3>
+<h3 id="楽天でvarnish-spchidren:513d68d854003f583ea929a20a7a7c49">楽天でvarnish(@spchidren)</h3>
+
 <ul>
-  <li>ふつうはvarnishは落ちるのでLBつかって並列で運用</li>
-  <li>varnishおちるとWebサーバーが負荷かかってしまう
-    <ul>
-      <li>LB -&gt; varnish -&gt; squid -&gt; apache</li>
-      <li>squidどうしでキャッシュを共有できるので、１つSquidおちてもWebサーバーにききにいかずにすむ。</li>
-    </ul>
-  </li>
-  <li>puppet
-    <ul>
-      <li>設定をらくにする</li>
-      <li>cacheのExpire</li>
-      <li>サーバーのぬきさし</li>
-    </ul>
-  </li>
+<li>L7 balancingがやりたくてVarnish導入
+
+<ul>
+<li>URLによってWebサーバーのグループを切り替えたい</li>
+</ul></li>
+<li>akamai -&gt; LB -&gt; varnish(RAM24G[malloc18G/hitrate 75%] -&gt; apache(+mod_thumb)</li>
+<li>LBからVarnishを切り離すのはどうやる？</li>
+<li>CDNやVarnishのcache clearをどうやるか
+
+<ul>
+<li>画像登録されたときにMQに登録して、必要に応じて消す</li>
+<li>CDNは常にExpireされない状態にしておける。</li>
+</ul></li>
+<li>ImageMagicおもい
+
+<ul>
+<li>varnishにサムネイルをつくるしくみを組み込んでみれば？（FreeImage)</li>
+<li>cc_commandでインクルードさせて、C言語でサムネイルつくるしくみをくみこむ</li>
+</ul></li>
+<li>varnishのいくさき
+
+<ul>
+<li>nginxにも近いしredisにもちかづいてきてる</li>
+<li>どこにいくんでしょ</li>
+</ul></li>
 </ul>
 
-<h3 id="varnishspchidren">楽天でvarnish(@spchidren)</h3>
+<h3 id="tddでvcl書いてデプロイ-hmsk:513d68d854003f583ea929a20a7a7c49">TDDでVCL書いてデプロイ(@hmsk)</h3>
+
 <ul>
-  <li>L7 balancingがやりたくてVarnish導入
-    <ul>
-      <li>URLによってWebサーバーのグループを切り替えたい</li>
-    </ul>
-  </li>
-  <li>akamai -&gt; LB -&gt; varnish(RAM24G[malloc18G/hitrate 75%] -&gt; apache(+mod_thumb)</li>
-  <li>LBからVarnishを切り離すのはどうやる？</li>
-  <li>CDNやVarnishのcache clearをどうやるか
-    <ul>
-      <li>画像登録されたときにMQに登録して、必要に応じて消す</li>
-      <li>CDNは常にExpireされない状態にしておける。</li>
-    </ul>
-  </li>
-  <li>ImageMagicおもい
-    <ul>
-      <li>varnishにサムネイルをつくるしくみを組み込んでみれば？（FreeImage)</li>
-      <li>cc_commandでインクルードさせて、C言語でサムネイルつくるしくみをくみこむ</li>
-    </ul>
-  </li>
-  <li>varnishのいくさき
-    <ul>
-      <li>nginxにも近いしredisにもちかづいてきてる</li>
-      <li>どこにいくんでしょ</li>
-    </ul>
-  </li>
+<li>varnishtest
+
+<ul>
+<li>RSpecぽい書き方できる</li>
+<li>xxx.vcltestファイルにケースを記述</li>
+</ul></li>
+<li>vmod
+
+<ul>
+<li>vclの設定をC言語っぽく描ける</li>
+<li>パージや圧縮、エラーなどに使える</li>
+<li>モバイル端末のリストのチェックにもVCLから外出しできる</li>
+</ul></li>
 </ul>
 
-<h3 id="tddvclhmsk">TDDでVCL書いてデプロイ(@hmsk)</h3>
+<h2 id="関連リンク:513d68d854003f583ea929a20a7a7c49">関連リンク</h2>
+
 <ul>
-  <li>varnishtest
-    <ul>
-      <li>RSpecぽい書き方できる</li>
-      <li>xxx.vcltestファイルにケースを記述</li>
-    </ul>
-  </li>
-  <li>vmod
-    <ul>
-      <li>vclの設定をC言語っぽく描ける</li>
-      <li>パージや圧縮、エラーなどに使える</li>
-      <li>モバイル端末のリストのチェックにもVCLから外出しできる</li>
-    </ul>
-  </li>
+<li>ATND
+
+<ul>
+<li><a href="http://atnd.org/events/16681">Varnish勉強会 Tokyo.vcl : ATND</a></li>
+</ul></li>
+<li>Ustream
+
+<ul>
+<li><a href="http://www.ustream.tv/recorded/15453305">http://www.ustream.tv/recorded/15453305</a></li>
+<li><a href="http://www.ustream.tv/recorded/15453834">http://www.ustream.tv/recorded/15453834</a></li>
+</ul></li>
+<li>Togetter
+
+<ul>
+<li><a href="http://togetter.com/li/151585">Togetter - 「第一回 Varnish勉強会 Tokyo.vcl」</a></li>
+</ul></li>
+<li>勉強会レポート
+
+<ul>
+<li><a href="http://d.hatena.ne.jp/hxmasaki/20110620/1308547067">Varnish勉強会 Tokyo.vclを行いました - ククラフト</a></li>
+<li><a href="http://d.hatena.ne.jp/mirakui/20110619/1308497959">私がクックパッドの画像配信野郎です - 床のトルストイ、ゲイとするとのこと</a></li>
+<li><a href="http://blog.xcir.net/?p=438">Tokyo.vclでVarnishCache3の新機能とVUPの仕方を話してきました &laquo; cat /dev/random &gt; /dev/null &amp;</a></li>
+<li><a href="http://blog.udzura.jp/2011/06/20/summary-of-tokyo-varnish-study-on-20110618/">東京varnish勉強会(Tokyo.vcl)まとめ &laquo;  blog.udzura.jp</a></li>
+</ul></li>
 </ul>
 
-<h2 id="section-2">関連リンク</h2>
-<ul>
-  <li>ATND
-    <ul>
-      <li><a href="http://atnd.org/events/16681">Varnish勉強会 Tokyo.vcl : ATND</a></li>
-    </ul>
-  </li>
-  <li>Ustream
-    <ul>
-      <li><a href="http://www.ustream.tv/recorded/15453305">http://www.ustream.tv/recorded/15453305</a></li>
-      <li><a href="http://www.ustream.tv/recorded/15453834">http://www.ustream.tv/recorded/15453834</a></li>
-    </ul>
-  </li>
-  <li>Togetter
-    <ul>
-      <li><a href="http://togetter.com/li/151585">Togetter - 「第一回 Varnish勉強会 Tokyo.vcl」</a></li>
-    </ul>
-  </li>
-  <li>勉強会レポート
-    <ul>
-      <li><a href="http://d.hatena.ne.jp/hxmasaki/20110620/1308547067">Varnish勉強会 Tokyo.vclを行いました - ククラフト</a></li>
-      <li><a href="http://d.hatena.ne.jp/mirakui/20110619/1308497959">私がクックパッドの画像配信野郎です - 床のトルストイ、ゲイとするとのこと</a></li>
-      <li><a href="http://blog.xcir.net/?p=438">Tokyo.vclでVarnishCache3の新機能とVUPの仕方を話してきました « cat /dev/random &gt; /dev/null &amp;</a></li>
-      <li><a href="http://blog.udzura.jp/2011/06/20/summary-of-tokyo-varnish-study-on-20110618/">東京varnish勉強会(Tokyo.vcl)まとめ «  blog.udzura.jp</a></li>
-    </ul>
-  </li>
-</ul>
-
-</div>
-
-
-
-
-<style type="text/css">
-  .sharing {
-     clear: both;
-  }
-  .sharing li{
-    display: inline;
-    list-style-type: none;
-    float: left;
-    height: 1em;
-    line-height: 1em;
-    padding: 0 10px 0 0 ;
-    margin: 10px 0;
-  }
-  .sharing ul {
-    margin: 1em 0;
-    padding: 1em 0;
-  }
-</style>
-<div class="sharing">
+			  <div class="sharing">
   <ul>
-  <li><a href="http://blog.restartr.com/2011/06/21/go-to-varnish-study-tokyovc/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
-  
-  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2011/06/21/go-to-varnish-study-tokyovc/" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2011/06/21/go-to-varnish-study-tokyovc/" >Tweet</a></li>
-  
+  <li><a href="http://blog.restartr.com/2011/06/21/go-to-varnish-study-tokyovc" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2011/06/21/go-to-varnish-study-tokyovc" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2011/06/21/go-to-varnish-study-tokyovc" >Tweet</a></li>
   <li><a data-pocket-label="pocket" data-pocket-count="horizontal" class="pocket-btn" data-lang="en"></a><script type="text/javascript">!function(d,i){if(!d.getElementById(i)){var j=d.createElement("script");j.id=i;j.src="https://widgets.getpocket.com/v1/j/btn.js?v=1";var w=d.getElementById(i);d.body.appendChild(j);}}(document,"pocket-btn-js");</script></li>
-  
-  
   </ul>
 </div>
-<p />
+<script type="text/javascript">
+  (function(){
+    var twitterWidgets = document.createElement('script');
+    twitterWidgets.type = 'text/javascript';
+    twitterWidgets.async = true;
+    twitterWidgets.src = '//platform.twitter.com/widgets.js';
+    document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+  })();
+</script>
+<hr />
 
-
-
-
-  <footer>
-    <p class="meta">
-      
-  
-
-<span class="byline author vcard">Posted by <span class="fn">ReSTARTR</span></span>
-
-      
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-06-21T23:56:40+09:00" pubdate data-updated="true">2011-06-21 (Tue)</time>
-      
-
-<span class="categories">
-  
-    <a class='category' href='/category/za-ji/'>雑記</a>
-  
-</span>
-
-
-    </p>
-    <hr />
-    <p class="meta">
-      
-        <a class="basic-alignment left" href="/2011/06/19/volunteer-at-shinchi-fukushima-pref/" title="Previous Post: 東京から福島へ一泊二日でボランティアに行ってきた">&laquo; 東京から福島へ一泊二日でボランティアに行ってきた</a>
-      
-      
-        <a class="basic-alignment right" href="/2011/08/16/3-things-that-i-was-in-trouble-using-squeryl/" title="Next Post: ScalaのORMapperのSquerylを試してみてハマった３つのこと">ScalaのORMapperのSquerylを試してみてハマった３つのこと &raquo;</a>
-      
-    </p>
-  </footer>
-</article>
-
-</div>
-
-<aside class="sidebar">
-  
-    <section id="titles">
-  <a href="http://blog.restartr.com" title="I Will Survive"><img id="logo" src="http://blog.restartr.com/images/portrait.jpg" /></a>
-  <h1 id="site_title"><a href="http://blog.restartr.com" title="I Will Survive">I Will Survive</a></h1>
-  <h3 id="site_subtitle">An application depelopper's blog.</h3>
-</section>
-
-<section id="menu">
-  <ul>
-    <li><i class="fa fa-home fa-lg"></i><a href="http://blog.restartr.com"> Home </a></li>
-    <li><i class="fa fa-calendar fa-lg"></i><a href="http://blog.restartr.com/blog/archives/"> Archives </a></li>
-    <li><i class="fa fa-user fa-lg"></i><a href="http://blog.restartr.com/about/"> About </a></li>
-    <li><i class="fa fa-rss fa-lg"></i><a href="http://blog.restartr.com/atom.xml"> Feed </a></li>
-  </ul>
-</section>
-
-<section id="social">
-  
-
-  
-
-  
-    <a href="" title="g+#103216164658230535238"><i class="fa fa-google-plus fa-2x"></i></a>
-  
-
-  
-    <a href="https://github.com/ReSTARTR" title="ReSTARTR"><i class="fa fa-github fa-2x"></i></a>
-  
-
-  
-
-  
-    <a href="https://twitter.com/ReSTARTR" title="ReSTARTR"><i class="fa fa-twitter fa-2x"></i></a>
-  
-
-  
-</section>
-
-
-<section>
-  <h1>Recent Posts</h1>
-  <ul id="recent_posts">
-    
-      <li class="post">
-        <a href="/2016/02/27/ec2-ls-hosts/">ec2-ls-hosts: EC2インスタンスを一覧するだけのシンプルツール</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2016/02/17/ergodox-ez/">ErgoDox EZを注文した(けどまだ届いてない)</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/12/31/things-of-2015/">2015年ふりかえり</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix/">Elixir/PhoenixでISUCON5予選の参考実装を書いた</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/10/15/go-programming-blueprints/">"Go Programming Blueprints"を読んだ</a>
-      </li>
-    
-  </ul>
-</section>
-<section>
-  <h1>Categories</h1>
-  <ul id="categories">
-    <li><a href='/category/architecture/'>architecture</a></li><li><a href='/category/docker/'>docker</a></li><li><a href='/category/elixir/'>Elixir</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/go/'>go</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/ruby/'>ruby</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
-  </ul>
-</section>
-<section>
-  <h1>GitHub Repos</h1>
-  <ul id="gh_repos">
-    <li class="loading">Status updating...</li>
-  </ul>
-  
-  <a href="https://github.com/ReSTARTR">@ReSTARTR</a> on GitHub
-  
-  <script type="text/javascript">
-    $.domReady(function(){
-        if (!window.jXHR){
-            var jxhr = document.createElement('script');
-            jxhr.type = 'text/javascript';
-            jxhr.src = '/javascripts/libs/jXHR.js';
-            var s = document.getElementsByTagName('script')[0];
-            s.parentNode.insertBefore(jxhr, s);
-        }
-
-        github.showRepos({
-            user: 'ReSTARTR',
-            count: 4,
-            skip_forks: true,
-            target: '#gh_repos'
-        });
-    });
-  </script>
-  <script src="/javascripts/github.js" type="text/javascript"> </script>
-</section>
-
-
-
-<section class="googleplus">
-  <h1>
-    <a href="https://plus.google.com/103216164658230535238?rel=author">
-      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
-      Google+
-    </a>
-  </h1>
-</section>
-
-
-
-  
-</aside>
-
-
-    </div>
-  </div>
-  <footer role="contentinfo"><p>
-  Copyright &copy; 2016 - ReSTARTR -
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
-</p>
-
+			   <footer>
+  <p class="meta">
+    <ul class="params">
+    <li>Category: [雑記]</li>
+    <li class="">Tags: [varnish cache study]</li>
+    <li><span class="byline author vcard">Posted by <span class="fn">ReSTARTR</span></span></li>
+    <li><time datetime="2011-06-21 23:56:40 &#43;0900 JST" pubdate data-updated="true">2011-06-21(Tue)</time></li>
+    </ul>
+  </p>
 </footer>
-  
 
+			</div>
 
+			
+		</div>
 
-
-
-
-
-  <script type="text/javascript">
-    (function(){
-      var twitterWidgets = document.createElement('script');
-      twitterWidgets.type = 'text/javascript';
-      twitterWidgets.async = true;
-      twitterWidgets.src = '//platform.twitter.com/widgets.js';
-      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
-    })();
-  </script>
-
-
-
-
-
-</body>
+  </body>
 </html>

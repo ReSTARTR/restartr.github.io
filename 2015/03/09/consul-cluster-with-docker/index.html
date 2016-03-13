@@ -1,186 +1,88 @@
-
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+	<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <meta charset="utf-8">
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.15" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
   <title>DockerとWeaveを使って1台のマシンでConsulを複数動かしてみる - I Will Survive</title>
-  <meta name="author" content="ReSTARTR">
-  <link rel="author" href="https://plus.google.com/103216164658230535238" />
-  <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="軽くConsulを試してみたくて、でもVagrantで複数台仮想マシンを立ち上げるのはちょっと気が重い…ということでUbuntu14.10 on MacBookAirにDockerコンテナを複数立ち上げてクラスタを構築してみるテストをしました。">
-  
-
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/poole.css">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/syntax.css">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/hyde.css">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/custom.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
 
   
-  <link rel="canonical" href="http://blog.restartr.com/2015/03/09/consul-cluster-with-docker/">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-   <link href="/stylesheets/data-table.css" media="screen, projection" rel="stylesheet" type="text/css" />
-  <script src="/javascripts/modernizr-2.0.js"></script>
-  <script src="/javascripts/ender.js"></script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  <link href="/atom.xml" rel="alternate" title="I Will Survive" type="application/atom+xml">
-  <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
-
-<!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
-<link href='http://fonts.googleapis.com/css?family=Lato:400,100,100italic,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
-<link href='http://fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
-<link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:200,300,400,500,600,700,900' rel='stylesheet' type='text/css'>
-
-
-	<!-- mathjax config similar to math.stackexchange -->
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    tex2jax: {
-      inlineMath: [ ['$$','$$'], ["\\(","\\)"] ],
-      processEscapes: true
-    }
-  });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      tex2jax: {
-        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-      }
-    });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax(), i;
-        for(i=0; i < all.length; i += 1) {
-            all[i].SourceElement().parentNode.className += ' has-jax';
-        }
-    });
-</script>
-
-<script type="text/javascript"
-   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
-
-
-
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://blog.restartr.com/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="http://blog.restartr.com/favicon.png">
 
   
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-894530-10']);
-    _gaq.push(['_trackPageview']);
-
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
-
-
-  <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
-  <style>html{background: url("/images/background.png") no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;}</style>
+  <link href="" rel="alternate" type="application/rss+xml" title="I Will Survive" />
 </head>
 
-<body   >
-  <header role="banner"><hgroup>
-</hgroup>
+	<body class="theme-base-0d">
+		<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="http://blog.restartr.com"><h1>I Will Survive</h1></a>
+      <p class="lead">
+       An application depelopper&#39;s blog. 
+      </p>
+    </div>
 
-</header>
-  <!-- <nav role="navigation"><ul class="subscription" data-subscription="rss">
-  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-  
-</ul>
-  
-<form action="https://www.google.com/search" method="get">
-  <fieldset role="search">
-    <input type="hidden" name="q" value="site:blog.restartr.com" />
-    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
-  </fieldset>
-</form>
-  
-<ul class="main-navigation">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives">Archives</a></li>
-</ul>
-
-</nav> -->
-  <div id="main">
-    <div id="content">
-      <div>
-<article class="hentry" role="article">
-  
-  <header>
-    
-      <h1 class="entry-title">DockerとWeaveを使って1台のマシンでConsulを複数動かしてみる</h1>
+    <ul class="sidebar-nav">
+      <li><a href="http://blog.restartr.com/">Home</a> </li>
       
-      <style type="text/css">
-  .sharing {
-     clear: both;
-  }
-  .sharing li{
-    display: inline;
-    list-style-type: none;
-    float: left;
-    height: 1em;
-    line-height: 1em;
-    padding: 0 10px 0 0 ;
-    margin: 10px 0;
-  }
-  .sharing ul {
-    margin: 1em 0;
-    padding: 1em 0;
-  }
-</style>
-<div class="sharing">
+        <li><a href="http://blog.restartr.com/about/"> About </a></li>
+      
+        <li><a href="http://blog.restartr.com/index.xml"> Feed </a></li>
+      
+        <li><a href="https://github.com/ReSTARTR"> GitHub </a></li>
+      
+        <li><a href="https://twitter.com/ReSTARTR"> Twitter </a></li>
+      
+    </ul>
+
+    <p>Copyright ©2016 - ReSTARTR. All rights reserved.</p>
+  </div>
+</div>
+
+
+		<div class="content container">
+			<div class="post">
+			 	<h1>DockerとWeaveを使って1台のマシンでConsulを複数動かしてみる</h1>
+        <span class="post-date">2015-03-09(Mon) - docker</span>
+			  <div class="sharing">
   <ul>
-  <li><a href="http://blog.restartr.com/2015/03/09/consul-cluster-with-docker/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
-  
-  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2015/03/09/consul-cluster-with-docker/" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2015/03/09/consul-cluster-with-docker/" >Tweet</a></li>
-  
+  <li><a href="http://blog.restartr.com/2015/03/09/consul-cluster-with-docker" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2015/03/09/consul-cluster-with-docker" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2015/03/09/consul-cluster-with-docker" >Tweet</a></li>
   <li><a data-pocket-label="pocket" data-pocket-count="horizontal" class="pocket-btn" data-lang="en"></a><script type="text/javascript">!function(d,i){if(!d.getElementById(i)){var j=d.createElement("script");j.id=i;j.src="https://widgets.getpocket.com/v1/j/btn.js?v=1";var w=d.getElementById(i);d.body.appendChild(j);}}(document,"pocket-btn-js");</script></li>
-  
-  
   </ul>
 </div>
-<p />
+<script type="text/javascript">
+  (function(){
+    var twitterWidgets = document.createElement('script');
+    twitterWidgets.type = 'text/javascript';
+    twitterWidgets.async = true;
+    twitterWidgets.src = '//platform.twitter.com/widgets.js';
+    document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+  })();
+</script>
+<hr />
 
-      
-    
-    
-      <p class="meta">
-        
+			      
 
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2015-03-09T00:22:13+09:00" pubdate data-updated="true">2015-03-09 (Mon)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>軽くConsulを試してみたくて、でもVagrantで複数台仮想マシンを立ち上げるのはちょっと気が重い…ということでUbuntu14.10 on MacBookAirにDockerコンテナを複数立ち上げてクラスタを構築してみるテストをしました。</p>
+<p>軽くConsulを試してみたくて、でもVagrantで複数台仮想マシンを立ち上げるのはちょっと気が重い…ということでUbuntu14.10 on MacBookAirにDockerコンテナを複数立ち上げてクラスタを構築してみるテストをしました。</p>
 
 <p>Dockerfileとか簡単な動かし方(を適当英語で書いたもの)をgithubにあげてあります</p>
 
 <ul>
-  <li><a href="https://github.com/ReSTARTR/test-consul-with-docker">ReSTARTR/test-consul-with-docker</a></li>
+<li><a href="https://github.com/ReSTARTR/test-consul-with-docker">ReSTARTR/test-consul-with-docker</a></li>
 </ul>
 
 <p>Docker内のプロセスがLISTENするポートに対してコンテナ外から接続する場合、<code>-p</code>でホストのポートにひもづけるか、<code>--link</code>でコンテナ同士をつなぐのが最も手軽な方法です。が、consulは複数のポート（HTTP API用、DNS用、ゴシッププロトコル用等）を使うため、この手軽な方法でクラスタを構築することができません。</p>
@@ -188,80 +90,66 @@
 <p>Dockerコンテナの接続パターンとしてはいくつかあって、deeeetさんのブログ記事に詳しく書かれています。</p>
 
 <ul>
-  <li><a href="http://deeeet.com/writing/2014/12/01/docker-link-pattern/">Dockerコンテナ接続パターン (2014年冬) | SOTA</a></li>
+<li><a href="http://deeeet.com/writing/2014/12/01/docker-link-pattern/">Dockerコンテナ接続パターン (2014年冬) | SOTA</a></li>
 </ul>
 
 <p>今回は手元のMacBook Airだけで完結させたかったので、weaveを使ったコンテナ間ネットワークを利用することにしました。</p>
 
-<h3 id="weave">weave</h3>
+<h3 id="weave:eb7384652550cf95d9fa5f789a7acdb6">weave</h3>
 
 <ul>
-  <li><a href="http://zettio.github.io/weave/">weave  | weave, the Docker network</a></li>
+<li><a href="http://zettio.github.io/weave/">weave  | weave, the Docker network</a></li>
 </ul>
 
 <p>dockerコンテナ間の内部ネットワークを構築するものです。詳しくはjacopenさんのSlideShareを。</p>
 
 <ul>
-  <li><a href="http://www.slideshare.net/jacopen/weave-40871981">Weaveを試してみた</a></li>
+<li><a href="http://www.slideshare.net/jacopen/weave-40871981">Weaveを試してみた</a></li>
 </ul>
 
 <p>使い方はとても簡単で、weaveコンテナを立ち上げて、weaveコマンド経由でdockerコマンドを実行するだけ。
 これならVagrantのような仮想マシンのためにメモリとディスク容量を割く必要もなくなります。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo weave launch
-</span><span class="line"><span class="nv">$ </span>sudo docker ps
-</span><span class="line">CONTAINER ID        IMAGE                COMMAND                CREATED             STATUS              PORTS                                            NAMES
-</span><span class="line">2eda921c011e        zettio/weave:0.9.0   <span class="err">&quot;</span>/home/weave/weaver    31 seconds ago      Up 30 seconds       0.0.0.0:6783-&gt;6783/tcp, 0.0.0.0:6783-&gt;6783/udp   weave
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<pre><code class="language-bash">$ sudo weave launch
+$ sudo docker ps
+CONTAINER ID        IMAGE                COMMAND                CREATED             STATUS              PORTS                                            NAMES
+2eda921c011e        zettio/weave:0.9.0   &quot;/home/weave/weaver    31 seconds ago      Up 30 seconds       0.0.0.0:6783-&gt;6783/tcp, 0.0.0.0:6783-&gt;6783/udp   weave
+</code></pre>
 
 <p>これだけで仮想ネットワークができあがります。ホストOSで必要なポートは6783だけです。</p>
 
 <p>あとはweaveコマンドにIPを指定しつつdockerコマンドのオプションを付けて起動すればOK。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ C</span><span class="o">=</span><span class="k">$(</span>sudo weave run 10.0.0.1/24 -it ubuntu<span class="k">)</span>
-</span><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec</span> <span class="nv">$C</span> -it /bin/bash
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<pre><code class="language-bash">$ C=$(sudo weave run 10.0.0.1/24 -it ubuntu)
+$ sudo docker exec $C -it /bin/bash
+</code></pre>
 
 <p>ただ、さくらVPSのCentOS6では動きませんでした。面倒なので深く追ってません。。。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo /usr/local/bin/weave launch
-</span><span class="line">WARNING: Linux kernel version 3.5 or newer is required <span class="o">(</span>you have 2.6<span class="o">)</span>
-</span><span class="line">ERROR: ip utility, iproute2-ss091226 does not support network namespaces.
-</span><span class="line">       Please install iproute2-ss111010 or later.
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<pre><code class="language-bash">$ sudo /usr/local/bin/weave launch
+WARNING: Linux kernel version 3.5 or newer is required (you have 2.6)
+ERROR: ip utility, iproute2-ss091226 does not support network namespaces.
+       Please install iproute2-ss111010 or later.
+</code></pre>
 
-<h3 id="consul">consul</h3>
+<h3 id="consul:eb7384652550cf95d9fa5f789a7acdb6">consul</h3>
 
 <ul>
-  <li><a href="https://www.consul.io/">consul</a></li>
+<li><a href="https://www.consul.io/">consul</a></li>
 </ul>
 
 <p>Hashicorp謹製クラスタのオーケストレーションツール。今更説明する必要もないと思うので詳細は省略します。
 consul（と周辺ツールのconsul-templateやenvconsul)を使えば複数のホスト間で設定を共有できる、というのを試すのが今回の目的でしたが、とりあえず複数のconsulを動かすところまでを書きます。</p>
 
-<h3 id="consul-1">consulを起動してクラスタを構築する</h3>
+<h3 id="consulを起動してクラスタを構築する:eb7384652550cf95d9fa5f789a7acdb6">consulを起動してクラスタを構築する</h3>
 
 <p>weaveネットワークに接続したコンテナを4台立ち上げて、consul1, consul2をserverとして、consul3, consul4をclientとして起動します。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo weave run 10.0.0.1/24 -it -v <span class="k">$(</span><span class="nb">pwd</span> -P<span class="k">)</span>:/opt --name<span class="o">=</span>consul1 restartr/consul-ready
-</span><span class="line"><span class="nv">$ </span>sudo weave run 10.0.0.2/24 -it -v <span class="k">$(</span><span class="nb">pwd</span> -P<span class="k">)</span>:/opt --name<span class="o">=</span>consul2 restartr/consul-ready
-</span><span class="line"><span class="nv">$ </span>sudo weave run 10.0.0.3/24 -it -v <span class="k">$(</span><span class="nb">pwd</span> -P<span class="k">)</span>:/opt --name<span class="o">=</span>consul3 restartr/consul-ready
-</span><span class="line"><span class="nv">$ </span>sudo weave run 10.0.0.4/24 -it -v <span class="k">$(</span><span class="nb">pwd</span> -P<span class="k">)</span>:/opt --name<span class="o">=</span>consul4 restartr/consul-ready
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<pre><code class="language-bash">$ sudo weave run 10.0.0.1/24 -it -v $(pwd -P):/opt --name=consul1 restartr/consul-ready
+$ sudo weave run 10.0.0.2/24 -it -v $(pwd -P):/opt --name=consul2 restartr/consul-ready
+$ sudo weave run 10.0.0.3/24 -it -v $(pwd -P):/opt --name=consul3 restartr/consul-ready
+$ sudo weave run 10.0.0.4/24 -it -v $(pwd -P):/opt --name=consul4 restartr/consul-ready
+</code></pre>
 
 <p>あとはconsul agentを順に起動するだけ。</p>
 
@@ -269,298 +157,80 @@ consul（と周辺ツールのconsul-templateやenvconsul)を使えば複数の�
 これを指定しないとdockerデフォルトのeth0のでクラスタにjoinすることになってしまい、このネットワークは他のコンテナとつながっていないためにクラスタ構築に失敗します。
 必ず<code>weave run 10.0.0.X/24</code>で指定したIPにbindしておきましょう。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec</span> -d consul1 consul agent -server -data-dir<span class="o">=</span>/tmp/consul -bootstrap-expect 1 -bind 10.0.0.1
-</span><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec</span> -d consul2 consul agent -server -data-dir<span class="o">=</span>/tmp/consul -config-dir<span class="o">=</span>/opt/consul.d/web.json -bind 10.0.0.2
-</span><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec</span> -d consul3 consul agent -data-dir<span class="o">=</span>/tmp/consul -config-dir<span class="o">=</span>/opt/consul.d/web.json -bind 10.0.0.3
-</span><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec</span> -d consul4 consul agent -data-dir<span class="o">=</span>/tmp/consul -config-dir<span class="o">=</span>/opt/consul.d/web.json -bind 10.0.0.4
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<pre><code class="language-bash">$ sudo docker exec -d consul1 consul agent -server -data-dir=/tmp/consul -bootstrap-expect 1 -bind 10.0.0.1
+$ sudo docker exec -d consul2 consul agent -server -data-dir=/tmp/consul -config-dir=/opt/consul.d/web.json -bind 10.0.0.2
+$ sudo docker exec -d consul3 consul agent -data-dir=/tmp/consul -config-dir=/opt/consul.d/web.json -bind 10.0.0.3
+$ sudo docker exec -d consul4 consul agent -data-dir=/tmp/consul -config-dir=/opt/consul.d/web.json -bind 10.0.0.4
+</code></pre>
 
 <p>で、先に起動したconsul1に対して残りのコンテナ内のconsul agentをjoinさせていきます。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec </span>consul2 consul join 10.0.0.1
-</span><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec </span>consul3 consul join 10.0.0.1
-</span><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec </span>consul4 consul join 10.0.0.1
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<pre><code class="language-bash">$ sudo docker exec consul2 consul join 10.0.0.1
+$ sudo docker exec consul3 consul join 10.0.0.1
+$ sudo docker exec consul4 consul join 10.0.0.1
+</code></pre>
 
 <p>と、<code>consul members</code>でjoinしている一覧が見えるようになります。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec </span>consul1 consul members
-</span><span class="line">Node          Address        Status  Type    Build  Protocol
-</span><span class="line">725dca3980ea  10.0.0.1:8301  alive   server  0.5.0  2
-</span><span class="line">f82001d6a7b4  10.0.0.2:8301  alive   server  0.5.0  2
-</span><span class="line">dcf304f77fdf  10.0.0.3:8301  alive   client  0.5.0  2
-</span><span class="line">3be672bd18b1  10.0.0.4:8301  alive   client  0.5.0  2
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<pre><code class="language-bash">$ sudo docker exec consul1 consul members
+Node          Address        Status  Type    Build  Protocol
+725dca3980ea  10.0.0.1:8301  alive   server  0.5.0  2
+f82001d6a7b4  10.0.0.2:8301  alive   server  0.5.0  2
+dcf304f77fdf  10.0.0.3:8301  alive   client  0.5.0  2
+3be672bd18b1  10.0.0.4:8301  alive   client  0.5.0  2
+</code></pre>
 
 <p>クラスタから離れるときは<code>consul leave</code>です。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec </span>consul4 consul leave
-</span><span class="line">Graceful leave <span class="nb">complete</span>
-</span><span class="line">
-</span><span class="line"><span class="nv">$ </span>sudo docker <span class="nb">exec </span>consul1 consul members
-</span><span class="line">Node          Address        Status  Type    Build  Protocol
-</span><span class="line">dcf304f77fdf  10.0.0.3:8301  alive   client  0.5.0  2
-</span><span class="line">3be672bd18b1  10.0.0.4:8301  left    client  0.5.0  2       <span class="c"># &lt;- Statusが&#39;alive&#39;から&#39;left&#39;に変わる</span>
-</span><span class="line">725dca3980ea  10.0.0.1:8301  alive   server  0.5.0  2
-</span><span class="line">f82001d6a7b4  10.0.0.2:8301  alive   server  0.5.0  2
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<pre><code class="language-bash">$ sudo docker exec consul4 consul leave
+Graceful leave complete
+
+$ sudo docker exec consul1 consul members
+Node          Address        Status  Type    Build  Protocol
+dcf304f77fdf  10.0.0.3:8301  alive   client  0.5.0  2
+3be672bd18b1  10.0.0.4:8301  left    client  0.5.0  2       # &lt;- Statusが'alive'から'left'に変わる
+725dca3980ea  10.0.0.1:8301  alive   server  0.5.0  2
+f82001d6a7b4  10.0.0.2:8301  alive   server  0.5.0  2
+</code></pre>
 
 <p>という感じで、複数のマシンをいじってる感じがまったくしないくらい<code>weave</code> &amp; <code>docker exec</code>は便利です。
 weaveがプロダクション環境で使えるか、という点については未知ですが。</p>
 
 <p>次回（があれば）consulを使った設定の管理について試したメモを書きたいと思います。</p>
-</div>
 
-
-
-
-<style type="text/css">
-  .sharing {
-     clear: both;
-  }
-  .sharing li{
-    display: inline;
-    list-style-type: none;
-    float: left;
-    height: 1em;
-    line-height: 1em;
-    padding: 0 10px 0 0 ;
-    margin: 10px 0;
-  }
-  .sharing ul {
-    margin: 1em 0;
-    padding: 1em 0;
-  }
-</style>
-<div class="sharing">
+			  <div class="sharing">
   <ul>
-  <li><a href="http://blog.restartr.com/2015/03/09/consul-cluster-with-docker/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
-  
-  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2015/03/09/consul-cluster-with-docker/" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2015/03/09/consul-cluster-with-docker/" >Tweet</a></li>
-  
+  <li><a href="http://blog.restartr.com/2015/03/09/consul-cluster-with-docker" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2015/03/09/consul-cluster-with-docker" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2015/03/09/consul-cluster-with-docker" >Tweet</a></li>
   <li><a data-pocket-label="pocket" data-pocket-count="horizontal" class="pocket-btn" data-lang="en"></a><script type="text/javascript">!function(d,i){if(!d.getElementById(i)){var j=d.createElement("script");j.id=i;j.src="https://widgets.getpocket.com/v1/j/btn.js?v=1";var w=d.getElementById(i);d.body.appendChild(j);}}(document,"pocket-btn-js");</script></li>
-  
-  
   </ul>
 </div>
-<p />
+<script type="text/javascript">
+  (function(){
+    var twitterWidgets = document.createElement('script');
+    twitterWidgets.type = 'text/javascript';
+    twitterWidgets.async = true;
+    twitterWidgets.src = '//platform.twitter.com/widgets.js';
+    document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+  })();
+</script>
+<hr />
 
-
-
-
-  <footer>
-    <p class="meta">
-      
-  
-
-<span class="byline author vcard">Posted by <span class="fn">ReSTARTR</span></span>
-
-      
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2015-03-09T00:22:13+09:00" pubdate data-updated="true">2015-03-09 (Mon)</time>
-      
-
-<span class="categories">
-  
-    <a class='category' href='/category/docker/'>docker</a>
-  
-</span>
-
-
-    </p>
-    <hr />
-    <p class="meta">
-      
-        <a class="basic-alignment left" href="/2015/01/18/peek-for-profiling-rails-app/" title="Previous Post: Peek - Railsアプリのプロファイリングツール">&laquo; Peek - Railsアプリのプロファイリングツール</a>
-      
-      
-        <a class="basic-alignment right" href="/2015/10/15/go-programming-blueprints/" title="Next Post: "Go Programming Blueprints"を読んだ">"Go Programming Blueprints"を読んだ &raquo;</a>
-      
-    </p>
-  </footer>
-</article>
-
-</div>
-
-<aside class="sidebar">
-  
-    <section id="titles">
-  <a href="http://blog.restartr.com" title="I Will Survive"><img id="logo" src="http://blog.restartr.com/images/portrait.jpg" /></a>
-  <h1 id="site_title"><a href="http://blog.restartr.com" title="I Will Survive">I Will Survive</a></h1>
-  <h3 id="site_subtitle">An application depelopper's blog.</h3>
-</section>
-
-<section id="menu">
-  <ul>
-    <li><i class="fa fa-home fa-lg"></i><a href="http://blog.restartr.com"> Home </a></li>
-    <li><i class="fa fa-calendar fa-lg"></i><a href="http://blog.restartr.com/blog/archives/"> Archives </a></li>
-    <li><i class="fa fa-user fa-lg"></i><a href="http://blog.restartr.com/about/"> About </a></li>
-    <li><i class="fa fa-rss fa-lg"></i><a href="http://blog.restartr.com/atom.xml"> Feed </a></li>
-  </ul>
-</section>
-
-<section id="social">
-  
-
-  
-
-  
-    <a href="" title="g+#103216164658230535238"><i class="fa fa-google-plus fa-2x"></i></a>
-  
-
-  
-    <a href="https://github.com/ReSTARTR" title="ReSTARTR"><i class="fa fa-github fa-2x"></i></a>
-  
-
-  
-
-  
-    <a href="https://twitter.com/ReSTARTR" title="ReSTARTR"><i class="fa fa-twitter fa-2x"></i></a>
-  
-
-  
-</section>
-
-
-<section>
-  <h1>Recent Posts</h1>
-  <ul id="recent_posts">
-    
-      <li class="post">
-        <a href="/2016/02/27/ec2-ls-hosts/">ec2-ls-hosts: EC2インスタンスを一覧するだけのシンプルツール</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2016/02/17/ergodox-ez/">ErgoDox EZを注文した(けどまだ届いてない)</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/12/31/things-of-2015/">2015年ふりかえり</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix/">Elixir/PhoenixでISUCON5予選の参考実装を書いた</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/10/15/go-programming-blueprints/">"Go Programming Blueprints"を読んだ</a>
-      </li>
-    
-  </ul>
-</section>
-<section>
-  <h1>Categories</h1>
-  <ul id="categories">
-    <li><a href='/category/architecture/'>architecture</a></li><li><a href='/category/docker/'>docker</a></li><li><a href='/category/elixir/'>Elixir</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/go/'>go</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/ruby/'>ruby</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
-  </ul>
-</section>
-<section>
-  <h1>GitHub Repos</h1>
-  <ul id="gh_repos">
-    <li class="loading">Status updating...</li>
-  </ul>
-  
-  <a href="https://github.com/ReSTARTR">@ReSTARTR</a> on GitHub
-  
-  <script type="text/javascript">
-    $.domReady(function(){
-        if (!window.jXHR){
-            var jxhr = document.createElement('script');
-            jxhr.type = 'text/javascript';
-            jxhr.src = '/javascripts/libs/jXHR.js';
-            var s = document.getElementsByTagName('script')[0];
-            s.parentNode.insertBefore(jxhr, s);
-        }
-
-        github.showRepos({
-            user: 'ReSTARTR',
-            count: 4,
-            skip_forks: true,
-            target: '#gh_repos'
-        });
-    });
-  </script>
-  <script src="/javascripts/github.js" type="text/javascript"> </script>
-</section>
-
-
-
-<section class="googleplus">
-  <h1>
-    <a href="https://plus.google.com/103216164658230535238?rel=author">
-      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
-      Google+
-    </a>
-  </h1>
-</section>
-
-
-
-  
-</aside>
-
-
-    </div>
-  </div>
-  <footer role="contentinfo"><p>
-  Copyright &copy; 2016 - ReSTARTR -
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
-</p>
-
+			   <footer>
+  <p class="meta">
+    <ul class="params">
+    <li>Category: docker</li>
+    <li class="">Tags: [docker consul weave]</li>
+    <li><span class="byline author vcard">Posted by <span class="fn">ReSTARTR</span></span></li>
+    <li><time datetime="2015-03-09 00:22:13 &#43;0900 JST" pubdate data-updated="true">2015-03-09(Mon)</time></li>
+    </ul>
+  </p>
 </footer>
-  
 
+			</div>
 
+			
+		</div>
 
-
-
-
-
-  <script type="text/javascript">
-    (function(){
-      var twitterWidgets = document.createElement('script');
-      twitterWidgets.type = 'text/javascript';
-      twitterWidgets.async = true;
-      twitterWidgets.src = '//platform.twitter.com/widgets.js';
-      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
-    })();
-  </script>
-
-
-
-
-
-</body>
+  </body>
 </html>

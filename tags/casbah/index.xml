@@ -1,0 +1,562 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Casbah on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/casbah/</link>
+    <description>Recent content in Casbah on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Wed, 28 Dec 2011 21:27:52 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/casbah/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>EventStatsはherokuとMongoLabとさくらVPSで動いている</title>
+      <link>http://blog.restartr.com/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps</link>
+      <pubDate>Wed, 28 Dec 2011 21:27:52 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps</guid>
+      <description>
+
+&lt;p&gt;今月頭に&lt;a href=&#34;http://blog.restartr.com/2011/12/10/eventststs&#34;&gt;ブログ書きました&lt;/a&gt;が、EventStatsという勉強会の参加者の推移が見れるサービスを公開しました。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://eventstats.restartr.com&#34;&gt;EventStats - イベントの統計情報が見れます&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;まぁ自分が欲しかっただけなんですけど、使ってみて頂ければ幸いです。
+今回はそのサービスの構成とかについて書いてみます。&lt;/p&gt;
+
+&lt;h3 id=&#34;アジェンダ:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;アジェンダ&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;全体像&lt;/li&gt;
+&lt;li&gt;システム構成&lt;/li&gt;
+&lt;li&gt;Gitリポジトリ&lt;/li&gt;
+&lt;li&gt;MongoDBのPaaS&lt;/li&gt;
+&lt;li&gt;各イベント管理サービスAPIの違い&lt;/li&gt;
+&lt;li&gt;開発メモ&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;1-全体像:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;1.全体像&lt;/h3&gt;
+
+&lt;p&gt;開発環境も含めて全体像を図にしてみました。(初Cacooですが超べんりですね！)&lt;/p&gt;
+
+&lt;p&gt;赤い線がGit操作で、黒い点線がMongoDBへのアクセスです。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://cacoo.com/diagrams/Cp2yo6tQNlxCm5av&#34;&gt;&lt;img border=&#34;1&#34; alt=&#34;全体像&#34; src=&#34;https://cacoo.com/diagrams/Cp2yo6tQNlxCm5av-2260A.png&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;2-システム構成:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;2.システム構成&lt;/h3&gt;
+
+&lt;p&gt;大きく分けてwebとクローラーの２つです。
+webはherokuに、クローラーはさくらのVPSに配置。&lt;/p&gt;
+
+&lt;p&gt;まずは優先してデータ蓄積を…ということでクローラーをpythonとmongodbで作成しました。
+(サービス的にはやいとこデータためないと意味ないので。)&lt;/p&gt;
+
+&lt;p&gt;クローラーは５分おきに起動するのでScalaよりPythonを選択しました。起動コスト重視です。
+(Scalaでサクサク開発できる程のスキルではないというのもありますが… )&lt;/p&gt;
+
+&lt;p&gt;実行場所はherokuのworkerも考えたましたが、最終的に既に利用していたさくらVPSでcronジョブとして運用することに。&lt;/p&gt;
+
+&lt;p&gt;ということでScalaのWebはデータ参照のみで、データの更新はしません。&lt;/p&gt;
+
+&lt;h3 id=&#34;3-gitリポジトリ:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;3.Gitリポジトリ&lt;/h3&gt;
+
+&lt;p&gt;webとクローラーは分けてGitで管理。リモートリポジトリはどちらもさくらのVPS上においています。
+ただし、本番リリースは開発PCからherokuに別途pushします。&lt;/p&gt;
+
+&lt;p&gt;※webもさくらVPSにリモートリポジトリを持って、本番データを参照するステージング環境として利用しています。&lt;/p&gt;
+
+&lt;h4 id=&#34;eventstats-web:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;eventstats-web&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;host: &lt;a href=&#34;http://www.heroku.com/&#34;&gt;heroku&lt;/a&gt; (Chedar)&lt;/li&gt;
+&lt;li&gt;scala
+
+&lt;ul&gt;
+&lt;li&gt;フレームワーク: &lt;a href=&#34;https://github.com/unfiltered/unfiltered&#34;&gt;unfiltered&lt;/a&gt; 0.5.1&lt;/li&gt;
+&lt;li&gt;mongodb接続: &lt;a href=&#34;http://api.mongodb.org/scala/casbah/2.1.5.0/&#34;&gt;casbah&lt;/a&gt; 2.1.5-1&lt;/li&gt;
+&lt;li&gt;テンプレートエンジン: &lt;a href=&#34;https://github.com/unfiltered/unfiltered/tree/master/scalate&#34;&gt;unfiltered-scalate&lt;/a&gt; (ssp)&lt;/li&gt;
+&lt;li&gt;テスティングライブラリ: &lt;a href=&#34;https://github.com/unfiltered/unfiltered/tree/master/spec&#34;&gt;unfiltered-specs&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;チャートのレンダリング: &lt;a href=&#34;http://code.google.com/apis/chart/index.html&#34;&gt;Google Chart Tools&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;eventstats-crawler:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;eventstats-crawler&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;host: さくらのvps&lt;/li&gt;
+&lt;li&gt;python 2.6
+
+&lt;ul&gt;
+&lt;li&gt;フレームワーク: なし&lt;/li&gt;
+&lt;li&gt;mongodb接続: &lt;a href=&#34;http://api.mongodb.org/python/1.11/&#34;&gt;pymongo&lt;/a&gt; 1.11&lt;/li&gt;
+&lt;li&gt;テスティングライブラリ: &lt;a href=&#34;http://readthedocs.org/docs/nose/en/latest/&#34;&gt;nose&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;その他: &lt;a href=&#34;http://www.crummy.com/software/BeautifulSoup/&#34;&gt;BeautifulSoup&lt;/a&gt; (&lt;em&gt;partake.inのwebスクレイピングに利用&lt;/em&gt;)&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;4-mongodbのpaas:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;4.MongoDBのPaas&lt;/h3&gt;
+
+&lt;p&gt;herokuプラグインとして&lt;a href=&#34;https://addons.heroku.com/mongolab&#34;&gt;MongoLab&lt;/a&gt;と&lt;a href=&#34;https://addons.heroku.com/mongohq&#34;&gt;MongoHQ&lt;/a&gt;の２つが提供されています。どちらも無料枠があるのですが、MongoLabの方が無料で利用できる容量が大きいのでこちらを選択。&lt;/p&gt;
+
+&lt;p&gt;月額の利用料金は以下です。（括弧内は1MBあたりの金額の目安です）
+&lt;em&gt;これ以上の容量も利用可能ですが個人で払う範囲ではないと思い除外してます。&lt;/em&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;mongolab:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;MongoLab&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;$ 0.00/240MB&lt;/li&gt;
+&lt;li&gt;$10.00/0.5GB  ($0.020/MB)&lt;/li&gt;
+&lt;li&gt;$20.00/2.0GB  ($0.009/MB)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;mongohq:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;MongoHQ&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;$ 0.00/ 16MB&lt;/li&gt;
+&lt;li&gt;$ 5.00/256MB  ($0.019/MB)&lt;/li&gt;
+&lt;li&gt;$15.00/2.0GB  ($0.007/MB)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;5-各イベント管理サービスapiの違い:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;5.各イベント管理サービスAPIの違い&lt;/h3&gt;
+
+&lt;p&gt;まずは&lt;strong&gt;atnd, zusaar, partake.inの３サービスに対応&lt;/strong&gt;。&lt;/p&gt;
+
+&lt;p&gt;それぞれ検索APIを提供してくれているのですが、当然ながら規格とかもないのでリクエストもレスポンスも違いがあります。&lt;/p&gt;
+
+&lt;p&gt;データ蓄積する際にそのAPIの差異を吸収して、webアプリから参照する際は気にしなくていい戦略をとりました。
+APIの違い検索のみに特化して違いをまとめると以下の通りです。&lt;/p&gt;
+
+&lt;h4 id=&#34;atnd:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;atnd&lt;/h4&gt;
+
+&lt;p&gt;イベント数も多いので、このAPIをスタンダードに設定。
+* API仕様
+ * &lt;a href=&#34;http://api.atnd.org/&#34;&gt;http://api.atnd.org/&lt;/a&gt;
+* リクエストパス
+ * &lt;a href=&#34;http://api.atnd.org/events/&#34;&gt;/events/&lt;/a&gt;
+   * イベントの検索
+ * &lt;a href=&#34;http://api.atnd.org/events/users/&#34;&gt;/events/users/&lt;/a&gt;
+   * イベントに参加しているユーザーの検索&lt;/p&gt;
+
+&lt;h4 id=&#34;zusaar:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;zusaar&lt;/h4&gt;
+
+&lt;p&gt;基本的にはatnd準拠っぽい感じだけど細かい違いがあります。
+ * API仕様
+   * &lt;a href=&#34;http://www.zusaar.com/doc/api.html&#34;&gt;http://www.zusaar.com/doc/api.html&lt;/a&gt;
+ * リクエストパス
+   * &lt;a href=&#34;http://www.zusaar.com/api/event/&#34;&gt;/api/event/&lt;/a&gt;
+     * イベントの検索
+   * &lt;a href=&#34;http://www.zusaar.com/api/event/user/&#34;&gt;/api/event/user/&lt;/a&gt;
+     * イベントに参加しているユーザーの検索
+atndとの違い
+ * エントリポイントやデータのキー名が単数形
+   * events→event
+   * users→user
+ * 明確なフィールドとしてのtwitter_idが無い
+    * 管理者も参加ユーザーも
+ * ハッシュタグがない
+ * レスポンスはjson一択&lt;/p&gt;
+
+&lt;h4 id=&#34;partake-in:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;partake.in&lt;/h4&gt;
+
+&lt;p&gt;全然違うAPI。APIリストにあっても未実装がほとんどなので、利用する際はソースを確認したほうが良いです。
+今回必要になりそうなAPIは２つくらいでした。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;API仕様
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://code.google.com/p/partakein/wiki/PublicWebAPI&#34;&gt;http://code.google.com/p/partakein/wiki/PublicWebAPI&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;リクエストパス
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://partake.in/api/event/search/&#34;&gt;/api/event/search&lt;/a&gt;
+
+&lt;ul&gt;
+&lt;li&gt;イベントの検索&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://partake.in/api/event/get/&#34;&gt;/api/event/get&lt;/a&gt;
+
+&lt;ul&gt;
+&lt;li&gt;イベントの詳細データ取得&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;APIのソース(抜粋)
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://code.google.com/p/partakein/source/browse/trunk/Partake/src/main/java/in/partake/controller/api/event/SearchAction.java&#34;&gt;in.partake.controller.api.event.SearchAction.java&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://code.google.com/p/partakein/source/browse/trunk/Partake/src/main/java/in/partake/controller/api/event/EventAction.java&#34;&gt;in.partake.controller.api.event.EventAction.java&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;その他の特徴は以下。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;複数イベントを特定して一括取得するAPIはない&lt;/li&gt;
+&lt;li&gt;フィールド名がcamelCase形式&lt;/li&gt;
+&lt;li&gt;レスポンスはjson一択&lt;/li&gt;
+&lt;li&gt;検索パラメータも特殊かつ少数&lt;/li&gt;
+&lt;li&gt;検索APIで取得できるのはイベントの固定情報のみ
+
+&lt;ul&gt;
+&lt;li&gt;参加枠数はAPIから取得可能&lt;/li&gt;
+&lt;li&gt;変動するユーザー数は取得不可能&lt;/li&gt;
+&lt;li&gt;→Webページをスクレイピングするしかないという結論&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;上記をふまえ、atnd/zusaarはJSON形式でAPIからデータ取得。&lt;/p&gt;
+
+&lt;p&gt;partake.inのみイベントのリストをAPIから取得して、ユーザー数はWebページのスクレイピングで対応しました。&lt;/p&gt;
+
+&lt;h3 id=&#34;6-開発メモ:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;6.開発メモ&lt;/h3&gt;
+
+&lt;h4 id=&#34;web-heroku-からもクローラー-さくらのvps-からも離れた場所にある:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;web(heroku)からもクローラー(さくらのvps)からも離れた場所にある&lt;/h4&gt;
+
+&lt;p&gt;開発PC上だと気にならなかったのですが、1件1件findしてinsertやupdateをしていると当然遅いです。なのである程度まとめて一気にinsertする方針に変更しました(ベンチ結果はありません ^^;)。
+更新はクローラーの１プロセスからのみ実行されるので、トランザクションとか意識しなくて良いです。なので比較的自由な構成がとれます。&lt;/p&gt;
+
+&lt;h4 id=&#34;scalaでjson-api:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;ScalaでJSON API&lt;/h4&gt;
+
+&lt;p&gt;まずはUnfilteredでJSON APIを作成。けど、jsでjson取得〜チャート生成の実行時間が思いの外大きいので、jsonも１枚のHTMLに埋め込む方針に変更。&lt;/p&gt;
+
+&lt;h3 id=&#34;さいごに:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;さいごに&lt;/h3&gt;
+
+&lt;p&gt;ざっと書きだすとこんな感じです。まぁこんな構成もあるよ、ってくらいにしか言えませんが。&lt;/p&gt;
+
+&lt;p&gt;webとクローラーを分けたことで、開発中のスキーマ変更が柔軟に行えたのは良かったのですが、スキーマ定義を共通で管理していないので、そのあたりうまく管理できると良いなと思ったり。
+当初はもう少しwebの機能も多かったのですが、効率化をしているうちにシンプルな形に落ち着きました。Scalaのコードもかなり小規模なものになっています。
+イベント管理者の方からのご意見ご要望などいただけると嬉しいです :)&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://eventstats.restartr.com&#34;&gt;EventStats - イベントの統計情報が見れます&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>ScalaからMongoDBへアクセスする - Salat編</title>
+      <link>http://blog.restartr.com/2011/03/09/access-to-mongodb-in-scala-with-salat</link>
+      <pubDate>Wed, 09 Mar 2011 09:00:38 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2011/03/09/access-to-mongodb-in-scala-with-salat</guid>
+      <description>&lt;p&gt;前回はCasbahというライブラリを使ってMongoDBへアクセスしてみました。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://blog.restartr.com/2011/03/07/access-to-mongodb-in-scala-with-casbah/&#34;&gt;ScalaからMongoDBへアクセスする ? Casbah編&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;今回は、Casbahに加えて、&lt;a href=&#34;https://github.com/novus/salat&#34;&gt;Salat&lt;/a&gt;というライブラリをを組み合わせて、より便利にMongoDBとScalaとやりとりをする方法について見ていきます。&lt;/p&gt;
+
+&lt;p&gt;&lt;h3&gt;Salat&lt;/h3&gt;
+&lt;a href=&#34;https://github.com/novus/salat&#34;&gt;novus/salat - GitHub&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Salatは、CasbahのMongoDBObjectとscalaのケースクラスと相互変換してくれる、ORマッパーです。wikiから引用するとこうあります。&lt;/p&gt;
+
+&lt;p&gt;&lt;blockquote&gt;
+Salat is a bi-directional Scala case class serialization library that leverages MongoDB&amp;rsquo;s DBObject (which uses BSON underneath) as its target format. This project is focused on fostering a DWIM and intuitive usage pattern for the end-user&amp;rsquo;s benefit, without sacrificing run time performance.&lt;/p&gt;
+
+&lt;p&gt;&lt;/blockquote&gt;
+パフォーマンスの犠牲なしに、より便利にMongoDBとやりとりできるというものらしいです。DWIMって初耳なんですが、&amp;rdquo;Do What I Mean.&amp;ldquo;の略語だそうです。意図したとおりに動いてくれる、くらいの意味でしょうか。
+あと、「Salat」って、ロシア語で「サラダ」の意味だそうです。&lt;/p&gt;
+
+&lt;p&gt;では、Salatの簡単な使い方を見ていきます。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;more&#34;&gt;&lt;/a&gt;&lt;a id=&#34;more-749&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;h3&gt; インストール &lt;/h3&gt;
+今回もsbt前提です。
+&lt;script src=&#34;https://gist.github.com/860266.js?file=SalatTestProject.scala&#34;&gt;&lt;/script&gt;
+CasbahとSalatどちらも必要です。今回はCasbahは2.0.2を、Salatは0.0.5を利用します。あとはいつものように&amp;rdquo;sbt reload update&amp;rdquo;を実行するだけです。&lt;/p&gt;
+
+&lt;p&gt;&lt;h3&gt;CasbahでMongoDBへアクセス&lt;/h3&gt;
+まずはCasbaとSalatをインポート。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;import com.novus.salat._
+import com.novus.salat.global._
+import com.mongodb.casbah.Imports._
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;CasbahのみでMongoDBに入れる例を復習します。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;val collection = MongoConnection()(&amp;quot;salat_test&amp;quot;)(&amp;quot;sample&amp;quot;)
+collection += MongoDBObject(&amp;quot;id&amp;quot;-&amp;gt;1, &amp;quot;name&amp;quot;-&amp;gt;&amp;quot;me&amp;quot;, &amp;quot;age&amp;quot;-&amp;gt;27)
+println(collection.findOne( MongoDBObject(&amp;quot;id&amp;quot;-&amp;gt;1)).get )
+// { &amp;quot;_id&amp;quot; : { &amp;quot;$oid&amp;quot; : &amp;quot;4d76475ce10d23dcda26857d&amp;quot;} , &amp;quot;id&amp;quot; : 1 , &amp;quot;name&amp;quot; : &amp;quot;me&amp;quot; , &amp;quot;age&amp;quot; : 27}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;で、このような値がすでにMongoDBに入っているとして、それぞれのフィールドにアクセスする場合、以下のようになります。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;val me2 = collection.findOne( MongoDBObject(&amp;quot;id&amp;quot;-&amp;gt;1)).get
+println( me2.getClass ) // class com.mongodb.BasicDBObject
+println( me2.get(&amp;quot;name&amp;quot;) ) // me
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;最後の&amp;rdquo;me2.get(&amp;ldquo;name&amp;rdquo;)&amp;ldquo;というのが格好悪いですね。もしかしたらDBから取り出したときに&amp;rdquo;name&amp;rdquo;というキーが存在しないかもしれません。ということで、そのフォーマットをケースクラスで定義できるSalatの出番です。
+Salatでは、grater[&lt;Type&gt;]のインスタンスを用いてMongoDBObjectとケースクラスの変換を行います。シリアライズは
+DBに保存する際は「asDBObject」メソッドで取り出してクラスインスタンスとして扱う場合は「asObject」メソッドを使います。&lt;/p&gt;
+
+&lt;p&gt;まずはクラスインスタンスをDBに入れる例。&lt;/p&gt;
+
+&lt;p&gt;Userというケースクラスを定義して、graterを用いてDBObjectに変換しています。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;case class User(id: Int, name: String, age: Int)
+
+val me = User(id=2, name=&amp;quot;me2&amp;quot;, age=54)
+val g = grater[User]
+collection += g.asDBObject(me)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;つぎに、DBからとりだした値をクラスインスタンスに変換する例です。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;val meInDB = collection.findOne( MongoDBObject(&amp;quot;id&amp;quot;-&amp;gt;2)).get
+println( meInDB.getClass )
+// class com.mongodb.BasicDBObject
+println( meInDB )
+// { &amp;quot;_id&amp;quot; : { &amp;quot;$oid&amp;quot; : &amp;quot;4d764830e10d23dc4758c29a&amp;quot;} , &amp;quot;_typeHint&amp;quot; : &amp;quot;User&amp;quot; , &amp;quot;id&amp;quot; : 2 , &amp;quot;name&amp;quot; : &amp;quot;me2&amp;quot; , &amp;quot;age&amp;quot; : 54}
+println( g.asObject(meInDB) )
+// User(2,me2,54)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;このように、ケースクラスへのマッピングが行われることにより、Scalaのコード中で扱うMongoDBのドキュメントの型が明確になり、見通しがよくなります。&lt;/p&gt;
+
+&lt;p&gt;「asObject(meInDB)」で変換する前の、DBからとりだしたままの状態(BasicDBObject型)の段階で&lt;/p&gt;
+
+&lt;p&gt;&lt;blockquote&gt;
+&amp;ldquo;_typeHint&amp;rdquo; : &amp;ldquo;User&amp;rdquo;&lt;/p&gt;
+
+&lt;p&gt;&lt;/blockquote&gt;
+というキーと値が見えます。この値がこのドキュメントに対応するクラス型を定義することになります。&lt;/p&gt;
+
+&lt;p&gt;&lt;h4&gt;問題点：意図しないケースクラスへの変換&lt;/h4&gt;
+別のケースクラスに変換しようとするとどうなるでしょうか。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;case class UserA(id: Int, name: String, age: Int)
+println( grater[UserA].asObject(meInDB) ) // UserA(2,me2,54)
+case class UserB(id: Int, name: String, salary: Int)
+println( grater[UserB].asObject(meInDB) )
+// java.lang.Exception: class UserB requires value for &#39;salary&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;クラス名が違うUserAに変換しようとすると変換できてしまいます。キー名が異なるUserBに変換しようとした場合はコンパイルエラーとなります。「_typeHint」の値がうまく機能しているのか、少々疑問が残ります…&lt;/p&gt;
+
+&lt;p&gt;&lt;h4&gt;問題点：クラス階層の保持&lt;/h4&gt;
+また、クラス階層をもつ場合がテストケースにあるのですが、これも微妙な挙動をします。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/novus/salat/blob/master/salat-core/src/test/scala/com/novus/salat/test/model/TestModel.scala&#34;&gt;salat-core/src/test/scala/com/novus/salat/test/model/TestModel.scala at master from novus/salat - GitHub&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;上記はテストケース用のモデル定義なのですが、Desmondのように別クラスの型を保持するケースクラスをDBObjectに変換する際に、Desmond型は保持できるのですが、それに含まれるAlice型が保持できずにリストに変換されてしまいます。&lt;/p&gt;
+
+&lt;p&gt;こんな感じのコードで試してみました。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;case class Group(group_id: Int, name: String, leader: User, members: List[User])
+
+val me = User(id=11, name=&amp;quot;me&amp;quot;, age=27)
+val you = User(id=12, name=&amp;quot;you&amp;quot;, age=30)
+val members = MongoDBList.newBuilder
+members += me
+members += you
+val group = Group(group_id=1, name=&amp;quot;you and me&amp;quot;, leader=me, members=List(me, you))
+println(group)
+// Group(1,you and me,List(User(11,me,27), User(12,you,30)))
+
+println(grater[Group].asDBObject(group))
+// // { &amp;quot;_typeHint&amp;quot; : &amp;quot;Group&amp;quot; , &amp;quot;group_id&amp;quot; : 1 , &amp;quot;name&amp;quot; : &amp;quot;you and me&amp;quot; , &amp;quot;leader&amp;quot; : [ 11 , &amp;quot;me&amp;quot; , 27] , &amp;quot;members&amp;quot; : [ [ 11 , &amp;quot;me&amp;quot; , 27] , [ 12 , &amp;quot;you&amp;quot; , 30]]}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;DBObjectに変換すると、leaderの値やmembersのList要素がリストに変換されてます。
+このままMongoDBに保存して、それを取り出したあとで&amp;rdquo;grater[Group].asObject(group)&amp;ldquo;しようとするとエラーになります。&lt;/p&gt;
+
+&lt;p&gt;まだ触り始めたばかりでGithubのWikiもちゃんと読み込んでないので、扱い方が違っているのかもしれません。引き続き動作検証をすすめたいと思います。（結局、Rogueを使うというオチになりそうな気がしないくもないですが…）&lt;/p&gt;
+
+&lt;p&gt;&lt;h3&gt;関連リンク&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/novus/salat/wiki/Quick-start&#34;&gt;Quick start - GitHub&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+今回も一応全コードを掲載しておきます。
+&lt;script src=&#34;https://gist.github.com/860266.js?file=SalatSample.scala&#34;&gt;&lt;/script&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>ScalaからMongoDBへアクセスする - Casbah編</title>
+      <link>http://blog.restartr.com/2011/03/07/access-to-mongodb-in-scala-with-casbah</link>
+      <pubDate>Mon, 07 Mar 2011 08:45:28 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2011/03/07/access-to-mongodb-in-scala-with-casbah</guid>
+      <description>&lt;p&gt;ここ２，３日、ScalaからMongoDBへのアクセスのため、CasbahとSalatをお試し中です。&lt;/p&gt;
+
+&lt;p&gt;もともとはAkkaを弄ってたんですが、Akkaに含まれるPersistent(MongoDBなどNoSQLへの接続用)がなくなるらしいので、別のがないかなー、と寄り道したのがきっかけです。&lt;/p&gt;
+
+&lt;p&gt;&lt;h3&gt;Casbah&lt;/h3&gt;
+MongoDBを開発している10gen謹製Scalaライブラリです。
+Scala製のドライバは他にもLiftの&lt;a href=&#34;http://www.assembla.com/wiki/show/liftweb/MongoDB&#34;&gt;MongoDB&lt;/a&gt;や、Liftと組み合わせて使う&lt;a href=&#34;http://engineering.foursquare.com/2011/01/21/rogue-a-type-safe-scala-dsl-for-querying-mongodb/&#34;&gt;Rogue&lt;/a&gt;、mongo-java-driverのラッパーの&lt;a href=&#34;http://github.com/alaz/mongo-scala-driver&#34;&gt;mongo-scala-driver&lt;/a&gt;などがあります。
+一覧は以下に掲載されています。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://github.com/alaz/mongo-scala-driver&#34;&gt;Java Language Center - MongoDB&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Rogueについては、Fungoingのbibrostさんのブログが詳しいのでそちらをご覧ください。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://fungoing.blogspot.com/2011/02/liftscala-dslroguemongodb.html&#34;&gt;Fungoing Labs: Lift用Scala DSL&amp;rdquo;Rogue&amp;rdquo;を使ってMongoDBにアクセス（１）〜概要編〜&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;なぜ、LiftのMongoDBなりRogueなりを使わなかったかというと、フレームワークに依存したくなかったからです。単体で動作するものが使いたいのです。なので、Casbahを選択しました。
+が、Casbahだけだと、複雑なレコードを作成するのには少々面倒なところがあります。ORマッパーが欲しくなるのです。その解決策となるSalatがあります。今回はCasbahのまとめにとどめ、Salatについては後日改めてまとめようと思います。&lt;/p&gt;
+
+&lt;p&gt;&lt;blockquote&gt;
+※追記※
+Salat編を書きました。
+&lt;a href=&#34;http://blog.restartr.com/2011/03/09/access-to-mongodb-in-scala-with-salat/&#34;&gt;ScalaからMongoDBへアクセスする ? Salat編&lt;/a&gt;
+&lt;/blockquote&gt;
+では、Casbahの使い方について見ていきます。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;more&#34;&gt;&lt;/a&gt;&lt;a id=&#34;more-722&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;h3&gt;インストール&lt;/h3&gt;
+sbtの設定はこんな感じです。
+project/build/SalatTestProject.scala
+&lt;script src=&#34;https://gist.github.com/857260.js?file=SalatTestProject.scala&#34;&gt;&lt;/script&gt;&lt;/p&gt;
+
+&lt;p&gt;そしたら、sbtプロンプトでreload, updateをします。&lt;/p&gt;
+
+&lt;p&gt;これで、project/lib_managed/scala_2.x.x/compile以下にjarファイルが読み込まれるはず。&lt;/p&gt;
+
+&lt;p&gt;&lt;h3&gt;CasbahでMongoDBへアクセス&lt;/h3&gt;
+目次は以下の通りです。&lt;/p&gt;
+
+&lt;p&gt;&lt;ul&gt;
+&lt;li&gt;MongoDBObjectの作成&lt;/li&gt;
+&lt;li&gt;ドキュメントの検索&lt;/li&gt;
+&lt;li&gt;ドキュメントのJOIN&lt;/li&gt;
+&lt;li&gt;ListObjectの生成&lt;/li&gt;
+&lt;li&gt;クエリの構築&lt;/li&gt;
+&lt;li&gt;クエリの構築(DSLを利用)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;MongoDBObjectの作成&lt;/h4&gt;
+Casbahでは、MongoDB上のドキュメントをMongoDBObjectとして取り扱います。&lt;/p&gt;
+
+&lt;p&gt;MongoDBObjectをインスタンス化する、もしくはMongoDBObjectBuilderで逐次フィールドを定義するかのどちらかになります。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;// MongoDBObjectをインスタンス化
+val user = MongoDBObject(&amp;quot;id&amp;quot;-&amp;gt;1, &amp;quot;name&amp;quot;-&amp;gt;&amp;quot;me&amp;quot;)
+println(user) // { &amp;quot;id&amp;quot; : 1 , &amp;quot;name&amp;quot; : &amp;quot;me&amp;quot;}
+
+// MongoDBObjectBuilderで逐次フィールド定義
+val builder = MongoDBObject.newBuilder
+builder += &amp;quot;id&amp;quot;-&amp;gt;2
+builder += &amp;quot;name&amp;quot;-&amp;gt;&amp;quot;you&amp;quot;
+val user2 = builder.result // これでMongoDBObjectができる
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;できたら、これをMongoDBに保存します。&lt;/p&gt;
+
+&lt;p&gt;まずはコレクションのインスタンス取得から。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;val conn = MongoConnection()
+// MongoConnection(&amp;quot;localhost&amp;quot;, 27017)でホストおよびポート指定が可能
+val db = conn(&amp;quot;casbah_test&amp;quot;)
+val collection = db(&amp;quot;sample&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;下記のように１行にまとめてもでもOKです。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;val collection = MongoConnection()(&amp;quot;casbah_test&amp;quot;)(&amp;quot;sample&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;で、コレクションに保存します。「+=」を使うだけと、とてもシンプルな操作になっています。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;collection += user // { &amp;quot;_id&amp;quot; : ObjectId(&amp;quot;4d7385ebf21423dcecb4c578&amp;quot;), &amp;quot;id&amp;quot; : 1, &amp;quot;name&amp;quot; : &amp;quot;me&amp;quot; }
+collection += user2 // { &amp;quot;_id&amp;quot; : ObjectId(&amp;quot;4d7385ebf21423dcedb4c578&amp;quot;), &amp;quot;id&amp;quot; : 2, &amp;quot;name&amp;quot; : &amp;quot;you&amp;quot; }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;h4&gt;ドキュメントの検索&lt;/h4&gt;
+保存したドキュメントを全件取得します。mongodbのコンソールでいう、db.collection.find()にあたる操作です。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;collection.find().foreach { println(_) }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;h4&gt;ドキュメントのJOIN&lt;/h4&gt;
+MongoDBでJoinはできないので、アプリ側で対処する場合に使うんでしょうかね。&lt;/p&gt;
+
+&lt;p&gt;やり方は、MongoDBObjectを「++」でつなぐだけ。簡単です。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;val identity = MongoDBObject(&amp;quot;name&amp;quot;-&amp;gt;&amp;quot;me&amp;quot;, &amp;quot;age&amp;quot;-&amp;gt;27)
+val address = MongoDBObject(&amp;quot;country&amp;quot;-&amp;gt;&amp;quot;Japan&amp;quot;, &amp;quot;prefecture&amp;quot;-&amp;gt;&amp;quot;Tokyo&amp;quot;)
+val user = identity ++ address
+println(user) // { &amp;quot;age&amp;quot; : 27 , &amp;quot;country&amp;quot; : &amp;quot;Japan&amp;quot; , &amp;quot;prefecture&amp;quot; : &amp;quot;Tokyo&amp;quot; , &amp;quot;name&amp;quot; : &amp;quot;me&amp;quot;}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;h4&gt;ListObjectの生成&lt;/h4&gt;
+List(javascriptでいうArrayのこと)はMongoDBListでつくります。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;val users1 = MongoDBList(
+  MongoDBObject(&amp;quot;name&amp;quot;-&amp;gt;&amp;quot;me&amp;quot;),
+  MongoDBObject(&amp;quot;name&amp;quot;-&amp;gt;&amp;quot;you&amp;quot;))
+println(users1) // [ { &amp;quot;name&amp;quot; : &amp;quot;me&amp;quot;} , { &amp;quot;name&amp;quot; : &amp;quot;you&amp;quot;}]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;当然ですが、Listの要素（MongoDBListの引数は）MongoDBObjectだけでなく、文字列や数値もOKです。&lt;/p&gt;
+
+&lt;p&gt;でListの場合もBuilder経由で作成が可能です。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;val users = MongoDBList.newBuilder
+val user1 = MongoDBObject(&amp;quot;name&amp;quot;-&amp;gt;&amp;quot;me&amp;quot;)
+val user2 = MongoDBObject(&amp;quot;name&amp;quot;-&amp;gt;&amp;quot;you&amp;quot;)
+users += user1
+users += user2
+println(users.result) // [ { &amp;quot;name&amp;quot; : &amp;quot;me&amp;quot;} , { &amp;quot;name&amp;quot; : &amp;quot;you&amp;quot;}]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;h4&gt;クエリの構築&lt;/h4&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;// 取得条件を指定
+val condition = MongoDBObject(&amp;quot;name&amp;quot;-&amp;gt;&amp;quot;me&amp;quot;)
+collection.find(condition).foreach( println )
+
+// 取得フィールドを限定
+val fields = MongoDBObject(&amp;quot;id&amp;quot;-&amp;gt;1)
+collection.find(condition, fields).foreach( println )
+
+// 条件の指定をせずに取得フィールドのみ限定する場合
+val conditionEmpty = MongoDBObject.empty
+collection.find(conditionEmpty, fields).foreach( println )
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;h4&gt;クエリの構築(DSLを利用)&lt;/h4&gt;
+$exists, $gt, $ltなど、以下にあるものはDSLとして使えるらしいです。&lt;/p&gt;
+
+&lt;p&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-ConditionalOperators&#34;&gt;Advanced Queries - MongoDB&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+findの引数にDSLを使って記述します。複数条件を組み合わせる場合は「++」でつなげます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;collection.find( &amp;quot;name&amp;quot; $exists true ).foreach{ println }
+
+// 組み合わせる場合は&amp;quot;++&amp;quot;でつなげる
+collection.find( (&amp;quot;name&amp;quot; $exists true) ++ (&amp;quot;age&amp;quot; $gte 20 $lt 30 ) ).foreach{ println }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;『(&amp;ldquo;age&amp;rdquo; $gte 20) ++ (&amp;ldquo;age&amp;rdquo; $lt 30)』と書かなくても、『(&amp;ldquo;age&amp;rdquo; $gte 20 $lt 30 ) 』とかけるので記述量がへって良いですね。&lt;/p&gt;
+
+&lt;p&gt;あと、追加ですけど、１ドキュメントのみ取得したい時はfindOneが使えます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;val obj = collection.findOne().get // Option[DBObject]からDBObjectを取り出すためにgetを呼ぶ
+println(obj(&amp;quot;name&amp;quot;)) //me
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;以上、かんたんにSasbahの使い方についてまとめてみました。&lt;/p&gt;
+
+&lt;p&gt;&lt;h3&gt;関連リンク&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/mongodb/casbah&#34;&gt;GitHub&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://api.mongodb.org/scala/casbah/2.0.2/tutorial.html&#34;&gt;Casbahチュートリアル&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://api.mongodb.org/scala/casbah/2.0.2/scaladoc/&#34;&gt;ScalaDoc (casbah-core v2.0.2)&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+ちなみに、細切れで説明した上記サンプルプログラムの全体を以下に掲載しておきます。&lt;/p&gt;
+
+&lt;p&gt;※convertObjectTypeメソッドの中身については現在検証中です(；・∀・)
+&lt;script src=&#34;https://gist.github.com/857260.js?file=CasbahSample.scala&#34;&gt;&lt;/script&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Keyboard on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/keyboard/</link>
+    <description>Recent content in Keyboard on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Wed, 17 Feb 2016 22:57:45 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/keyboard/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>ErgoDox EZを注文した(けどまだ届いてない)</title>
+      <link>http://blog.restartr.com/2016/02/17/ergodox-ez</link>
+      <pubDate>Wed, 17 Feb 2016 22:57:45 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2016/02/17/ergodox-ez</guid>
+      <description>
+
+&lt;p&gt;&lt;img src=&#34;http://res.cloudinary.com/indiegogo-media-prod-cld/image/upload/c_limit,w_620/v1435062448/e209onukdbrkpy4fygew.png&#34; alt=&#34;ErgoDox EZ&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;大きなプロジェクトが一区切りついたこともあって、勢いでErgoDox EZを買いました。&lt;/p&gt;
+
+&lt;p&gt;お高めキーボード遍歴としては、FILCO Majestouch(黒軸)を1年程使った後、ここ5年くらいずっとHHKBpro2(墨黒無刻印)を使っていました。が、ずっとこれに変わるコンパクトかつ親指をもてあまさない最高なキーボードがないかなと思ってました。&lt;/p&gt;
+
+&lt;p&gt;つい最近「&lt;a href=&#34;http://nippondanji.blogspot.jp/2016/01/ergodox.html&#34;&gt;漢(オトコ)のコンピュータ道: キーボードを新しくした話(ErgoDox)&lt;/a&gt;」を目にしたこともあって、また理想のキーボードを探してみることにした結果、ErgoDox EZに行き着いた、といういきさつです。&lt;/p&gt;
+
+&lt;p&gt;本当なら届いてからポストしようと考えてたのですが、確認したら4月あたりまで1ヶ月程かかるらしいので、とりあえず注文するまでに調べたことを書いておきます。&lt;/p&gt;
+
+&lt;p&gt;&lt;blockquote class=&#34;twitter-tweet&#34; data-lang=&#34;ja&#34;&gt;&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;&lt;a href=&#34;https://twitter.com/ReSTARTR&#34;&gt;@restartr&lt;/a&gt; Hello, and thank you for supporting us! We expect to ship current orders around April, working hard to cut down lead times.&lt;/p&gt;&amp;mdash; ErgoDox EZ (@ErgoDoxEZ) &lt;a href=&#34;https://twitter.com/ErgoDoxEZ/status/699937511099863041&#34;&gt;2016, 2月 17&lt;/a&gt;&lt;/blockquote&gt; &lt;script async src=&#34;//platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;&lt;/p&gt;
+
+&lt;p&gt;まじか&amp;hellip;orz&lt;/p&gt;
+
+&lt;h2 id=&#34;ergodoxを買えるところ:67beeeb1249322c24a3e836816b31d7f&#34;&gt;ErgoDoxを買えるところ&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://ergodox.org&#34;&gt;ErgoDox&lt;/a&gt;そのものは&lt;a href=&#34;http://www.key64.org&#34;&gt;The Key64 Keyboard&lt;/a&gt;の流れから生まれた設計とかコードが公開されたプロジェクトであり、実際にはパーツを揃えて組み立てたりしないといけないのが敷居の高いところ。
+ですが、クラウドファンディングで製造販売する流れができていて非常にありがたいです。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.indiegogo.com/projects/ergodox-ez-an-incredible-mechanical-keyboard#/&#34;&gt;ErgoDox EZ: An incredible mechanical keyboard | Indiegogo&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://falbatech.pl/prestashop/index.php&#34;&gt;FalbaTech&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.massdrop.com/buy/ergodox&#34;&gt;ErgoDox Ergonomic Mechanical Keyboard Kit Drop - Massdrop&lt;/a&gt;(今は買えない)&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.massdrop.com/buy/infinity-ergodox&#34;&gt;Infinity ErgoDox Ergonomic Keyboard Kit Drop - Massdrop&lt;/a&gt;(今は買えない)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;完成形だったり、組み立て式だったり、細部の造形がイマイチだったり様々です。&lt;/p&gt;
+
+&lt;p&gt;ErgoDox EZが写真で見る限りかなり質感よさそうですし、傾斜できるスタンドが用意されていたりキートップとスイッチ(後述)を6種類から選べるのが気の利いている点が気に入ってこれにしました。&lt;/p&gt;
+
+&lt;h2 id=&#34;ergodox-ezについて:67beeeb1249322c24a3e836816b31d7f&#34;&gt;ErgoDox EZについて&lt;/h2&gt;
+
+&lt;p&gt;サイトを眺めているといろいろ知らない要素が出てきて「はて?」となったので、ざっと重要なポイントを抜き出しつつ軽く補足をくわえて以下に書き出してみます。&lt;/p&gt;
+
+&lt;h3 id=&#34;概要:67beeeb1249322c24a3e836816b31d7f&#34;&gt;概要&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;完成形（組み立てでない）&lt;/li&gt;
+&lt;li&gt;2年保証&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.maruichirubber.co.jp/rubber/newpage2-2.htm&#34;&gt;インジェクションモールドABS製&lt;/a&gt;フレーム
+
+&lt;ul&gt;
+&lt;li&gt;他の成形手法より大量生産に向いているが高価、らしい&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;刻印のあるキーキャップも選択可能
+
+&lt;ul&gt;
+&lt;li&gt;基本は無刻印&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;アクセサリー
+
+&lt;ul&gt;
+&lt;li&gt;Tilt/Tentキット&lt;/li&gt;
+&lt;li&gt;リストレスト&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;強力なカスタマイズ力、オープンソースなファームウェア(QMK)&lt;/li&gt;
+&lt;li&gt;Nキーロールオーバーと&lt;a href=&#34;https://ja.wikipedia.org/wiki/マウスキー&#34;&gt;マウスキー&lt;/a&gt;に対応&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;価格:67beeeb1249322c24a3e836816b31d7f&#34;&gt;価格&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;本体、Tilt/Tentキット、リストレスト $295&lt;/li&gt;
+&lt;li&gt;本体のみ(キースイッチあり、キーキャップなし) $205&lt;/li&gt;
+&lt;li&gt;本体のみ(無刻印キートップ) $240&lt;/li&gt;
+&lt;li&gt;本体のみ(刻印キートップ) $240&lt;/li&gt;
+&lt;li&gt;本体のみ(キースイッチあり、キーキャップなし)、Tilt/Tent Kit、リストレスト $260&lt;/li&gt;
+&lt;li&gt;Tilt/Tentキット、リストレスト $85&lt;/li&gt;
+&lt;li&gt;Tilt/Tentキット $45&lt;/li&gt;
+&lt;li&gt;リストレスト $45&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;バラで買うと$240 + $45 + $45の$330なので、全部入りを買うのが良いかと。
+あとでキーキャップを変えるにしても揃えるのが大変そうなので。&lt;/p&gt;
+
+&lt;p&gt;全部入りの場合、120円/ドル換算で約35,000円程度です。HHKBpro2とかREALFORCEが2万円強なので、それより1.5倍くらいお高めです。が、Kinesisが定価45,000を超えることを考えるとなかなか良いポジションではないかと思います。(一般的なキーボードからしたら十分すぎるほど高価ですけど&amp;hellip;)&lt;/p&gt;
+
+&lt;h3 id=&#34;キーキャップ:67beeeb1249322c24a3e836816b31d7f&#34;&gt;キーキャップ&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;PBT樹脂DCS キーキャップ
+
+&lt;ul&gt;
+&lt;li&gt;刻印ありの場合はDSA(DCSよりもフラットな並び)&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;PBTは樹脂の種類で、ABSに比べて耐久性に優れている
+
+&lt;ul&gt;
+&lt;li&gt;HHKBpro2のキーキャップはPBTでケースはABS&lt;a href=&#34;https://www.pfu.fujitsu.com/hhkeyboard/notice.html&#34;&gt;とのこと&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;DCSはキーキャップ形状の一種
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.keycapsdirect.com/pdfs/DCSFamily.pdf&#34;&gt;DCS FAMILY(PDF)&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;おそらく&lt;a href=&#34;http://www.gateron.com/page153?product_id=57&#34;&gt;Gateron製&lt;/a&gt;ではないかと思います(キースイッチがgateron製なので)&lt;/p&gt;
+
+&lt;h3 id=&#34;キースイッチ-軸:67beeeb1249322c24a3e836816b31d7f&#34;&gt;キースイッチ（軸）&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Gateron製キースイッチ
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.gateron.com/page152?product_category=1&amp;amp;brd=1&#34;&gt;机械键盘轴开关，国产cherry轴开关，gateron轴青轴红轴茶轴黑轴gateron官网官方网站&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Cherryスイッチクローン(中国製?)&lt;/li&gt;
+&lt;li&gt;Cherryに比べて滑らか&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;ErgoDox EZでは6つのスイッチから選べます。
+このスイッチについてさんざん調べまわった結果、僕は&amp;rdquo;Gateron White&amp;rdquo;を選択しました。&lt;/p&gt;
+
+&lt;p&gt;ちなみに、注文した後のメールに各スイッチの仕様書(PDF)が添付されていますので、そちらも見つつ選ぶと良いです。
+(すべての注文処理が終わった後にこの添付ファイルに気づきました&amp;hellip;)&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Gateron White(リニア・35g)&lt;/li&gt;
+&lt;li&gt;Gateron Red(リニア・45g =&lt;a href=&#34;https://deskthority.net/wiki/Cherry_MX_Red&#34;&gt;Cherry MX赤軸&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;Gateron Black(リニア・50g, =&lt;a href=&#34;https://deskthority.net/wiki/Cherry_MX_Black&#34;&gt;Cherry MX黒軸&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;Gateron Yellow(リニア・50g)&lt;/li&gt;
+&lt;li&gt;Gateron Brown(タクタイル・45g =&lt;a href=&#34;https://deskthority.net/wiki/Cherry_MX_Brown&#34;&gt;Cherry MX茶軸&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;Gateron Blue(タクタイル・55g =&lt;a href=&#34;https://deskthority.net/wiki/Cherry_MX_Blue&#34;&gt;Cherry MX青軸&lt;/a&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;PDFに表記されていた図を雑に並べてみました。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://gyazo.com/c6e7e025230e6c79b0727c506b93fff4&#34;&gt;&lt;img src=&#34;https://i.gyazo.com/c6e7e025230e6c79b0727c506b93fff4.png&#34; alt=&#34;https://gyazo.com/c6e7e025230e6c79b0727c506b93fff4&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;参考までに、他のキースイッチの数値はこんな感じ。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;HHKB Pro2 荷重45g 4mmストローク&lt;/li&gt;
+&lt;li&gt;REALFORCE 荷重30~45g(変荷重と固定の3種)  4mmストローク&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;自分の場合、クリック感があるタクタイルより、リニアが好き（FILCO時代は黒軸でした)なので、白、赤、黄、黒あたりが選択肢となります。
+HHKB pro2が荷重45gなので、赤軸がいちばん近いです。REALFORCEなら白軸35gが近いでしょうか。&lt;/p&gt;
+
+&lt;p&gt;Youtubeにもいろいろがあがっていましたので、こちらも参考に。&lt;/p&gt;
+
+&lt;iframe width=&#34;560&#34; height=&#34;315&#34; src=&#34;https://www.youtube.com/embed/gy2C1Of0oQk&#34; frameborder=&#34;0&#34; allowfullscreen&gt;&lt;/iframe&gt;
+
+&lt;iframe width=&#34;560&#34; height=&#34;315&#34; src=&#34;https://www.youtube.com/embed/A2Px2f6A5dM&#34; frameborder=&#34;0&#34; allowfullscreen&gt;&lt;/iframe&gt;
+
+&lt;p&gt;とまぁそんな感じの製品です。到着までまだまだ待たないといけないのがつらいです。。。
+いまのところ注文してから到着まで1ヶ月とのことなので、はやめに注文したほうが良いかと思います。
+購入してみようかな？と思った方はこちらからどうぞ:-)&lt;/p&gt;
+
+&lt;iframe src=&#34;https://www.indiegogo.com/project/ergodox-ez-an-incredible-mechanical-keyboard/embedded&#34; width=&#34;222px&#34; height=&#34;445px&#34; frameborder=&#34;0&#34; scrolling=&#34;no&#34;&gt;&lt;/iframe&gt;
+
+&lt;p&gt;ちなみに、&lt;a href=&#34;http://www.jw-shop.com/menu-row/keyboard.htm&#34;&gt;キーボード カスタム制作&lt;/a&gt;というサービスもあるみたいです。&lt;/p&gt;
+
+&lt;h2 id=&#34;参考にしたところ:67beeeb1249322c24a3e836816b31d7f&#34;&gt;参考にしたところ&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://nippondanji.blogspot.jp/2016/01/ergodox.html&#34;&gt;漢(オトコ)のコンピュータ道: キーボードを新しくした話(ErgoDox)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://kammers.aa0.netvolante.jp/20150928201048/&#34;&gt;ergodoxを買いました | kammers&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://deskthority.net/wiki/ErgoDox&#34;&gt;ErgoDox - Deskthority wiki&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.massdrop.com/buy/gateron-switches&#34;&gt;Gateron Switches Drop - Massdrop&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://deskthority.net/wiki/Gateron_KS-3_series&#34;&gt;Gateron KS-3 series - Deskthority wiki&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://g-chan.dip.jp/square/archives/2016/02/nisse_nisse.html&#34;&gt;G-chan Square - [キーボード][NISSE] エスリルのキーボード&amp;rdquo;NISSE&amp;rdquo; 3台目を購入しました&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Diy on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/diy/</link>
+    <description>Recent content in Diy on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 22 Aug 2010 21:45:17 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/diy/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>バックライトがつかないiPhone3GSの液晶を交換してみた</title>
+      <link>http://blog.restartr.com/2010/08/22/change-my-iphone3gs-display</link>
+      <pubDate>Sun, 22 Aug 2010 21:45:17 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2010/08/22/change-my-iphone3gs-display</guid>
+      <description>&lt;p&gt;&lt;a title=&#34;IMG_2217 by ReSTARTR_y, on Flickr&#34; href=&#34;http://www.flickr.com/photos/53244662@N04/4914863453/&#34;&gt;&lt;img src=&#34;http://farm5.static.flickr.com/4119/4914863453_161bbe155f.jpg&#34; alt=&#34;IMG_2217&#34; width=&#34;333&#34; height=&#34;500&#34; /&gt;&lt;/a&gt;&lt;br /&gt;
+タイトルそのまんまですが、iPhone3GSの液晶を交換しました。&lt;br /&gt;
+&lt;em&gt;※参考にしていただいければ幸いですが、自己責任でお願いしますm(_ _)m&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;a id=&#34;more&#34;&gt;&lt;/a&gt;&lt;a id=&#34;more-284&#34;&gt;&lt;/a&gt;経緯&lt;/strong&gt;&lt;br /&gt;
+FUJIROCK2010に行って、前夜祭で雨にやられてiPhone3GSのバックライトがつかなくなってしまいました。&lt;br /&gt;
+ただし、液晶が見にくいだけで一応の一通りの機能に問題はありません。SoftBankショップに相談しにいったら修理するくらいならiPhone3GS/iPhone4に交換したほうが良いとのこと。でも今更iPhone4はスルーの予定だったし、iPhone3GSに変えるのもなんだかプライドが許さないわけです。&lt;br /&gt;
+ということで、ひとまず3G回線をもともとつかっていた端末(SoftBank 911T)に機種変更してしのいでいました。&lt;/p&gt;
+&lt;p&gt;が、iPhoneなしの生活がしんどくなってきたため、液晶交換に踏み切りました。ここまできたら保証もなにも気になりません。自己責任どんとこいです。&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;http://ilab.cc/lcd.html&#34;&gt;交換作業を依頼することもできます&lt;/a&gt;が、コスト削減のためにも自分でやります。必要なものは&lt;a href=&#34;http://ilab.shop-pro.jp/?pid=15252505&#34;&gt;iPhone3GS 液晶パネル&lt;/a&gt;(&lt;del&gt;\7,800&lt;/del&gt; \4,800(※2011/04/11現在))のみ。&lt;a href=&#34;http://ilab.shop-pro.jp/?pid=14642995&#34;&gt;専用の工具&lt;/a&gt;(\800)も売っていますが、普通の精密ドライバーがあればなんとかなります。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;交換の過程&lt;/strong&gt;&lt;br /&gt;
+詳しい過程は&lt;a href=&#34;http://mutodanoshi.com/blog/2009/08/iphne-3gs-lcd-replacement-01.html&#34;&gt;こちら&lt;/a&gt;を参照したほうが良いでしょうｗ（いちいち写真とるのめんどくさくて…）&lt;/p&gt;
+&lt;p&gt;&lt;a title=&#34;IMG_2210 by ReSTARTR_y, on Flickr&#34; href=&#34;http://www.flickr.com/photos/53244662@N04/4914863441/&#34;&gt;&lt;img src=&#34;http://farm5.static.flickr.com/4122/4914863441_8cc97bce61.jpg&#34; alt=&#34;IMG_2210&#34; width=&#34;500&#34; height=&#34;333&#34; /&gt;&lt;/a&gt;&lt;br /&gt;
+こんな感じのパッケージがダンボールに入れられて送られてきます。&lt;/p&gt;
+&lt;p&gt;まずiPhoneの分解から。&lt;br /&gt;
+本体を開けるとこんな感じで、本体右上あたりに「１」と「２」のシールが貼られたパーツで液晶とパネルが接続されています。それを引き抜けばOK。&lt;br /&gt;
+&lt;a title=&#34;IMG_2214 by ReSTARTR_y, on Flickr&#34; href=&#34;http://www.flickr.com/photos/53244662@N04/4914863445/&#34;&gt;&lt;img src=&#34;http://farm5.static.flickr.com/4118/4914863445_4e52429956.jpg&#34; alt=&#34;IMG_2214&#34; width=&#34;500&#34; height=&#34;333&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;次は液晶を全面のパネルからはずします。&lt;br /&gt;
+液晶は金属フレームとくっついてるのですが、ただ粘着シートでくっついてるだけ（下写真）なです。&lt;br /&gt;
+&lt;a title=&#34;IMG_2219 by ReSTARTR_y, on Flickr&#34; href=&#34;http://www.flickr.com/photos/53244662@N04/4914863455/&#34;&gt;&lt;img src=&#34;http://farm5.static.flickr.com/4097/4914863455_f35d34792a.jpg&#34; alt=&#34;IMG_2219&#34; width=&#34;500&#34; height=&#34;333&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;そーっと液晶をひっペがすと鏡面が現れます（下写真右側がそれ）。で、新しい液晶の裏面のシートをはがして金属フレームとくっつけます。&lt;br /&gt;
+&lt;a title=&#34;IMG_2223 by ReSTARTR_y, on Flickr&#34; href=&#34;http://www.flickr.com/photos/53244662@N04/4914863461/&#34;&gt;&lt;img src=&#34;http://farm5.static.flickr.com/4138/4914863461_638b4d6a87.jpg&#34; alt=&#34;IMG_2223&#34; width=&#34;500&#34; height=&#34;333&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;ちなみにもともとくみこまれていたものにはQRコードのシールが貼ってますが、新しいものにはついてません。&lt;br /&gt;
+（接続部分の「２」のシールもありません）&lt;br /&gt;
+&lt;a title=&#34;IMG_2222 by ReSTARTR_y, on Flickr&#34; href=&#34;http://www.flickr.com/photos/53244662@N04/4914863457/&#34;&gt;&lt;img src=&#34;http://farm5.static.flickr.com/4073/4914863457_6356258b66.jpg&#34; alt=&#34;IMG_2222&#34; width=&#34;500&#34; height=&#34;333&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;ちゃんと動作するか、バックライトが点くか確認してみます。&lt;br /&gt;
+&lt;a title=&#34;IMG_2232 by ReSTARTR_y, on Flickr&#34; href=&#34;http://www.flickr.com/photos/53244662@N04/4914890785/&#34;&gt;&lt;img src=&#34;http://farm5.static.flickr.com/4134/4914890785_2c2a32d671.jpg&#34; alt=&#34;IMG_2232&#34; width=&#34;500&#34; height=&#34;333&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;あとは元通りにするだけ。最後に本体下部のネジを締めて完了です。&lt;br /&gt;
+&lt;a title=&#34;IMG_2234 by ReSTARTR_y, on Flickr&#34; href=&#34;http://www.flickr.com/photos/53244662@N04/4914890885/&#34;&gt;&lt;img src=&#34;http://farm5.static.flickr.com/4137/4914890885_41b1e93b6d.jpg&#34; alt=&#34;IMG_2234&#34; width=&#34;500&#34; height=&#34;333&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;あ、前面パネルが緑色なのはこのシート使ってるからです。ヨドバシとかハンズとかに売ってます。印象がポップになるので気に入ってます。&lt;br /&gt;
+&lt;a title=&#34;IMG_2235 by ReSTARTR_y, on Flickr&#34; href=&#34;http://www.flickr.com/photos/53244662@N04/4914890933/&#34;&gt;&lt;img src=&#34;http://farm5.static.flickr.com/4115/4914890933_250318d01a.jpg&#34; alt=&#34;IMG_2235&#34; width=&#34;500&#34; height=&#34;333&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;機種変更は9月の締め日(9/11)まで待ち、それまではipod touchとして使います。&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tumblr on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/tumblr/</link>
+    <description>Recent content in Tumblr on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 25 Mar 2012 02:30:19 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/tumblr/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>はてなダイアリーからTumblrへデータ移行するpythonスクリプト</title>
+      <link>http://blog.restartr.com/2012/03/25/python-script-for-moving-from-movabletype-to-tumblr</link>
+      <pubDate>Sun, 25 Mar 2012 02:30:19 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2012/03/25/python-script-for-moving-from-movabletype-to-tumblr</guid>
+      <description>
+
+&lt;p&gt;どうも。もうすぐ入社３ヶ月が経って試用期間が終わろうとしている状況な僕です。&lt;/p&gt;
+
+&lt;p&gt;すっかり停滞気味のブログですが保守も兼ねて投稿を。&lt;/p&gt;
+
+&lt;h3 id=&#34;はてダから-del-はてブロ-del-tumblrへ:6c3b29414222a1fdabb7cd29c4dfee48&#34;&gt;はてダから&lt;del&gt;はてブロ&lt;/del&gt;Tumblrへ&lt;/h3&gt;
+
+&lt;p&gt;とあるブログをはてなダイアリーで書いていたのですが、Tumblrへブログのデータを移行したいという要求が出てきました。ということでpythonで移行スクリプトを書いてみました。&lt;/p&gt;
+
+&lt;h3 id=&#34;ソースコード:6c3b29414222a1fdabb7cd29c4dfee48&#34;&gt;ソースコード&lt;/h3&gt;
+
+&lt;p&gt;例によってGitHubにて公開しておきます。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/ReSTARTR/mt2tumblr&#34;&gt;https://github.com/ReSTARTR/mt2tumblr&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;python2.6以外はテストしてません( ｰ`дｰ´)ｷﾘｯ&lt;/p&gt;
+
+&lt;h3 id=&#34;使い方:6c3b29414222a1fdabb7cd29c4dfee48&#34;&gt;使い方&lt;/h3&gt;
+
+&lt;p&gt;oauth2に依存しているので、実行前にインストールしておいてください。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;pip install oauth2
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;使い方はREADMEどおりです。いつもどおりのテキトー英文です。&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;はてなダイアリーの管理画面から&amp;rdquo;管理 &amp;gt; インポート/エクスポート&amp;rdquo;でMovableType形式のファイルをダウンロード&lt;/li&gt;
+&lt;li&gt;ダウンロードしたファイルをresourcesディレクトリに配置&lt;/li&gt;
+&lt;li&gt;tumblrにアプリケーションを登録( &lt;a href=&#34;http://www.tumblr.com/oauth/apps&#34;&gt;http://www.tumblr.com/oauth/apps&lt;/a&gt; )&lt;/li&gt;
+&lt;li&gt;consumer_keyとconsumer_secretを入手&lt;/li&gt;
+&lt;li&gt;config.pyを編集する&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;CONSUMER_KEY = &#39;&amp;lt;consumer_key&amp;gt;&#39;
+CONSUMER_SECRET = &#39;&amp;lt;consumer_secret&amp;gt;&#39;
+BASE_HOSTNAME = &#39;&amp;lt;your_tumblr_url&amp;gt;&#39; # &#39;&amp;lt;your-id&amp;gt;.tumblr.com&#39;のように&amp;quot;http://&amp;quot;は抜きで。
+PARSE_FILE_PATH = &#39;path/to/movable_type_data.txt&#39;
+POST_STATE = &#39;publish&#39; # 動作テストしたいなら&#39;draft&#39;にすると良いです。
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;実行する&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;python run.py
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;まずはファイルの内容を読み込んで、日時、カテゴリ、タイトルが表示されるので問題ないか確認&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;OAuth認証する。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;下記のようにURLが表示されるのでブラウザでアクセス。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;open in browser:http://www.tumblr.com/oauth/authorize?oauth_token={OAUTH_TOKEN}
+
+oauth_verifier:
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;リダイレクト先のURLに含まれる&amp;rdquo;oauth_verifier&amp;rdquo;の値をコピーしてターミナルにペースト。
+
+&lt;ul&gt;
+&lt;li&gt;リダイレクト先は404になりますが、oauth_verifierが欲しいだけなのでそれで問題なしです。&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;これで、Tumblerへのインポートが始まります。&lt;/p&gt;
+
+&lt;p&gt;(ﾟдﾟ)ｳﾏｰ&lt;/p&gt;
+
+&lt;h3 id=&#34;注意事項:6c3b29414222a1fdabb7cd29c4dfee48&#34;&gt;注意事項&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;APIの呼び出し回数の制限に引っかかるかもしれませんがそのへんのエラー制御はできていません。&lt;/li&gt;
+&lt;li&gt;MovableType形式のデータをTumblrに移行するスクリプトとしてつくっていますが、実際にははてなダイアリーからMovableType形式でエクスポートしたデータでしかテストしていません。それ以外で動くかは保証できません…&lt;/li&gt;
+&lt;li&gt;投稿時間はJSTからGMTに変換してます。不要なら適当に編集してください。&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

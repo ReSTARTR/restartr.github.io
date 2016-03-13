@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Ruby Rails on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/ruby-rails/</link>
+    <description>Recent content in Ruby Rails on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 18 Jan 2015 13:26:53 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/ruby-rails/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Peek - Railsアプリのプロファイリングツール</title>
+      <link>http://blog.restartr.com/2015/01/18/peek-for-profiling-rails-app</link>
+      <pubDate>Sun, 18 Jan 2015 13:26:53 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2015/01/18/peek-for-profiling-rails-app</guid>
+      <description>
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/peek/peek&#34;&gt;Peek&lt;/a&gt;という、Railsアプリケーションに組み込めるプロファイリングツール（群）があります。
+&lt;a href=&#34;https://github.com/blog/1252-how-we-keep-github-fast&#34;&gt;How we keep Github fast&lt;/a&gt;でも言及されているツールです。(2012年なので少し古いですが。)&lt;/p&gt;
+
+&lt;h3 id=&#34;プロファイリングツールと適正:80f3a3d87dff3340fadb3d942d4923d0&#34;&gt;プロファイリングツールと適正&lt;/h3&gt;
+
+&lt;p&gt;プロファイリング用のツールはたくさんあって、時間がかかる特定の処理を改善するために使うものもあれば、常時記録して特異な変化を監視するものもあります。&lt;/p&gt;
+
+&lt;p&gt;今回は後者寄りの要件であり、これに見合うものとしてPeekを取り上げました。&lt;/p&gt;
+
+&lt;p&gt;Railsでこれ以外のツールとしては、&lt;a href=&#34;https://github.com/MiniProfiler/rack-mini-profiler&#34;&gt;rack-mini-profiler&lt;/a&gt;や&lt;a href=&#34;https://github.com/newrelic/rpm&#34;&gt;newrelic/rpm&lt;/a&gt;などがあり、それらについて今回の要件と照合してみました。&lt;/p&gt;
+
+&lt;h4 id=&#34;newrelic-rpm:80f3a3d87dff3340fadb3d942d4923d0&#34;&gt;newrelic rpm&lt;/h4&gt;
+
+&lt;p&gt;newrelicのサービス上で結果が確認出来るだけではなく、&lt;a href=&#34;https://github.com/newrelic/rpm#developer-mode&#34;&gt;デベロッパーモード&lt;/a&gt;の場合に&amp;rdquo;/newrelic&amp;rdquo;にアクセスするとリクエストごとのプロファイル結果が見れます。
+ただ、別途&amp;rdquo;/newrelic&amp;rdquo;のURLを開く必要があり、パフォーマンスチェックを忘れがちになる可能性があります。&lt;/p&gt;
+
+&lt;h4 id=&#34;rack-mini-profiler:80f3a3d87dff3340fadb3d942d4923d0&#34;&gt;rack-mini-profiler&lt;/h4&gt;
+
+&lt;p&gt;トータルの処理時間は画面隅に表示されるけれど、個々の処理時間については画面隅のボックスをクリックして詳細を開かないといけません。&lt;/p&gt;
+
+&lt;h4 id=&#34;peek:80f3a3d87dff3340fadb3d942d4923d0&#34;&gt;peek&lt;/h4&gt;
+
+&lt;p&gt;Peekは適切な粒度で常に目に入れることができるツールであり、常用するのにちょうど良いのでは、という印象です。&lt;/p&gt;
+
+&lt;p&gt;先のGihtubのブログでは&amp;rdquo;Mission controll bar&amp;rdquo;いう、スタッフがプロダクション環境でも常にパフォーマンスを確認できる仕組みが整えられています。&lt;/p&gt;
+
+&lt;h3 id=&#34;peekのしくみ:80f3a3d87dff3340fadb3d942d4923d0&#34;&gt;Peekのしくみ&lt;/h3&gt;
+
+&lt;p&gt;しくみは以下ブログ記事が詳しいです。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://r7kamura.hatenablog.com/entry/2014/09/24/004607&#34;&gt;Railsの性能測定用プラグイン peek/peek - ✘╹◡╹✘&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;リクエストごとにIDを発行し、そのリクエストごとに各種計測値をデータストア（ファイル、Redis、Memcached等）に保存。
+ページ表示後に別リクエスト(&amp;ldquo;/peek/&amp;hellip;&amp;rdquo;)として非同期で計測値を取得して、画面の要素を置換する、というしくみ。&lt;/p&gt;
+
+&lt;h3 id=&#34;peekの拡張:80f3a3d87dff3340fadb3d942d4923d0&#34;&gt;Peekの拡張&lt;/h3&gt;
+
+&lt;p&gt;Peek自体はプラットフォームを提供するだけで、実際の個々の値を記録したりするのはそのプラグイン。&lt;/p&gt;
+
+&lt;p&gt;対応しているのは&lt;a href=&#34;https://github.com/peek/peek#available-peek-views&#34;&gt;Available Peek views&lt;/a&gt;
+に記載されています。仮にほしいものが見つからなかったとしても、わりと手軽に追加できるような仕組みになっています。&lt;/p&gt;
+
+&lt;p&gt;ということでmemcached用のプラグインをつくりました。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/ReSTARTR/peek-memcached&#34;&gt;peek-memcached&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/evan/memcached&#34;&gt;evan/memcached&lt;/a&gt;という、cで実装されたruby用memcachedクライアントがあって、それを使ったmemcachedアクセスを記録するプラグインです。&lt;/p&gt;
+
+&lt;p&gt;このプラグインでは&lt;code&gt;Memcached#get&lt;/code&gt;&lt;code&gt;Memcached#set&lt;/code&gt;メソッドにモンキーパッチあてて、回数と時間を記録しています。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;呼び出し回数(calls)&lt;/li&gt;
+&lt;li&gt;総処理時間(duration)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;に加えて、下記も記録できるようになっています。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;キャッシュヒット数(Get[HIT])&lt;/li&gt;
+&lt;li&gt;キャッシュミス数(Get[MISS])&lt;/li&gt;
+&lt;li&gt;キャッシュ更新数(Set)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;peekの惜しいところ:80f3a3d87dff3340fadb3d942d4923d0&#34;&gt;Peekの惜しいところ&lt;/h3&gt;
+
+&lt;p&gt;要素が増えるとブラウザの横幅に収まりきらなくなって、折り返し＆はみ出します。本当に必要な要素に絞る抑止力にはなりますが、もう少しコンパクトに収められるとよりよいかな、と。&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

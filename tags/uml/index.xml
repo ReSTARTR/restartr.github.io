@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Uml on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/uml/</link>
+    <description>Recent content in Uml on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Mon, 01 Apr 2013 20:12:54 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/uml/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>プログラマーにとっての『UMLっぽい何か』</title>
+      <link>http://blog.restartr.com/2013/04/01/uml-for-programmer</link>
+      <pubDate>Mon, 01 Apr 2013 20:12:54 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2013/04/01/uml-for-programmer</guid>
+      <description>
+
+&lt;p&gt;わりと普遍的な話題だったので便乗です。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://nekoya.github.com/blog/2013/04/01/useful-uml/&#34;&gt; UMLも捨てたもんじゃない - nekoya press &lt;/a&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;UMLは設計の技法ではない&lt;/li&gt;
+&lt;li&gt;頭の中を整理するため、あるいは人と共有する際の表現技法である&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+とか、
+
+&lt;blockquote&gt;UMLの厳密な書式ルールには全くこだわりはなく、大まかなイメージだけ伝われば、細かい部分は口頭でフォローすれば十分だと考えていています。そういう意味ではUMLを正しく使っているとは言えないのかも知れませんが、それはそれでいいんじゃないのと。
+
+&lt;/blockquote&gt;
+
+&lt;p&gt;は、まったくもって同意見で、「UML」という&amp;rdquo;なんだか面倒くさそうなイメージ&amp;rdquo;を捨てて、コードを整理もしくは伝達する補足的なものとして扱うことが大事だと思います。UMLを本を読んできっちり勉強する必要もなくて、英会話が完璧な文法に則る必要がないのと基本的に同じだと思います。&lt;/p&gt;
+
+&lt;p&gt;所謂SEが用いるUMLではなくプログラマーにとってのUMLは、もっとくだけたもので良いのです。&lt;/p&gt;
+
+&lt;h4 id=&#34;いつやるか:dd0ed9b4a54415750a4f3d93b0aa0837&#34;&gt;いつやるか&lt;/h4&gt;
+
+&lt;p&gt;どのフェーズでこの図の作成にとりかかるかが問題になると思いますが、自分の場合は以下の場合に作成を試みることが多いです。&lt;/p&gt;
+
+&lt;p&gt;（主にクラス図作成の場合を想定しています。）&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;1. プロトタイプ的に作り始めたコードが、ある程度育ってきて全体が見えづらいと感じた時&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;これは自分のために作成するもの。なのでUMLのルールに準拠する必要はありませんので、どちらかといえば書き捨て型といえます。&lt;/p&gt;
+
+&lt;p&gt;（※ドキュメントの無いコードを読む場合も書き捨て型で作成します。）&lt;/p&gt;
+
+&lt;p&gt;そして、この図をもとに設計を見なおしたりします。&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;2. 自分が作ったコードを他の誰かが読む時&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;これは他人のために作成するもの。すでに設計が固まった段階のコードを追いかける上での補足情報になります。&lt;/p&gt;
+
+&lt;p&gt;完全にUML準拠する必要はないでしょうが、ある程度は従ったほうが余計な誤解もなくなるかもしれません。1である程度整理ができているのでこの段階での作成は非常にそれ程苦ではないはずです。&lt;/p&gt;
+
+&lt;p&gt;どちらの場合もコードありきで、後追いでの図形作成になります。注意すべきなのは、図にすべての情報を詰め込むわけではなく、必要最低限の情報に留めることで図をシンプルに保つことは必要です。&lt;/p&gt;
+
+&lt;p&gt;とまぁ、これくらいシンプルなルールであれば、普段の開発フローに取り入れることはさほど大きなコストではないと考えます。多くの人はこれくらいのことはやっているんじゃないかとは思いますが、先のブログでも書かれている通り表立って議論されることはあまりないように感じます。&lt;/p&gt;
+
+&lt;h4 id=&#34;図を描くためのツール:dd0ed9b4a54415750a4f3d93b0aa0837&#34;&gt;図を描くためのツール&lt;/h4&gt;
+
+&lt;p&gt;図形作成のためにいちいち&lt;a href=&#34;http://astah.change-vision.com/ja/index.html&#34;&gt;astah*&lt;/a&gt;やExcel()のようなアプリケーションを立ち上げるのは面倒ですよね。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://drive.google.com&#34;&gt;Google Drive&lt;/a&gt;の「図形描画」や「プレゼンテーション」がオススメです。きっちりUML準拠の図を作成するわけではないので、クラス図(もどき)ならこれで十分ですし、共有も簡単です。シーケンス図はちょっと書きづらいかもしれませんが、そんな時はノートやホワイトボードに書いたものを写真に撮って適当な場所で共有すればOKでしょう。&lt;/p&gt;
+
+&lt;p&gt;ところで、オブジェクト指向の場合ではなく、（純粋）関数型の場合はどうなのでしょうかね。数式？&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

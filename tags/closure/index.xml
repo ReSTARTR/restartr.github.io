@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Closure on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/closure/</link>
+    <description>Recent content in Closure on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Wed, 17 Apr 2013 22:19:14 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/closure/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>pythonのクロージャに変数を束縛する方法</title>
+      <link>http://blog.restartr.com/2013/04/17/bind-a-variable-to-closure-in-python</link>
+      <pubDate>Wed, 17 Apr 2013 22:19:14 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2013/04/17/bind-a-variable-to-closure-in-python</guid>
+      <description>
+
+&lt;p&gt;ハマったので。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;a = 2
+double = lambda x: x*a
+double(4)  # 8 (=4*2)
+double(10) # 20 (=10*3)
+a = 3
+double(4)  # 12 # WTF?
+double(10) # 30
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;doubleというクロージャ内の変数aを、クロージャ宣言時のaで束縛したいのです。&lt;/p&gt;
+
+&lt;p&gt;対応は２つ。&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;lambdaのデフォルト引数で束縛する&lt;/li&gt;
+&lt;li&gt;functools.partialで束縛する&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;1-lambdaのデフォルト引数で束縛する:0f6d0773b05936b8e8cf05eb2d87ac67&#34;&gt;1. lambdaのデフォルト引数で束縛する&lt;/h3&gt;
+
+&lt;p&gt;参考：&lt;a href=&#34;http://stackoverflow.com/questions/10452770/python-lambdas-binding-to-local-values&#34;&gt;closures - Python lambda&amp;rsquo;s binding to local values - Stack Overflow&lt;/a&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;a = 2
+double = lambda x, y=a: x*y
+double(4)  # 8 (=4*2)
+double(10) # 20 (=10*3)
+a = 3
+double(4)  # 12 (=4*2)
+double(10) # 30 (=10*2)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;2-functools-partialで束縛する:0f6d0773b05936b8e8cf05eb2d87ac67&#34;&gt;2. functools.partialで束縛する&lt;/h3&gt;
+
+&lt;p&gt;やってることは1と同じなのですが、一応動くよねということで。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from functools import partial
+a = 2
+double = partial(lambda x, y=None: x*y, y=a)
+double(4) # 8 (=8*2)
+double(10) # 30 (=10*2)
+a = 3
+double(4)  # 12 (=4*2)
+double(10) # 30 (=10*2)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;そもそも変数上書きしなければ良いんじゃない:0f6d0773b05936b8e8cf05eb2d87ac67&#34;&gt;そもそも変数上書きしなければ良いんじゃない？&lt;/h3&gt;
+
+&lt;p&gt;普段は変数の上書きは基本的にやりません。なので変数の束縛とかあまり意識してませんでした。&lt;/p&gt;
+
+&lt;p&gt;今回、プロジェクトオイラーを解くにあたって、素数ジェネレータをつくろうとした結果、ハマったのでした。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;from itertools import ifilter, count
+def gen_primes():
+    it = count(2)  # [2, 3, 4, ...]
+    while True:
+        v = it.next()
+        yield v
+        it = ifilter(lambda x, y=v: x % y &amp;gt; 0, it)
+        # 当初は以下のようにしていた
+        # これだと次のループ時のifilter内でvの値が変わってしまう
+        # it = ifilter(lambda x: x % v &amp;gt; 0, it)
+for v in gen_primes():
+    print v
+    if v &amp;gt; 100:
+        break
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;余談1-functools-partialの使いどころ:0f6d0773b05936b8e8cf05eb2d87ac67&#34;&gt;余談1: functools.partialの使いどころ&lt;/h3&gt;
+
+&lt;p&gt;ちょくちょく&lt;a href=&#34;http://docs.python.jp/2.7/library/functools.html#functools.partial&#34;&gt;functools.partial&lt;/a&gt;使ってましたが、そんなの使わなくてもlambdaで事足りますね。今更気づきました&amp;hellip;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;mul = lambda a, b: a * b
+mul(3,2)  # 6
+# lambda
+double = lambda a, b=2: mul(a,b)
+double(3)  # 6
+# functools.partial
+import functools
+double = functools.partial(mul, 2)
+double(3)  # 6
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;こうなると、functools.partialの使いどころが難しいですね。
+戻り値がpartialオブジェクトなので、あとで引数とかが参照できることくらいでしょうか&amp;hellip;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-python&#34;&gt;&amp;gt;&amp;gt;&amp;gt; f = functools.partial(lambda a, b=0:a+b, b=0)
+&amp;gt;&amp;gt;&amp;gt; f
+&amp;lt;functools.partial object at 0x1092b2ec0&amp;gt;
+&amp;gt;&amp;gt;&amp;gt; f.args
+()
+&amp;gt;&amp;gt;&amp;gt; f.keywords
+{&#39;b&#39;: 0}
+&amp;gt;&amp;gt;&amp;gt; f.func
+&amp;lt;function &amp;lt;lambda&amp;gt; at 0x1092eab18&amp;gt;
+&amp;gt;&amp;gt;&amp;gt; f.args = (1,)  # 引数を後から上書きはできない
+Traceback (most recent call last):
+  File &amp;quot;&amp;lt;stdin&amp;gt;&amp;quot;, line 1, in &amp;lt;module&amp;gt;
+TypeError: readonly attribute
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

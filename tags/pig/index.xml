@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Pig on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/pig/</link>
+    <description>Recent content in Pig on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Tue, 09 Mar 2010 23:39:08 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/pig/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Hadoop Hack Nightに行ってきた</title>
+      <link>http://blog.restartr.com/2010/03/09/hadoop-hack-night</link>
+      <pubDate>Tue, 09 Mar 2010 23:39:08 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2010/03/09/hadoop-hack-night</guid>
+      <description>&lt;p&gt;3月8日に開催された&lt;a href=&#34;http://gihyo.jp/event/2010/hadoophn&#34;&gt;Hadoop Hack Night&lt;/a&gt;に行ってきました。&lt;br /&gt;
+ハッシュタグは&lt;a href=&#34;http://twitter.com/#search?q=%23hadoophn&#34;&gt;#hadoophn&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;最近Hadoop界隈を色々調査していたので、これは！と思い応募開始のアナウンスとともに申し込み。&lt;br /&gt;
+応募者多数のため、申し込み期限が切り上げられたほどの人気ぶりだったようで。&lt;br /&gt;
+抽選に当たったのは奇跡。なのでかなり気合入れていってきました。&lt;/p&gt;
+&lt;p&gt;一番印象にのこったのは、&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://hadoop.apache.org/hdfs/&#34;&gt;HDFS&lt;/a&gt;は信頼性が低い&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://hadoop.apache.org/pig/&#34;&gt;Pig&lt;/a&gt;でカバーできない処理はほぼない&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;の2点でした。&lt;/p&gt;
+&lt;p&gt;以下、それについての感想です。&lt;/p&gt;
+&lt;h3&gt;HDFSは信頼性が低い&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;http://hadoop.apache.org/hdfs/&#34;&gt;HDFS&lt;/a&gt;はあくまで処理データの一時保存場所とすること。別にマスタデータは保持しておくべきだと。&lt;br /&gt;
+まだ不安定性に遭遇したことがないのですが、この点はかなり重要になりそう。&lt;br /&gt;
+確かに分散するのでコピーした分だけデータ量は増えるので、ずっとHDFS上のみで保管するのは現実的でないのかも。&lt;br /&gt;
+&lt;em&gt;※ファイル圧縮の機能はHDFSは備えているけど、どちらかと言えば転送量を減らすのが目的のようですね。&lt;/em&gt;&lt;/p&gt;
+&lt;h3&gt;PIGでカバーできない処理はほとんどない&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&#34;http://hadoop.apache.org/pig/&#34;&gt;PIG&lt;/a&gt;はMapReduceを使い易くした、一種のスクリプト言語のようなもの（と認識しています。）&lt;br /&gt;
+逐次処理をJavaとかよりもと単純に書けます。&lt;br /&gt;
+で、PIGはかなりドメインを限定して開発されたものと勝手にイメージしていたので、だいたいの処理がまかなえると聞いてちょっと驚き。&lt;br /&gt;
+Hadoop本にはあまり細かいことが書かれていなかったし、「ほぼSQL」な&lt;a href=&#34;http://hadoop.apache.org/hive/&#34;&gt;Hive&lt;/a&gt;中心に調査していたのですが、PIGもドキュメントとかもう少し見てみようと思います。&lt;/p&gt;
+&lt;p&gt;主催者の皆様、講演者の皆様、参加者の皆様お疲れ様でした。&lt;br /&gt;
+非常に有意義な時間が過ごせました。&lt;/p&gt;
+&lt;p&gt;&lt;i&gt;※全体を通してのメモは整理して後日追記します&lt;/i&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,181 +1,81 @@
-
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+	<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <meta charset="utf-8">
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.15" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
   <title>NettyでWebSocketサーバーを実装する - I Will Survive</title>
-  <meta name="author" content="ReSTARTR">
-  <link rel="author" href="https://plus.google.com/103216164658230535238" />
-  <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="NettyでWebSocketサーバーを実装する .sharing { clear: both; } .sharing li{ display: inline; list-style-type: none; float: left; height: 1em; line-height: 1em; &hellip;">
-  
-
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/poole.css">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/syntax.css">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/hyde.css">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/custom.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
 
   
-  <link rel="canonical" href="http://blog.restartr.com/2010/12/29/websocket-server-written-in-scala-with-netty/">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-   <link href="/stylesheets/data-table.css" media="screen, projection" rel="stylesheet" type="text/css" />
-  <script src="/javascripts/modernizr-2.0.js"></script>
-  <script src="/javascripts/ender.js"></script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  <link href="/atom.xml" rel="alternate" title="I Will Survive" type="application/atom+xml">
-  <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
-
-<!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
-<link href='http://fonts.googleapis.com/css?family=Lato:400,100,100italic,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
-<link href='http://fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
-<link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:200,300,400,500,600,700,900' rel='stylesheet' type='text/css'>
-
-
-	<!-- mathjax config similar to math.stackexchange -->
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    tex2jax: {
-      inlineMath: [ ['$$','$$'], ["\\(","\\)"] ],
-      processEscapes: true
-    }
-  });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      tex2jax: {
-        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-      }
-    });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax(), i;
-        for(i=0; i < all.length; i += 1) {
-            all[i].SourceElement().parentNode.className += ' has-jax';
-        }
-    });
-</script>
-
-<script type="text/javascript"
-   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
-
-
-
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://blog.restartr.com/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="http://blog.restartr.com/favicon.png">
 
   
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-894530-10']);
-    _gaq.push(['_trackPageview']);
-
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
-
-
-  <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
-  <style>html{background: url("/images/background.png") no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;}</style>
+  <link href="" rel="alternate" type="application/rss+xml" title="I Will Survive" />
 </head>
 
-<body   >
-  <header role="banner"><hgroup>
-</hgroup>
+	<body class="theme-base-0d">
+		<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="http://blog.restartr.com"><h1>I Will Survive</h1></a>
+      <p class="lead">
+       An application depelopper&#39;s blog. 
+      </p>
+    </div>
 
-</header>
-  <!-- <nav role="navigation"><ul class="subscription" data-subscription="rss">
-  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-  
-</ul>
-  
-<form action="https://www.google.com/search" method="get">
-  <fieldset role="search">
-    <input type="hidden" name="q" value="site:blog.restartr.com" />
-    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
-  </fieldset>
-</form>
-  
-<ul class="main-navigation">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives">Archives</a></li>
-</ul>
-
-</nav> -->
-  <div id="main">
-    <div id="content">
-      <div>
-<article class="hentry" role="article">
-  
-  <header>
-    
-      <h1 class="entry-title">NettyでWebSocketサーバーを実装する</h1>
+    <ul class="sidebar-nav">
+      <li><a href="http://blog.restartr.com/">Home</a> </li>
       
-      <style type="text/css">
-  .sharing {
-     clear: both;
-  }
-  .sharing li{
-    display: inline;
-    list-style-type: none;
-    float: left;
-    height: 1em;
-    line-height: 1em;
-    padding: 0 10px 0 0 ;
-    margin: 10px 0;
-  }
-  .sharing ul {
-    margin: 1em 0;
-    padding: 1em 0;
-  }
-</style>
-<div class="sharing">
+        <li><a href="http://blog.restartr.com/about/"> About </a></li>
+      
+        <li><a href="http://blog.restartr.com/index.xml"> Feed </a></li>
+      
+        <li><a href="https://github.com/ReSTARTR"> GitHub </a></li>
+      
+        <li><a href="https://twitter.com/ReSTARTR"> Twitter </a></li>
+      
+    </ul>
+
+    <p>Copyright ©2016 - ReSTARTR. All rights reserved.</p>
+  </div>
+</div>
+
+
+		<div class="content container">
+			<div class="post">
+			 	<h1>NettyでWebSocketサーバーを実装する</h1>
+        <span class="post-date">2010-12-29(Wed) - [Scala]</span>
+			  <div class="sharing">
   <ul>
-  <li><a href="http://blog.restartr.com/2010/12/29/websocket-server-written-in-scala-with-netty/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
-  
-  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2010/12/29/websocket-server-written-in-scala-with-netty/" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2010/12/29/websocket-server-written-in-scala-with-netty/" >Tweet</a></li>
-  
+  <li><a href="http://blog.restartr.com/2010/12/29/websocket-server-written-in-scala-with-netty" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2010/12/29/websocket-server-written-in-scala-with-netty" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2010/12/29/websocket-server-written-in-scala-with-netty" >Tweet</a></li>
   <li><a data-pocket-label="pocket" data-pocket-count="horizontal" class="pocket-btn" data-lang="en"></a><script type="text/javascript">!function(d,i){if(!d.getElementById(i)){var j=d.createElement("script");j.id=i;j.src="https://widgets.getpocket.com/v1/j/btn.js?v=1";var w=d.getElementById(i);d.body.appendChild(j);}}(document,"pocket-btn-js");</script></li>
-  
-  
   </ul>
 </div>
-<p />
+<script type="text/javascript">
+  (function(){
+    var twitterWidgets = document.createElement('script');
+    twitterWidgets.type = 'text/javascript';
+    twitterWidgets.async = true;
+    twitterWidgets.src = '//platform.twitter.com/widgets.js';
+    document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+  })();
+</script>
+<hr />
 
-      
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2010-12-29T18:45:53+09:00" pubdate data-updated="true">2010-12-29 (Wed)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>この記事は <a href="http://atnd.org/events/10683">Scala Advent Calendar JP 2010</a> 23 日目(12/29)です。</p>
+			      <p>この記事は <a href="http://atnd.org/events/10683">Scala Advent Calendar JP 2010</a> 23 日目(12/29)です。</p>
 <p>前日の <a href="http://twitter.com/cooldaemon">@cooldaemon</a> さんが<a href="http://d.hatena.ne.jp/cooldaemon/20101228">Scala Actor + NIO</a>という、ものすごい記事を書いていらっしゃったのでこの流れの中で投稿するのが忍びないくらいです。<br />
 ＃まさか前日にNIOネタがくるとはぁぁぁ…</p>
 <p>さて、今回はNettyを使ってWebSocketサーバーを実装してみました。<br />
@@ -210,49 +110,28 @@ JavaではなくScalaで、です。<br />
 <p><a href="https://github.com/ReSTARTR/nettyws/blob/master/src/main/scala/com/restartr/nettyws/EchoServer.scala">EchoServer.scala</a><br />
 まずは起動元から。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-<span class="line-number">21</span>
-</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">object</span> <span class="nc">EchoServer</span> <span class="o">{</span>
-</span><span class="line">  <span class="nd">@throws</span><span class="o">(</span><span class="n">classOf</span><span class="o">[</span><span class="kt">Exception</span><span class="o">])</span>
-</span><span class="line">  <span class="k">def</span> <span class="n">main</span><span class="o">(</span><span class="n">args</span><span class="k">:</span><span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">])</span> <span class="o">{</span>
-</span><span class="line">    <span class="c1">// サーバーのセットアップ</span>
-</span><span class="line">    <span class="k">val</span> <span class="n">bootstrap</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">ServerBootstrap</span><span class="o">(</span>
-</span><span class="line">      <span class="k">new</span> <span class="nc">NioServerSocketChannelFactory</span><span class="o">(</span>
-</span><span class="line">        <span class="nc">Executors</span><span class="o">.</span><span class="n">newCachedThreadPool</span><span class="o">(),</span> <span class="c1">// bossExecutor</span>
-</span><span class="line">        <span class="nc">Executors</span><span class="o">.</span><span class="n">newCachedThreadPool</span><span class="o">()</span>  <span class="c1">// workerExecutor</span>
-</span><span class="line">      <span class="o">))</span>
-</span><span class="line">
-</span><span class="line">    <span class="n">bootstrap</span><span class="o">.</span><span class="n">setPipelineFactory</span><span class="o">(</span>
-</span><span class="line">      <span class="c1">// リクエストをそのまま返すハンドラを実装して登録</span>
-</span><span class="line">      <span class="k">new</span> <span class="nc">ChannelPipelineFactory</span><span class="o">()</span> <span class="o">{</span>
-</span><span class="line">        <span class="k">def</span> <span class="n">getPipeline</span><span class="o">()</span> <span class="k">=</span> <span class="nc">Channels</span><span class="o">.</span><span class="n">pipeline</span><span class="o">(</span><span class="k">new</span> <span class="nc">EchoServerHandler</span><span class="o">())</span>
-</span><span class="line">      <span class="o">}</span>
-</span><span class="line">    <span class="o">)</span>
-</span><span class="line">
-</span><span class="line">    <span class="c1">// 8080番で待ち受け開始</span>
-</span><span class="line">    <span class="n">bootstrap</span><span class="o">.</span><span class="n">bind</span><span class="o">(</span><span class="k">new</span> <span class="nc">InetSocketAddress</span><span class="o">(</span><span class="mi">8080</span><span class="o">))</span>
-</span><span class="line">  <span class="o">}</span>
-</span><span class="line"><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<pre><code class="language-scala">object EchoServer {
+  @throws(classOf[Exception])
+  def main(args:Array[String]) {
+    // サーバーのセットアップ
+    val bootstrap = new ServerBootstrap(
+      new NioServerSocketChannelFactory(
+        Executors.newCachedThreadPool(), // bossExecutor
+        Executors.newCachedThreadPool()  // workerExecutor
+      ))
+
+    bootstrap.setPipelineFactory(
+      // リクエストをそのまま返すハンドラを実装して登録
+      new ChannelPipelineFactory() {
+        def getPipeline() = Channels.pipeline(new EchoServerHandler())
+      }
+    )
+
+    // 8080番で待ち受け開始
+    bootstrap.bind(new InetSocketAddress(8080))
+  }
+}
+</code></pre>
 
 <p>で、ハンドラ側がこんなかんじ。<br />
 
@@ -262,57 +141,34 @@ SimpleChannelUpstreamHandlerの</p>
 <li>def exceptionCaught(ctx: ChannelHandlerContext, e: ExceptionEvent) </li>
 </ul>
 <p>をオーバーライドして処理内容を定義すればOK。<br />
-何かを呼び出し元に返すには、&#8221;e.getChannel().write( {レスポンス} )&#8221;で。</p>
+何かを呼び出し元に返すには、"e.getChannel().write( {レスポンス} )"で。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-<span class="line-number">21</span>
-<span class="line-number">22</span>
-<span class="line-number">23</span>
-</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">class</span> <span class="nc">EchoServerHandler</span> <span class="k">extends</span> <span class="nc">SimpleChannelUpstreamHandler</span> <span class="o">{</span>
-</span><span class="line">  <span class="k">val</span> <span class="n">logger</span> <span class="k">=</span> <span class="n">java</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">logging</span><span class="o">.</span><span class="nc">Logger</span><span class="o">.</span><span class="n">getLogger</span><span class="o">(</span><span class="s">&quot;EchoServerHandler&quot;</span><span class="o">)</span>
-</span><span class="line">  <span class="k">val</span> <span class="n">transferredBytes</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">AtomicLong</span><span class="o">()</span>
-</span><span class="line">
-</span><span class="line">  <span class="c1">// そのまま返す</span>
-</span><span class="line">  <span class="k">override</span> <span class="k">def</span> <span class="n">messageReceived</span><span class="o">(</span><span class="n">ctx</span><span class="k">:</span><span class="kt">ChannelHandlerContext</span><span class="o">,</span> <span class="n">e</span><span class="k">:</span><span class="kt">MessageEvent</span><span class="o">)</span> <span class="o">{</span>
-</span><span class="line">    <span class="n">transferredBytes</span><span class="o">.</span><span class="n">addAndGet</span><span class="o">(</span>
-</span><span class="line">      <span class="n">e</span><span class="o">.</span><span class="n">getMessage</span><span class="o">().</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">ChannelBuffer</span><span class="o">].</span><span class="n">readableBytes</span><span class="o">())</span>
-</span><span class="line">
-</span><span class="line">    <span class="n">println</span><span class="o">(</span><span class="s">&quot;echo_server: message received: &quot;</span> <span class="o">+</span> <span class="n">e</span><span class="o">.</span><span class="n">getMessage</span><span class="o">())</span>
-</span><span class="line">    <span class="c1">// レスポンスを返す</span>
-</span><span class="line">    <span class="n">e</span><span class="o">.</span><span class="n">getChannel</span><span class="o">().</span><span class="n">write</span><span class="o">(</span><span class="n">e</span><span class="o">.</span><span class="n">getMessage</span><span class="o">())</span>
-</span><span class="line">  <span class="o">}</span>
-</span><span class="line">
-</span><span class="line">  <span class="c1">// 例外発生時はここにくる</span>
-</span><span class="line">  <span class="k">override</span> <span class="k">def</span> <span class="n">exceptionCaught</span><span class="o">(</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">ChannelHandlerContext</span><span class="o">,</span> <span class="n">e</span><span class="k">:</span> <span class="kt">ExceptionEvent</span><span class="o">)</span> <span class="o">{</span>
-</span><span class="line">    <span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="o">(</span><span class="nc">Level</span><span class="o">.</span><span class="nc">WARNING</span><span class="o">,</span>
-</span><span class="line">               <span class="s">&quot;Unexpected exception from downstream.&quot;</span><span class="o">,</span>
-</span><span class="line">               <span class="n">e</span><span class="o">.</span><span class="n">getCause</span><span class="o">())</span>
-</span><span class="line">
-</span><span class="line">    <span class="n">e</span><span class="o">.</span><span class="n">getChannel</span><span class="o">().</span><span class="n">close</span><span class="o">()</span>
-</span><span class="line">  <span class="o">}</span>
-</span><span class="line"><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<pre><code class="language-scala">class EchoServerHandler extends SimpleChannelUpstreamHandler {
+  val logger = java.util.logging.Logger.getLogger(&quot;EchoServerHandler&quot;)
+  val transferredBytes = new AtomicLong()
 
-<h3>WebSocketサーバー</h3>
+  // そのまま返す
+  override def messageReceived(ctx:ChannelHandlerContext, e:MessageEvent) {
+    transferredBytes.addAndGet(
+      e.getMessage().asInstanceOf[ChannelBuffer].readableBytes())
+
+    println(&quot;echo_server: message received: &quot; + e.getMessage())
+    // レスポンスを返す
+    e.getChannel().write(e.getMessage())
+  }
+
+  // 例外発生時はここにくる
+  override def exceptionCaught(ctx: ChannelHandlerContext, e: ExceptionEvent) {
+    logger.log(Level.WARNING,
+               &quot;Unexpected exception from downstream.&quot;,
+               e.getCause())
+
+    e.getChannel().close()
+  }
+}
+</code></pre>
+
+<p><h3>WebSocketサーバー</h3>
 <p>本題のWebSocketサーバーです。<br />
 Echoサーバーの応用で、WebSocket用のハンドラを作成して、Bootstrapに登録すれば良い訳です。</p>
 <h4>仕様</h4>
@@ -326,317 +182,174 @@ Echoサーバーの応用で、WebSocket用のハンドラを作成して、Boot
 <p>すべて書くと冗長なので要所だけ抜き出しました。<br />
 <a href="https://github.com/ReSTARTR/nettyws/tree/master/src/main/scala/com/restartr/nettyws">全ソースはGithubを見てください。</a></p>
 <p><b>WebSocketServerIndexPage.scala</b><br />
-まずはクライアント側はこんな感じで、インプットフォームに入力した文字列をWebSocketサーバーに投げ、結果をdivに追記するだけです。</p>
+まずはクライアント側はこんな感じで、インプットフォームに入力した文字列をWebSocketサーバーに投げ、結果をdivに追記するだけです。</p></p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-<span class="line-number">21</span>
-<span class="line-number">22</span>
-</pre></td><td class="code"><pre><code class="scala"><span class="line">  <span class="k">var</span> <span class="n">socket</span><span class="o">;</span>
-</span><span class="line">  <span class="k">if</span> <span class="o">(</span><span class="n">window</span><span class="o">.</span><span class="nc">WebSocket</span><span class="o">)</span> <span class="o">{</span>
-</span><span class="line">    <span class="n">socket</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">WebSocket</span><span class="o">(</span> <span class="-Symbol">&#39;ws</span><span class="o">://</span><span class="n">localhost</span><span class="k">:</span><span class="err">8080</span><span class="kt">/uppercase</span><span class="err">&#39;</span> <span class="o">);</span>
-</span><span class="line">    <span class="n">socket</span><span class="o">.</span><span class="n">onmessage</span> <span class="k">=</span> <span class="n">function</span><span class="o">(</span><span class="n">event</span><span class="o">)</span> <span class="o">{</span> <span class="n">log</span><span class="o">(</span><span class="n">event</span><span class="o">.</span><span class="n">data</span><span class="o">)</span> <span class="o">}</span>
-</span><span class="line">    <span class="n">socket</span><span class="o">.</span><span class="n">onopen</span> <span class="k">=</span> <span class="n">function</span><span class="o">(</span><span class="n">event</span><span class="o">)</span> <span class="o">{</span> <span class="n">log</span><span class="o">(</span><span class="-Symbol">&#39;web</span> <span class="n">socket</span> <span class="n">opened</span><span class="err">&#39;</span><span class="o">)</span> <span class="o">}</span>
-</span><span class="line">    <span class="n">socket</span><span class="o">.</span><span class="n">onclose</span> <span class="k">=</span> <span class="n">function</span><span class="o">(</span><span class="n">event</span><span class="o">)</span> <span class="o">{</span> <span class="n">log</span><span class="o">(</span><span class="-Symbol">&#39;web</span> <span class="n">socket</span> <span class="n">closed</span><span class="err">&#39;</span><span class="o">)</span> <span class="o">}</span>
-</span><span class="line">  <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-</span><span class="line">    <span class="n">alert</span><span class="o">(</span><span class="-Symbol">&#39;your</span> <span class="n">browser</span> <span class="n">does</span> <span class="n">not</span> <span class="n">supported</span> <span class="n">web</span> <span class="n">socket</span><span class="err">&#39;</span><span class="o">)</span>
-</span><span class="line">  <span class="o">}</span>
-</span><span class="line">  <span class="n">function</span> <span class="n">log</span><span class="o">(</span><span class="n">message</span><span class="o">)</span> <span class="o">{</span>
-</span><span class="line">    <span class="n">p</span> <span class="k">=</span> <span class="n">document</span><span class="o">.</span><span class="n">createElement</span><span class="o">(</span><span class="-Symbol">&#39;p</span><span class="err">&#39;</span><span class="o">);</span>
-</span><span class="line">    <span class="n">p</span><span class="o">.</span><span class="n">innerHTML</span> <span class="k">=</span> <span class="n">message</span>
-</span><span class="line">    <span class="n">document</span><span class="o">.</span><span class="n">getElementById</span><span class="o">(</span><span class="-Symbol">&#39;log</span><span class="err">&#39;</span><span class="o">).</span><span class="n">appendChild</span><span class="o">(</span><span class="n">p</span><span class="o">)</span> <span class="o">;</span>
-</span><span class="line">  <span class="o">}</span>
-</span><span class="line">  <span class="n">function</span> <span class="n">send</span><span class="o">(</span><span class="n">message</span><span class="o">)</span> <span class="o">{</span>
-</span><span class="line">    <span class="k">if</span> <span class="o">(!</span><span class="n">window</span><span class="o">.</span><span class="nc">WebSocket</span><span class="o">)</span> <span class="o">{</span> <span class="k">return</span><span class="o">;</span> <span class="o">}</span>
-</span><span class="line">    <span class="k">if</span> <span class="o">(</span><span class="n">socket</span><span class="o">.</span><span class="n">readyState</span> <span class="o">==</span> <span class="nc">WebSocket</span><span class="o">.</span><span class="nc">OPEN</span><span class="o">)</span> <span class="o">{</span>
-</span><span class="line">      <span class="n">socket</span><span class="o">.</span><span class="n">send</span><span class="o">(</span><span class="n">message</span><span class="o">)</span>
-</span><span class="line">    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-</span><span class="line">      <span class="n">alert</span><span class="o">(</span><span class="-Symbol">&#39;the</span> <span class="n">socket</span> <span class="n">is</span> <span class="n">not</span> <span class="n">open</span><span class="o">.</span><span class="err">&#39;</span><span class="o">)</span>
-</span><span class="line">    <span class="o">}</span>
-</span><span class="line">  <span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<pre><code class="language-scala">      var socket;
+      if (window.WebSocket) {
+        socket = new WebSocket( 'ws://localhost:8080/uppercase' );
+        socket.onmessage = function(event) { log(event.data) }
+        socket.onopen = function(event) { log('web socket opened') }
+        socket.onclose = function(event) { log('web socket closed') }
+      } else {
+        alert('your browser does not supported web socket')
+      }
+      function log(message) {
+        p = document.createElement('p');
+        p.innerHTML = message
+        document.getElementById('log').appendChild(p) ;
+      }
+      function send(message) {
+        if (!window.WebSocket) { return; }
+        if (socket.readyState == WebSocket.OPEN) {
+          socket.send(message)
+        } else {
+          alert('the socket is not open.')
+        }
+      }
+</code></pre>
 
 <p><b>WebSocketServer.scala</b><br />
 サーバー起動オブジェクトです。<br />
 HTML/WebSocketを扱うハンドラを登録してポートで待ち受けます。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="c1">// WebSocket用ハンドラを含むPipelineFactoryを登録</span>
-</span><span class="line"><span class="n">bootstrap</span><span class="o">.</span><span class="n">setPipelineFactory</span><span class="o">(</span><span class="k">new</span> <span class="nc">WebSocketServerPipelineFactory</span><span class="o">())</span>
-</span><span class="line">
-</span><span class="line"><span class="c1">// 8080番で待ち受け開始</span>
-</span><span class="line"><span class="n">bootstrap</span><span class="o">.</span><span class="n">bind</span><span class="o">(</span><span class="k">new</span> <span class="nc">InetSocketAddress</span><span class="o">(</span><span class="s">&quot;localhost&quot;</span><span class="o">,</span> <span class="mi">8080</span><span class="o">))</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<pre><code class="language-scala">    // WebSocket用ハンドラを含むPipelineFactoryを登録
+    bootstrap.setPipelineFactory(new WebSocketServerPipelineFactory())
+
+    // 8080番で待ち受け開始
+    bootstrap.bind(new InetSocketAddress(&quot;localhost&quot;, 8080))
+</code></pre>
 
 <p><b>WebSocketServerHandler.scala</b><br />
 実装するのは、Echoサーバーと同じく、messageReceived()とexceptionCaught()の２つ。<br />
 処理を分割しているのですこしだけメソッド多めです。<br />
 messageRecieved()で受信内容によって実際のハンドラをHttp/WebSocketのどちらかに切り替えます。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-<span class="line-number">21</span>
-<span class="line-number">22</span>
-<span class="line-number">23</span>
-<span class="line-number">24</span>
-<span class="line-number">25</span>
-<span class="line-number">26</span>
-<span class="line-number">27</span>
-<span class="line-number">28</span>
-<span class="line-number">29</span>
-<span class="line-number">30</span>
-<span class="line-number">31</span>
-<span class="line-number">32</span>
-<span class="line-number">33</span>
-<span class="line-number">34</span>
-<span class="line-number">35</span>
-<span class="line-number">36</span>
-<span class="line-number">37</span>
-<span class="line-number">38</span>
-<span class="line-number">39</span>
-<span class="line-number">40</span>
-<span class="line-number">41</span>
-<span class="line-number">42</span>
-<span class="line-number">43</span>
-<span class="line-number">44</span>
-<span class="line-number">45</span>
-<span class="line-number">46</span>
-<span class="line-number">47</span>
-<span class="line-number">48</span>
-<span class="line-number">49</span>
-<span class="line-number">50</span>
-<span class="line-number">51</span>
-<span class="line-number">52</span>
-<span class="line-number">53</span>
-<span class="line-number">54</span>
-<span class="line-number">55</span>
-<span class="line-number">56</span>
-<span class="line-number">57</span>
-<span class="line-number">58</span>
-<span class="line-number">59</span>
-<span class="line-number">60</span>
-<span class="line-number">61</span>
-<span class="line-number">62</span>
-<span class="line-number">63</span>
-<span class="line-number">64</span>
-<span class="line-number">65</span>
-<span class="line-number">66</span>
-<span class="line-number">67</span>
-<span class="line-number">68</span>
-<span class="line-number">69</span>
-<span class="line-number">70</span>
-<span class="line-number">71</span>
-<span class="line-number">72</span>
-<span class="line-number">73</span>
-<span class="line-number">74</span>
-<span class="line-number">75</span>
-<span class="line-number">76</span>
-<span class="line-number">77</span>
-<span class="line-number">78</span>
-<span class="line-number">79</span>
-<span class="line-number">80</span>
-<span class="line-number">81</span>
-<span class="line-number">82</span>
-<span class="line-number">83</span>
-<span class="line-number">84</span>
-<span class="line-number">85</span>
-<span class="line-number">86</span>
-<span class="line-number">87</span>
-<span class="line-number">88</span>
-<span class="line-number">89</span>
-<span class="line-number">90</span>
-<span class="line-number">91</span>
-<span class="line-number">92</span>
-<span class="line-number">93</span>
-<span class="line-number">94</span>
-<span class="line-number">95</span>
-<span class="line-number">96</span>
-<span class="line-number">97</span>
-<span class="line-number">98</span>
-<span class="line-number">99</span>
-<span class="line-number">100</span>
-<span class="line-number">101</span>
-<span class="line-number">102</span>
-<span class="line-number">103</span>
-</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">class</span> <span class="nc">WebSocketServerHandler</span> <span class="k">extends</span> <span class="nc">SimpleChannelUpstreamHandler</span> <span class="o">{</span>
-</span><span class="line">  <span class="k">val</span> <span class="nc">WEBSOCKET_PATH</span> <span class="k">=</span> <span class="s">&quot;/uppercase&quot;</span>
-</span><span class="line">
-</span><span class="line">  <span class="cm">/**</span>
-</span><span class="line"><span class="cm">   * メッセージ受信時の処理</span>
-</span><span class="line"><span class="cm">   *   メッセージの内容によってWebSocketかHttpかハンドラを切り替える</span>
-</span><span class="line"><span class="cm">   */</span>
-</span><span class="line">  <span class="nd">@throws</span><span class="o">(</span><span class="n">classOf</span><span class="o">[</span><span class="kt">Exception</span><span class="o">])</span>
-</span><span class="line">  <span class="k">override</span> <span class="k">def</span> <span class="n">messageReceived</span><span class="o">(</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">ChannelHandlerContext</span><span class="o">,</span> <span class="n">e</span><span class="k">:</span> <span class="kt">MessageEvent</span><span class="o">)</span> <span class="o">{</span>
-</span><span class="line">    <span class="k">val</span> <span class="n">msg</span><span class="k">:</span><span class="kt">Object</span> <span class="o">=</span> <span class="n">e</span><span class="o">.</span><span class="n">getMessage</span><span class="o">()</span>
-</span><span class="line">    <span class="n">msg</span> <span class="k">match</span> <span class="o">{</span>
-</span><span class="line">      <span class="k">case</span> <span class="n">frame</span><span class="k">:</span> <span class="kt">WebSocketFrame</span> <span class="o">=&gt;</span> <span class="o">{</span>
-</span><span class="line">          <span class="n">handleWebSocketFrame</span><span class="o">(</span><span class="n">ctx</span><span class="o">,</span> <span class="n">frame</span><span class="o">)</span>
-</span><span class="line">        <span class="o">}</span>
-</span><span class="line">      <span class="k">case</span> <span class="n">req</span><span class="k">:</span> <span class="kt">HttpRequest</span> <span class="o">=&gt;</span> <span class="o">{</span>
-</span><span class="line">          <span class="n">handleHttpRequest</span><span class="o">(</span><span class="n">ctx</span><span class="o">,</span> <span class="n">req</span><span class="o">)</span>
-</span><span class="line">        <span class="o">}</span>
-</span><span class="line">    <span class="o">}</span>
-</span><span class="line">  <span class="o">}</span>
-</span><span class="line">  <span class="cm">/**</span>
-</span><span class="line"><span class="cm">   * HTTPリクエスト時の処理</span>
-</span><span class="line"><span class="cm">   */</span>
-</span><span class="line">  <span class="nd">@throws</span><span class="o">(</span><span class="n">classOf</span><span class="o">[</span><span class="kt">Exception</span><span class="o">])</span>
-</span><span class="line">  <span class="k">def</span> <span class="n">handleHttpRequest</span><span class="o">(</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">ChannelHandlerContext</span><span class="o">,</span> <span class="n">req</span><span class="k">:</span> <span class="kt">HttpRequest</span><span class="o">)</span> <span class="o">{</span>
-</span><span class="line">    <span class="c1">// DEBUG</span>
-</span><span class="line">    <span class="n">println</span><span class="o">(</span><span class="s">&quot;handleHttpRequest: &quot;</span> <span class="o">+</span> <span class="nc">Thread</span><span class="o">.</span><span class="n">currentThread</span><span class="o">().</span><span class="n">getName</span><span class="o">())</span>
-</span><span class="line">
-</span><span class="line">    <span class="c1">// GETリクエスト以外は処理しない</span>
-</span><span class="line">    <span class="c1">// &quot;/&quot;にきたらWebSocketクライアント用ページを送信</span>
-</span><span class="line">    <span class="c1">// &quot;/uppercase&quot;にきたらリクエスト文字列を大文字に変換して返す</span>
-</span><span class="line">    <span class="k">if</span> <span class="o">(</span><span class="n">req</span><span class="o">.</span><span class="n">getMethod</span><span class="o">()</span> <span class="o">!=</span> <span class="nc">GET</span><span class="o">)</span> <span class="o">{</span>
-</span><span class="line">      <span class="n">sendHttpResponse</span><span class="o">(</span>
-</span><span class="line">        <span class="n">ctx</span><span class="o">,</span>
-</span><span class="line">        <span class="n">req</span><span class="o">,</span>
-</span><span class="line">        <span class="k">new</span> <span class="nc">DefaultHttpResponse</span><span class="o">(</span><span class="nc">HTTP_1_1</span><span class="o">,</span> <span class="nc">FORBIDDEN</span><span class="o">))</span>
-</span><span class="line">    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">req</span><span class="o">.</span><span class="n">getUri</span><span class="o">().</span><span class="n">equalsIgnoreCase</span><span class="o">(</span><span class="s">&quot;/&quot;</span><span class="o">))</span> <span class="o">{</span>
-</span><span class="line">    	
-</span><span class="line">      <span class="c1">// (中略) デフォルトHTMLの送信</span>
-</span><span class="line">
-</span><span class="line">    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">req</span><span class="o">.</span><span class="n">getUri</span><span class="o">().</span><span class="n">equalsIgnoreCase</span><span class="o">(</span><span class="nc">WEBSOCKET_PATH</span><span class="o">)</span> <span class="o">&amp;&amp;</span>
-</span><span class="line">               <span class="nc">Values</span><span class="o">.</span><span class="nc">UPGRADE</span><span class="o">.</span><span class="n">equalsIgnoreCase</span><span class="o">(</span><span class="n">req</span><span class="o">.</span><span class="n">getHeader</span><span class="o">(</span><span class="nc">Names</span><span class="o">.</span><span class="nc">CONNECTION</span><span class="o">))</span> <span class="o">&amp;&amp;</span>
-</span><span class="line">               <span class="nc">Values</span><span class="o">.</span><span class="nc">WEBSOCKET</span><span class="o">.</span><span class="n">equalsIgnoreCase</span><span class="o">(</span><span class="n">req</span><span class="o">.</span><span class="n">getHeader</span><span class="o">(</span><span class="nc">Names</span><span class="o">.</span><span class="nc">UPGRADE</span><span class="o">)))</span> <span class="o">{</span>
-</span><span class="line">
-</span><span class="line">      <span class="c1">// (中略) WebSocket接続処理</span>
-</span><span class="line">
-</span><span class="line">      <span class="c1">// ハンドラをHTTPからWebSocketに切り替えて、</span>
-</span><span class="line">      <span class="c1">// send the handshake response</span>
-</span><span class="line">      <span class="k">val</span> <span class="n">p</span> <span class="k">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">getChannel</span><span class="o">().</span><span class="n">getPipeline</span><span class="o">()</span>
-</span><span class="line">      <span class="n">p</span><span class="o">.</span><span class="n">remove</span><span class="o">(</span><span class="s">&quot;aggregator&quot;</span><span class="o">)</span>
-</span><span class="line">      <span class="n">p</span><span class="o">.</span><span class="n">replace</span><span class="o">(</span><span class="s">&quot;decoder&quot;</span><span class="o">,</span> <span class="s">&quot;wsdecoder&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="nc">WebSocketFrameDecoder</span><span class="o">())</span>
-</span><span class="line">
-</span><span class="line">      <span class="n">ctx</span><span class="o">.</span><span class="n">getChannel</span><span class="o">().</span><span class="n">write</span><span class="o">(</span><span class="n">res</span><span class="o">)</span>
-</span><span class="line">
-</span><span class="line">      <span class="n">p</span><span class="o">.</span><span class="n">replace</span><span class="o">(</span><span class="s">&quot;encoder&quot;</span><span class="o">,</span> <span class="s">&quot;wsencoder&quot;</span><span class="o">,</span> <span class="k">new</span> <span class="nc">WebSocketFrameEncoder</span><span class="o">())</span>
-</span><span class="line">    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-</span><span class="line">      <span class="n">sendHttpResponse</span><span class="o">(</span>
-</span><span class="line">        <span class="n">ctx</span><span class="o">,</span> <span class="n">req</span><span class="o">,</span> <span class="k">new</span> <span class="nc">DefaultHttpResponse</span><span class="o">(</span><span class="nc">HTTP_1_1</span><span class="o">,</span> <span class="nc">FORBIDDEN</span><span class="o">))</span>
-</span><span class="line">    <span class="o">}</span>
-</span><span class="line">  <span class="o">}</span>
-</span><span class="line">  <span class="cm">/**</span>
-</span><span class="line"><span class="cm">   * WebSocketリクエスト時の処理</span>
-</span><span class="line"><span class="cm">   */</span>
-</span><span class="line">  <span class="nd">@throws</span><span class="o">(</span><span class="n">classOf</span><span class="o">[</span><span class="kt">Exception</span><span class="o">])</span>
-</span><span class="line">  <span class="k">def</span> <span class="n">handleWebSocketFrame</span><span class="o">(</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">ChannelHandlerContext</span><span class="o">,</span> <span class="n">frame</span><span class="k">:</span> <span class="kt">WebSocketFrame</span><span class="o">)</span> <span class="o">{</span>
-</span><span class="line">    <span class="c1">// 大文字に変換するして、WebSocketFrameにのせてレスポンスを返す。</span>
-</span><span class="line">    <span class="n">ctx</span><span class="o">.</span><span class="n">getChannel</span><span class="o">().</span><span class="n">write</span><span class="o">(</span>
-</span><span class="line">      <span class="k">new</span> <span class="nc">DefaultWebSocketFrame</span><span class="o">(</span>
-</span><span class="line">        <span class="n">frame</span><span class="o">.</span><span class="n">getTextData</span><span class="o">().</span><span class="n">toUpperCase</span><span class="o">))</span>
-</span><span class="line">  <span class="o">}</span>
-</span><span class="line">  <span class="cm">/**</span>
-</span><span class="line"><span class="cm">   * HTTPレスポンスの送信</span>
-</span><span class="line"><span class="cm">   */</span>
-</span><span class="line">  <span class="nd">@throws</span><span class="o">(</span><span class="n">classOf</span><span class="o">[</span><span class="kt">Exception</span><span class="o">])</span>
-</span><span class="line">  <span class="k">def</span> <span class="n">sendHttpResponse</span><span class="o">(</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">ChannelHandlerContext</span><span class="o">,</span> <span class="n">req</span><span class="k">:</span> <span class="kt">HttpRequest</span><span class="o">,</span> <span class="n">res</span><span class="k">:</span> <span class="kt">HttpResponse</span><span class="o">)</span> <span class="o">{</span>
-</span><span class="line">    <span class="c1">// ステータスコードが200じゃなければエラーページの表示</span>
-</span><span class="line">    <span class="k">if</span> <span class="o">(</span><span class="n">res</span><span class="o">.</span><span class="n">getStatus</span><span class="o">().</span><span class="n">getCode</span><span class="o">()</span> <span class="o">!=</span> <span class="mi">200</span><span class="o">)</span> <span class="o">{</span>
-</span><span class="line">      <span class="n">res</span><span class="o">.</span><span class="n">setContent</span><span class="o">(</span>
-</span><span class="line">        <span class="nc">ChannelBuffers</span><span class="o">.</span><span class="n">copiedBuffer</span><span class="o">(</span>
-</span><span class="line">          <span class="n">res</span><span class="o">.</span><span class="n">getStatus</span><span class="o">().</span><span class="n">toString</span><span class="o">(),</span> <span class="nc">CharsetUtil</span><span class="o">.</span><span class="nc">UTF_8</span><span class="o">))</span>
-</span><span class="line">      <span class="nc">HttpHeaders</span><span class="o">.</span><span class="n">setContentLength</span><span class="o">(</span><span class="n">res</span><span class="o">,</span> <span class="n">res</span><span class="o">.</span><span class="n">getContent</span><span class="o">().</span><span class="n">readableBytes</span><span class="o">())</span>
-</span><span class="line">    <span class="o">}</span>
-</span><span class="line">
-</span><span class="line">    <span class="c1">// keep-aliveでなければ接続を閉じる</span>
-</span><span class="line">    <span class="k">val</span> <span class="n">f</span> <span class="k">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">getChannel</span><span class="o">().</span><span class="n">write</span><span class="o">(</span><span class="n">res</span><span class="o">)</span>
-</span><span class="line">    <span class="k">if</span> <span class="o">(!</span><span class="nc">HttpHeaders</span><span class="o">.</span><span class="n">isKeepAlive</span><span class="o">(</span><span class="n">req</span><span class="o">)</span> <span class="o">||</span> <span class="n">res</span><span class="o">.</span><span class="n">getStatus</span><span class="o">().</span><span class="n">getCode</span><span class="o">()</span> <span class="o">!=</span> <span class="mi">200</span><span class="o">)</span> <span class="o">{</span>
-</span><span class="line">      <span class="n">f</span><span class="o">.</span><span class="n">addListener</span><span class="o">(</span><span class="nc">ChannelFutureListener</span><span class="o">.</span><span class="nc">CLOSE</span><span class="o">)</span>
-</span><span class="line">    <span class="o">}</span>
-</span><span class="line">  <span class="o">}</span>
-</span><span class="line">  <span class="cm">/**</span>
-</span><span class="line"><span class="cm">   * 例外発生時の処理</span>
-</span><span class="line"><span class="cm">   */</span>
-</span><span class="line">  <span class="nd">@throws</span><span class="o">(</span><span class="n">classOf</span><span class="o">[</span><span class="kt">Exception</span><span class="o">])</span>
-</span><span class="line">  <span class="k">override</span> <span class="k">def</span> <span class="n">exceptionCaught</span><span class="o">(</span><span class="n">ctx</span><span class="k">:</span> <span class="kt">ChannelHandlerContext</span><span class="o">,</span> <span class="n">e</span><span class="k">:</span> <span class="kt">ExceptionEvent</span><span class="o">)</span> <span class="o">{</span>
-</span><span class="line">    <span class="n">println</span><span class="o">(</span><span class="s">&quot;server: exception caught: &quot;</span><span class="o">)</span>
-</span><span class="line">    <span class="n">e</span><span class="o">.</span><span class="n">getCause</span><span class="o">().</span><span class="n">printStackTrace</span><span class="o">()</span>
-</span><span class="line">    <span class="n">e</span><span class="o">.</span><span class="n">getChannel</span><span class="o">().</span><span class="n">close</span><span class="o">()</span>
-</span><span class="line">  <span class="o">}</span>
-</span><span class="line">  <span class="cm">/**</span>
-</span><span class="line"><span class="cm">   * WebSocket接続情報</span>
-</span><span class="line"><span class="cm">   */</span>
-</span><span class="line">  <span class="k">def</span> <span class="n">getWebSocketLocation</span><span class="o">(</span><span class="n">req</span><span class="k">:</span> <span class="kt">HttpRequest</span><span class="o">)</span> <span class="k">=</span>
-</span><span class="line">    <span class="s">&quot;ws://&quot;</span> <span class="o">+</span> <span class="n">req</span><span class="o">.</span><span class="n">getHeader</span><span class="o">(</span><span class="nc">HttpHeaders</span><span class="o">.</span><span class="nc">Names</span><span class="o">.</span><span class="nc">HOST</span><span class="o">)</span> <span class="o">+</span> <span class="nc">WEBSOCKET_PATH</span>
-</span><span class="line"><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<pre><code class="language-scala">class WebSocketServerHandler extends SimpleChannelUpstreamHandler {
+  val WEBSOCKET_PATH = &quot;/uppercase&quot;
+
+  /**
+   * メッセージ受信時の処理
+   *   メッセージの内容によってWebSocketかHttpかハンドラを切り替える
+   */
+  @throws(classOf[Exception])
+  override def messageReceived(ctx: ChannelHandlerContext, e: MessageEvent) {
+    val msg:Object = e.getMessage()
+    msg match {
+      case frame: WebSocketFrame =&gt; {
+          handleWebSocketFrame(ctx, frame)
+        }
+      case req: HttpRequest =&gt; {
+          handleHttpRequest(ctx, req)
+        }
+    }
+  }
+  /**
+   * HTTPリクエスト時の処理
+   */
+  @throws(classOf[Exception])
+  def handleHttpRequest(ctx: ChannelHandlerContext, req: HttpRequest) {
+    // DEBUG
+    println(&quot;handleHttpRequest: &quot; + Thread.currentThread().getName())
+
+    // GETリクエスト以外は処理しない
+    // &quot;/&quot;にきたらWebSocketクライアント用ページを送信
+    // &quot;/uppercase&quot;にきたらリクエスト文字列を大文字に変換して返す
+    if (req.getMethod() != GET) {
+      sendHttpResponse(
+        ctx,
+        req,
+        new DefaultHttpResponse(HTTP_1_1, FORBIDDEN))
+    } else if (req.getUri().equalsIgnoreCase(&quot;/&quot;)) {
+
+      // (中略) デフォルトHTMLの送信
+
+    } else if (req.getUri().equalsIgnoreCase(WEBSOCKET_PATH) &amp;&amp;
+               Values.UPGRADE.equalsIgnoreCase(req.getHeader(Names.CONNECTION)) &amp;&amp;
+               Values.WEBSOCKET.equalsIgnoreCase(req.getHeader(Names.UPGRADE))) {
+
+      // (中略) WebSocket接続処理
+
+      // ハンドラをHTTPからWebSocketに切り替えて、
+      // send the handshake response
+      val p = ctx.getChannel().getPipeline()
+      p.remove(&quot;aggregator&quot;)
+      p.replace(&quot;decoder&quot;, &quot;wsdecoder&quot;, new WebSocketFrameDecoder())
+
+      ctx.getChannel().write(res)
+
+      p.replace(&quot;encoder&quot;, &quot;wsencoder&quot;, new WebSocketFrameEncoder())
+    } else {
+      sendHttpResponse(
+        ctx, req, new DefaultHttpResponse(HTTP_1_1, FORBIDDEN))
+    }
+  }
+  /**
+   * WebSocketリクエスト時の処理
+   */
+  @throws(classOf[Exception])
+  def handleWebSocketFrame(ctx: ChannelHandlerContext, frame: WebSocketFrame) {
+    // 大文字に変換するして、WebSocketFrameにのせてレスポンスを返す。
+    ctx.getChannel().write(
+      new DefaultWebSocketFrame(
+        frame.getTextData().toUpperCase))
+  }
+  /**
+   * HTTPレスポンスの送信
+   */
+  @throws(classOf[Exception])
+  def sendHttpResponse(ctx: ChannelHandlerContext, req: HttpRequest, res: HttpResponse) {
+    // ステータスコードが200じゃなければエラーページの表示
+    if (res.getStatus().getCode() != 200) {
+      res.setContent(
+        ChannelBuffers.copiedBuffer(
+          res.getStatus().toString(), CharsetUtil.UTF_8))
+      HttpHeaders.setContentLength(res, res.getContent().readableBytes())
+    }
+
+    // keep-aliveでなければ接続を閉じる
+    val f = ctx.getChannel().write(res)
+    if (!HttpHeaders.isKeepAlive(req) || res.getStatus().getCode() != 200) {
+      f.addListener(ChannelFutureListener.CLOSE)
+    }
+  }
+  /**
+   * 例外発生時の処理
+   */
+  @throws(classOf[Exception])
+  override def exceptionCaught(ctx: ChannelHandlerContext, e: ExceptionEvent) {
+    println(&quot;server: exception caught: &quot;)
+    e.getCause().printStackTrace()
+    e.getChannel().close()
+  }
+  /**
+   * WebSocket接続情報
+   */
+  def getWebSocketLocation(req: HttpRequest) =
+    &quot;ws://&quot; + req.getHeader(HttpHeaders.Names.HOST) + WEBSOCKET_PATH
+}
+</code></pre>
 
 <p><b>WebSocketServerPipelineFactory.scala</b><br />
 パイプラインへの登録を定義します。<br />
 リクエストはDecoderを通り、ハンドラで処理され、Encoderを通って返される、という流れです。<br />
 ここでは初期状態としてHttp用の設定になっていますが、一旦WebSocket通信開始のリクエストを受け取ると、そのあとはWebSocketのDecoder/Encoderに切り替わります。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="o">&lt;</span><span class="n">pre</span> <span class="n">class</span><span class="o">=</span><span class="s">&quot;brush:scala&quot;</span><span class="o">&gt;</span>
-</span><span class="line"><span class="k">class</span> <span class="nc">WebSocketServerPipelineFactory</span> <span class="k">extends</span> <span class="nc">ChannelPipelineFactory</span><span class="o">{</span>
-</span><span class="line">  <span class="nd">@throws</span><span class="o">(</span><span class="n">classOf</span><span class="o">[</span><span class="kt">Exception</span><span class="o">])</span>
-</span><span class="line">  <span class="k">def</span> <span class="n">getPipeline</span><span class="o">()</span><span class="k">:</span> <span class="kt">ChannelPipeline</span> <span class="o">=</span> <span class="o">{</span>
-</span><span class="line">    <span class="k">val</span> <span class="n">pipeline</span> <span class="k">=</span> <span class="nc">Channels</span><span class="o">.</span><span class="n">pipeline</span><span class="o">()</span>
-</span><span class="line">
-</span><span class="line">    <span class="n">pipeline</span><span class="o">.</span><span class="n">addLast</span><span class="o">(</span><span class="s">&quot;decoder&quot;</span>    <span class="o">,</span> <span class="k">new</span> <span class="nc">HttpRequestDecoder</span><span class="o">())</span>
-</span><span class="line">    <span class="n">pipeline</span><span class="o">.</span><span class="n">addLast</span><span class="o">(</span><span class="s">&quot;aggregator&quot;</span> <span class="o">,</span> <span class="k">new</span> <span class="nc">HttpChunkAggregator</span><span class="o">(</span><span class="mi">65536</span><span class="o">))</span>
-</span><span class="line">    <span class="n">pipeline</span><span class="o">.</span><span class="n">addLast</span><span class="o">(</span><span class="s">&quot;encoder&quot;</span>    <span class="o">,</span> <span class="k">new</span> <span class="nc">HttpResponseEncoder</span><span class="o">())</span>
-</span><span class="line">    <span class="n">pipeline</span><span class="o">.</span><span class="n">addLast</span><span class="o">(</span><span class="s">&quot;handler&quot;</span>    <span class="o">,</span> <span class="k">new</span> <span class="nc">WebSocketServerHandler</span><span class="o">())</span>
-</span><span class="line">
-</span><span class="line">    <span class="n">pipeline</span>
-</span><span class="line">  <span class="o">}</span>
-</span><span class="line"><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<pre><code class="language-scala">&lt;pre class=&quot;brush:scala&quot;&gt;
+class WebSocketServerPipelineFactory extends ChannelPipelineFactory{
+  @throws(classOf[Exception])
+  def getPipeline(): ChannelPipeline = {
+    val pipeline = Channels.pipeline()
+
+    pipeline.addLast(&quot;decoder&quot;    , new HttpRequestDecoder())
+    pipeline.addLast(&quot;aggregator&quot; , new HttpChunkAggregator(65536))
+    pipeline.addLast(&quot;encoder&quot;    , new HttpResponseEncoder())
+    pipeline.addLast(&quot;handler&quot;    , new WebSocketServerHandler())
+
+    pipeline
+  }
+}
+</code></pre>
+
 <p>実際、ブラウザでひらいてみると、Webフォームに入力されている「hello, world」が大文字に変換されてフォーム下部に追記されていきます。<br />
 まぁWebSocketサーバーを実装するだけなら、jetty7を使ったほうがシンプルに早くかけると思います。<br />
 Memcacheプロトコルを話すサービスをつくる場合とかには便利ですね。（messagepack-rpcでもnetty使っているとか。)</p>
@@ -644,242 +357,46 @@ Memcacheプロトコルを話すサービスをつくる場合とかには便利
 <p>参考：</p>
 
 <ul>
-  <li><a href="http://gihyo.jp/dev/feature/01/websocket">Jettyで始めるWebSocket超入門</a></li>
-  <li><a href="http://d.hatena.ne.jp/yuroyoro/20100316/1268735022">Jetty7のWebSocketをScalaから使う - ゆろよろ日記</a></li>
+<li><a href="http://gihyo.jp/dev/feature/01/websocket">Jettyで始めるWebSocket超入門</a></li>
+<li><a href="http://d.hatena.ne.jp/yuroyoro/20100316/1268735022">Jetty7のWebSocketをScalaから使う - ゆろよろ日記</a></li>
 </ul>
 
 <p>以上、お粗末様でした。。。</p>
 <p># あれ？Scalaあんまり関係ない？？</p>
-</div>
 
-
-
-
-<style type="text/css">
-  .sharing {
-     clear: both;
-  }
-  .sharing li{
-    display: inline;
-    list-style-type: none;
-    float: left;
-    height: 1em;
-    line-height: 1em;
-    padding: 0 10px 0 0 ;
-    margin: 10px 0;
-  }
-  .sharing ul {
-    margin: 1em 0;
-    padding: 1em 0;
-  }
-</style>
-<div class="sharing">
+			  <div class="sharing">
   <ul>
-  <li><a href="http://blog.restartr.com/2010/12/29/websocket-server-written-in-scala-with-netty/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
-  
-  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2010/12/29/websocket-server-written-in-scala-with-netty/" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2010/12/29/websocket-server-written-in-scala-with-netty/" >Tweet</a></li>
-  
+  <li><a href="http://blog.restartr.com/2010/12/29/websocket-server-written-in-scala-with-netty" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2010/12/29/websocket-server-written-in-scala-with-netty" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2010/12/29/websocket-server-written-in-scala-with-netty" >Tweet</a></li>
   <li><a data-pocket-label="pocket" data-pocket-count="horizontal" class="pocket-btn" data-lang="en"></a><script type="text/javascript">!function(d,i){if(!d.getElementById(i)){var j=d.createElement("script");j.id=i;j.src="https://widgets.getpocket.com/v1/j/btn.js?v=1";var w=d.getElementById(i);d.body.appendChild(j);}}(document,"pocket-btn-js");</script></li>
-  
-  
   </ul>
 </div>
-<p />
+<script type="text/javascript">
+  (function(){
+    var twitterWidgets = document.createElement('script');
+    twitterWidgets.type = 'text/javascript';
+    twitterWidgets.async = true;
+    twitterWidgets.src = '//platform.twitter.com/widgets.js';
+    document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+  })();
+</script>
+<hr />
 
-
-
-
-  <footer>
-    <p class="meta">
-      
-  
-
-<span class="byline author vcard">Posted by <span class="fn">ReSTARTR</span></span>
-
-      
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2010-12-29T18:45:53+09:00" pubdate data-updated="true">2010-12-29 (Wed)</time>
-      
-
-<span class="categories">
-  
-    <a class='category' href='/category/scala/'>Scala</a>
-  
-</span>
-
-
-    </p>
-    <hr />
-    <p class="meta">
-      
-        <a class="basic-alignment left" href="/2010/11/23/scala-erlang-php-and-me/" title="Previous Post: ScalaとErlangとPHPと私">&laquo; ScalaとErlangとPHPと私</a>
-      
-      
-        <a class="basic-alignment right" href="/2010/12/31/10-targets-that-i-wanted-to-achieve-in-2010/" title="Next Post: 2010年に達成したかった10の目標">2010年に達成したかった10の目標 &raquo;</a>
-      
-    </p>
-  </footer>
-</article>
-
-</div>
-
-<aside class="sidebar">
-  
-    <section id="titles">
-  <a href="http://blog.restartr.com" title="I Will Survive"><img id="logo" src="http://blog.restartr.com/images/portrait.jpg" /></a>
-  <h1 id="site_title"><a href="http://blog.restartr.com" title="I Will Survive">I Will Survive</a></h1>
-  <h3 id="site_subtitle">An application depelopper's blog.</h3>
-</section>
-
-<section id="menu">
-  <ul>
-    <li><i class="fa fa-home fa-lg"></i><a href="http://blog.restartr.com"> Home </a></li>
-    <li><i class="fa fa-calendar fa-lg"></i><a href="http://blog.restartr.com/blog/archives/"> Archives </a></li>
-    <li><i class="fa fa-user fa-lg"></i><a href="http://blog.restartr.com/about/"> About </a></li>
-    <li><i class="fa fa-rss fa-lg"></i><a href="http://blog.restartr.com/atom.xml"> Feed </a></li>
-  </ul>
-</section>
-
-<section id="social">
-  
-
-  
-
-  
-    <a href="" title="g+#103216164658230535238"><i class="fa fa-google-plus fa-2x"></i></a>
-  
-
-  
-    <a href="https://github.com/ReSTARTR" title="ReSTARTR"><i class="fa fa-github fa-2x"></i></a>
-  
-
-  
-
-  
-    <a href="https://twitter.com/ReSTARTR" title="ReSTARTR"><i class="fa fa-twitter fa-2x"></i></a>
-  
-
-  
-</section>
-
-
-<section>
-  <h1>Recent Posts</h1>
-  <ul id="recent_posts">
-    
-      <li class="post">
-        <a href="/2016/02/27/ec2-ls-hosts/">ec2-ls-hosts: EC2インスタンスを一覧するだけのシンプルツール</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2016/02/17/ergodox-ez/">ErgoDox EZを注文した(けどまだ届いてない)</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/12/31/things-of-2015/">2015年ふりかえり</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix/">Elixir/PhoenixでISUCON5予選の参考実装を書いた</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/10/15/go-programming-blueprints/">"Go Programming Blueprints"を読んだ</a>
-      </li>
-    
-  </ul>
-</section>
-<section>
-  <h1>Categories</h1>
-  <ul id="categories">
-    <li><a href='/category/architecture/'>architecture</a></li><li><a href='/category/docker/'>docker</a></li><li><a href='/category/elixir/'>Elixir</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/go/'>go</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/ruby/'>ruby</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
-  </ul>
-</section>
-<section>
-  <h1>GitHub Repos</h1>
-  <ul id="gh_repos">
-    <li class="loading">Status updating...</li>
-  </ul>
-  
-  <a href="https://github.com/ReSTARTR">@ReSTARTR</a> on GitHub
-  
-  <script type="text/javascript">
-    $.domReady(function(){
-        if (!window.jXHR){
-            var jxhr = document.createElement('script');
-            jxhr.type = 'text/javascript';
-            jxhr.src = '/javascripts/libs/jXHR.js';
-            var s = document.getElementsByTagName('script')[0];
-            s.parentNode.insertBefore(jxhr, s);
-        }
-
-        github.showRepos({
-            user: 'ReSTARTR',
-            count: 4,
-            skip_forks: true,
-            target: '#gh_repos'
-        });
-    });
-  </script>
-  <script src="/javascripts/github.js" type="text/javascript"> </script>
-</section>
-
-
-
-<section class="googleplus">
-  <h1>
-    <a href="https://plus.google.com/103216164658230535238?rel=author">
-      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
-      Google+
-    </a>
-  </h1>
-</section>
-
-
-
-  
-</aside>
-
-
-    </div>
-  </div>
-  <footer role="contentinfo"><p>
-  Copyright &copy; 2016 - ReSTARTR -
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
-</p>
-
+			   <footer>
+  <p class="meta">
+    <ul class="params">
+    <li>Category: [Scala]</li>
+    <li class="">Tags: [Scala websocket netty]</li>
+    <li><span class="byline author vcard">Posted by <span class="fn">ReSTARTR</span></span></li>
+    <li><time datetime="2010-12-29 18:45:53 &#43;0900 JST" pubdate data-updated="true">2010-12-29(Wed)</time></li>
+    </ul>
+  </p>
 </footer>
-  
 
+			</div>
 
+			
+		</div>
 
-
-
-
-
-  <script type="text/javascript">
-    (function(){
-      var twitterWidgets = document.createElement('script');
-      twitterWidgets.type = 'text/javascript';
-      twitterWidgets.async = true;
-      twitterWidgets.src = '//platform.twitter.com/widgets.js';
-      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
-    })();
-  </script>
-
-
-
-
-
-</body>
+  </body>
 </html>
