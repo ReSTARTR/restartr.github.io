@@ -1,192 +1,93 @@
-
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+	<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <meta charset="utf-8">
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.15" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
   <title>Elixir/PhoenixでISUCON5予選の参考実装を書いた - I Will Survive</title>
-  <meta name="author" content="ReSTARTR">
-  <link rel="author" href="https://plus.google.com/103216164658230535238" />
-  <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="Elixir/PhoenixでISUCON5予選の参考実装を書いた .sharing { clear: both; } .sharing li{ display: inline; list-style-type: none; float: left; height: 1em; line- &hellip;">
-  
-
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/poole.css">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/syntax.css">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/hyde.css">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/custom.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
 
   
-  <link rel="canonical" href="http://blog.restartr.com/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix/">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-   <link href="/stylesheets/data-table.css" media="screen, projection" rel="stylesheet" type="text/css" />
-  <script src="/javascripts/modernizr-2.0.js"></script>
-  <script src="/javascripts/ender.js"></script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  <link href="/atom.xml" rel="alternate" title="I Will Survive" type="application/atom+xml">
-  <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
-
-<!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
-<link href='http://fonts.googleapis.com/css?family=Lato:400,100,100italic,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
-<link href='http://fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
-<link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:200,300,400,500,600,700,900' rel='stylesheet' type='text/css'>
-
-
-	<!-- mathjax config similar to math.stackexchange -->
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    tex2jax: {
-      inlineMath: [ ['$$','$$'], ["\\(","\\)"] ],
-      processEscapes: true
-    }
-  });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      tex2jax: {
-        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-      }
-    });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax(), i;
-        for(i=0; i < all.length; i += 1) {
-            all[i].SourceElement().parentNode.className += ' has-jax';
-        }
-    });
-</script>
-
-<script type="text/javascript"
-   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
-
-
-
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://blog.restartr.com/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="http://blog.restartr.com/favicon.png">
 
   
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-894530-10']);
-    _gaq.push(['_trackPageview']);
-
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
-
-
-  <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
-  <style>html{background: url("/images/background.png") no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;}</style>
+  <link href="" rel="alternate" type="application/rss+xml" title="I Will Survive" />
 </head>
 
-<body   >
-  <header role="banner"><hgroup>
-</hgroup>
+	<body class="theme-base-0d">
+		<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="http://blog.restartr.com"><h1>I Will Survive</h1></a>
+      <p class="lead">
+       An application depelopper&#39;s blog. 
+      </p>
+    </div>
 
-</header>
-  <!-- <nav role="navigation"><ul class="subscription" data-subscription="rss">
-  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-  
-</ul>
-  
-<form action="https://www.google.com/search" method="get">
-  <fieldset role="search">
-    <input type="hidden" name="q" value="site:blog.restartr.com" />
-    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
-  </fieldset>
-</form>
-  
-<ul class="main-navigation">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives">Archives</a></li>
-</ul>
-
-</nav> -->
-  <div id="main">
-    <div id="content">
-      <div>
-<article class="hentry" role="article">
-  
-  <header>
-    
-      <h1 class="entry-title">Elixir/PhoenixでISUCON5予選の参考実装を書いた</h1>
+    <ul class="sidebar-nav">
+      <li><a href="http://blog.restartr.com/">Home</a> </li>
       
-      <style type="text/css">
-  .sharing {
-     clear: both;
-  }
-  .sharing li{
-    display: inline;
-    list-style-type: none;
-    float: left;
-    height: 1em;
-    line-height: 1em;
-    padding: 0 10px 0 0 ;
-    margin: 10px 0;
-  }
-  .sharing ul {
-    margin: 1em 0;
-    padding: 1em 0;
-  }
-</style>
-<div class="sharing">
+        <li><a href="http://blog.restartr.com/about/"> About </a></li>
+      
+        <li><a href="http://blog.restartr.com/index.xml"> Feed </a></li>
+      
+        <li><a href="https://github.com/ReSTARTR"> GitHub </a></li>
+      
+        <li><a href="https://twitter.com/ReSTARTR"> Twitter </a></li>
+      
+    </ul>
+
+    <p>Copyright ©2016 - ReSTARTR. All rights reserved.</p>
+  </div>
+</div>
+
+
+		<div class="content container">
+			<div class="post">
+			 	<h1>Elixir/PhoenixでISUCON5予選の参考実装を書いた</h1>
+        <span class="post-date">2015-10-21(Wed) - [Elixir]</span>
+			  <div class="sharing">
   <ul>
-  <li><a href="http://blog.restartr.com/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
-  
-  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix/" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix/" >Tweet</a></li>
-  
+  <li><a href="http://blog.restartr.com/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix" >Tweet</a></li>
   <li><a data-pocket-label="pocket" data-pocket-count="horizontal" class="pocket-btn" data-lang="en"></a><script type="text/javascript">!function(d,i){if(!d.getElementById(i)){var j=d.createElement("script");j.id=i;j.src="https://widgets.getpocket.com/v1/j/btn.js?v=1";var w=d.getElementById(i);d.body.appendChild(j);}}(document,"pocket-btn-js");</script></li>
-  
-  
   </ul>
 </div>
-<p />
+<script type="text/javascript">
+  (function(){
+    var twitterWidgets = document.createElement('script');
+    twitterWidgets.type = 'text/javascript';
+    twitterWidgets.async = true;
+    twitterWidgets.src = '//platform.twitter.com/widgets.js';
+    document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+  })();
+</script>
+<hr />
 
-      
-    
-    
-      <p class="meta">
-        
+			      
 
+<p><a href="https://github.com/isucon/isucon5-qualify">ISUCON5予選の参考実装</a>を、Elixir/Phoenixで実装してみました。</p>
 
-
-
-
-
-
-
-  
-
-
-<time datetime="2015-10-21T19:32:17+09:00" pubdate data-updated="true">2015-10-21 (Wed)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p><a href="https://github.com/isucon/isucon5-qualify">ISUCON5予選の参考実装</a>を、Elixir/Phoenixで実装してみました。</p>
-
-<blockquote class="twitter-tweet" lang="ja"><p lang="en" dir="ltr">It (partially) works! <a href="https://twitter.com/hashtag/myelixirstatus?src=hash">#myelixirstatus</a> <a href="https://t.co/NuhhufXAwC">pic.twitter.com/NuhhufXAwC</a></p>&mdash; Masaki YOSHIDA (@ReSTARTR) <a href="https://twitter.com/ReSTARTR/status/656434698730639360">2015, 10月 20</a></blockquote>
-<script async="" src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
+<p><blockquote class="twitter-tweet" lang="ja"><p lang="en" dir="ltr">It (partially) works! <a href="https://twitter.com/hashtag/myelixirstatus?src=hash">#myelixirstatus</a> <a href="https://t.co/NuhhufXAwC">pic.twitter.com/NuhhufXAwC</a></p>&mdash; Masaki YOSHIDA (@ReSTARTR) <a href="https://twitter.com/ReSTARTR/status/656434698730639360">2015, 10月 20</a></blockquote> <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script></p>
 
 <p>汚いながらもとりあえずひととおり動いたので現時点でのコードをGithubにpush。</p>
 
 <ul>
-  <li><a href="https://github.com/ReSTARTR/isucon5-qualify-elixir">github.com/ReSTARTR/isucon5-qualify-elixir</a></li>
+<li><a href="https://github.com/ReSTARTR/isucon5-qualify-elixir">github.com/ReSTARTR/isucon5-qualify-elixir</a></li>
 </ul>
 
-<h3 id="section">実装について補足</h3>
+<h3 id="実装について補足:efe39066a01c868bb9b83d761df0ba42">実装について補足</h3>
 
 <p>まずは他言語の初期実装と同等のSQLを再現することを目標としました。</p>
 
@@ -195,64 +96,60 @@
 
 <p>そのため、テンプレートの細かい表示(時刻フォーマット等)の不備や、ベンチマーカーがチェックしない機能が抜けている可能性があります。</p>
 
-<h3 id="section-1">注意点</h3>
+<h3 id="注意点:efe39066a01c868bb9b83d761df0ba42">注意点</h3>
 
 <p>ベンチマーカーがCSSファイルのサイズを厳密にチェックしていて、なぜか1バイト余計に増えてしまってパスしない問題が発生します。
 <a href="https://github.com/isucon/isucon5-qualify/blob/42cec755d41b1573af3dd4735d78523494fd42dd/bench/src/main/java/net/isucon/isucon5q/bench/scenario/BootstrapChecker.java#L186">チェック箇所のサイズ</a>を<code>122540</code>から<code>122541</code>にすることで無理やりとおしました。
 原因は追って調査ですが、機能的に問題ないはずなので一時しのぎです。</p>
 
-<h3 id="section-2">ベンチマーク結果</h3>
+<h3 id="ベンチマーク結果:efe39066a01c868bb9b83d761df0ba42">ベンチマーク結果</h3>
 
 <p>気になる性能ですが、Goと比較すると以下のような結果となりました。</p>
 
 <p>※VirtualBox上にたてたMySQLにたいして、ホストのMacOSX上でアプリケーションを実行しています</p>
 
 <table>
-  <thead>
-    <tr>
-      <th style="text-align: left">Lang</th>
-      <th style="text-align: right">requests</th>
-      <th style="text-align: right">elapsed</th>
-      <th style="text-align: right">success</th>
-      <th style="text-align: right">redirect</th>
-      <th style="text-align: right">failure</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="text-align: left">Elixir/Phoenix</td>
-      <td style="text-align: right">333</td>
-      <td style="text-align: right">76093</td>
-      <td style="text-align: right">239</td>
-      <td style="text-align: right">93</td>
-      <td style="text-align: right">1</td>
-    </tr>
-    <tr>
-      <td style="text-align: left">Go</td>
-      <td style="text-align: right">138</td>
-      <td style="text-align: right">106728</td>
-      <td style="text-align: right">98</td>
-      <td style="text-align: right">39</td>
-      <td style="text-align: right">1</td>
-    </tr>
-  </tbody>
+<thead>
+<tr>
+<th align="left">Lang</th>
+<th align="right">requests</th>
+<th align="right">elapsed</th>
+<th align="right">success</th>
+<th align="right">redirect</th>
+<th align="right">failure</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="left">Elixir/Phoenix</td>
+<td align="right">333</td>
+<td align="right">76093</td>
+<td align="right">239</td>
+<td align="right">93</td>
+<td align="right">1</td>
+</tr>
+
+<tr>
+<td align="left">Go</td>
+<td align="right">138</td>
+<td align="right">106728</td>
+<td align="right">98</td>
+<td align="right">39</td>
+<td align="right">1</td>
+</tr>
+</tbody>
 </table>
 
 <p><a href="https://github.com/isucon/isucon5-qualify/blob/master/eventapp/lib/score.rb">スコア計算式</a>をもとに計算してみると以下のようなスコアとなります(eror, exception, violationsはないので減点は無し)</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1"># Elixir/Phoenix</span>
-</span><span class="line"><span class="n">irb</span><span class="p">(</span><span class="n">main</span><span class="p">):</span><span class="mo">001</span><span class="p">:</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">base_score</span> <span class="o">=</span> <span class="mi">239</span> <span class="o">+</span> <span class="mi">93</span> <span class="o">*</span> <span class="mi">0</span><span class="o">.</span><span class="mi">1</span>
-</span><span class="line"><span class="o">=&gt;</span> <span class="mi">248</span><span class="o">.</span><span class="mi">3</span>
-</span><span class="line"><span class="c1"># Go</span>
-</span><span class="line"><span class="n">irb</span><span class="p">(</span><span class="n">main</span><span class="p">):</span><span class="mo">002</span><span class="p">:</span><span class="mi">0</span><span class="o">&gt;</span> <span class="n">base_score</span> <span class="o">=</span> <span class="mi">98</span> <span class="o">+</span> <span class="mi">39</span> <span class="o">*</span> <span class="mi">0</span><span class="o">.</span><span class="mi">1</span>
-</span><span class="line"><span class="o">=&gt;</span> <span class="mi">101</span><span class="o">.</span><span class="mi">9</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<pre><code class="language-ruby"># Elixir/Phoenix
+irb(main):001:0&gt; base_score = 239 + 93 * 0.1
+=&gt; 248.3
+# Go
+irb(main):002:0&gt; base_score = 98 + 39 * 0.1
+=&gt; 101.9
+</code></pre>
 
 <p>同じクエリを再現したうえで、だいたい2.5倍くらいの性能差？でしょうか。
 が、完全に模倣できているか自信はないのであくまで参考程度ということで…</p>
@@ -261,324 +158,92 @@
 
 <p>elixir/phoenix版の結果</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-</pre></td><td class="code"><pre><code class="json"><span class="line"><span class="p">{</span>
-</span><span class="line">  <span class="nt">&quot;valid&quot;</span> <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-</span><span class="line">  <span class="nt">&quot;requests&quot;</span> <span class="p">:</span> <span class="mi">333</span><span class="p">,</span>
-</span><span class="line">  <span class="nt">&quot;elapsed&quot;</span> <span class="p">:</span> <span class="mi">76093</span><span class="p">,</span>
-</span><span class="line">  <span class="nt">&quot;done&quot;</span> <span class="p">:</span> <span class="s2">&quot;[{Isucon5InitExecutor},{BootstrapChecker},{Isucon5Load,Isucon5Load,Isucon5Load,Isucon5Load,Isucon5Checker}]&quot;</span><span class="p">,</span>
-</span><span class="line">  <span class="nt">&quot;responses&quot;</span> <span class="p">:</span> <span class="p">{</span>
-</span><span class="line">    <span class="nt">&quot;success&quot;</span> <span class="p">:</span> <span class="mi">239</span><span class="p">,</span>
-</span><span class="line">    <span class="nt">&quot;redirect&quot;</span> <span class="p">:</span> <span class="mi">93</span><span class="p">,</span>
-</span><span class="line">    <span class="nt">&quot;failure&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-</span><span class="line">    <span class="nt">&quot;error&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-</span><span class="line">    <span class="nt">&quot;exception&quot;</span> <span class="p">:</span> <span class="mi">0</span>
-</span><span class="line">  <span class="p">},</span>
-</span><span class="line">  <span class="nt">&quot;violations&quot;</span> <span class="p">:</span> <span class="p">[</span> <span class="p">]</span>
-</span><span class="line"><span class="p">}</span>
-</span><span class="line">
-</span><span class="line"><span class="err">BUILD</span> <span class="err">SUCCESSFUL</span>
-</span><span class="line">
-</span><span class="line"><span class="err">Total</span> <span class="err">time:</span> <span class="mi">1</span> <span class="err">mins</span> <span class="mf">27.449</span> <span class="err">secs</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<pre><code class="language-json">{
+  &quot;valid&quot; : true,
+  &quot;requests&quot; : 333,
+  &quot;elapsed&quot; : 76093,
+  &quot;done&quot; : &quot;[{Isucon5InitExecutor},{BootstrapChecker},{Isucon5Load,Isucon5Load,Isucon5Load,Isucon5Load,Isucon5Checker}]&quot;,
+  &quot;responses&quot; : {
+    &quot;success&quot; : 239,
+    &quot;redirect&quot; : 93,
+    &quot;failure&quot; : 1,
+    &quot;error&quot; : 0,
+    &quot;exception&quot; : 0
+  },
+  &quot;violations&quot; : [ ]
+}
+
+BUILD SUCCESSFUL
+
+Total time: 1 mins 27.449 secs
+</code></pre>
 
 <p>go版の結果</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-</pre></td><td class="code"><pre><code class="json"><span class="line"><span class="p">{</span>
-</span><span class="line">  <span class="nt">&quot;valid&quot;</span> <span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
-</span><span class="line">  <span class="nt">&quot;requests&quot;</span> <span class="p">:</span> <span class="mi">138</span><span class="p">,</span>
-</span><span class="line">  <span class="nt">&quot;elapsed&quot;</span> <span class="p">:</span> <span class="mi">106728</span><span class="p">,</span>
-</span><span class="line">  <span class="nt">&quot;done&quot;</span> <span class="p">:</span> <span class="s2">&quot;[{Isucon5InitExecutor},{BootstrapChecker},{Isucon5Load,Isucon5Load,Isucon5Load,Isucon5Load,Isucon5Checker}]&quot;</span><span class="p">,</span>
-</span><span class="line">  <span class="nt">&quot;responses&quot;</span> <span class="p">:</span> <span class="p">{</span>
-</span><span class="line">    <span class="nt">&quot;success&quot;</span> <span class="p">:</span> <span class="mi">98</span><span class="p">,</span>
-</span><span class="line">    <span class="nt">&quot;redirect&quot;</span> <span class="p">:</span> <span class="mi">39</span><span class="p">,</span>
-</span><span class="line">    <span class="nt">&quot;failure&quot;</span> <span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
-</span><span class="line">    <span class="nt">&quot;error&quot;</span> <span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
-</span><span class="line">    <span class="nt">&quot;exception&quot;</span> <span class="p">:</span> <span class="mi">0</span>
-</span><span class="line">  <span class="p">},</span>
-</span><span class="line">  <span class="nt">&quot;violations&quot;</span> <span class="p">:</span> <span class="p">[</span> <span class="p">]</span>
-</span><span class="line"><span class="p">}</span>
-</span><span class="line">
-</span><span class="line"><span class="err">BUILD</span> <span class="err">SUCCESSFUL</span>
-</span><span class="line">
-</span><span class="line"><span class="err">Total</span> <span class="err">time:</span> <span class="mi">1</span> <span class="err">mins</span> <span class="mf">54.937</span> <span class="err">secs</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<pre><code class="language-json">{
+  &quot;valid&quot; : true,
+  &quot;requests&quot; : 138,
+  &quot;elapsed&quot; : 106728,
+  &quot;done&quot; : &quot;[{Isucon5InitExecutor},{BootstrapChecker},{Isucon5Load,Isucon5Load,Isucon5Load,Isucon5Load,Isucon5Checker}]&quot;,
+  &quot;responses&quot; : {
+    &quot;success&quot; : 98,
+    &quot;redirect&quot; : 39,
+    &quot;failure&quot; : 1,
+    &quot;error&quot; : 0,
+    &quot;exception&quot; : 0
+  },
+  &quot;violations&quot; : [ ]
+}
 
-<h3 id="section-3">今後</h3>
+BUILD SUCCESSFUL
+
+Total time: 1 mins 54.937 secs
+</code></pre>
+
+<h3 id="今後:efe39066a01c868bb9b83d761df0ba42">今後</h3>
 
 <p>今回のISUCONアプリは結構機能を積んでいるため、Elixir/Phoenixに慣れるにはちょうど良いテーマなのではないかと思います。</p>
 
-<p>ただPhoenix初心者ということもあり、実装していたほとんどの時間は”Ectoでどうやってクエリを再現するか”に使っていて、
+<p>ただPhoenix初心者ということもあり、実装していたほとんどの時間は&rdquo;Ectoでどうやってクエリを再現するか&rdquo;に使っていて、
 ロジックの書き方とか各モジュールの使い分けとかまであまり気にできてません。
 Phoenix/Ectoの有効性を台無しにしていること間違いなし…
 まぁ、そこんところはおいおい感覚をつかんでいこうかな、と。</p>
 
 <p>このあとはEctoの抽象化を活かしつつさらに最適化をすすめていったときに、どのような性能を発揮するのか気になるところです。</p>
-</div>
 
-
-
-
-<style type="text/css">
-  .sharing {
-     clear: both;
-  }
-  .sharing li{
-    display: inline;
-    list-style-type: none;
-    float: left;
-    height: 1em;
-    line-height: 1em;
-    padding: 0 10px 0 0 ;
-    margin: 10px 0;
-  }
-  .sharing ul {
-    margin: 1em 0;
-    padding: 1em 0;
-  }
-</style>
-<div class="sharing">
+			  <div class="sharing">
   <ul>
-  <li><a href="http://blog.restartr.com/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
-  
-  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix/" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix/" >Tweet</a></li>
-  
+  <li><a href="http://blog.restartr.com/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix" >Tweet</a></li>
   <li><a data-pocket-label="pocket" data-pocket-count="horizontal" class="pocket-btn" data-lang="en"></a><script type="text/javascript">!function(d,i){if(!d.getElementById(i)){var j=d.createElement("script");j.id=i;j.src="https://widgets.getpocket.com/v1/j/btn.js?v=1";var w=d.getElementById(i);d.body.appendChild(j);}}(document,"pocket-btn-js");</script></li>
-  
-  
   </ul>
 </div>
-<p />
+<script type="text/javascript">
+  (function(){
+    var twitterWidgets = document.createElement('script');
+    twitterWidgets.type = 'text/javascript';
+    twitterWidgets.async = true;
+    twitterWidgets.src = '//platform.twitter.com/widgets.js';
+    document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+  })();
+</script>
+<hr />
 
-
-
-
-  <footer>
-    <p class="meta">
-      
-  
-
-<span class="byline author vcard">Posted by <span class="fn">ReSTARTR</span></span>
-
-      
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2015-10-21T19:32:17+09:00" pubdate data-updated="true">2015-10-21 (Wed)</time>
-      
-
-<span class="categories">
-  
-    <a class='category' href='/category/elixir/'>Elixir</a>
-  
-</span>
-
-
-    </p>
-    <hr />
-    <p class="meta">
-      
-        <a class="basic-alignment left" href="/2015/10/15/go-programming-blueprints/" title="Previous Post: "Go Programming Blueprints"を読んだ">&laquo; "Go Programming Blueprints"を読んだ</a>
-      
-      
-        <a class="basic-alignment right" href="/2015/12/31/things-of-2015/" title="Next Post: 2015年ふりかえり">2015年ふりかえり &raquo;</a>
-      
-    </p>
-  </footer>
-</article>
-
-</div>
-
-<aside class="sidebar">
-  
-    <section id="titles">
-  <a href="http://blog.restartr.com" title="I Will Survive"><img id="logo" src="http://blog.restartr.com/images/portrait.jpg" /></a>
-  <h1 id="site_title"><a href="http://blog.restartr.com" title="I Will Survive">I Will Survive</a></h1>
-  <h3 id="site_subtitle">An application depelopper's blog.</h3>
-</section>
-
-<section id="menu">
-  <ul>
-    <li><i class="fa fa-home fa-lg"></i><a href="http://blog.restartr.com"> Home </a></li>
-    <li><i class="fa fa-calendar fa-lg"></i><a href="http://blog.restartr.com/blog/archives/"> Archives </a></li>
-    <li><i class="fa fa-user fa-lg"></i><a href="http://blog.restartr.com/about/"> About </a></li>
-    <li><i class="fa fa-rss fa-lg"></i><a href="http://blog.restartr.com/atom.xml"> Feed </a></li>
-  </ul>
-</section>
-
-<section id="social">
-  
-
-  
-
-  
-    <a href="" title="g+#103216164658230535238"><i class="fa fa-google-plus fa-2x"></i></a>
-  
-
-  
-    <a href="https://github.com/ReSTARTR" title="ReSTARTR"><i class="fa fa-github fa-2x"></i></a>
-  
-
-  
-
-  
-    <a href="https://twitter.com/ReSTARTR" title="ReSTARTR"><i class="fa fa-twitter fa-2x"></i></a>
-  
-
-  
-</section>
-
-
-<section>
-  <h1>Recent Posts</h1>
-  <ul id="recent_posts">
-    
-      <li class="post">
-        <a href="/2016/02/27/ec2-ls-hosts/">ec2-ls-hosts: EC2インスタンスを一覧するだけのシンプルツール</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2016/02/17/ergodox-ez/">ErgoDox EZを注文した(けどまだ届いてない)</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/12/31/things-of-2015/">2015年ふりかえり</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix/">Elixir/PhoenixでISUCON5予選の参考実装を書いた</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/10/15/go-programming-blueprints/">"Go Programming Blueprints"を読んだ</a>
-      </li>
-    
-  </ul>
-</section>
-<section>
-  <h1>Categories</h1>
-  <ul id="categories">
-    <li><a href='/category/architecture/'>architecture</a></li><li><a href='/category/docker/'>docker</a></li><li><a href='/category/elixir/'>Elixir</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/go/'>go</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/ruby/'>ruby</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
-  </ul>
-</section>
-<section>
-  <h1>GitHub Repos</h1>
-  <ul id="gh_repos">
-    <li class="loading">Status updating...</li>
-  </ul>
-  
-  <a href="https://github.com/ReSTARTR">@ReSTARTR</a> on GitHub
-  
-  <script type="text/javascript">
-    $.domReady(function(){
-        if (!window.jXHR){
-            var jxhr = document.createElement('script');
-            jxhr.type = 'text/javascript';
-            jxhr.src = '/javascripts/libs/jXHR.js';
-            var s = document.getElementsByTagName('script')[0];
-            s.parentNode.insertBefore(jxhr, s);
-        }
-
-        github.showRepos({
-            user: 'ReSTARTR',
-            count: 4,
-            skip_forks: true,
-            target: '#gh_repos'
-        });
-    });
-  </script>
-  <script src="/javascripts/github.js" type="text/javascript"> </script>
-</section>
-
-
-
-<section class="googleplus">
-  <h1>
-    <a href="https://plus.google.com/103216164658230535238?rel=author">
-      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
-      Google+
-    </a>
-  </h1>
-</section>
-
-
-
-  
-</aside>
-
-
-    </div>
-  </div>
-  <footer role="contentinfo"><p>
-  Copyright &copy; 2016 - ReSTARTR -
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
-</p>
-
+			   <footer>
+  <p class="meta">
+    <ul class="params">
+    <li>Category: [Elixir]</li>
+    <li class="">Tags: [elixir phoenix isucon]</li>
+    <li><span class="byline author vcard">Posted by <span class="fn">ReSTARTR</span></span></li>
+    <li><time datetime="2015-10-21 19:32:17 &#43;0900 JST" pubdate data-updated="true">2015-10-21(Wed)</time></li>
+    </ul>
+  </p>
 </footer>
-  
 
+			</div>
 
+			
+		</div>
 
-
-
-
-
-  <script type="text/javascript">
-    (function(){
-      var twitterWidgets = document.createElement('script');
-      twitterWidgets.type = 'text/javascript';
-      twitterWidgets.async = true;
-      twitterWidgets.src = '//platform.twitter.com/widgets.js';
-      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
-    })();
-  </script>
-
-
-
-
-
-</body>
+  </body>
 </html>

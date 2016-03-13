@@ -1,0 +1,664 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Go on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/go/</link>
+    <description>Recent content in Go on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Thu, 15 Oct 2015 19:54:29 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/go/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>&#34;Go Programming Blueprints&#34;を読んだ</title>
+      <link>http://blog.restartr.com/2015/10/15/go-programming-blueprints</link>
+      <pubDate>Thu, 15 Oct 2015 19:54:29 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2015/10/15/go-programming-blueprints</guid>
+      <description>
+
+&lt;p&gt;&lt;a href=&#34;http://www.amazon.co.jp/gp/product/B00T4ACPA0)&#34;&gt;
+&lt;img src=&#34;https://raw.githubusercontent.com/matryer/goblueprints/master/artwork/bookcover.jpg&#34; alt=&#34;Go Blueprints by Mat Ryer book cover&#34; /&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/gp/product/B00T4ACPA0&#34;&gt;Go Programming Blueprints - Solving Development Challenges with Golang&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;最近Kindleで購入したので、でひととおり読んで写経してみました。&lt;/p&gt;
+
+&lt;h3 id=&#34;概要と雑感:8fb6d052d7c346df71849845ab713680&#34;&gt;概要と雑感&lt;/h3&gt;
+
+&lt;p&gt;2015年1月に発売された書籍であり、Goのバージョンでいうと1.3から1.4の頃に書かれたものです。
+著者はGolang UK Conference 2015でトークもしていた&lt;a href=&#34;https://twitter.com/matryer&#34;&gt;@matryer&lt;/a&gt;さん。
+(&lt;em&gt;※&lt;a href=&#34;https://www.youtube.com/watch?v=tIm8UkSf6RA&#34;&gt;Golang UK Conference 2015 - Mat Ryer - Building APIs - YouTube&lt;/a&gt;&lt;/em&gt;)&lt;/p&gt;
+
+&lt;p&gt;いくつかのGo製アプリケーション開発を通じて、Goの機能・パターンを学習する、という感じのもの。機能やパターンについて網羅的ではないものの、特定のユースケースをベースにしているため、パターンの理解は容易に感じます。取り扱うトピックも、web/apiサーバーとコマンドラインツールがバランスよく取り上げられています。&lt;/p&gt;
+
+&lt;p&gt;対象読者は「すべてのGoプログラマー」と記載がありますが、&lt;a href=&#34;https://tour.golang.org&#34;&gt;A Tour of Go&lt;/a&gt;をひととおりやったあとくらいがちょうど良い気がします。&lt;/p&gt;
+
+&lt;p&gt;リファレンス的な構成の他書や&lt;a href=&#34;https://golang.org/doc/effective_go.html&#34;&gt;Effective Go&lt;/a&gt;のような公式ドキュメントのものとうまくすみ分けができているのではないかと。&lt;/p&gt;
+
+&lt;p&gt;ただ誤字・脱字が少し目立つかな（章ごとに1,2個程度ですが)という点が残念ではありますが、比較的わかりやすいミスなので読んでいて混乱するほどではありません。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/golang/go/wiki/Books&#34;&gt;Go Books&lt;/a&gt;としては比較的マイナーっぽく、日本語圏の情報もないので購入はちょっとしたギャンブルでしたが、ある程度まとまったストーリーとして読めるGo関連の書籍は少ない印象ですし、自分としてはちょうど良い買い物だったかなと思います。&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;※ソースコードも&lt;a href=&#34;https://github.com/matryer/goblueprints&#34;&gt;matryer/goblueprints&lt;/a&gt;に公開されています&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;_※当然英語ですが、さほど読みにくい感じはなかったです&lt;/p&gt;
+
+&lt;h3 id=&#34;構成:8fb6d052d7c346df71849845ab713680&#34;&gt;構成&lt;/h3&gt;
+
+&lt;p&gt;全8章で作成するアプリケーションのうち、1章で簡潔するものと章をまたがるものがあり、構成は以下のようになっています。&lt;/p&gt;
+
+&lt;h4 id=&#34;1-2-3-websocketによるチャットアプリケーション:8fb6d052d7c346df71849845ab713680&#34;&gt;1, 2, 3: websocketによるチャットアプリケーション&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;http.Handle/HandleFuncの基本的な使い方とか、TDDによるパッケージ開発、&lt;/li&gt;
+&lt;li&gt;ソーシャルログイン機能の追加(OAuthは&lt;a href=&#34;https://github.com/stretchr/gomniauth&#34;&gt;stretchr/gomniauth&lt;/a&gt;を利用)&lt;/li&gt;
+&lt;li&gt;アイコン画像のアップロード機能の追加&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;4-空きドメイン検索ツール:8fb6d052d7c346df71849845ab713680&#34;&gt;4: 空きドメイン検索ツール&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Unixコマンドのように、STDIN/OUTを使った複数コマンドによる連携
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;$ 単語生成 | 単語の補正 | TLDの付与 | WHOISチェック&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;これらをos.Command.Stdin,Stdoutで束ねるコマンド&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;.o(シェルスクリプトでも良いのではと思いますが、外部プロセスとの連携の練習ということで&amp;hellip;)&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;5-6-twitterのリアルタイムカウンター:8fb6d052d7c346df71849845ab713680&#34;&gt;5, 6: Twitterのリアルタイムカウンター&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;複数のプロセスで構成される分散システム
+
+&lt;ol&gt;
+&lt;li&gt;twitter streaming apiから拾ったツイートを&lt;a href=&#34;http://nsq.io&#34;&gt;NSQ&lt;/a&gt;に追加するプログラム&lt;/li&gt;
+&lt;li&gt;NSQのsubscriberが単語別件数を集計して、1秒ごとにMongoDBを更新するプログラム&lt;/li&gt;
+&lt;li&gt;MongoDBの内容を管理・閲覧ツール(RESTful APIとWEBアプリ)&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;トピック&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;シグナルトラップによる安全なプロセス終了処理&lt;/li&gt;
+&lt;li&gt;sync.Mutexによる協調動作の実装&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/stretchr/graceful&#34;&gt;stretchr/graceful&lt;/a&gt;での安全な終了処理&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;7-google-places-apiを使ったロケーション推薦アプリケーション:8fb6d052d7c346df71849845ab713680&#34;&gt;7: Google Places APIを使ったロケーション推薦アプリケーション&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;iotaによるEnum相当の実現&lt;/li&gt;
+&lt;li&gt;TDDでパッケージ開発
+
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;.o(ここで&lt;a href=&#34;https://github.com/cheekybits&#34;&gt;cheekybits/is&lt;/a&gt;が出てきたけど、全体で統一感出してほしい&amp;hellip;)&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;型アサーションによるキャスト&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;8-ファイル自動バックアップシステム:8fb6d052d7c346df71849845ab713680&#34;&gt;8 ファイル自動バックアップシステム&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;2つのCLIツールの作成
+
+&lt;ul&gt;
+&lt;li&gt;backup: バックアップする対象リストの管理コマンド
+
+&lt;ul&gt;
+&lt;li&gt;メタデータ管理は&lt;a href=&#34;https://github.com/mattyer/filedb&#34;&gt;mattyer/filedb&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;backupd: メタデータをもとに実ファイル監視とバックアップ実行する常駐プログラム&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;蛇足:8fb6d052d7c346df71849845ab713680&#34;&gt;蛇足&lt;/h3&gt;
+
+&lt;p&gt;そういえば、カーニハン著のThe Go Programming Languageが11月発売とのこと&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/gp/product/0134190440&#34;&gt;The Go Programming Language&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Goのjson.Marshal/Unmarshalの仕様を整理してみる</title>
+      <link>http://blog.restartr.com/2014/08/13/golang-json-marshal-unmarshal</link>
+      <pubDate>Wed, 13 Aug 2014 00:02:42 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2014/08/13/golang-json-marshal-unmarshal</guid>
+      <description>
+
+&lt;h3 id=&#34;tl-dr:95b5ef122b0628eff42f880d34516c78&#34;&gt;TL;DR&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;goの構造体につけるタグは、フォーマットが不正だと読み込まれない(当然)&lt;/li&gt;
+&lt;li&gt;json.Marshalは、構造体のjsonタグがあればその値をキーとしてJSON文字列を生成する&lt;/li&gt;
+&lt;li&gt;json.Unmarshalは、構造体のjsonタグがあればその値を対応するフィールドにマッピングする
+
+&lt;ul&gt;
+&lt;li&gt;jsonタグがなければ、完全一致もしくはcase-insensitiveなフィールドにマッピングする&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;では、ひとつづつ確認していきます。&lt;/p&gt;
+
+&lt;h3 id=&#34;goの構造体につけるタグは-フォーマットが不正だと読み込まれない-当然:95b5ef122b0628eff42f880d34516c78&#34;&gt;goの構造体につけるタグは、フォーマットが不正だと読み込まれない(当然)&lt;/h3&gt;
+
+&lt;p&gt;goの構造体にはタグの機能があって、型の後に特定のフォーマットでアノテーションが記述できます&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;type MyType struct {
+  Hoge string `foo:&amp;quot;1&amp;quot; bar:&amp;quot;2&amp;quot;`
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;key:&amp;quot;value&amp;quot;&lt;/code&gt;をスペース区切りで複数かけます。
+で、アクセスするにはリフレクションを使います。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;t := reflect.TypeOf(MyType{})
+tagFoo := t.Field(0).Get(&amp;quot;foo&amp;quot;)
+tagBar := t.Field(0).Get(&amp;quot;bar&amp;quot;)
+fmt.Printf(&amp;quot;foo=%s, bar=%s\n&amp;quot;, tagFoo, tagBar)
+// foo=1, bar=2
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;タグのフォーマットが不正な場合は、値が空になります。コンパイルエラーにはなりません。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;type MyType struct {
+  Hoge string `foo:1`
+}
+t := reflect.TypeOf(MyType{})
+tagFoo := t.Field(0).Get(&amp;quot;foo&amp;quot;)
+fmt.Printf(&amp;quot;foo=%#v\n&amp;quot;, tagFoo)
+// foo=&amp;quot;&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;このエラーをコンパイルする前に検知するには、&lt;code&gt;go vet&lt;/code&gt;コマンドが使えます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ go vet my_type.go
+my_type.go:10: struct field tag `foo:1` not compatible with reflect.StructTag.Get
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;できれば&lt;code&gt;go compile&lt;/code&gt;実行したときに自動的にチェックしてほしいところですが…&lt;/p&gt;
+
+&lt;p&gt;で、jsonパッケージのMarshal/Unmarshalは、このタグを使ってアノテーションを記述することができます。&lt;/p&gt;
+
+&lt;h3 id=&#34;json-marshalは-構造体のjsonタグがあればその値をキーとしてjson文字列を生成する:95b5ef122b0628eff42f880d34516c78&#34;&gt;json.Marshalは、構造体のjsonタグがあればその値をキーとしてJSON文字列を生成する&lt;/h3&gt;
+
+&lt;p&gt;json.Marshalは構造体からJSON文字列への変換する関数です。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;type MyType struct {
+  A string
+  FooBar string
+}
+
+mt := MyType{&amp;quot;aaaa&amp;quot;, &amp;quot;baz&amp;quot;}
+b, _ := json.Marshal(mt)
+fmt.Printf(&amp;quot;%s\n&amp;quot;, string(b))
+// {&amp;quot;A&amp;quot;:&amp;quot;aaaa&amp;quot;,&amp;quot;FooBar&amp;quot;:&amp;quot;baz&amp;quot;}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;普通にやると、フィールド名がそのままJSONのキーになります。&lt;/p&gt;
+
+&lt;p&gt;ここで構造体のタグ機能をつかって、フィールド名のアノテーションを書くことで、任意のフィールド名でJSONが生成できます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;type MyType struct {
+  A string `json:&amp;quot;a&amp;quot;`
+  FooBar string `json:&amp;quot;foo_bar&amp;quot;`
+}
+
+mt := MyType{&amp;quot;aaaa&amp;quot;, &amp;quot;baz&amp;quot;}
+b, _ := json.Marshal(mt)
+fmt.Printf(&amp;quot;%s\n&amp;quot;, string(b))
+// {&amp;quot;a&amp;quot;:&amp;quot;aaaa&amp;quot;,&amp;quot;foo_bar&amp;quot;:&amp;quot;baz&amp;quot;}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;アノテーション指定した&amp;rdquo;a&amp;rdquo;がJSONのキーとして使用されていることが確認できます。&lt;/p&gt;
+
+&lt;h3 id=&#34;json-unmarshalは-構造体のjsonタグがあればその値を対応するフィールドにマッピングする:95b5ef122b0628eff42f880d34516c78&#34;&gt;json.Unmarshalは、構造体のjsonタグがあればその値を対応するフィールドにマッピングする&lt;/h3&gt;
+
+&lt;p&gt;json.UnmarshalはJSON文字列から構造体へ変換する関数です。&lt;/p&gt;
+
+&lt;p&gt;まずはタグなしのパターン&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;type MyType struct {
+  A string
+  FooBar string
+}
+
+var mt MyType
+json.Unarshal([]byte(`{&amp;quot;A&amp;quot;:&amp;quot;aaa&amp;quot;, &amp;quot;FooBar&amp;quot;:&amp;quot;baz&amp;quot;}`, &amp;amp;mt)
+fmt.Printf(&amp;quot;%#v\n&amp;quot;, mt) // main.MyType{A:&amp;quot;aaaa&amp;quot;,FooBar:&amp;quot;baz&amp;quot;}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;JSONのフィールド名がsnake_caseのパターン&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var mt MyType
+json.Unarshal([]byte(`{&amp;quot;a&amp;quot;:&amp;quot;aaa&amp;quot;,&amp;quot;foo_bar&amp;quot;:&amp;quot;baz&amp;quot;}`, &amp;amp;mt)
+fmt.Printf(&amp;quot;%#v\n&amp;quot;, mt) // main.MyType{A:&amp;quot;aaaa&amp;quot;, FooBar:&amp;quot;&amp;quot;}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ここで「ん？」となるわけです。タグによるアノテーションがないのになぜ小文字のフィールドがちゃんと読み込まれているのか…と。&lt;/p&gt;
+
+&lt;p&gt;この仕様、json.Unmarshalのgodocにちゃんと書いてあります。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://golang.org/pkg/encoding/json/#Unmarshal&#34;&gt;func Unmarshal&lt;/a&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;To unmarshal JSON into a struct, Unmarshal matches incoming object keys to the keys used by Marshal (either the struct field name or its tag), preferring an exact match but also accepting a case-insensitive match.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;どうやら、json.Unmarshalは、JSONに含まれるキーと完全一致か、case-insensitiveに一致する構造体のフィールドにマッピングする仕様となっているようです。もちろん、snake_caseなJSONのキーはアノテーションがないとマッピングされず無視されます。（構造体のフィールドとしてsnale_caseが存在しない限りは)&lt;/p&gt;
+
+&lt;h3 id=&#34;経緯:95b5ef122b0628eff42f880d34516c78&#34;&gt;経緯&lt;/h3&gt;
+
+&lt;p&gt;先日、&lt;a href=&#34;http://connpass.com/event/7914/&#34;&gt;ヒカルのGO! hikarie.go #2&lt;/a&gt;で&lt;a href=&#34;https://twitter.com/yosuke_furukawa&#34;&gt;@yosuke_furukawa&lt;/a&gt;さんによるGoでJSON APIを書いてみるというハンズオンを体験してきました。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/yosuke-furukawa/golang-study&#34;&gt;yosuke-furukawa/golang-study&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;そこで、アノテーションをつけた構造体を使ってMarshalした時に、書いたコードがこれです。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;type User struct {
+  Name string `json:name`
+}
+user := User{&amp;quot;restartr&amp;quot;}
+b, _ := json.Marshal(user)
+fmt.Printf(&amp;quot;%s\n&amp;quot;, string(b)) // {&amp;quot;Name&amp;quot;:&amp;quot;restartr&amp;quot;}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;小文字で出力してほしいのに、アノテーションが効かない…となったわけです。
+他の参加者が&lt;code&gt;json:&amp;quot;name&amp;quot;&lt;/code&gt;でないといけないことに気づいて、この件は一件落着。&lt;/p&gt;
+
+&lt;p&gt;だったのですが、もう少し詳しく調べると上に整理したような仕様が見えてきたというわけです。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;type User struct {
+  Name string `json:name` // 実際は無視されている
+}
+var user User
+json.Unmarshal([]byte(`{&amp;quot;name&amp;quot;:&amp;quot;restartr&amp;quot;}`, &amp;amp;user)
+fmt.Printf(&amp;quot;%s\n&amp;quot;, user) // main.User{Name:&amp;quot;restartr&amp;quot;}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;実はこの時書いた&lt;code&gt;json:name&lt;/code&gt;というアノテーションは不正なフォーマットとして無視されていて、たまたまUser.Nameというフィールドにcase-insensitiveでUnmarshalした時にマッピングができていたにすぎなかったようです。&lt;/p&gt;
+
+&lt;p&gt;とまぁそんな感じでJSONの取り扱いについて正しい知識を得られたのですが、一人でやってた時には気づかなかった疑問とか知識として不足している点に気付けるので、ハンズオン形式も良いものですね。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Docker謹製ライブラリのlibchanについて調べてみた</title>
+      <link>http://blog.restartr.com/2014/06/28/about-docker-libchan</link>
+      <pubDate>Sat, 28 Jun 2014 14:44:23 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2014/06/28/about-docker-libchan</guid>
+      <description>
+
+&lt;p&gt;DockerCon2014で発表された&lt;a href=&#34;https://github.com/docker/libchan&#34;&gt;libchan&lt;/a&gt;について調べたことをまとめてみます。&lt;/p&gt;
+
+&lt;p&gt;libchanは&lt;a href=&#34;https://github.com/docker/libcontainer&#34;&gt;libcontainer&lt;/a&gt;や&lt;a href=&#34;https://github.com/docker/libswarm&#34;&gt;libswarm&lt;/a&gt;と共に発表されました。
+libswarmはDockerを中心にしたエコシステムにおけるベンダーロックインを回避するためのソリューションであり、libcontainerは&lt;a href=&#34;http://d.hatena.ne.jp/mainyaa/20140311/p1&#34;&gt;Docker 0.9リリースドキュメント日本語訳: Execution driversとlibcontainer導入 - Happy New World&lt;/a&gt;を参照するのがよいでしょう。&lt;/p&gt;
+
+&lt;p&gt;では、libchanとは何なのでしょうか。&lt;/p&gt;
+
+&lt;p&gt;READMEには&lt;code&gt;like Go channels over the network&lt;/code&gt;とあります。ネットワーク上のgo channel?よくかりませんね。。。&lt;/p&gt;
+
+&lt;p&gt;README.mdとPROTOCOL.md、いくつかのテストコードをもとに簡単な実装をしてみた結果をまとめます。&lt;/p&gt;
+
+&lt;h3 id=&#34;libchanとはなにか:420542fbd67b0f03cfaa082edb6d06ae&#34;&gt;libchanとはなにか&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/docker/libchan/README.md&#34;&gt;README&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;libchanは超軽量なネットワークライブラリであり、多様な通信プロトコルの土台となるものです。
+同一プロセス内でも、同一ホストの別プロセス間でも、ネットワークを超えた別ホストの別プロセス間でも双方向通信可能にするための基礎的なAPIを提供しています。
+モダンなmicro-serviesなどRPCやRESTプロトコルにはフィットしない領域で、libchanを使うことが想定されています。&lt;/p&gt;
+
+&lt;p&gt;利用例はいまのところlibswarmのみです。というかlibswarmから抽出された汎用的な通信ライブラリだと思います。
+APIが安定してくると他のフレームワーク等への導入などもあるかもしれません。&lt;/p&gt;
+
+&lt;p&gt;では、具体的にどうやって双方向通信を可能にしてるのでしょう。&lt;/p&gt;
+
+&lt;h3 id=&#34;libchanのプロトコル:420542fbd67b0f03cfaa082edb6d06ae&#34;&gt;libchanのプロトコル&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/docker/libchan/PROTOCOL.md&#34;&gt;PROTOCOL&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;libchanは以下のコンポーネントで構成されています。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;channel&lt;/li&gt;
+&lt;li&gt;session&lt;/li&gt;
+&lt;li&gt;message&lt;/li&gt;
+&lt;li&gt;byte stream&lt;/li&gt;
+&lt;li&gt;nesting&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;channelとは、並行プログラム間の双方向通信用オブジェクトです。goのchannelに似てるけどそのものではありません。Sender/Receiverがそれぞれ1方向ずつの経路を持つため、ソケットというよりパイプの概念に近いです。&lt;/p&gt;
+
+&lt;p&gt;この２つの通信経路がsessionとなり、その間を流れるのがbyte stream。
+で、byte streamにはmessageが乗っかり、messageにはchannelを含めることができるという概念です。&lt;/p&gt;
+
+&lt;h3 id=&#34;libchanのメッセージ:420542fbd67b0f03cfaa082edb6d06ae&#34;&gt;libchanのメッセージ&lt;/h3&gt;
+
+&lt;p&gt;メッセージはlibchan.Message。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;type libchan.Message struct {
+  Data []byte // メッセージの内容
+  Fd *os.File
+  Ret Sender  // 受信者が返答するためのchannel
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;このメッセージ型を、各種通信方式に対応したSender/Receiver経由でやりとりすることになります。&lt;/p&gt;
+
+&lt;h3 id=&#34;メッセージの構造化:420542fbd67b0f03cfaa082edb6d06ae&#34;&gt;メッセージの構造化&lt;/h3&gt;
+
+&lt;p&gt;メッセージは以下のようにして生成します。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;message := libchan.Message{Data: []byte(&amp;quot;Hello, libchan&amp;quot;), Ret: libchan.RetPipe}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;で、ただのテキストではなく構造化されたデータも送れます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;import &amp;quot;github.com/docker/libchan/data&amp;quot;
+
+d := data.Empty().Set(&amp;quot;foo&amp;quot;, &amp;quot;bar&amp;quot;)
+d.Get(&amp;quot;foo&amp;quot;) // &amp;quot;bar&amp;quot;
+d.Pretty() // foo=bar
+message := libchan.Message{Data: d, Ret: libchan.RetPipe))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ちなみに、各メソッド(Add,Set,Get,Del)はMessageのポインタをかえさないので、変数を上書きするかメソッドチェインにする必要があります。&lt;/p&gt;
+
+&lt;h3 id=&#34;メッセージの送受信:420542fbd67b0f03cfaa082edb6d06ae&#34;&gt;メッセージの送受信&lt;/h3&gt;
+
+&lt;p&gt;作成したメッセージををSender経由で送ります。（ここでのSender/Receiverは擬似コードです）&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;sender.Send(&amp;amp;libchan.Message{Data: []byte(msg)})
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;で、Receiverが受信したメッセージは&lt;code&gt;data.Decode()&lt;/code&gt;で&lt;code&gt;map[string][]string&lt;/code&gt;に変換できます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;message, _ := receiver.Receive(0)
+decoded, _ := data.Decode(string(message.Data))
+fmt.Printf(&amp;quot;%$v\n&amp;quot;, docoded) // map[string][]string{&amp;quot;foo&amp;quot;:[]string{&amp;quot;bar&amp;quot;}}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;sender-receiver:420542fbd67b0f03cfaa082edb6d06ae&#34;&gt;Sender/Receiver&lt;/h3&gt;
+
+&lt;p&gt;実際にメッセージを送受信するのは、Send/Receiverメソッドを持つinterfaceを実装したものを使います。
+定義はだいたいこんなかんじになっています。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;type Sender interface {
+  Send(msg *Message) (Receiver, error)
+}
+
+func (s *Sender) Send(msg *libchan.Message) (libchan.Receiver, error)
+
+type Receiver interface {
+  Receiver(mode int) (*Message, error)
+}
+
+func (r *Receiver) Receive(mode int) (*libchan.Message, error)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;主要な実装は以下&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/docker/libchan/blob/master/nop.go&#34;&gt;nop&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/docker/libchan/blob/master/inmem.go&#34;&gt;inmem&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/docker/libchan/blob/master/unix&#34;&gt;unix&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/docker/libchan/blob/master/http2&#34;&gt;http2&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;inmem-in-memory-go-channel:420542fbd67b0f03cfaa082edb6d06ae&#34;&gt;inmem (In-memory Go channel)&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/docker/libchan/blob/master/inmem_test.go&#34;&gt;inmem_test.go&lt;/a&gt;を参考に実装してみます。&lt;/p&gt;
+
+&lt;p&gt;まずは&lt;code&gt;libchan.Pipe()&lt;/code&gt;を使って、receiver/senderを取得します。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;receiver, sender := libchan.Pipe()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;送信側はgorutine内でsender経由でメッセージを送信して、送信側から受信したメッセージに対してさらに返信します。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;go func() {
+  recv, _ := sender.Send(&amp;amp;libchan.Message{
+    Data: []byte(&amp;quot;Hello&amp;quot;),
+    Ret: libchan.RetPipe,
+  )
+  msg, _ := recv.Receive(0) // mode=0で自動Close()
+  fmt.Println(string(msg.Data)) // &amp;quot;World&amp;quot;
+}()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;受信側はreceiver経由でメッセージ受信して、それに対して返信します。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;msg, err := receiver.Receive(libchan.Ret)
+fmt.Println(string(msg.Data)) // &amp;quot;Hello&amp;quot;
+// msg.Retが返信用のchannelとなっている
+_, err := msg.Ret.Send(&amp;amp;libchan.Message{Data: []byte(&amp;quot;World&amp;quot;)})
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;unix-http2の実装:420542fbd67b0f03cfaa082edb6d06ae&#34;&gt;unix/http2の実装&lt;/h3&gt;
+
+&lt;p&gt;それぞれにテストコードがあるので覗いてみるとだいたいのイメージがつかめます。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/docker/libchan/blob/master/unix/unix_test.go&#34;&gt;unix/unix_test.go&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/docker/libchan/blob/master/http2/listener_test.go&#34;&gt;http2/listener_test.go&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;まとめ:420542fbd67b0f03cfaa082edb6d06ae&#34;&gt;まとめ&lt;/h2&gt;
+
+&lt;p&gt;libchanにおけるchannelとgoのchannel、名前は同じでも別モノです。
+今のところこれといった用途が思いつかないですが、libswarmから派生したものとすると多様なプロトコルの差異を吸収するためのアダプター実装を手助けしてくれるレイヤーと考えるのがよさそうです。&lt;/p&gt;
+
+&lt;p&gt;というか、DockerConでちょくちょく言及されていた「マイクロサービス」という概念のほうが興味あります。&lt;/p&gt;
+
+&lt;h2 id=&#34;追記:420542fbd67b0f03cfaa082edb6d06ae&#34;&gt;追記&lt;/h2&gt;
+
+&lt;p&gt;&lt;blockquote class=&#34;twitter-tweet&#34; lang=&#34;ja&#34;&gt;&lt;p&gt;そういえば書き忘れてたけど、アプリケーションが成長する過程においてlibchanの統一的なインターフェースによって比較的容易にスケールできるんだよ、ってことをDockerConのキーノートでいってたような。。。あとでみかえそう。&lt;/p&gt;&amp;mdash; Masaki YOSHIDA (@ReSTARTR) &lt;a href=&#34;https://twitter.com/ReSTARTR/statuses/482775493511376896&#34;&gt;2014, 6月 28&lt;/a&gt;&lt;/blockquote&gt;
+&lt;script async src=&#34;//platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;&lt;/p&gt;
+
+&lt;p&gt;ということに気づき、再度キーノートを見返してました。libchanについては以下動画の30:45あたりからどうぞ。&lt;/p&gt;
+
+&lt;iframe width=&#34;640&#34; height=&#34;360&#34; src=&#34;//www.youtube.com/embed/_DOXBVrlW78&#34; frameborder=&#34;0&#34; allowfullscreen&gt;&lt;/iframe&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Goでmemcachedのstatsを取得する</title>
+      <link>http://blog.restartr.com/2014/04/21/golang-memcache-stats-client</link>
+      <pubDate>Mon, 21 Apr 2014 00:17:33 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2014/04/21/golang-memcache-stats-client</guid>
+      <description>
+
+&lt;p&gt;YouTubeで使われている&lt;a href=&#34;https://github.com/youtube/vitess&#34;&gt;vitess&lt;/a&gt;の実装をざっと見てたところ、memcachedクライアント実装が簡潔でわかりやすかったので出来る限りラフに実装を写経してみました。&lt;/p&gt;
+
+&lt;p&gt;やってることはコマンドラインからアドレスを受け取って、memcachedのstatsを表示するだけです。&lt;/p&gt;
+
+&lt;h3 id=&#34;この写経で学べること:73a14f702b9f2e9f68d8015c0962278f&#34;&gt;この写経で学べること&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;flagパッケージを使ったコマンドライン引数の取得&lt;/li&gt;
+&lt;li&gt;netパッケージを使ったネットワーク接続&lt;/li&gt;
+&lt;li&gt;bufioパッケージを使ったストリームの読み出し&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;main:73a14f702b9f2e9f68d8015c0962278f&#34;&gt;main()&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;func main() {
+	// 引数読み出し
+	address := flag.String(&amp;quot;address&amp;quot;, &amp;quot;localhost:11211&amp;quot;, &amp;quot;server address&amp;quot;)
+	flag.Parse()
+	fmt.Printf(&amp;quot;server: %s\n&amp;quot;, *address)
+
+	// サーバーに接続
+	conn, err := GetConn(*address)
+	if err != nil {
+		fmt.Printf(&amp;quot;%#v&amp;quot;, err)
+		os.Exit(1)
+	}
+	defer conn.conn.Close()
+
+	// stats読み出し
+	result, _ := conn.Stats()
+	fmt.Printf(&amp;quot;%s&amp;quot;, result)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;実行結果:73a14f702b9f2e9f68d8015c0962278f&#34;&gt;実行結果&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ go run ./memcache_stats.go --address=localhost:11211
+server: localhost:11211
+STAT pid 23282
+STAT uptime 12425
+STAT time 1398007875
+STAT version 1.4.4
+STAT pointer_size 64
+STAT rusage_user 0.335948
+STAT rusage_system 0.344947
+  :
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;実装全体:73a14f702b9f2e9f68d8015c0962278f&#34;&gt;実装全体&lt;/h3&gt;
+
+&lt;p&gt;{% gist 11116595 memcache_stats.go %}&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>vimで特定のファイルタイプだけタブインデントにする方法</title>
+      <link>http://blog.restartr.com/2014/04/20/vimrc-noexpandtab-in-golang</link>
+      <pubDate>Sun, 20 Apr 2014 16:15:21 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2014/04/20/vimrc-noexpandtab-in-golang</guid>
+      <description>&lt;p&gt;rubyやpythonなど通常のプログラムを書く場合は、基本的にソフトタブ(2spaces)でインデントされるようにvimを設定しています。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-vim&#34;&gt;set noexpandtab
+set tabstop=2
+set shiftwidth=2
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;けれど、Goの場合はインデントはハードタブが通例。&lt;/p&gt;
+
+&lt;p&gt;なので拡張子が&amp;rdquo;.go&amp;rdquo;の場合だけハードタブでインデントするための設定を.vimrcに書いておきます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-vim&#34;&gt;if expand(&amp;quot;%:t&amp;quot;) =~ &amp;quot;.*\.go&amp;quot;
+  set noexpandtab
+  set tabstop=4
+  set shiftwidth=4
+endif
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;%:t&lt;/code&gt;はディレクトリ含まないファイル名。&lt;/p&gt;
+
+&lt;p&gt;autocmd使うほうが良いかも。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-vim&#34;&gt;au BufNewFile,BufRead *.go set noexpandtab tabstop=4 shiftwidth=4
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ちなみに、&lt;code&gt;set expandtab&lt;/code&gt;してる状態でタブを入力する場合は&lt;code&gt;Ctrl-v + &amp;lt;tab&amp;gt;&lt;/code&gt;でハードタブが入力できます。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>GoとPythonをZeroMQで繋ぐ</title>
+      <link>http://blog.restartr.com/2013/04/26/connect-go-and-python-with-zeromq</link>
+      <pubDate>Fri, 26 Apr 2013 23:34:48 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2013/04/26/connect-go-and-python-with-zeromq</guid>
+      <description>&lt;p&gt;最近Rubyでプロジェクトオイラーを解きながらRubyに慣れようとしてるのですが、ちょっと飽きてきたので息抜きにGoを書いたりしています。&lt;/p&gt;
+
+&lt;p&gt;ついでにZeroMQも試してみたかったので、GoとPythonをZeroMQで繋いでみました。&lt;/p&gt;
+
+&lt;p&gt;構成はこんな感じで、Python(かGo)clientを起動し、Goで動くmonitorq経由でGoのserverにつながります。PUB/SUBでmonitorからモニタリングできるのがミソです。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-ruby&#34;&gt;                  +----------------------------------------+
+                  |                                        |
+  +------+        |--------------------------+     +-----+ |
+  |client|--------|9001     monitorq     9002|-----|serv | |
+  |(REQ) |        |(ROUTER)   9003   (DEALER)|     |(REP)| |
+  +------+        |--------------------------+     +-----+ |
+                  |          |(PUB)                        |
+                  |          |                             |
+                  |          |                             |
+                  |          |(SUB)                        |
+                  |      +-------+                         |
+                  |      |monitor|                         |
+                  |      +-------+                         |
+                  +----------------------------------------+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;em&gt;※client/server/monitorは複数たちあげるとよしなに振り分けてくれます。&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;monitorqでfan-in/outする&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ go run queue.go monitorq
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;clientから&amp;rdquo;PING&amp;rdquo;を投げる(と、&amp;rdquo;PONG#&lt;pid&gt;&amp;ldquo;が帰る)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ python run queue.py client
+PONG#&amp;lt;28870&amp;gt;
+PONG#&amp;lt;28870&amp;gt;
+ :
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;serverから&amp;rdquo;PONG&amp;rdquo;を返す(clientからのPINGを表示)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ go run queue.go serv
+Recv: PING#&amp;lt;73835&amp;gt;
+Recv: PING#&amp;lt;73835&amp;gt;
+ :
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;monitorでリクエスト総数をモニタリング&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ go run queue.go monitor
+MONITOR: IN: 2082, OUT 2082
+MONITOR: IN: 2083, OUT 2083
+ :
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;コードはgistにあげてます。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://gist.github.com/ReSTARTR/5467656&#34;&gt;gist&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;ZeroMQなら他にもいろんな構成がとれるので、使いどころは結構あるのではないかと。&lt;/p&gt;
+
+&lt;p&gt;今回、不慣れなGoで書いてみましたが、これくらいであればもわりと素直にかけるなぁという印象です。&lt;/p&gt;
+
+&lt;p&gt;Goで書かれたZeroMQのサンプルは以下githubリポジトリにたくさんあるので、覗いてみると色々勉強になります。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/imatix/zguide/tree/master/examples/Go&#34;&gt;zguide/examples/Go at master ? imatix/zguide&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,181 +1,83 @@
-
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+	<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <meta charset="utf-8">
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.15" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
   <title>DotCloudのMongoDBをScalaから使ってみる - I Will Survive</title>
-  <meta name="author" content="ReSTARTR">
-  <link rel="author" href="https://plus.google.com/103216164658230535238" />
-  <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="DotCloudのMongoDBをScalaから使ってみる .sharing { clear: both; } .sharing li{ display: inline; list-style-type: none; float: left; height: 1em; line-height: &hellip;">
-  
-
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/poole.css">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/syntax.css">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/hyde.css">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/custom.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
 
   
-  <link rel="canonical" href="http://blog.restartr.com/2011/05/28/access-from-scala-to-mongodb-on-dotcloud/">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-   <link href="/stylesheets/data-table.css" media="screen, projection" rel="stylesheet" type="text/css" />
-  <script src="/javascripts/modernizr-2.0.js"></script>
-  <script src="/javascripts/ender.js"></script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  <link href="/atom.xml" rel="alternate" title="I Will Survive" type="application/atom+xml">
-  <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
-
-<!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
-<link href='http://fonts.googleapis.com/css?family=Lato:400,100,100italic,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
-<link href='http://fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
-<link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:200,300,400,500,600,700,900' rel='stylesheet' type='text/css'>
-
-
-	<!-- mathjax config similar to math.stackexchange -->
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    tex2jax: {
-      inlineMath: [ ['$$','$$'], ["\\(","\\)"] ],
-      processEscapes: true
-    }
-  });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      tex2jax: {
-        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-      }
-    });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax(), i;
-        for(i=0; i < all.length; i += 1) {
-            all[i].SourceElement().parentNode.className += ' has-jax';
-        }
-    });
-</script>
-
-<script type="text/javascript"
-   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
-
-
-
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://blog.restartr.com/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="http://blog.restartr.com/favicon.png">
 
   
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-894530-10']);
-    _gaq.push(['_trackPageview']);
-
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
-
-
-  <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
-  <style>html{background: url("/images/background.png") no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;}</style>
+  <link href="" rel="alternate" type="application/rss+xml" title="I Will Survive" />
 </head>
 
-<body   >
-  <header role="banner"><hgroup>
-</hgroup>
+	<body class="theme-base-0d">
+		<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="http://blog.restartr.com"><h1>I Will Survive</h1></a>
+      <p class="lead">
+       An application depelopper&#39;s blog. 
+      </p>
+    </div>
 
-</header>
-  <!-- <nav role="navigation"><ul class="subscription" data-subscription="rss">
-  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-  
-</ul>
-  
-<form action="https://www.google.com/search" method="get">
-  <fieldset role="search">
-    <input type="hidden" name="q" value="site:blog.restartr.com" />
-    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
-  </fieldset>
-</form>
-  
-<ul class="main-navigation">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives">Archives</a></li>
-</ul>
-
-</nav> -->
-  <div id="main">
-    <div id="content">
-      <div>
-<article class="hentry" role="article">
-  
-  <header>
-    
-      <h1 class="entry-title">DotCloudのMongoDBをScalaから使ってみる</h1>
+    <ul class="sidebar-nav">
+      <li><a href="http://blog.restartr.com/">Home</a> </li>
       
-      <style type="text/css">
-  .sharing {
-     clear: both;
-  }
-  .sharing li{
-    display: inline;
-    list-style-type: none;
-    float: left;
-    height: 1em;
-    line-height: 1em;
-    padding: 0 10px 0 0 ;
-    margin: 10px 0;
-  }
-  .sharing ul {
-    margin: 1em 0;
-    padding: 1em 0;
-  }
-</style>
-<div class="sharing">
+        <li><a href="http://blog.restartr.com/about/"> About </a></li>
+      
+        <li><a href="http://blog.restartr.com/index.xml"> Feed </a></li>
+      
+        <li><a href="https://github.com/ReSTARTR"> GitHub </a></li>
+      
+        <li><a href="https://twitter.com/ReSTARTR"> Twitter </a></li>
+      
+    </ul>
+
+    <p>Copyright ©2016 - ReSTARTR. All rights reserved.</p>
+  </div>
+</div>
+
+
+		<div class="content container">
+			<div class="post">
+			 	<h1>DotCloudのMongoDBをScalaから使ってみる</h1>
+        <span class="post-date">2011-05-28(Sat) - [Scala]</span>
+			  <div class="sharing">
   <ul>
-  <li><a href="http://blog.restartr.com/2011/05/28/access-from-scala-to-mongodb-on-dotcloud/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
-  
-  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2011/05/28/access-from-scala-to-mongodb-on-dotcloud/" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2011/05/28/access-from-scala-to-mongodb-on-dotcloud/" >Tweet</a></li>
-  
+  <li><a href="http://blog.restartr.com/2011/05/28/access-from-scala-to-mongodb-on-dotcloud" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2011/05/28/access-from-scala-to-mongodb-on-dotcloud" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2011/05/28/access-from-scala-to-mongodb-on-dotcloud" >Tweet</a></li>
   <li><a data-pocket-label="pocket" data-pocket-count="horizontal" class="pocket-btn" data-lang="en"></a><script type="text/javascript">!function(d,i){if(!d.getElementById(i)){var j=d.createElement("script");j.id=i;j.src="https://widgets.getpocket.com/v1/j/btn.js?v=1";var w=d.getElementById(i);d.body.appendChild(j);}}(document,"pocket-btn-js");</script></li>
-  
-  
   </ul>
 </div>
-<p />
+<script type="text/javascript">
+  (function(){
+    var twitterWidgets = document.createElement('script');
+    twitterWidgets.type = 'text/javascript';
+    twitterWidgets.async = true;
+    twitterWidgets.src = '//platform.twitter.com/widgets.js';
+    document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+  })();
+</script>
+<hr />
 
-      
-    
-    
-      <p class="meta">
-        
+			      
 
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-05-28T20:00:57+09:00" pubdate data-updated="true">2011-05-28 (Sat)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>DotCloudにDuoStackが<a href="http://gigaom.com/cloud/exclusive-paas-startups-unite-dotcloud-buys-duostack/">買収され</a>て、DotCloudでもMongoDBが使えるようになりましたし、node.jsも使えるしで、ますますDotCloudが魅力的なものになってきました。</p>
+<p>DotCloudにDuoStackが<a href="http://gigaom.com/cloud/exclusive-paas-startups-unite-dotcloud-buys-duostack/">買収され</a>て、DotCloudでもMongoDBが使えるようになりましたし、node.jsも使えるしで、ますますDotCloudが魅力的なものになってきました。</p>
 
 <p>ただし、node.jsはサポートされても、WebSocketは正式サポートされていないと<a href="http://docs.dotcloud.com/components/nodejs/">公式マニュアル</a>にも書いてありますがWebSocketサポート済みのDuoStack買収によってどう流れるか気になるところです。</p>
 
@@ -184,31 +86,31 @@
 <p>前回の記事はこちらです。</p>
 
 <ul>
-  <li><a href="http://blog.restartr.com/2011/05/09/sample-sbt-project-for-dotcloud/">ScalaをDotCloudにアップロードするためのsbtサンプル</a></li>
+<li><a href="http://blog.restartr.com/2011/05/09/sample-sbt-project-for-dotcloud/">ScalaをDotCloudにアップロードするためのsbtサンプル</a></li>
 </ul>
 
 <p>ちなみにDotCloudは下記バージョンにて動作しているみたいです（2011.05.28現在)</p>
 
 <ul>
-  <li>nginx 0.7.65</li>
-  <li>jetty 6.1</li>
-  <li>mongodb 1.8.1</li>
+<li>nginx 0.7.65</li>
+<li>jetty 6.1</li>
+<li>mongodb 1.8.1</li>
 </ul>
 
-<h3 id="section">作成したサンプルアプリ</h3>
+<h3 id="作成したサンプルアプリ:573d61040063d81a26c10db348448b94">作成したサンプルアプリ</h3>
 
 <p>事情により停止する場合があるかもしれませんがご了承を。</p>
 
 <ul>
-  <li><a href="http://samplemongo.ramee.dotcloud.com/">http://samplemongo.ramee.dotcloud.com/</a></li>
+<li><a href="http://samplemongo.ramee.dotcloud.com/">http://samplemongo.ramee.dotcloud.com/</a></li>
 </ul>
 
-<h3 id="dotcloudmongodb">DotCloudにMongoDBサーバーを準備する</h3>
+<h3 id="dotcloudにmongodbサーバーを準備する:573d61040063d81a26c10db348448b94">DotCloudにMongoDBサーバーを準備する</h3>
 
 <p>DotCloudのMongoDBマニュアルはこちら</p>
 
 <ul>
-  <li><a href="http://docs.dotcloud.com/components/mongodb/">MongoDB ? DotCloud documentation</a></li>
+<li><a href="http://docs.dotcloud.com/components/mongodb/">MongoDB ? DotCloud documentation</a></li>
 </ul>
 
 <p>上記マニュアルにしたがって作成すればMongoDBサーバーを準備できます。
@@ -216,420 +118,178 @@
 
 <p>簡単。</p>
 
-<p>今回は”example.mongo”という名前で作成する例を記してありますので、
+<p>今回は&rdquo;example.mongo&rdquo;という名前で作成する例を記してありますので、
 それぞれ自分の作成したいアプリ名に読み替えて下さい。</p>
 
-<h4 id="section-1">サーバーを作成</h4>
+<h4 id="サーバーを作成:573d61040063d81a26c10db348448b94">サーバーを作成</h4>
 
-<p>事前に”dotcloud create example”は実行してあるものとします。
+<p>事前に&rdquo;dotcloud create example&rdquo;は実行してあるものとします。
 詳しくはこちらの<a href="http://docs.dotcloud.com/tutorials/firststeps/#id2">マニュアル</a>を見てください。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>dotcloud deploy -t mongo example.mongo
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<pre><code class="language-bash">$ dotcloud deploy -t mongo example.mongo
+</code></pre>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">&gt; Created <span class="s2">&quot;example.mongo&quot;</span>.
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<pre><code class="language-bash">&gt; Created &quot;example.mongo&quot;.
+</code></pre>
 
-<h4 id="dbidpass">DB情報を確認（ID/PASS）</h4>
+<h4 id="db情報を確認-id-pass:573d61040063d81a26c10db348448b94">DB情報を確認（ID/PASS）</h4>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>dotcloud info example.mongo
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<pre><code class="language-bash">$ dotcloud info example.mongo
+</code></pre>
 
 <p>deployコマンド実行してから実際に作成されるまで少し時間がかかります。
 すぐにinfoコマンドを実行すると下記エラーがでます。
 ※正確に測ってませんが数十秒くらい？</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">&gt; Sat May 28 08:14:43 Error: couldn<span class="err">&#39;</span>t connect to server 127.0.0.1 shell/mongo.js:79
-</span><span class="line">&gt; exception: connect failed
-</span><span class="line">&gt; Connection to mongo.example.dotcloud.com closed.
-</span><span class="line">&gt; Abort.
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<pre><code class="language-bash">&gt; Sat May 28 08:14:43 Error: couldn't connect to server 127.0.0.1 shell/mongo.js:79
+&gt; exception: connect failed
+&gt; Connection to mongo.example.dotcloud.com closed.
+&gt; Abort.
+</code></pre>
 
-<p>作成完了していれば、下記情報が表示されますので、”mongodb_password: <strong>**</strong>“に記載されたパスワードをメモしておきます。</p>
+<p>作成完了していれば、下記情報が表示されますので、&rdquo;mongodb_password: ******&ldquo;に記載されたパスワードをメモしておきます。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">cluster: wolverine
-</span><span class="line">config:
-</span><span class="line">    mongodb_password: ******
-</span><span class="line">created_at: 1306570413.6722209
-</span><span class="line">name: example.mongo
-</span><span class="line">namespace: example
-</span><span class="line">ports:
-</span><span class="line">-   name: ssh
-</span><span class="line">    url: ssh://mongodb@mongo.example.dotcloud.com:5906
-</span><span class="line">-   name: mongodb
-</span><span class="line">    url: mongodb://root:******@mongo.example.dotcloud.com:5907
-</span><span class="line">state: running
-</span><span class="line"><span class="nb">type</span>: mongodb
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<pre><code class="language-bash">cluster: wolverine
+config:
+    mongodb_password: ******
+created_at: 1306570413.6722209
+name: example.mongo
+namespace: example
+ports:
+-   name: ssh
+    url: ssh://mongodb@mongo.example.dotcloud.com:5906
+-   name: mongodb
+    url: mongodb://root:******@mongo.example.dotcloud.com:5907
+state: running
+type: mongodb
+</code></pre>
 
-<h4 id="mongodb">MongoDBサーバーへログイン</h4>
+<h4 id="mongodbサーバーへログイン:573d61040063d81a26c10db348448b94">MongoDBサーバーへログイン</h4>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>dotcloud run example.mongo mongo
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<pre><code class="language-bash">$ dotcloud run example.mongo mongo
+</code></pre>
 
-<p>infoコマンドで表示されたパスワードを使って、”sampledb”というdbにアプリユーザーを追加します。</p>
+<p>infoコマンドで表示されたパスワードを使って、&rdquo;sampledb&rdquo;というdbにアプリユーザーを追加します。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">&gt; use sampledb
-</span><span class="line">switched to db sampledb
-</span><span class="line">&gt; db.getSisterDB<span class="o">(</span><span class="s2">&quot;admin&quot;</span><span class="o">)</span>.auth<span class="o">(</span><span class="s2">&quot;root&quot;</span>, <span class="s2">&quot;&lt;infoコマンドで表示されるパスワード&gt;&quot;</span><span class="o">)</span>;
-</span><span class="line">1
-</span><span class="line">&gt; db.addUser<span class="o">(</span><span class="s2">&quot;APPUSER_NAME&quot;</span>, <span class="s2">&quot;APPPUSER_PASS&quot;</span><span class="o">)</span>;
-</span><span class="line"><span class="o">{</span>
-</span><span class="line">     <span class="s2">&quot;user&quot;</span> : <span class="s2">&quot;APPUSER_NAME&quot;</span>,
-</span><span class="line">     <span class="s2">&quot;readOnly&quot;</span> : <span class="nb">false</span>,
-</span><span class="line">     <span class="s2">&quot;pwd&quot;</span> : <span class="s2">&quot;xxxxxxxxxxxxxxxxxxxxxxxxxxxxx&quot;</span>
-</span><span class="line"><span class="o">}</span>
-</span><span class="line">&gt; <span class="nb">exit</span>
-</span><span class="line">bye
-</span><span class="line">Connection to mongo.example.dotcloud.com closed.
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<pre><code class="language-bash">&gt; use sampledb
+switched to db sampledb
+&gt; db.getSisterDB(&quot;admin&quot;).auth(&quot;root&quot;, &quot;&lt;infoコマンドで表示されるパスワード&gt;&quot;);
+1
+&gt; db.addUser(&quot;APPUSER_NAME&quot;, &quot;APPPUSER_PASS&quot;);
+{
+     &quot;user&quot; : &quot;APPUSER_NAME&quot;,
+     &quot;readOnly&quot; : false,
+     &quot;pwd&quot; : &quot;xxxxxxxxxxxxxxxxxxxxxxxxxxxxx&quot;
+}
+&gt; exit
+bye
+Connection to mongo.example.dotcloud.com closed.
+</code></pre>
 
 <p>※とりあえず一旦ログアウトしてますが、別に必須じゃないです。</p>
 
-<h4 id="section-2">再度ログインしてテスト操作してみる</h4>
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>dotcloud run example.mongo mongo
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<h4 id="再度ログインしてテスト操作してみる:573d61040063d81a26c10db348448b94">再度ログインしてテスト操作してみる</h4>
+
+<pre><code class="language-bash">$ dotcloud run example.mongo mongo
+</code></pre>
 
 <p>新規作成したユーザーでDB操作が可能か確認してみます。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="c"># mongo</span>
-</span><span class="line">Warning: Permanently added <span class="s1">&#39;[mongo.example.dotcloud.com]:5906,[174.129.17.131]:5906&#39;</span> <span class="o">(</span>RSA<span class="o">)</span> &gt; to the list of known hosts.
-</span><span class="line">MongoDB shell version: 1.8.1
-</span><span class="line">connecting to: <span class="nb">test</span>
-</span><span class="line">&gt; use sampledb;
-</span><span class="line">switched to db sampledb
-</span><span class="line">&gt; db.auth<span class="o">(</span><span class="s2">&quot;sampleuser&quot;</span>, <span class="s2">&quot;samplepass&quot;</span><span class="o">)</span>;
-</span><span class="line">1
-</span><span class="line">&gt; db.sampledb.save<span class="o">({</span>id:1,name:<span class="s2">&quot;foo&quot;</span><span class="o">})</span>;
-</span><span class="line">&gt; db.sampledb.find<span class="o">()</span>;
-</span><span class="line"><span class="o">{</span> <span class="s2">&quot;_id&quot;</span> : ObjectId<span class="o">(</span><span class="s2">&quot;4de0b033a1fd29eb0e1522fd&quot;</span><span class="o">)</span>, <span class="s2">&quot;id&quot;</span> : 1, <span class="s2">&quot;name&quot;</span> : <span class="s2">&quot;foo&quot;</span> <span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<pre><code class="language-bash"># mongo
+Warning: Permanently added '[mongo.example.dotcloud.com]:5906,[174.129.17.131]:5906' (RSA) &gt; to the list of known hosts.
+MongoDB shell version: 1.8.1
+connecting to: test
+&gt; use sampledb;
+switched to db sampledb
+&gt; db.auth(&quot;sampleuser&quot;, &quot;samplepass&quot;);
+1
+&gt; db.sampledb.save({id:1,name:&quot;foo&quot;});
+&gt; db.sampledb.find();
+{ &quot;_id&quot; : ObjectId(&quot;4de0b033a1fd29eb0e1522fd&quot;), &quot;id&quot; : 1, &quot;name&quot; : &quot;foo&quot; }
+</code></pre>
 
-<p>問題なさそうなので、あとはアプリを”dotcloud push”して動かすだけです。</p>
+<p>問題なさそうなので、あとはアプリを&rdquo;dotcloud push&rdquo;して動かすだけです。</p>
 
-<h3 id="scala">scalaからアクセスするサンプル</h3>
+<h3 id="scalaからアクセスするサンプル:573d61040063d81a26c10db348448b94">scalaからアクセスするサンプル</h3>
 
-<p>サービス名を「example.samplemongo”として作成する例です。</p>
+<p>サービス名を「example.samplemongo&rdquo;として作成する例です。</p>
 
 <p>requirementsはイカのとおり。</p>
 
 <ul>
-  <li>scala 2.9.0</li>
-  <li>sbt 0.7.7</li>
-  <li>jetty 7.3.1.v20110307</li>
-  <li>casbah 2.1.5.0</li>
+<li>scala 2.9.0</li>
+<li>sbt 0.7.7</li>
+<li>jetty 7.3.1.v20110307</li>
+<li>casbah 2.1.5.0</li>
 </ul>
 
 <p><code>sbt</code>
-で基本ディレクトリを作成したら、下記プロジェクト設定を{root}/project/build/MongoSampleProject.scala”として保存します。</p>
+で基本ディレクトリを作成したら、下記プロジェクト設定を{root}/project/build/MongoSampleProject.scala&rdquo;として保存します。</p>
 
-<p>前回の設定クラスをコピーしてきたので、”sbt dot_create”と”sbt dot_push”も一応使えます。</p>
+<p>前回の設定クラスをコピーしてきたので、&rdquo;sbt dot_create&rdquo;と&rdquo;sbt dot_push&rdquo;も一応使えます。</p>
 
-<p>※”example.mongo”の名称は適宜読み替えでお願いします。
-##### MongodbSampleProject.scala</p>
+<p>※&rdquo;example.mongo&rdquo;の名称は適宜読み替えでお願いします。</p>
+
+<h5 id="mongodbsampleproject-scala:573d61040063d81a26c10db348448b94">MongodbSampleProject.scala</h5>
 
 <script src="https://gist.github.com/996769.js?file=MongodbSampleProject.scala"></script>
 
 <p>配置できたら、</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">sbt reload update
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<pre><code class="language-bash">sbt reload update
+</code></pre>
 
 <p>でライブラリを読み込みます。</p>
 
 <p>あとは下記Servletの実装とweb.xmlを用意したらOK．</p>
 
-<h5 id="mongodbservletscala">MongodbServlet.scala</h5>
+<h5 id="mongodbservlet-scala:573d61040063d81a26c10db348448b94">MongodbServlet.scala</h5>
 
 <script src="https://gist.github.com/996769.js?file=MonbodbServlet.scala"></script>
 
-<h5 id="webxml">web.xml</h5>
+<h5 id="web-xml:573d61040063d81a26c10db348448b94">web.xml</h5>
 
 <script src="https://gist.github.com/996769.js?file=web.xml"></script>
 
-<p>できたら、”sbt dot_push”でdotcloudへアップロードされるはずです。</p>
+<p>できたら、&rdquo;sbt dot_push&rdquo;でdotcloudへアップロードされるはずです。</p>
 
-<p>最後に、”http:／／samplemongo.exapmle.dotcloud.com”にアクセスして、フォームからデータ登録ができれば成功です。</p>
+<p>最後に、&rdquo;http:／／samplemongo.exapmle.dotcloud.com&rdquo;にアクセスして、フォームからデータ登録ができれば成功です。</p>
 
 <p>RDBMSにくらべてデータ保存・取得までが圧倒的に簡単で、PaaSでもMongoDBはいい感じですね！</p>
 
-</div>
-
-
-
-
-<style type="text/css">
-  .sharing {
-     clear: both;
-  }
-  .sharing li{
-    display: inline;
-    list-style-type: none;
-    float: left;
-    height: 1em;
-    line-height: 1em;
-    padding: 0 10px 0 0 ;
-    margin: 10px 0;
-  }
-  .sharing ul {
-    margin: 1em 0;
-    padding: 1em 0;
-  }
-</style>
-<div class="sharing">
+			  <div class="sharing">
   <ul>
-  <li><a href="http://blog.restartr.com/2011/05/28/access-from-scala-to-mongodb-on-dotcloud/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
-  
-  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2011/05/28/access-from-scala-to-mongodb-on-dotcloud/" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2011/05/28/access-from-scala-to-mongodb-on-dotcloud/" >Tweet</a></li>
-  
+  <li><a href="http://blog.restartr.com/2011/05/28/access-from-scala-to-mongodb-on-dotcloud" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2011/05/28/access-from-scala-to-mongodb-on-dotcloud" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2011/05/28/access-from-scala-to-mongodb-on-dotcloud" >Tweet</a></li>
   <li><a data-pocket-label="pocket" data-pocket-count="horizontal" class="pocket-btn" data-lang="en"></a><script type="text/javascript">!function(d,i){if(!d.getElementById(i)){var j=d.createElement("script");j.id=i;j.src="https://widgets.getpocket.com/v1/j/btn.js?v=1";var w=d.getElementById(i);d.body.appendChild(j);}}(document,"pocket-btn-js");</script></li>
-  
-  
   </ul>
 </div>
-<p />
+<script type="text/javascript">
+  (function(){
+    var twitterWidgets = document.createElement('script');
+    twitterWidgets.type = 'text/javascript';
+    twitterWidgets.async = true;
+    twitterWidgets.src = '//platform.twitter.com/widgets.js';
+    document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+  })();
+</script>
+<hr />
 
-
-
-
-  <footer>
-    <p class="meta">
-      
-  
-
-<span class="byline author vcard">Posted by <span class="fn">ReSTARTR</span></span>
-
-      
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2011-05-28T20:00:57+09:00" pubdate data-updated="true">2011-05-28 (Sat)</time>
-      
-
-<span class="categories">
-  
-    <a class='category' href='/category/scala/'>Scala</a>
-  
-</span>
-
-
-    </p>
-    <hr />
-    <p class="meta">
-      
-        <a class="basic-alignment left" href="/2011/05/09/sample-sbt-project-for-dotcloud/" title="Previous Post: ScalaをDotCloudにアップロードするためのsbtサンプル">&laquo; ScalaをDotCloudにアップロードするためのsbtサンプル</a>
-      
-      
-        <a class="basic-alignment right" href="/2011/06/19/volunteer-at-shinchi-fukushima-pref/" title="Next Post: 東京から福島へ一泊二日でボランティアに行ってきた">東京から福島へ一泊二日でボランティアに行ってきた &raquo;</a>
-      
-    </p>
-  </footer>
-</article>
-
-</div>
-
-<aside class="sidebar">
-  
-    <section id="titles">
-  <a href="http://blog.restartr.com" title="I Will Survive"><img id="logo" src="http://blog.restartr.com/images/portrait.jpg" /></a>
-  <h1 id="site_title"><a href="http://blog.restartr.com" title="I Will Survive">I Will Survive</a></h1>
-  <h3 id="site_subtitle">An application depelopper's blog.</h3>
-</section>
-
-<section id="menu">
-  <ul>
-    <li><i class="fa fa-home fa-lg"></i><a href="http://blog.restartr.com"> Home </a></li>
-    <li><i class="fa fa-calendar fa-lg"></i><a href="http://blog.restartr.com/blog/archives/"> Archives </a></li>
-    <li><i class="fa fa-user fa-lg"></i><a href="http://blog.restartr.com/about/"> About </a></li>
-    <li><i class="fa fa-rss fa-lg"></i><a href="http://blog.restartr.com/atom.xml"> Feed </a></li>
-  </ul>
-</section>
-
-<section id="social">
-  
-
-  
-
-  
-    <a href="" title="g+#103216164658230535238"><i class="fa fa-google-plus fa-2x"></i></a>
-  
-
-  
-    <a href="https://github.com/ReSTARTR" title="ReSTARTR"><i class="fa fa-github fa-2x"></i></a>
-  
-
-  
-
-  
-    <a href="https://twitter.com/ReSTARTR" title="ReSTARTR"><i class="fa fa-twitter fa-2x"></i></a>
-  
-
-  
-</section>
-
-
-<section>
-  <h1>Recent Posts</h1>
-  <ul id="recent_posts">
-    
-      <li class="post">
-        <a href="/2016/02/27/ec2-ls-hosts/">ec2-ls-hosts: EC2インスタンスを一覧するだけのシンプルツール</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2016/02/17/ergodox-ez/">ErgoDox EZを注文した(けどまだ届いてない)</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/12/31/things-of-2015/">2015年ふりかえり</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix/">Elixir/PhoenixでISUCON5予選の参考実装を書いた</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/10/15/go-programming-blueprints/">"Go Programming Blueprints"を読んだ</a>
-      </li>
-    
-  </ul>
-</section>
-<section>
-  <h1>Categories</h1>
-  <ul id="categories">
-    <li><a href='/category/architecture/'>architecture</a></li><li><a href='/category/docker/'>docker</a></li><li><a href='/category/elixir/'>Elixir</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/go/'>go</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/ruby/'>ruby</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
-  </ul>
-</section>
-<section>
-  <h1>GitHub Repos</h1>
-  <ul id="gh_repos">
-    <li class="loading">Status updating...</li>
-  </ul>
-  
-  <a href="https://github.com/ReSTARTR">@ReSTARTR</a> on GitHub
-  
-  <script type="text/javascript">
-    $.domReady(function(){
-        if (!window.jXHR){
-            var jxhr = document.createElement('script');
-            jxhr.type = 'text/javascript';
-            jxhr.src = '/javascripts/libs/jXHR.js';
-            var s = document.getElementsByTagName('script')[0];
-            s.parentNode.insertBefore(jxhr, s);
-        }
-
-        github.showRepos({
-            user: 'ReSTARTR',
-            count: 4,
-            skip_forks: true,
-            target: '#gh_repos'
-        });
-    });
-  </script>
-  <script src="/javascripts/github.js" type="text/javascript"> </script>
-</section>
-
-
-
-<section class="googleplus">
-  <h1>
-    <a href="https://plus.google.com/103216164658230535238?rel=author">
-      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
-      Google+
-    </a>
-  </h1>
-</section>
-
-
-
-  
-</aside>
-
-
-    </div>
-  </div>
-  <footer role="contentinfo"><p>
-  Copyright &copy; 2016 - ReSTARTR -
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
-</p>
-
+			   <footer>
+  <p class="meta">
+    <ul class="params">
+    <li>Category: [Scala]</li>
+    <li class="">Tags: [Scala mongodb dotcloud paas]</li>
+    <li><span class="byline author vcard">Posted by <span class="fn">ReSTARTR</span></span></li>
+    <li><time datetime="2011-05-28 20:00:57 &#43;0900 JST" pubdate data-updated="true">2011-05-28(Sat)</time></li>
+    </ul>
+  </p>
 </footer>
-  
 
+			</div>
 
+			
+		</div>
 
-
-
-
-
-  <script type="text/javascript">
-    (function(){
-      var twitterWidgets = document.createElement('script');
-      twitterWidgets.type = 'text/javascript';
-      twitterWidgets.async = true;
-      twitterWidgets.src = '//platform.twitter.com/widgets.js';
-      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
-    })();
-  </script>
-
-
-
-
-
-</body>
+  </body>
 </html>

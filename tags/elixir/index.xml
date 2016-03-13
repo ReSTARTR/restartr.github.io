@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Elixir on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/elixir/</link>
+    <description>Recent content in Elixir on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Wed, 21 Oct 2015 19:32:17 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/elixir/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Elixir/PhoenixでISUCON5予選の参考実装を書いた</title>
+      <link>http://blog.restartr.com/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix</link>
+      <pubDate>Wed, 21 Oct 2015 19:32:17 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix</guid>
+      <description>
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/isucon/isucon5-qualify&#34;&gt;ISUCON5予選の参考実装&lt;/a&gt;を、Elixir/Phoenixで実装してみました。&lt;/p&gt;
+
+&lt;p&gt;&lt;blockquote class=&#34;twitter-tweet&#34; lang=&#34;ja&#34;&gt;&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;It (partially) works! &lt;a href=&#34;https://twitter.com/hashtag/myelixirstatus?src=hash&#34;&gt;#myelixirstatus&lt;/a&gt; &lt;a href=&#34;https://t.co/NuhhufXAwC&#34;&gt;pic.twitter.com/NuhhufXAwC&lt;/a&gt;&lt;/p&gt;&amp;mdash; Masaki YOSHIDA (@ReSTARTR) &lt;a href=&#34;https://twitter.com/ReSTARTR/status/656434698730639360&#34;&gt;2015, 10月 20&lt;/a&gt;&lt;/blockquote&gt; &lt;script async src=&#34;//platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;&lt;/p&gt;
+
+&lt;p&gt;汚いながらもとりあえずひととおり動いたので現時点でのコードをGithubにpush。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/ReSTARTR/isucon5-qualify-elixir&#34;&gt;github.com/ReSTARTR/isucon5-qualify-elixir&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;実装について補足:efe39066a01c868bb9b83d761df0ba42&#34;&gt;実装について補足&lt;/h3&gt;
+
+&lt;p&gt;まずは他言語の初期実装と同等のSQLを再現することを目標としました。&lt;/p&gt;
+
+&lt;p&gt;Goの実装を参考に、まずは各ページを実装してブラウザでひととおり機能が実装できているか確認。
+その後ベンチマークをすべて通過するまでひたすら修正するという手順ですすめました。&lt;/p&gt;
+
+&lt;p&gt;そのため、テンプレートの細かい表示(時刻フォーマット等)の不備や、ベンチマーカーがチェックしない機能が抜けている可能性があります。&lt;/p&gt;
+
+&lt;h3 id=&#34;注意点:efe39066a01c868bb9b83d761df0ba42&#34;&gt;注意点&lt;/h3&gt;
+
+&lt;p&gt;ベンチマーカーがCSSファイルのサイズを厳密にチェックしていて、なぜか1バイト余計に増えてしまってパスしない問題が発生します。
+&lt;a href=&#34;https://github.com/isucon/isucon5-qualify/blob/42cec755d41b1573af3dd4735d78523494fd42dd/bench/src/main/java/net/isucon/isucon5q/bench/scenario/BootstrapChecker.java#L186&#34;&gt;チェック箇所のサイズ&lt;/a&gt;を&lt;code&gt;122540&lt;/code&gt;から&lt;code&gt;122541&lt;/code&gt;にすることで無理やりとおしました。
+原因は追って調査ですが、機能的に問題ないはずなので一時しのぎです。&lt;/p&gt;
+
+&lt;h3 id=&#34;ベンチマーク結果:efe39066a01c868bb9b83d761df0ba42&#34;&gt;ベンチマーク結果&lt;/h3&gt;
+
+&lt;p&gt;気になる性能ですが、Goと比較すると以下のような結果となりました。&lt;/p&gt;
+
+&lt;p&gt;※VirtualBox上にたてたMySQLにたいして、ホストのMacOSX上でアプリケーションを実行しています&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align=&#34;left&#34;&gt;Lang&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;requests&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;elapsed&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;success&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;redirect&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;failure&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;Elixir/Phoenix&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;333&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;76093&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;239&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;93&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;Go&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;138&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;106728&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;98&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;39&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/isucon/isucon5-qualify/blob/master/eventapp/lib/score.rb&#34;&gt;スコア計算式&lt;/a&gt;をもとに計算してみると以下のようなスコアとなります(eror, exception, violationsはないので減点は無し)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-ruby&#34;&gt;# Elixir/Phoenix
+irb(main):001:0&amp;gt; base_score = 239 + 93 * 0.1
+=&amp;gt; 248.3
+# Go
+irb(main):002:0&amp;gt; base_score = 98 + 39 * 0.1
+=&amp;gt; 101.9
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;同じクエリを再現したうえで、だいたい2.5倍くらいの性能差？でしょうか。
+が、完全に模倣できているか自信はないのであくまで参考程度ということで…&lt;/p&gt;
+
+&lt;p&gt;以下にベンチマーカーの出力内容も貼っておきます。&lt;/p&gt;
+
+&lt;p&gt;elixir/phoenix版の結果&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
+  &amp;quot;valid&amp;quot; : true,
+  &amp;quot;requests&amp;quot; : 333,
+  &amp;quot;elapsed&amp;quot; : 76093,
+  &amp;quot;done&amp;quot; : &amp;quot;[{Isucon5InitExecutor},{BootstrapChecker},{Isucon5Load,Isucon5Load,Isucon5Load,Isucon5Load,Isucon5Checker}]&amp;quot;,
+  &amp;quot;responses&amp;quot; : {
+    &amp;quot;success&amp;quot; : 239,
+    &amp;quot;redirect&amp;quot; : 93,
+    &amp;quot;failure&amp;quot; : 1,
+    &amp;quot;error&amp;quot; : 0,
+    &amp;quot;exception&amp;quot; : 0
+  },
+  &amp;quot;violations&amp;quot; : [ ]
+}
+
+BUILD SUCCESSFUL
+
+Total time: 1 mins 27.449 secs
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;go版の結果&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
+  &amp;quot;valid&amp;quot; : true,
+  &amp;quot;requests&amp;quot; : 138,
+  &amp;quot;elapsed&amp;quot; : 106728,
+  &amp;quot;done&amp;quot; : &amp;quot;[{Isucon5InitExecutor},{BootstrapChecker},{Isucon5Load,Isucon5Load,Isucon5Load,Isucon5Load,Isucon5Checker}]&amp;quot;,
+  &amp;quot;responses&amp;quot; : {
+    &amp;quot;success&amp;quot; : 98,
+    &amp;quot;redirect&amp;quot; : 39,
+    &amp;quot;failure&amp;quot; : 1,
+    &amp;quot;error&amp;quot; : 0,
+    &amp;quot;exception&amp;quot; : 0
+  },
+  &amp;quot;violations&amp;quot; : [ ]
+}
+
+BUILD SUCCESSFUL
+
+Total time: 1 mins 54.937 secs
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;今後:efe39066a01c868bb9b83d761df0ba42&#34;&gt;今後&lt;/h3&gt;
+
+&lt;p&gt;今回のISUCONアプリは結構機能を積んでいるため、Elixir/Phoenixに慣れるにはちょうど良いテーマなのではないかと思います。&lt;/p&gt;
+
+&lt;p&gt;ただPhoenix初心者ということもあり、実装していたほとんどの時間は&amp;rdquo;Ectoでどうやってクエリを再現するか&amp;rdquo;に使っていて、
+ロジックの書き方とか各モジュールの使い分けとかまであまり気にできてません。
+Phoenix/Ectoの有効性を台無しにしていること間違いなし…
+まぁ、そこんところはおいおい感覚をつかんでいこうかな、と。&lt;/p&gt;
+
+&lt;p&gt;このあとはEctoの抽象化を活かしつつさらに最適化をすすめていったときに、どのような性能を発揮するのか気になるところです。&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

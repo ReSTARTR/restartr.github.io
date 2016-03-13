@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Twitter on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/twitter/</link>
+    <description>Recent content in Twitter on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Wed, 06 Apr 2011 09:00:50 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/twitter/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>ScalaとJetty7のWebSocketでリアルタイムチェックインマップを作ってみた</title>
+      <link>http://blog.restartr.com/2011/04/06/realtime-checkin-map-build-with-scala-and-jetty7-websocket</link>
+      <pubDate>Wed, 06 Apr 2011 09:00:50 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2011/04/06/realtime-checkin-map-build-with-scala-and-jetty7-websocket</guid>
+      <description>
+
+&lt;p&gt;&lt;a href=&#34;http://blog.restartr.com/wp-content/uploads/2011/04/check-in-map-screenshot.png&#34;&gt;&lt;img src=&#34;http://blog.restartr.com/wp-content/uploads/2011/04/check-in-map-screenshot.png&#34; alt=&#34;チェックインマップのスクリーンショット&#34; title=&#34;チェックインマップのスクリーンショット&#34; width=&#34;619&#34; height=&#34;441&#34; class=&#34;alignnone size-full wp-image-800&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;最近、会社の組織変更に伴い新グループに移動しました。
+その際、グループ内の自己紹介用に作ったものをGithubに上げてみました。
+動いているものを公開したかったのですが永続的に公開できる場所がないのでソース公開のみです。&lt;/p&gt;
+
+&lt;p&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/ReSTARTR/checkin_map&#34;&gt; ReSTARTR/checkin_map - GitHub &lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+以前scala advent calender 2010で「&lt;a href=&#34;http://blog.restartr.com/2010/12/29/websocket-server-written-in-scala-with-netty/&#34;&gt;NettyでWebSocketサーバーを実装する&lt;/a&gt;」にてWebSocketサーバーを実装してましたが、今回はJettyを使っての実装にしてみました。&lt;/p&gt;
+
+&lt;p&gt;pub/subモデルもどきを採用してみたりしましたが、正直勉強不足でうまい実装方法ができていないのが現状。
+少しづつリファクタリングしたいところ。
+コメントやフォークでのツッコミいただけると大変嬉しいです。&lt;/p&gt;
+
+&lt;h2 id=&#34;実行方法:a35d552d1ea719fd73f86ada72fcfde9&#34;&gt;実行方法&lt;/h2&gt;
+
+&lt;p&gt;こちらに実行方法を記述してる通りにやれば動作するはず。&lt;/p&gt;
+
+&lt;p&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/ReSTARTR/checkin_map/blob/master/README.md&#34;&gt;https://github.com/ReSTARTR/checkin_map/blob/master/README.md&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;仕組み:a35d552d1ea719fd73f86ada72fcfde9&#34;&gt;仕組み&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;TwitterのStreamingAPIを使って、foursquareのチェックインツイートを取得&lt;/li&gt;
+&lt;li&gt;それをWebsocket経由で地図にリアルタイムプロット&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;jetty7を使うに当たって:a35d552d1ea719fd73f86ada72fcfde9&#34;&gt;Jetty7を使うに当たって&lt;/h2&gt;
+
+&lt;p&gt;今のところ、sbt-0.7.5RC1 + jetty7.3.1.v20110307で動作確認済みです。&lt;/p&gt;
+
+&lt;p&gt;jetty7.3のwebsocketを使うには、sbt-0.7.5RC以上を使わないといけないようです。
+sbt0.7.4だとjetty7.1までしかコンパイルできず、jetty7.1だとwebsocketの最新仕様にあってなくてソケットオープン時にコケます。
+(このあたりの組み合わせは記憶があいまいですが。。。）&lt;/p&gt;
+
+&lt;h2 id=&#34;scalaのjsonオブジェクトではなくsjsonを使うこと:a35d552d1ea719fd73f86ada72fcfde9&#34;&gt;scalaのjsonオブジェクトではなくsjsonを使うこと&lt;/h2&gt;
+
+&lt;p&gt;scala.util.parsing.json.JSONをつかってシリアライズすると、javascript側でのevalに失敗します。
+（原因はクオート処理しないため。）
+Scala内で完結するならまだしも、JavaScriptへ転送する場合はsjsonが良いようです。&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

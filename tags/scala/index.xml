@@ -1,0 +1,1750 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Scala on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/scala/</link>
+    <description>Recent content in Scala on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Wed, 28 Dec 2011 21:27:52 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/scala/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>EventStatsはherokuとMongoLabとさくらVPSで動いている</title>
+      <link>http://blog.restartr.com/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps</link>
+      <pubDate>Wed, 28 Dec 2011 21:27:52 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps</guid>
+      <description>
+
+&lt;p&gt;今月頭に&lt;a href=&#34;http://blog.restartr.com/2011/12/10/eventststs&#34;&gt;ブログ書きました&lt;/a&gt;が、EventStatsという勉強会の参加者の推移が見れるサービスを公開しました。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://eventstats.restartr.com&#34;&gt;EventStats - イベントの統計情報が見れます&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;まぁ自分が欲しかっただけなんですけど、使ってみて頂ければ幸いです。
+今回はそのサービスの構成とかについて書いてみます。&lt;/p&gt;
+
+&lt;h3 id=&#34;アジェンダ:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;アジェンダ&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;全体像&lt;/li&gt;
+&lt;li&gt;システム構成&lt;/li&gt;
+&lt;li&gt;Gitリポジトリ&lt;/li&gt;
+&lt;li&gt;MongoDBのPaaS&lt;/li&gt;
+&lt;li&gt;各イベント管理サービスAPIの違い&lt;/li&gt;
+&lt;li&gt;開発メモ&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;1-全体像:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;1.全体像&lt;/h3&gt;
+
+&lt;p&gt;開発環境も含めて全体像を図にしてみました。(初Cacooですが超べんりですね！)&lt;/p&gt;
+
+&lt;p&gt;赤い線がGit操作で、黒い点線がMongoDBへのアクセスです。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://cacoo.com/diagrams/Cp2yo6tQNlxCm5av&#34;&gt;&lt;img border=&#34;1&#34; alt=&#34;全体像&#34; src=&#34;https://cacoo.com/diagrams/Cp2yo6tQNlxCm5av-2260A.png&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;2-システム構成:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;2.システム構成&lt;/h3&gt;
+
+&lt;p&gt;大きく分けてwebとクローラーの２つです。
+webはherokuに、クローラーはさくらのVPSに配置。&lt;/p&gt;
+
+&lt;p&gt;まずは優先してデータ蓄積を…ということでクローラーをpythonとmongodbで作成しました。
+(サービス的にはやいとこデータためないと意味ないので。)&lt;/p&gt;
+
+&lt;p&gt;クローラーは５分おきに起動するのでScalaよりPythonを選択しました。起動コスト重視です。
+(Scalaでサクサク開発できる程のスキルではないというのもありますが… )&lt;/p&gt;
+
+&lt;p&gt;実行場所はherokuのworkerも考えたましたが、最終的に既に利用していたさくらVPSでcronジョブとして運用することに。&lt;/p&gt;
+
+&lt;p&gt;ということでScalaのWebはデータ参照のみで、データの更新はしません。&lt;/p&gt;
+
+&lt;h3 id=&#34;3-gitリポジトリ:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;3.Gitリポジトリ&lt;/h3&gt;
+
+&lt;p&gt;webとクローラーは分けてGitで管理。リモートリポジトリはどちらもさくらのVPS上においています。
+ただし、本番リリースは開発PCからherokuに別途pushします。&lt;/p&gt;
+
+&lt;p&gt;※webもさくらVPSにリモートリポジトリを持って、本番データを参照するステージング環境として利用しています。&lt;/p&gt;
+
+&lt;h4 id=&#34;eventstats-web:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;eventstats-web&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;host: &lt;a href=&#34;http://www.heroku.com/&#34;&gt;heroku&lt;/a&gt; (Chedar)&lt;/li&gt;
+&lt;li&gt;scala
+
+&lt;ul&gt;
+&lt;li&gt;フレームワーク: &lt;a href=&#34;https://github.com/unfiltered/unfiltered&#34;&gt;unfiltered&lt;/a&gt; 0.5.1&lt;/li&gt;
+&lt;li&gt;mongodb接続: &lt;a href=&#34;http://api.mongodb.org/scala/casbah/2.1.5.0/&#34;&gt;casbah&lt;/a&gt; 2.1.5-1&lt;/li&gt;
+&lt;li&gt;テンプレートエンジン: &lt;a href=&#34;https://github.com/unfiltered/unfiltered/tree/master/scalate&#34;&gt;unfiltered-scalate&lt;/a&gt; (ssp)&lt;/li&gt;
+&lt;li&gt;テスティングライブラリ: &lt;a href=&#34;https://github.com/unfiltered/unfiltered/tree/master/spec&#34;&gt;unfiltered-specs&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;チャートのレンダリング: &lt;a href=&#34;http://code.google.com/apis/chart/index.html&#34;&gt;Google Chart Tools&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;eventstats-crawler:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;eventstats-crawler&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;host: さくらのvps&lt;/li&gt;
+&lt;li&gt;python 2.6
+
+&lt;ul&gt;
+&lt;li&gt;フレームワーク: なし&lt;/li&gt;
+&lt;li&gt;mongodb接続: &lt;a href=&#34;http://api.mongodb.org/python/1.11/&#34;&gt;pymongo&lt;/a&gt; 1.11&lt;/li&gt;
+&lt;li&gt;テスティングライブラリ: &lt;a href=&#34;http://readthedocs.org/docs/nose/en/latest/&#34;&gt;nose&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;その他: &lt;a href=&#34;http://www.crummy.com/software/BeautifulSoup/&#34;&gt;BeautifulSoup&lt;/a&gt; (&lt;em&gt;partake.inのwebスクレイピングに利用&lt;/em&gt;)&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;4-mongodbのpaas:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;4.MongoDBのPaas&lt;/h3&gt;
+
+&lt;p&gt;herokuプラグインとして&lt;a href=&#34;https://addons.heroku.com/mongolab&#34;&gt;MongoLab&lt;/a&gt;と&lt;a href=&#34;https://addons.heroku.com/mongohq&#34;&gt;MongoHQ&lt;/a&gt;の２つが提供されています。どちらも無料枠があるのですが、MongoLabの方が無料で利用できる容量が大きいのでこちらを選択。&lt;/p&gt;
+
+&lt;p&gt;月額の利用料金は以下です。（括弧内は1MBあたりの金額の目安です）
+&lt;em&gt;これ以上の容量も利用可能ですが個人で払う範囲ではないと思い除外してます。&lt;/em&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;mongolab:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;MongoLab&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;$ 0.00/240MB&lt;/li&gt;
+&lt;li&gt;$10.00/0.5GB  ($0.020/MB)&lt;/li&gt;
+&lt;li&gt;$20.00/2.0GB  ($0.009/MB)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;mongohq:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;MongoHQ&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;$ 0.00/ 16MB&lt;/li&gt;
+&lt;li&gt;$ 5.00/256MB  ($0.019/MB)&lt;/li&gt;
+&lt;li&gt;$15.00/2.0GB  ($0.007/MB)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;5-各イベント管理サービスapiの違い:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;5.各イベント管理サービスAPIの違い&lt;/h3&gt;
+
+&lt;p&gt;まずは&lt;strong&gt;atnd, zusaar, partake.inの３サービスに対応&lt;/strong&gt;。&lt;/p&gt;
+
+&lt;p&gt;それぞれ検索APIを提供してくれているのですが、当然ながら規格とかもないのでリクエストもレスポンスも違いがあります。&lt;/p&gt;
+
+&lt;p&gt;データ蓄積する際にそのAPIの差異を吸収して、webアプリから参照する際は気にしなくていい戦略をとりました。
+APIの違い検索のみに特化して違いをまとめると以下の通りです。&lt;/p&gt;
+
+&lt;h4 id=&#34;atnd:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;atnd&lt;/h4&gt;
+
+&lt;p&gt;イベント数も多いので、このAPIをスタンダードに設定。
+* API仕様
+ * &lt;a href=&#34;http://api.atnd.org/&#34;&gt;http://api.atnd.org/&lt;/a&gt;
+* リクエストパス
+ * &lt;a href=&#34;http://api.atnd.org/events/&#34;&gt;/events/&lt;/a&gt;
+   * イベントの検索
+ * &lt;a href=&#34;http://api.atnd.org/events/users/&#34;&gt;/events/users/&lt;/a&gt;
+   * イベントに参加しているユーザーの検索&lt;/p&gt;
+
+&lt;h4 id=&#34;zusaar:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;zusaar&lt;/h4&gt;
+
+&lt;p&gt;基本的にはatnd準拠っぽい感じだけど細かい違いがあります。
+ * API仕様
+   * &lt;a href=&#34;http://www.zusaar.com/doc/api.html&#34;&gt;http://www.zusaar.com/doc/api.html&lt;/a&gt;
+ * リクエストパス
+   * &lt;a href=&#34;http://www.zusaar.com/api/event/&#34;&gt;/api/event/&lt;/a&gt;
+     * イベントの検索
+   * &lt;a href=&#34;http://www.zusaar.com/api/event/user/&#34;&gt;/api/event/user/&lt;/a&gt;
+     * イベントに参加しているユーザーの検索
+atndとの違い
+ * エントリポイントやデータのキー名が単数形
+   * events→event
+   * users→user
+ * 明確なフィールドとしてのtwitter_idが無い
+    * 管理者も参加ユーザーも
+ * ハッシュタグがない
+ * レスポンスはjson一択&lt;/p&gt;
+
+&lt;h4 id=&#34;partake-in:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;partake.in&lt;/h4&gt;
+
+&lt;p&gt;全然違うAPI。APIリストにあっても未実装がほとんどなので、利用する際はソースを確認したほうが良いです。
+今回必要になりそうなAPIは２つくらいでした。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;API仕様
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://code.google.com/p/partakein/wiki/PublicWebAPI&#34;&gt;http://code.google.com/p/partakein/wiki/PublicWebAPI&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;リクエストパス
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://partake.in/api/event/search/&#34;&gt;/api/event/search&lt;/a&gt;
+
+&lt;ul&gt;
+&lt;li&gt;イベントの検索&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://partake.in/api/event/get/&#34;&gt;/api/event/get&lt;/a&gt;
+
+&lt;ul&gt;
+&lt;li&gt;イベントの詳細データ取得&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;APIのソース(抜粋)
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://code.google.com/p/partakein/source/browse/trunk/Partake/src/main/java/in/partake/controller/api/event/SearchAction.java&#34;&gt;in.partake.controller.api.event.SearchAction.java&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://code.google.com/p/partakein/source/browse/trunk/Partake/src/main/java/in/partake/controller/api/event/EventAction.java&#34;&gt;in.partake.controller.api.event.EventAction.java&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;その他の特徴は以下。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;複数イベントを特定して一括取得するAPIはない&lt;/li&gt;
+&lt;li&gt;フィールド名がcamelCase形式&lt;/li&gt;
+&lt;li&gt;レスポンスはjson一択&lt;/li&gt;
+&lt;li&gt;検索パラメータも特殊かつ少数&lt;/li&gt;
+&lt;li&gt;検索APIで取得できるのはイベントの固定情報のみ
+
+&lt;ul&gt;
+&lt;li&gt;参加枠数はAPIから取得可能&lt;/li&gt;
+&lt;li&gt;変動するユーザー数は取得不可能&lt;/li&gt;
+&lt;li&gt;→Webページをスクレイピングするしかないという結論&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;上記をふまえ、atnd/zusaarはJSON形式でAPIからデータ取得。&lt;/p&gt;
+
+&lt;p&gt;partake.inのみイベントのリストをAPIから取得して、ユーザー数はWebページのスクレイピングで対応しました。&lt;/p&gt;
+
+&lt;h3 id=&#34;6-開発メモ:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;6.開発メモ&lt;/h3&gt;
+
+&lt;h4 id=&#34;web-heroku-からもクローラー-さくらのvps-からも離れた場所にある:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;web(heroku)からもクローラー(さくらのvps)からも離れた場所にある&lt;/h4&gt;
+
+&lt;p&gt;開発PC上だと気にならなかったのですが、1件1件findしてinsertやupdateをしていると当然遅いです。なのである程度まとめて一気にinsertする方針に変更しました(ベンチ結果はありません ^^;)。
+更新はクローラーの１プロセスからのみ実行されるので、トランザクションとか意識しなくて良いです。なので比較的自由な構成がとれます。&lt;/p&gt;
+
+&lt;h4 id=&#34;scalaでjson-api:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;ScalaでJSON API&lt;/h4&gt;
+
+&lt;p&gt;まずはUnfilteredでJSON APIを作成。けど、jsでjson取得〜チャート生成の実行時間が思いの外大きいので、jsonも１枚のHTMLに埋め込む方針に変更。&lt;/p&gt;
+
+&lt;h3 id=&#34;さいごに:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;さいごに&lt;/h3&gt;
+
+&lt;p&gt;ざっと書きだすとこんな感じです。まぁこんな構成もあるよ、ってくらいにしか言えませんが。&lt;/p&gt;
+
+&lt;p&gt;webとクローラーを分けたことで、開発中のスキーマ変更が柔軟に行えたのは良かったのですが、スキーマ定義を共通で管理していないので、そのあたりうまく管理できると良いなと思ったり。
+当初はもう少しwebの機能も多かったのですが、効率化をしているうちにシンプルな形に落ち着きました。Scalaのコードもかなり小規模なものになっています。
+イベント管理者の方からのご意見ご要望などいただけると嬉しいです :)&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://eventstats.restartr.com&#34;&gt;EventStats - イベントの統計情報が見れます&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Scalaで設定ファイルを使いたい時どうしたらいいの？</title>
+      <link>http://blog.restartr.com/2011/08/30/config-libraries-in-scala</link>
+      <pubDate>Tue, 30 Aug 2011 00:02:15 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2011/08/30/config-libraries-in-scala</guid>
+      <description>
+
+&lt;p&gt;&lt;em style=&#34;color:red&#34;&gt;2011.08.31 kmizushimaさんから頂いた&lt;a href=&#34;http://blog.restartr.com/2011/08/30/config-libraries-in-scala/?preview=true&amp;preview_id=1049&amp;preview_nonce=ad0bbeeef6#comment-108&#34;&gt;コメント&lt;/a&gt;を元に、下記の記述を修正＆追記しました。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Twitterのutil-evalの一時ファイル生成について&lt;/li&gt;
+&lt;li&gt;AkkaのConfigファイルのパース手法について
+&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;TwitterのOAuthの鍵やDB接続情報など、アプリを書く上で環境によって切り替える設定が大抵の場合あると思います。普段使っているPHPの場合、設定を外部ファイルに書きだす場合、ini,yaml,xml,phpのいずれかを使うことが多いのですが、Scalaの場合、設定ファイルってどうするのか気になりました。&lt;/p&gt;
+
+&lt;p&gt;ということで、適当に思いついたライブラリやフレームワークがどのように対応しているのか調査。&lt;/p&gt;
+
+&lt;h2 id=&#34;ライブラリ:480a52d1b0b037e3923545808ab81cf8&#34;&gt;ライブラリ&lt;/h2&gt;
+
+&lt;h3 id=&#34;propertiesファイル:480a52d1b0b037e3923545808ab81cf8&#34;&gt;propertiesファイル&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;javaの古くから使われている&lt;/li&gt;
+&lt;li&gt;キーと値のみ設定可能&lt;/li&gt;
+&lt;li&gt;依存関係がないので手軽。&lt;/li&gt;
+&lt;li&gt;すべてが文字列&lt;/li&gt;
+&lt;li&gt;例えばこんな感じ&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;path/to/conf.properties&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;hoge = &amp;quot;moge&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;val p = new java.util.Properties()
+val config = p.load(new java.io.FileInputStream(&amp;quot;path/to/conf.properties&amp;quot;);
+config.get(&amp;quot;hoge&amp;quot;) // &amp;quot;moge&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;twitterのconfiggy:480a52d1b0b037e3923545808ab81cf8&#34;&gt;twitterのconfiggy&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/robey/configgy&#34;&gt;https://github.com/robey/configgy&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;独自フォーマット&lt;/li&gt;
+&lt;li&gt;オワコン&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;twitterのutil-eval:480a52d1b0b037e3923545808ab81cf8&#34;&gt;twitterのutil-eval&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://twitter.github.com/util/&#34;&gt;http://twitter.github.com/util/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Evalした値をそのまま利用&lt;/li&gt;
+&lt;li&gt;Scalaのコンパイラに任せられる。つまりScalaコードがそのまま設定ファイルに。&lt;/li&gt;
+&lt;li&gt;型安全&lt;/li&gt;
+&lt;li&gt;詳しいことはこちらを参照
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://d.hatena.ne.jp/xuwei/20110805/1312551980&#34;&gt;twitter が Scala 大好きすぎて (?) 設定ファイルまで Scala のソースコードな件 - scalaとか・・・&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.youhei.jp/scala-util-eval&#34;&gt;Scala アプリケーションのコンフィグレーションに Twitter 製の util-eval を使ってみた - blog.youhei.jp&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;下記処理にて設定クラスインスタンスをapply経由で取り出せる
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/twitter/util/blob/master/util-eval/src/main/scala/com/twitter/util/Eval.scala#L247&#34;&gt;com.twitter.util.Eval#L247&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;&lt;del&gt;一時的にjarファイルを生成するので環境に制約あるとダメ（たぶん）&lt;/del&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;一時ファイルを生成するのは、ローカルにcloneした古いままのバージョン（1.2.5）で動作確認していたためでした。&lt;/li&gt;
+&lt;li&gt;古いコード: &lt;a href=&#34;https://github.com/twitter/util/blob/7c81842286f30aee4b2176bceb8c79ded710c88e/src/main/scala/com/twitter/util/Evaluator.scala&#34;&gt;com.twitter.util.Evaluator&lt;/a&gt;のコメントに&lt;a href=&#34;https://github.com/twitter/util/blob/7c81842286f30aee4b2176bceb8c79ded710c88e/src/main/scala/com/twitter/util/Evaluator.scala#L57&#34;&gt;All generated .scala and .class files are stored, by default, in System.getProperty(&amp;ldquo;java.io.tmpdir&amp;rdquo;)&lt;/a&gt;と書いてあったので、「一時ファイルが生成される」と認識し、実際の動作確認でもその一時ファイルが確認できていました。&lt;/li&gt;
+&lt;li&gt;しかし、新しいコード: &lt;a href=&#34;https://github.com/twitter/util/blob/master/util-eval/src/main/scala/com/twitter/util/Eval.scala&#34;&gt;com.twitter.util.Eval&lt;/a&gt;のコメントには&lt;a href=&#34;https://github.com/twitter/util/blob/master/util-eval/src/main/scala/com/twitter/util/Eval.scala#L50&#34;&gt;If target is None, the results are compiled to memory (and are therefore ephemeral)&lt;/a&gt;とある通り、パス指定がない場合はメモリ上の仮想ディレクトリに対して操作を行う模様です。&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;使い方&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;設定のtraitを定義&lt;/p&gt;
+
+&lt;p&gt;src/main/scala/com/restartr/utilSample/MyConfig.scala&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;package com.restartr.utilSample
+
+trait MyConfig {
+  val num: Int
+  val str: String
+}
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;実際の設定ファイルでは、設定のTraitを継承してインスタンス生成&lt;/p&gt;
+
+&lt;p&gt;※クラスインスタンスでなくても文字列やリストでもOK。&lt;/p&gt;
+
+&lt;p&gt;path/to/config/MyConfig.scala&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;import com.restartr.utilSample.MyConfig
+new MyConfig {
+  val num = 1
+  val str = &amp;quot;san&amp;quot;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;使いたい場所でEval。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;val conf = Eval[MyConfig](new java.io.File(&amp;quot;path/to/config/MyConfig.scala&amp;quot;))
+conf.num // 1
+conf.str // &amp;quot;san&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;configrity:480a52d1b0b037e3923545808ab81cf8&#34;&gt;configrity&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/paradigmatic/Configrity&#34;&gt;https://github.com/paradigmatic/Configrity&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;akkaのフォーマットと同等
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/paradigmatic/Configrity/wiki/Formats&#34;&gt;設定のフォーマット&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Scala 2.9以上対象。&lt;/li&gt;
+&lt;li&gt;configファイルの&lt;strong&gt;読み書き&lt;/strong&gt;ができる
+
+&lt;ul&gt;
+&lt;li&gt;immutable, thread safe, allow functional design pattern&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;各種フレームワーク:480a52d1b0b037e3923545808ab81cf8&#34;&gt;各種フレームワーク&lt;/h2&gt;
+
+&lt;p&gt;以下のフレームワークはすべて独自実装でした。Propertiesじゃ役不足だし、かといってデファクトな設定用ライブラリがないからなのでしょうか。&lt;/p&gt;
+
+&lt;h3 id=&#34;akkaのconfig:480a52d1b0b037e3923545808ab81cf8&#34;&gt;akkaのconfig&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;akka.confとかがそれ。&lt;/li&gt;
+&lt;li&gt;独自パーサーを使用
+
+&lt;ul&gt;
+&lt;li&gt;70行程度のシンプルなパーサー&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/jboner/akka/blob/master/akka-actor/src/main/scala/akka/config/ConfigParser.scala&#34;&gt;akka.config.ConfigParser&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;del&gt;正規表現で定義されてる&lt;/del&gt;Scalaのパーザコンビネータ(RegexParsersを継承)で定義されている
+
+&lt;ul&gt;
+&lt;li&gt;&amp;rdquo;{&amp;ldquo;と&amp;rdquo;}&amp;ldquo;で階層構造を表現&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;akka {
+  cluster{
+    name = &amp;quot;test-cluster&amp;quot;
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;使える型
+
+&lt;ul&gt;
+&lt;li&gt;数値&lt;/li&gt;
+&lt;li&gt;文字列&lt;/li&gt;
+&lt;li&gt;真偽値（on/off , true/false)&lt;/li&gt;
+&lt;li&gt;リスト [1,2,3] / [&amp;ldquo;hoge&amp;rdquo;,&amp;ldquo;moge&amp;rdquo;]&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;play-frameworkのconfig:480a52d1b0b037e3923545808ab81cf8&#34;&gt;play!frameworkのconfig&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;独自パーサー
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/playframework/play/blob/master/framework/src/play/utils/OrderSafeProperties.java&#34;&gt;play.utils.OrderSafeProperties&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;java.util.propertiesを継承したもの。&lt;/li&gt;
+&lt;li&gt;環境ごとにIDを割り当てられる
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://playdocja.appspot.com/documentation/1.2.1/production&#34;&gt;http://playdocja.appspot.com/documentation/1.2.1/production&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://playdocja.appspot.com/documentation/1.2.1/guide11&#34;&gt;http://playdocja.appspot.com/documentation/1.2.1/guide11&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;IDごとに%{ID}を頭につければ切り替えてくれるみたい&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;lift:480a52d1b0b037e3923545808ab81cf8&#34;&gt;Lift&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;LiftRulesが設定をもつ
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://simply.liftweb.net/index-3.1.html#toc-Subsection-3.1.2&#34;&gt;http://simply.liftweb.net/index-3.1.html#toc-Subsection-3.1.2&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;実装はここ
+*&lt;a href=&#34;https://github.com/lift/framework/blob/master/web/webkit/src/main/scala/net/liftweb/http/LiftRules.scala&#34;&gt;net.liftweb.http.LiftRules&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;たぶんこのへん
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/lift/framework/blob/master/core/util/src/main/scala/net/liftweb/util/Props.scala&#34;&gt;net.liftweb.util.Props&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;ざっと調べて使ってみたところ、手軽にやるならProperties、フレームワークを使うならそれに則り、厳密にやるならTwitterのEvalや、設定ファイルを読み書きできる独特なConfigrityなんかがよさそうです。&lt;/p&gt;
+
+&lt;p&gt;XMLは…まぁないでしょうね。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>ScalaのORMapperのSquerylを試してみてハマった３つのこと</title>
+      <link>http://blog.restartr.com/2011/08/16/3-things-that-i-was-in-trouble-using-squeryl</link>
+      <pubDate>Tue, 16 Aug 2011 08:00:15 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2011/08/16/3-things-that-i-was-in-trouble-using-squeryl</guid>
+      <description>&lt;p&gt;ScalaのORMとしてSquerylってのがあります。&lt;/p&gt;
+
+&lt;p&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://squeryl.org/index.html&#34;&gt;Squeryl - A Scala ORM for SQL Databases&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+使い方は上記リンク先を見ればだいたいわかります。&lt;/p&gt;
+
+&lt;p&gt;あと、&lt;a href=&#34;http://twitter.com/jugyo&#34;&gt;@jugyo&lt;/a&gt;さんのブログに導入あたりはまとまっていますし、つまづいたらGoogleGroupで検索すれば何か見つかるかもしれません。&lt;/p&gt;
+
+&lt;p&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.twiwt.org/e/f34763&#34;&gt; Twiwt:Blog / jugyo : squeryl を試す &lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.twiwt.org/e/7e40ce&#34;&gt;Twiwt:Blog / jugyo : Squeryl の使い方 - セットアップ, モデルの定義, テーブル作成&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://groups.google.com/group/squeryl/about&#34;&gt; Squeryl | Google Groups &lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+さて、今回はTwitterっぽいものを想定して機能を試してみたのですが、３つほどハマったところを記しておきます。&lt;/p&gt;
+
+&lt;p&gt;環境はScala2.9.0.1、Sbt0.7.7、MySQL5.5、Squeryl0.9.4です。&lt;/p&gt;
+
+&lt;p&gt;ソースはgistに登録。それを本文末尾にも掲載しておきました。&lt;/p&gt;
+
+&lt;p&gt;&lt;h3&gt;１．プライマリーキーの指定での嵌りどころ&lt;/h3&gt;
+1つのカラムがPKとなるテーブルスキーマの場合、org.squeryl.KeyedEntity[T]を継承して使います。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;
+class Users(id: Long, text: String) extends KeyedEntity[Long]
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;KeyedEntityにはidというフィールドが用意されていて、継承時に型を指定することで、PKの型に適用させることができます。今回の場合であればLong型のPK「id」ということになります。&lt;/p&gt;
+
+&lt;p&gt;ただし、この場合、PKはautoincrementedになってしまいます。&lt;/p&gt;
+
+&lt;p&gt;コード的には下記のようにKeyedEntity[T]を使わずSchema継承時に定義するのと同等になるわけです。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;
+class Users(id: Long, text: String)
+
+class Db extends Schema {
+
+  val users = table[User](&amp;quot;users&amp;quot;)
+
+  on(users)(u =&amp;gt; declare(
+
+    u.id is (primaryKey, autoincremented))
+
+}
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これは結構困ります。そんな場合はSchemaを継承するときに定義を上書きすればOK。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;
+class Users(id: Long, text: String) extends KeyedEntity[Long]
+
+class Db extends Schema {
+
+  val users = table[User](&amp;quot;users&amp;quot;)
+
+  on(users)(u =&amp;gt; declare(
+
+    u.id is (primaryKey))
+
+}
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これはSquerylのGoogleGroupに書いてました。&lt;/p&gt;
+
+&lt;p&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://groups.google.com/forum/#!topic/squeryl/BTrKBwikMqs&#34;&gt;how to cancel &amp;ldquo;autoincremented&amp;rdquo; from KeyedEntity[T]&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;２．DDLのカラムの順番の嵌りどころ&lt;/h3&gt;
+Db.printDdlを実行した時にカラムの順番が予測できません。&lt;/p&gt;
+
+&lt;p&gt;PKが最初にくるのかと思えばそうでもないみたい。ここは細かく追ってないですが、これもGoogleGroupに答えがありました。&lt;/p&gt;
+
+&lt;p&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://groups.google.com/forum/#!topic/squeryl/ZwiDf5Q-IUI&#34;&gt;CREATE TABLE columns in order of constructor arguments&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+答えとしては、org.squeryl.internals.DatabaseAdapter:: writeCreateTableあたりをorverrideしてなんとかしてくれとのこと。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/max-l/Squeryl/blob/master/src/main/scala/org/squeryl/internals/DatabaseAdapter.scala#L255&#34;&gt;https://github.com/max-l/Squeryl/blob/master/src/main/scala/org/squeryl/internals/DatabaseAdapter.scala#L255&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;なんか良い方法はないの…&lt;/p&gt;
+
+&lt;p&gt;とりあえず、printDdlした結果をコピーして、順番だけ書き換えて、手動で直接DBにクエリ発行すればなんとかなるでしょう。&lt;/p&gt;
+
+&lt;p&gt;&lt;h3&gt;３．外部キーの利用でのはまりどころ&lt;/h3&gt;
+２つのテーブルにRelationを設定してからDb.createした際、外部キーが設定されない問題がありました。&lt;/p&gt;
+
+&lt;p&gt;MySQLは5.5を使っているので外部キーに対応していない訳でもないです。&lt;/p&gt;
+
+&lt;p&gt;問題はAdapterの選定にありました。&lt;/p&gt;
+
+&lt;p&gt;org.squeryl.adapter.MySQLAdapter&lt;/p&gt;
+
+&lt;p&gt;をつかっていたのですが、&lt;/p&gt;
+
+&lt;p&gt;org.squeryl.adapter.MySQLInnoDBAdapter&lt;/p&gt;
+
+&lt;p&gt;を使えばOKでした。&lt;/p&gt;
+
+&lt;p&gt;根本の原因は、org.squeryl.adapter.MySQLAdapterに&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;
+override def supportsForeignKeyConstraints = false
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;と定義してあり、一方のorg.squeryl.adapter.MySQLInnoDBAdapterには&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;
+override def supportsForeignKeyConstraints = true
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;と定義してあります。&lt;/p&gt;
+
+&lt;p&gt;この値がtrueになっていないとForeignKeyの制約がDDLに含まれなくなってしまうので注意です。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/max-l/Squeryl/blob/master/src/main/scala/org/squeryl/adapters/MySQLAdapter.scala#L75&#34;&gt;Docコメントにも書いてある&lt;/a&gt;ので注意です。&lt;/p&gt;
+
+&lt;p&gt;以上、Squerylを弄ってみて嵌ったことをまとめてみました。&lt;/p&gt;
+
+&lt;p&gt;&lt;h3&gt;Squerylの使用感&lt;/h3&gt;
+ちょっと前にTwitterのStreamAPIのデータをMySQLに格納するためにSquerylを使ったのと今回少し弄ってみただけなのでまだまだ知らないことだらけです。他にも機能的はたくさん用意されていると思いますし、APIも割となじみやすいので複雑すぎないテーブル定義の場合には積極的にSquerylを使っていこうと思います。&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;※ドキュメントや本体のソースを追いかけたりしながら使い方を学ぶのは非常に楽しいです:)&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;で、ソースは以下です。&lt;/p&gt;
+
+&lt;script src=&#34;https://gist.github.com/1146854.js&#34;&gt; &lt;/script&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>DotCloudのMongoDBをScalaから使ってみる</title>
+      <link>http://blog.restartr.com/2011/05/28/access-from-scala-to-mongodb-on-dotcloud</link>
+      <pubDate>Sat, 28 May 2011 20:00:57 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2011/05/28/access-from-scala-to-mongodb-on-dotcloud</guid>
+      <description>
+
+&lt;p&gt;DotCloudにDuoStackが&lt;a href=&#34;http://gigaom.com/cloud/exclusive-paas-startups-unite-dotcloud-buys-duostack/&#34;&gt;買収され&lt;/a&gt;て、DotCloudでもMongoDBが使えるようになりましたし、node.jsも使えるしで、ますますDotCloudが魅力的なものになってきました。&lt;/p&gt;
+
+&lt;p&gt;ただし、node.jsはサポートされても、WebSocketは正式サポートされていないと&lt;a href=&#34;http://docs.dotcloud.com/components/nodejs/&#34;&gt;公式マニュアル&lt;/a&gt;にも書いてありますがWebSocketサポート済みのDuoStack買収によってどう流れるか気になるところです。&lt;/p&gt;
+
+&lt;p&gt;さて今回は、前回作ったものをベースにScalaからMongoDBへアクセスするサンプルをDotCloudで動かすまでを書いておきます。（まぁ、Scalaのコードはオマケみたいなものですけど…）&lt;/p&gt;
+
+&lt;p&gt;前回の記事はこちらです。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.restartr.com/2011/05/09/sample-sbt-project-for-dotcloud/&#34;&gt;ScalaをDotCloudにアップロードするためのsbtサンプル&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;ちなみにDotCloudは下記バージョンにて動作しているみたいです（2011.05.28現在)&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;nginx 0.7.65&lt;/li&gt;
+&lt;li&gt;jetty 6.1&lt;/li&gt;
+&lt;li&gt;mongodb 1.8.1&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;作成したサンプルアプリ:573d61040063d81a26c10db348448b94&#34;&gt;作成したサンプルアプリ&lt;/h3&gt;
+
+&lt;p&gt;事情により停止する場合があるかもしれませんがご了承を。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://samplemongo.ramee.dotcloud.com/&#34;&gt;http://samplemongo.ramee.dotcloud.com/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;dotcloudにmongodbサーバーを準備する:573d61040063d81a26c10db348448b94&#34;&gt;DotCloudにMongoDBサーバーを準備する&lt;/h3&gt;
+
+&lt;p&gt;DotCloudのMongoDBマニュアルはこちら&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://docs.dotcloud.com/components/mongodb/&#34;&gt;MongoDB ? DotCloud documentation&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;上記マニュアルにしたがって作成すればMongoDBサーバーを準備できます。
+基本的には、追加したいサーバーを登録して、ユーザーを作成するだけです。&lt;/p&gt;
+
+&lt;p&gt;簡単。&lt;/p&gt;
+
+&lt;p&gt;今回は&amp;rdquo;example.mongo&amp;rdquo;という名前で作成する例を記してありますので、
+それぞれ自分の作成したいアプリ名に読み替えて下さい。&lt;/p&gt;
+
+&lt;h4 id=&#34;サーバーを作成:573d61040063d81a26c10db348448b94&#34;&gt;サーバーを作成&lt;/h4&gt;
+
+&lt;p&gt;事前に&amp;rdquo;dotcloud create example&amp;rdquo;は実行してあるものとします。
+詳しくはこちらの&lt;a href=&#34;http://docs.dotcloud.com/tutorials/firststeps/#id2&#34;&gt;マニュアル&lt;/a&gt;を見てください。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ dotcloud deploy -t mongo example.mongo
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;&amp;gt; Created &amp;quot;example.mongo&amp;quot;.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;db情報を確認-id-pass:573d61040063d81a26c10db348448b94&#34;&gt;DB情報を確認（ID/PASS）&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ dotcloud info example.mongo
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;deployコマンド実行してから実際に作成されるまで少し時間がかかります。
+すぐにinfoコマンドを実行すると下記エラーがでます。
+※正確に測ってませんが数十秒くらい？&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;&amp;gt; Sat May 28 08:14:43 Error: couldn&#39;t connect to server 127.0.0.1 shell/mongo.js:79
+&amp;gt; exception: connect failed
+&amp;gt; Connection to mongo.example.dotcloud.com closed.
+&amp;gt; Abort.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;作成完了していれば、下記情報が表示されますので、&amp;rdquo;mongodb_password: ******&amp;ldquo;に記載されたパスワードをメモしておきます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;cluster: wolverine
+config:
+    mongodb_password: ******
+created_at: 1306570413.6722209
+name: example.mongo
+namespace: example
+ports:
+-   name: ssh
+    url: ssh://mongodb@mongo.example.dotcloud.com:5906
+-   name: mongodb
+    url: mongodb://root:******@mongo.example.dotcloud.com:5907
+state: running
+type: mongodb
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;mongodbサーバーへログイン:573d61040063d81a26c10db348448b94&#34;&gt;MongoDBサーバーへログイン&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ dotcloud run example.mongo mongo
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;infoコマンドで表示されたパスワードを使って、&amp;rdquo;sampledb&amp;rdquo;というdbにアプリユーザーを追加します。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;&amp;gt; use sampledb
+switched to db sampledb
+&amp;gt; db.getSisterDB(&amp;quot;admin&amp;quot;).auth(&amp;quot;root&amp;quot;, &amp;quot;&amp;lt;infoコマンドで表示されるパスワード&amp;gt;&amp;quot;);
+1
+&amp;gt; db.addUser(&amp;quot;APPUSER_NAME&amp;quot;, &amp;quot;APPPUSER_PASS&amp;quot;);
+{
+     &amp;quot;user&amp;quot; : &amp;quot;APPUSER_NAME&amp;quot;,
+     &amp;quot;readOnly&amp;quot; : false,
+     &amp;quot;pwd&amp;quot; : &amp;quot;xxxxxxxxxxxxxxxxxxxxxxxxxxxxx&amp;quot;
+}
+&amp;gt; exit
+bye
+Connection to mongo.example.dotcloud.com closed.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;※とりあえず一旦ログアウトしてますが、別に必須じゃないです。&lt;/p&gt;
+
+&lt;h4 id=&#34;再度ログインしてテスト操作してみる:573d61040063d81a26c10db348448b94&#34;&gt;再度ログインしてテスト操作してみる&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ dotcloud run example.mongo mongo
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;新規作成したユーザーでDB操作が可能か確認してみます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# mongo
+Warning: Permanently added &#39;[mongo.example.dotcloud.com]:5906,[174.129.17.131]:5906&#39; (RSA) &amp;gt; to the list of known hosts.
+MongoDB shell version: 1.8.1
+connecting to: test
+&amp;gt; use sampledb;
+switched to db sampledb
+&amp;gt; db.auth(&amp;quot;sampleuser&amp;quot;, &amp;quot;samplepass&amp;quot;);
+1
+&amp;gt; db.sampledb.save({id:1,name:&amp;quot;foo&amp;quot;});
+&amp;gt; db.sampledb.find();
+{ &amp;quot;_id&amp;quot; : ObjectId(&amp;quot;4de0b033a1fd29eb0e1522fd&amp;quot;), &amp;quot;id&amp;quot; : 1, &amp;quot;name&amp;quot; : &amp;quot;foo&amp;quot; }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;問題なさそうなので、あとはアプリを&amp;rdquo;dotcloud push&amp;rdquo;して動かすだけです。&lt;/p&gt;
+
+&lt;h3 id=&#34;scalaからアクセスするサンプル:573d61040063d81a26c10db348448b94&#34;&gt;scalaからアクセスするサンプル&lt;/h3&gt;
+
+&lt;p&gt;サービス名を「example.samplemongo&amp;rdquo;として作成する例です。&lt;/p&gt;
+
+&lt;p&gt;requirementsはイカのとおり。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;scala 2.9.0&lt;/li&gt;
+&lt;li&gt;sbt 0.7.7&lt;/li&gt;
+&lt;li&gt;jetty 7.3.1.v20110307&lt;/li&gt;
+&lt;li&gt;casbah 2.1.5.0&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;code&gt;sbt&lt;/code&gt;
+で基本ディレクトリを作成したら、下記プロジェクト設定を{root}/project/build/MongoSampleProject.scala&amp;rdquo;として保存します。&lt;/p&gt;
+
+&lt;p&gt;前回の設定クラスをコピーしてきたので、&amp;rdquo;sbt dot_create&amp;rdquo;と&amp;rdquo;sbt dot_push&amp;rdquo;も一応使えます。&lt;/p&gt;
+
+&lt;p&gt;※&amp;rdquo;example.mongo&amp;rdquo;の名称は適宜読み替えでお願いします。&lt;/p&gt;
+
+&lt;h5 id=&#34;mongodbsampleproject-scala:573d61040063d81a26c10db348448b94&#34;&gt;MongodbSampleProject.scala&lt;/h5&gt;
+
+&lt;script src=&#34;https://gist.github.com/996769.js?file=MongodbSampleProject.scala&#34;&gt;&lt;/script&gt;
+
+&lt;p&gt;配置できたら、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;sbt reload update
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;でライブラリを読み込みます。&lt;/p&gt;
+
+&lt;p&gt;あとは下記Servletの実装とweb.xmlを用意したらOK．&lt;/p&gt;
+
+&lt;h5 id=&#34;mongodbservlet-scala:573d61040063d81a26c10db348448b94&#34;&gt;MongodbServlet.scala&lt;/h5&gt;
+
+&lt;script src=&#34;https://gist.github.com/996769.js?file=MonbodbServlet.scala&#34;&gt;&lt;/script&gt;
+
+&lt;h5 id=&#34;web-xml:573d61040063d81a26c10db348448b94&#34;&gt;web.xml&lt;/h5&gt;
+
+&lt;script src=&#34;https://gist.github.com/996769.js?file=web.xml&#34;&gt;&lt;/script&gt;
+
+&lt;p&gt;できたら、&amp;rdquo;sbt dot_push&amp;rdquo;でdotcloudへアップロードされるはずです。&lt;/p&gt;
+
+&lt;p&gt;最後に、&amp;rdquo;http:／／samplemongo.exapmle.dotcloud.com&amp;rdquo;にアクセスして、フォームからデータ登録ができれば成功です。&lt;/p&gt;
+
+&lt;p&gt;RDBMSにくらべてデータ保存・取得までが圧倒的に簡単で、PaaSでもMongoDBはいい感じですね！&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>ScalaをDotCloudにアップロードするためのsbtサンプル</title>
+      <link>http://blog.restartr.com/2011/05/09/sample-sbt-project-for-dotcloud</link>
+      <pubDate>Mon, 09 May 2011 23:35:43 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2011/05/09/sample-sbt-project-for-dotcloud</guid>
+      <description>
+
+&lt;p&gt;&lt;a href=&#34;http://dotcloud.com/&#34;&gt;dotcloud&lt;/a&gt;を必要最低限操作するためのactionをsbtに追加してみました。&lt;/p&gt;
+
+&lt;p&gt;sbtのアクション自体はじめてなので作法がよくわかってないので、間違っているかも知れませんが。&lt;/p&gt;
+
+&lt;h3 id=&#34;使い方:0bbc900d9426631008618c5d05350acf&#34;&gt;使い方&lt;/h3&gt;
+
+&lt;p&gt;※scalaファイルは最後に掲載しています。
+とりあえず下記を作成するサービス名に置き換えればOKです。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;  val dotApplicationName = &amp;quot;APPNAME&amp;quot;
+  val dotServiceName = dotApplicationName + &amp;quot;.SERVNAME&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;あとは、下記を順に実行すればOK(dot_prepareはdot_pushの前に必ず実行されるので省略可能)&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&amp;ldquo;sbt dot_create&amp;rdquo; : サービスの作成&lt;/li&gt;
+&lt;li&gt;&amp;ldquo;sbt dot_prepare&amp;rdquo; : リリース用ディレクトリ作成とwarファイルのコピー&lt;/li&gt;
+&lt;li&gt;&amp;ldquo;sbt dot_push&amp;rdquo; : dotcloudへのwarファイルpush&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;dotcloud用に注意すべきこと:0bbc900d9426631008618c5d05350acf&#34;&gt;dotcloud用に注意すべきこと&lt;/h3&gt;
+
+&lt;p&gt;&amp;ldquo;sbt package&amp;rdquo;を使用すると、&amp;rdquo;＜projectName＞-＜scala_ver＞-＜app_ver＞.war&amp;rdquo;の形式でwarファイルが作成されます。
+が、dotcloudのドキュメントにはこう書いてあるので、&amp;rdquo;root.war&amp;rdquo;で作成するのが望ましいです。&lt;/p&gt;
+
+&lt;p&gt;&lt;blockquote&gt;
+The java service will make your application available at &lt;a href=&#34;http://frontend.myapp.dotcloud.com/&#34;&gt;http://frontend.myapp.dotcloud.com/&lt;/a&gt; if your archive is named root.war or &lt;a href=&#34;http://frontend.myapp.dotcloud.com/webapp/&#34;&gt;http://frontend.myapp.dotcloud.com/webapp/&lt;/a&gt; if your archive is named webapp.war (../foobar/ if the archive was named foobar.war and so on). So, you can effectively serve multiple web applications with the same java service.&lt;/p&gt;
+
+&lt;p&gt;&lt;/blockquote&gt;
+&lt;a href=&#34;http://docs.dotcloud.com/components/java/&#34;&gt;Java &amp;mdash; DotCloud documentation&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;さらに、&amp;rdquo;dotcloud push&amp;rdquo;はwarファイルを含むディレクトリを指定することになり、それ以下がすべて同期されてしまいます。デフォルトだと、&amp;rdquo;./target/scala_2.8.1/&amp;ldquo;以下のすべてが。&lt;/p&gt;
+
+&lt;p&gt;なので、warのみ格納する&amp;rdquo;release&amp;rdquo;ディレクトリを作り、 そこに&amp;rdquo;root.war&amp;rdquo;としてひとつだけ存在させておきました。
+順番に書くと、&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;sbt packageでtarget/scala_2.8.1/＜projectName＞-＜scala_ver＞-＜app_ver＞.warを生成&lt;/li&gt;
+&lt;li&gt;そのwarファイルをtarget/release/root.warにコピー&lt;/li&gt;
+&lt;li&gt;&amp;ldquo;dotcloud push ＜dotcloud_appname＞ target/release/&amp;rdquo; でwarのみアップロード&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;という方法で対応しました。&lt;/p&gt;
+
+&lt;p&gt;以下、サンプルのプロジェクト設定です。&lt;/p&gt;
+
+&lt;script src=&#34;https://gist.github.com/962534.js?file=RameeProject.scala&#34;&gt;&lt;/script&gt;
+
+&lt;h3 id=&#34;参考リンク:0bbc900d9426631008618c5d05350acf&#34;&gt;参考リンク&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://docs.dotcloud.com/cli/&#34;&gt;DotCloud command line &amp;mdash; DotCloud documentation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://code.google.com/p/simple-build-tool/wiki/Process&#34;&gt;Process - simple-build-tool - A build tool for Scala - Google Project Hosting&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>ScalaとJetty7のWebSocketでリアルタイムチェックインマップを作ってみた</title>
+      <link>http://blog.restartr.com/2011/04/06/realtime-checkin-map-build-with-scala-and-jetty7-websocket</link>
+      <pubDate>Wed, 06 Apr 2011 09:00:50 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2011/04/06/realtime-checkin-map-build-with-scala-and-jetty7-websocket</guid>
+      <description>
+
+&lt;p&gt;&lt;a href=&#34;http://blog.restartr.com/wp-content/uploads/2011/04/check-in-map-screenshot.png&#34;&gt;&lt;img src=&#34;http://blog.restartr.com/wp-content/uploads/2011/04/check-in-map-screenshot.png&#34; alt=&#34;チェックインマップのスクリーンショット&#34; title=&#34;チェックインマップのスクリーンショット&#34; width=&#34;619&#34; height=&#34;441&#34; class=&#34;alignnone size-full wp-image-800&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;最近、会社の組織変更に伴い新グループに移動しました。
+その際、グループ内の自己紹介用に作ったものをGithubに上げてみました。
+動いているものを公開したかったのですが永続的に公開できる場所がないのでソース公開のみです。&lt;/p&gt;
+
+&lt;p&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/ReSTARTR/checkin_map&#34;&gt; ReSTARTR/checkin_map - GitHub &lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+以前scala advent calender 2010で「&lt;a href=&#34;http://blog.restartr.com/2010/12/29/websocket-server-written-in-scala-with-netty/&#34;&gt;NettyでWebSocketサーバーを実装する&lt;/a&gt;」にてWebSocketサーバーを実装してましたが、今回はJettyを使っての実装にしてみました。&lt;/p&gt;
+
+&lt;p&gt;pub/subモデルもどきを採用してみたりしましたが、正直勉強不足でうまい実装方法ができていないのが現状。
+少しづつリファクタリングしたいところ。
+コメントやフォークでのツッコミいただけると大変嬉しいです。&lt;/p&gt;
+
+&lt;h2 id=&#34;実行方法:a35d552d1ea719fd73f86ada72fcfde9&#34;&gt;実行方法&lt;/h2&gt;
+
+&lt;p&gt;こちらに実行方法を記述してる通りにやれば動作するはず。&lt;/p&gt;
+
+&lt;p&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/ReSTARTR/checkin_map/blob/master/README.md&#34;&gt;https://github.com/ReSTARTR/checkin_map/blob/master/README.md&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;仕組み:a35d552d1ea719fd73f86ada72fcfde9&#34;&gt;仕組み&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;TwitterのStreamingAPIを使って、foursquareのチェックインツイートを取得&lt;/li&gt;
+&lt;li&gt;それをWebsocket経由で地図にリアルタイムプロット&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;jetty7を使うに当たって:a35d552d1ea719fd73f86ada72fcfde9&#34;&gt;Jetty7を使うに当たって&lt;/h2&gt;
+
+&lt;p&gt;今のところ、sbt-0.7.5RC1 + jetty7.3.1.v20110307で動作確認済みです。&lt;/p&gt;
+
+&lt;p&gt;jetty7.3のwebsocketを使うには、sbt-0.7.5RC以上を使わないといけないようです。
+sbt0.7.4だとjetty7.1までしかコンパイルできず、jetty7.1だとwebsocketの最新仕様にあってなくてソケットオープン時にコケます。
+(このあたりの組み合わせは記憶があいまいですが。。。）&lt;/p&gt;
+
+&lt;h2 id=&#34;scalaのjsonオブジェクトではなくsjsonを使うこと:a35d552d1ea719fd73f86ada72fcfde9&#34;&gt;scalaのjsonオブジェクトではなくsjsonを使うこと&lt;/h2&gt;
+
+&lt;p&gt;scala.util.parsing.json.JSONをつかってシリアライズすると、javascript側でのevalに失敗します。
+（原因はクオート処理しないため。）
+Scala内で完結するならまだしも、JavaScriptへ転送する場合はsjsonが良いようです。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>ScalaからMongoDBへアクセスする - Salat編</title>
+      <link>http://blog.restartr.com/2011/03/09/access-to-mongodb-in-scala-with-salat</link>
+      <pubDate>Wed, 09 Mar 2011 09:00:38 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2011/03/09/access-to-mongodb-in-scala-with-salat</guid>
+      <description>&lt;p&gt;前回はCasbahというライブラリを使ってMongoDBへアクセスしてみました。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://blog.restartr.com/2011/03/07/access-to-mongodb-in-scala-with-casbah/&#34;&gt;ScalaからMongoDBへアクセスする ? Casbah編&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;今回は、Casbahに加えて、&lt;a href=&#34;https://github.com/novus/salat&#34;&gt;Salat&lt;/a&gt;というライブラリをを組み合わせて、より便利にMongoDBとScalaとやりとりをする方法について見ていきます。&lt;/p&gt;
+
+&lt;p&gt;&lt;h3&gt;Salat&lt;/h3&gt;
+&lt;a href=&#34;https://github.com/novus/salat&#34;&gt;novus/salat - GitHub&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Salatは、CasbahのMongoDBObjectとscalaのケースクラスと相互変換してくれる、ORマッパーです。wikiから引用するとこうあります。&lt;/p&gt;
+
+&lt;p&gt;&lt;blockquote&gt;
+Salat is a bi-directional Scala case class serialization library that leverages MongoDB&amp;rsquo;s DBObject (which uses BSON underneath) as its target format. This project is focused on fostering a DWIM and intuitive usage pattern for the end-user&amp;rsquo;s benefit, without sacrificing run time performance.&lt;/p&gt;
+
+&lt;p&gt;&lt;/blockquote&gt;
+パフォーマンスの犠牲なしに、より便利にMongoDBとやりとりできるというものらしいです。DWIMって初耳なんですが、&amp;rdquo;Do What I Mean.&amp;ldquo;の略語だそうです。意図したとおりに動いてくれる、くらいの意味でしょうか。
+あと、「Salat」って、ロシア語で「サラダ」の意味だそうです。&lt;/p&gt;
+
+&lt;p&gt;では、Salatの簡単な使い方を見ていきます。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;more&#34;&gt;&lt;/a&gt;&lt;a id=&#34;more-749&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;h3&gt; インストール &lt;/h3&gt;
+今回もsbt前提です。
+&lt;script src=&#34;https://gist.github.com/860266.js?file=SalatTestProject.scala&#34;&gt;&lt;/script&gt;
+CasbahとSalatどちらも必要です。今回はCasbahは2.0.2を、Salatは0.0.5を利用します。あとはいつものように&amp;rdquo;sbt reload update&amp;rdquo;を実行するだけです。&lt;/p&gt;
+
+&lt;p&gt;&lt;h3&gt;CasbahでMongoDBへアクセス&lt;/h3&gt;
+まずはCasbaとSalatをインポート。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;import com.novus.salat._
+import com.novus.salat.global._
+import com.mongodb.casbah.Imports._
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;CasbahのみでMongoDBに入れる例を復習します。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;val collection = MongoConnection()(&amp;quot;salat_test&amp;quot;)(&amp;quot;sample&amp;quot;)
+collection += MongoDBObject(&amp;quot;id&amp;quot;-&amp;gt;1, &amp;quot;name&amp;quot;-&amp;gt;&amp;quot;me&amp;quot;, &amp;quot;age&amp;quot;-&amp;gt;27)
+println(collection.findOne( MongoDBObject(&amp;quot;id&amp;quot;-&amp;gt;1)).get )
+// { &amp;quot;_id&amp;quot; : { &amp;quot;$oid&amp;quot; : &amp;quot;4d76475ce10d23dcda26857d&amp;quot;} , &amp;quot;id&amp;quot; : 1 , &amp;quot;name&amp;quot; : &amp;quot;me&amp;quot; , &amp;quot;age&amp;quot; : 27}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;で、このような値がすでにMongoDBに入っているとして、それぞれのフィールドにアクセスする場合、以下のようになります。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;val me2 = collection.findOne( MongoDBObject(&amp;quot;id&amp;quot;-&amp;gt;1)).get
+println( me2.getClass ) // class com.mongodb.BasicDBObject
+println( me2.get(&amp;quot;name&amp;quot;) ) // me
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;最後の&amp;rdquo;me2.get(&amp;ldquo;name&amp;rdquo;)&amp;ldquo;というのが格好悪いですね。もしかしたらDBから取り出したときに&amp;rdquo;name&amp;rdquo;というキーが存在しないかもしれません。ということで、そのフォーマットをケースクラスで定義できるSalatの出番です。
+Salatでは、grater[&lt;Type&gt;]のインスタンスを用いてMongoDBObjectとケースクラスの変換を行います。シリアライズは
+DBに保存する際は「asDBObject」メソッドで取り出してクラスインスタンスとして扱う場合は「asObject」メソッドを使います。&lt;/p&gt;
+
+&lt;p&gt;まずはクラスインスタンスをDBに入れる例。&lt;/p&gt;
+
+&lt;p&gt;Userというケースクラスを定義して、graterを用いてDBObjectに変換しています。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;case class User(id: Int, name: String, age: Int)
+
+val me = User(id=2, name=&amp;quot;me2&amp;quot;, age=54)
+val g = grater[User]
+collection += g.asDBObject(me)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;つぎに、DBからとりだした値をクラスインスタンスに変換する例です。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;val meInDB = collection.findOne( MongoDBObject(&amp;quot;id&amp;quot;-&amp;gt;2)).get
+println( meInDB.getClass )
+// class com.mongodb.BasicDBObject
+println( meInDB )
+// { &amp;quot;_id&amp;quot; : { &amp;quot;$oid&amp;quot; : &amp;quot;4d764830e10d23dc4758c29a&amp;quot;} , &amp;quot;_typeHint&amp;quot; : &amp;quot;User&amp;quot; , &amp;quot;id&amp;quot; : 2 , &amp;quot;name&amp;quot; : &amp;quot;me2&amp;quot; , &amp;quot;age&amp;quot; : 54}
+println( g.asObject(meInDB) )
+// User(2,me2,54)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;このように、ケースクラスへのマッピングが行われることにより、Scalaのコード中で扱うMongoDBのドキュメントの型が明確になり、見通しがよくなります。&lt;/p&gt;
+
+&lt;p&gt;「asObject(meInDB)」で変換する前の、DBからとりだしたままの状態(BasicDBObject型)の段階で&lt;/p&gt;
+
+&lt;p&gt;&lt;blockquote&gt;
+&amp;ldquo;_typeHint&amp;rdquo; : &amp;ldquo;User&amp;rdquo;&lt;/p&gt;
+
+&lt;p&gt;&lt;/blockquote&gt;
+というキーと値が見えます。この値がこのドキュメントに対応するクラス型を定義することになります。&lt;/p&gt;
+
+&lt;p&gt;&lt;h4&gt;問題点：意図しないケースクラスへの変換&lt;/h4&gt;
+別のケースクラスに変換しようとするとどうなるでしょうか。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;case class UserA(id: Int, name: String, age: Int)
+println( grater[UserA].asObject(meInDB) ) // UserA(2,me2,54)
+case class UserB(id: Int, name: String, salary: Int)
+println( grater[UserB].asObject(meInDB) )
+// java.lang.Exception: class UserB requires value for &#39;salary&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;クラス名が違うUserAに変換しようとすると変換できてしまいます。キー名が異なるUserBに変換しようとした場合はコンパイルエラーとなります。「_typeHint」の値がうまく機能しているのか、少々疑問が残ります…&lt;/p&gt;
+
+&lt;p&gt;&lt;h4&gt;問題点：クラス階層の保持&lt;/h4&gt;
+また、クラス階層をもつ場合がテストケースにあるのですが、これも微妙な挙動をします。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/novus/salat/blob/master/salat-core/src/test/scala/com/novus/salat/test/model/TestModel.scala&#34;&gt;salat-core/src/test/scala/com/novus/salat/test/model/TestModel.scala at master from novus/salat - GitHub&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;上記はテストケース用のモデル定義なのですが、Desmondのように別クラスの型を保持するケースクラスをDBObjectに変換する際に、Desmond型は保持できるのですが、それに含まれるAlice型が保持できずにリストに変換されてしまいます。&lt;/p&gt;
+
+&lt;p&gt;こんな感じのコードで試してみました。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;case class Group(group_id: Int, name: String, leader: User, members: List[User])
+
+val me = User(id=11, name=&amp;quot;me&amp;quot;, age=27)
+val you = User(id=12, name=&amp;quot;you&amp;quot;, age=30)
+val members = MongoDBList.newBuilder
+members += me
+members += you
+val group = Group(group_id=1, name=&amp;quot;you and me&amp;quot;, leader=me, members=List(me, you))
+println(group)
+// Group(1,you and me,List(User(11,me,27), User(12,you,30)))
+
+println(grater[Group].asDBObject(group))
+// // { &amp;quot;_typeHint&amp;quot; : &amp;quot;Group&amp;quot; , &amp;quot;group_id&amp;quot; : 1 , &amp;quot;name&amp;quot; : &amp;quot;you and me&amp;quot; , &amp;quot;leader&amp;quot; : [ 11 , &amp;quot;me&amp;quot; , 27] , &amp;quot;members&amp;quot; : [ [ 11 , &amp;quot;me&amp;quot; , 27] , [ 12 , &amp;quot;you&amp;quot; , 30]]}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;DBObjectに変換すると、leaderの値やmembersのList要素がリストに変換されてます。
+このままMongoDBに保存して、それを取り出したあとで&amp;rdquo;grater[Group].asObject(group)&amp;ldquo;しようとするとエラーになります。&lt;/p&gt;
+
+&lt;p&gt;まだ触り始めたばかりでGithubのWikiもちゃんと読み込んでないので、扱い方が違っているのかもしれません。引き続き動作検証をすすめたいと思います。（結局、Rogueを使うというオチになりそうな気がしないくもないですが…）&lt;/p&gt;
+
+&lt;p&gt;&lt;h3&gt;関連リンク&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/novus/salat/wiki/Quick-start&#34;&gt;Quick start - GitHub&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+今回も一応全コードを掲載しておきます。
+&lt;script src=&#34;https://gist.github.com/860266.js?file=SalatSample.scala&#34;&gt;&lt;/script&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>ScalaからMongoDBへアクセスする - Casbah編</title>
+      <link>http://blog.restartr.com/2011/03/07/access-to-mongodb-in-scala-with-casbah</link>
+      <pubDate>Mon, 07 Mar 2011 08:45:28 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2011/03/07/access-to-mongodb-in-scala-with-casbah</guid>
+      <description>&lt;p&gt;ここ２，３日、ScalaからMongoDBへのアクセスのため、CasbahとSalatをお試し中です。&lt;/p&gt;
+
+&lt;p&gt;もともとはAkkaを弄ってたんですが、Akkaに含まれるPersistent(MongoDBなどNoSQLへの接続用)がなくなるらしいので、別のがないかなー、と寄り道したのがきっかけです。&lt;/p&gt;
+
+&lt;p&gt;&lt;h3&gt;Casbah&lt;/h3&gt;
+MongoDBを開発している10gen謹製Scalaライブラリです。
+Scala製のドライバは他にもLiftの&lt;a href=&#34;http://www.assembla.com/wiki/show/liftweb/MongoDB&#34;&gt;MongoDB&lt;/a&gt;や、Liftと組み合わせて使う&lt;a href=&#34;http://engineering.foursquare.com/2011/01/21/rogue-a-type-safe-scala-dsl-for-querying-mongodb/&#34;&gt;Rogue&lt;/a&gt;、mongo-java-driverのラッパーの&lt;a href=&#34;http://github.com/alaz/mongo-scala-driver&#34;&gt;mongo-scala-driver&lt;/a&gt;などがあります。
+一覧は以下に掲載されています。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://github.com/alaz/mongo-scala-driver&#34;&gt;Java Language Center - MongoDB&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Rogueについては、Fungoingのbibrostさんのブログが詳しいのでそちらをご覧ください。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://fungoing.blogspot.com/2011/02/liftscala-dslroguemongodb.html&#34;&gt;Fungoing Labs: Lift用Scala DSL&amp;rdquo;Rogue&amp;rdquo;を使ってMongoDBにアクセス（１）〜概要編〜&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;なぜ、LiftのMongoDBなりRogueなりを使わなかったかというと、フレームワークに依存したくなかったからです。単体で動作するものが使いたいのです。なので、Casbahを選択しました。
+が、Casbahだけだと、複雑なレコードを作成するのには少々面倒なところがあります。ORマッパーが欲しくなるのです。その解決策となるSalatがあります。今回はCasbahのまとめにとどめ、Salatについては後日改めてまとめようと思います。&lt;/p&gt;
+
+&lt;p&gt;&lt;blockquote&gt;
+※追記※
+Salat編を書きました。
+&lt;a href=&#34;http://blog.restartr.com/2011/03/09/access-to-mongodb-in-scala-with-salat/&#34;&gt;ScalaからMongoDBへアクセスする ? Salat編&lt;/a&gt;
+&lt;/blockquote&gt;
+では、Casbahの使い方について見ていきます。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;more&#34;&gt;&lt;/a&gt;&lt;a id=&#34;more-722&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;h3&gt;インストール&lt;/h3&gt;
+sbtの設定はこんな感じです。
+project/build/SalatTestProject.scala
+&lt;script src=&#34;https://gist.github.com/857260.js?file=SalatTestProject.scala&#34;&gt;&lt;/script&gt;&lt;/p&gt;
+
+&lt;p&gt;そしたら、sbtプロンプトでreload, updateをします。&lt;/p&gt;
+
+&lt;p&gt;これで、project/lib_managed/scala_2.x.x/compile以下にjarファイルが読み込まれるはず。&lt;/p&gt;
+
+&lt;p&gt;&lt;h3&gt;CasbahでMongoDBへアクセス&lt;/h3&gt;
+目次は以下の通りです。&lt;/p&gt;
+
+&lt;p&gt;&lt;ul&gt;
+&lt;li&gt;MongoDBObjectの作成&lt;/li&gt;
+&lt;li&gt;ドキュメントの検索&lt;/li&gt;
+&lt;li&gt;ドキュメントのJOIN&lt;/li&gt;
+&lt;li&gt;ListObjectの生成&lt;/li&gt;
+&lt;li&gt;クエリの構築&lt;/li&gt;
+&lt;li&gt;クエリの構築(DSLを利用)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;MongoDBObjectの作成&lt;/h4&gt;
+Casbahでは、MongoDB上のドキュメントをMongoDBObjectとして取り扱います。&lt;/p&gt;
+
+&lt;p&gt;MongoDBObjectをインスタンス化する、もしくはMongoDBObjectBuilderで逐次フィールドを定義するかのどちらかになります。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;// MongoDBObjectをインスタンス化
+val user = MongoDBObject(&amp;quot;id&amp;quot;-&amp;gt;1, &amp;quot;name&amp;quot;-&amp;gt;&amp;quot;me&amp;quot;)
+println(user) // { &amp;quot;id&amp;quot; : 1 , &amp;quot;name&amp;quot; : &amp;quot;me&amp;quot;}
+
+// MongoDBObjectBuilderで逐次フィールド定義
+val builder = MongoDBObject.newBuilder
+builder += &amp;quot;id&amp;quot;-&amp;gt;2
+builder += &amp;quot;name&amp;quot;-&amp;gt;&amp;quot;you&amp;quot;
+val user2 = builder.result // これでMongoDBObjectができる
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;できたら、これをMongoDBに保存します。&lt;/p&gt;
+
+&lt;p&gt;まずはコレクションのインスタンス取得から。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;val conn = MongoConnection()
+// MongoConnection(&amp;quot;localhost&amp;quot;, 27017)でホストおよびポート指定が可能
+val db = conn(&amp;quot;casbah_test&amp;quot;)
+val collection = db(&amp;quot;sample&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;下記のように１行にまとめてもでもOKです。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;val collection = MongoConnection()(&amp;quot;casbah_test&amp;quot;)(&amp;quot;sample&amp;quot;)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;で、コレクションに保存します。「+=」を使うだけと、とてもシンプルな操作になっています。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;collection += user // { &amp;quot;_id&amp;quot; : ObjectId(&amp;quot;4d7385ebf21423dcecb4c578&amp;quot;), &amp;quot;id&amp;quot; : 1, &amp;quot;name&amp;quot; : &amp;quot;me&amp;quot; }
+collection += user2 // { &amp;quot;_id&amp;quot; : ObjectId(&amp;quot;4d7385ebf21423dcedb4c578&amp;quot;), &amp;quot;id&amp;quot; : 2, &amp;quot;name&amp;quot; : &amp;quot;you&amp;quot; }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;h4&gt;ドキュメントの検索&lt;/h4&gt;
+保存したドキュメントを全件取得します。mongodbのコンソールでいう、db.collection.find()にあたる操作です。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;collection.find().foreach { println(_) }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;h4&gt;ドキュメントのJOIN&lt;/h4&gt;
+MongoDBでJoinはできないので、アプリ側で対処する場合に使うんでしょうかね。&lt;/p&gt;
+
+&lt;p&gt;やり方は、MongoDBObjectを「++」でつなぐだけ。簡単です。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;val identity = MongoDBObject(&amp;quot;name&amp;quot;-&amp;gt;&amp;quot;me&amp;quot;, &amp;quot;age&amp;quot;-&amp;gt;27)
+val address = MongoDBObject(&amp;quot;country&amp;quot;-&amp;gt;&amp;quot;Japan&amp;quot;, &amp;quot;prefecture&amp;quot;-&amp;gt;&amp;quot;Tokyo&amp;quot;)
+val user = identity ++ address
+println(user) // { &amp;quot;age&amp;quot; : 27 , &amp;quot;country&amp;quot; : &amp;quot;Japan&amp;quot; , &amp;quot;prefecture&amp;quot; : &amp;quot;Tokyo&amp;quot; , &amp;quot;name&amp;quot; : &amp;quot;me&amp;quot;}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;h4&gt;ListObjectの生成&lt;/h4&gt;
+List(javascriptでいうArrayのこと)はMongoDBListでつくります。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;val users1 = MongoDBList(
+  MongoDBObject(&amp;quot;name&amp;quot;-&amp;gt;&amp;quot;me&amp;quot;),
+  MongoDBObject(&amp;quot;name&amp;quot;-&amp;gt;&amp;quot;you&amp;quot;))
+println(users1) // [ { &amp;quot;name&amp;quot; : &amp;quot;me&amp;quot;} , { &amp;quot;name&amp;quot; : &amp;quot;you&amp;quot;}]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;当然ですが、Listの要素（MongoDBListの引数は）MongoDBObjectだけでなく、文字列や数値もOKです。&lt;/p&gt;
+
+&lt;p&gt;でListの場合もBuilder経由で作成が可能です。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;val users = MongoDBList.newBuilder
+val user1 = MongoDBObject(&amp;quot;name&amp;quot;-&amp;gt;&amp;quot;me&amp;quot;)
+val user2 = MongoDBObject(&amp;quot;name&amp;quot;-&amp;gt;&amp;quot;you&amp;quot;)
+users += user1
+users += user2
+println(users.result) // [ { &amp;quot;name&amp;quot; : &amp;quot;me&amp;quot;} , { &amp;quot;name&amp;quot; : &amp;quot;you&amp;quot;}]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;h4&gt;クエリの構築&lt;/h4&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;// 取得条件を指定
+val condition = MongoDBObject(&amp;quot;name&amp;quot;-&amp;gt;&amp;quot;me&amp;quot;)
+collection.find(condition).foreach( println )
+
+// 取得フィールドを限定
+val fields = MongoDBObject(&amp;quot;id&amp;quot;-&amp;gt;1)
+collection.find(condition, fields).foreach( println )
+
+// 条件の指定をせずに取得フィールドのみ限定する場合
+val conditionEmpty = MongoDBObject.empty
+collection.find(conditionEmpty, fields).foreach( println )
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;h4&gt;クエリの構築(DSLを利用)&lt;/h4&gt;
+$exists, $gt, $ltなど、以下にあるものはDSLとして使えるらしいです。&lt;/p&gt;
+
+&lt;p&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.mongodb.org/display/DOCS/Advanced+Queries#AdvancedQueries-ConditionalOperators&#34;&gt;Advanced Queries - MongoDB&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+findの引数にDSLを使って記述します。複数条件を組み合わせる場合は「++」でつなげます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;collection.find( &amp;quot;name&amp;quot; $exists true ).foreach{ println }
+
+// 組み合わせる場合は&amp;quot;++&amp;quot;でつなげる
+collection.find( (&amp;quot;name&amp;quot; $exists true) ++ (&amp;quot;age&amp;quot; $gte 20 $lt 30 ) ).foreach{ println }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;『(&amp;ldquo;age&amp;rdquo; $gte 20) ++ (&amp;ldquo;age&amp;rdquo; $lt 30)』と書かなくても、『(&amp;ldquo;age&amp;rdquo; $gte 20 $lt 30 ) 』とかけるので記述量がへって良いですね。&lt;/p&gt;
+
+&lt;p&gt;あと、追加ですけど、１ドキュメントのみ取得したい時はfindOneが使えます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;val obj = collection.findOne().get // Option[DBObject]からDBObjectを取り出すためにgetを呼ぶ
+println(obj(&amp;quot;name&amp;quot;)) //me
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;以上、かんたんにSasbahの使い方についてまとめてみました。&lt;/p&gt;
+
+&lt;p&gt;&lt;h3&gt;関連リンク&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/mongodb/casbah&#34;&gt;GitHub&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://api.mongodb.org/scala/casbah/2.0.2/tutorial.html&#34;&gt;Casbahチュートリアル&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://api.mongodb.org/scala/casbah/2.0.2/scaladoc/&#34;&gt;ScalaDoc (casbah-core v2.0.2)&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+ちなみに、細切れで説明した上記サンプルプログラムの全体を以下に掲載しておきます。&lt;/p&gt;
+
+&lt;p&gt;※convertObjectTypeメソッドの中身については現在検証中です(；・∀・)
+&lt;script src=&#34;https://gist.github.com/857260.js?file=CasbahSample.scala&#34;&gt;&lt;/script&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>pythonとscalaのファイルの自動クローズ</title>
+      <link>http://blog.restartr.com/2011/02/07/automatically-close-the-file-in-python-and-scala</link>
+      <pubDate>Mon, 07 Feb 2011 00:10:22 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2011/02/07/automatically-close-the-file-in-python-and-scala</guid>
+      <description>&lt;p&gt;エキスパートPythonプログラミングを少しずつ読み進めています。といっても気になるタイトルを拾い読みですが。&lt;/p&gt;
+
+&lt;p&gt;そのなかの&amp;rdquo;2.4 withとcontextlib&amp;rdquo;の章のwith文の例としてファイル読み込みのコードが書いてました。
+&lt;script src=&#34;https://gist.github.com/813385.js?file=read_file_using_with.py&#34;&gt;&lt;/script&gt;
+たったこれだけで、自動クローズまでやってくれるみたい。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;more&#34;&gt;&lt;/a&gt;&lt;a id=&#34;more-576&#34;&gt;&lt;/a&gt;
+さらに、with文を使うためのクラス定義も可能らしい。
+&lt;script src=&#34;https://gist.github.com/813385.js?file=Reader.py&#34;&gt;&lt;/script&gt;&lt;/p&gt;
+
+&lt;p&gt;実装すべきは下記２メソッドのみ。&lt;/p&gt;
+
+&lt;p&gt;&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;enter&lt;/strong&gt;(self)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;exit&lt;/strong&gt;(self, exception_type, exception_value, exception_traceback)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;strong&gt;enter&lt;/strong&gt;の戻り値はasで受けとれます。
+&lt;strong&gt;exit&lt;/strong&gt;で例外処理のfinallyに当たる処理を書きます。何も返さないと例外はその呼び出し元に伝播します。&lt;/p&gt;
+
+&lt;p&gt;さらにさらに、contextlibというモジュールを使えば、もっと自然に書けます。
+&lt;script src=&#34;https://gist.github.com/813385.js?file=read_file_with_closing.py&#34;&gt;&lt;/script&gt;
+※これは、contextmanager内のfinally句でcloseを書くのと同じ。(&lt;a href=&#34;http://www.python.jp/doc/nightly/library/contextlib.html#contextlib.closing&#34;&gt;参考&lt;/a&gt;)&lt;/p&gt;
+
+&lt;p&gt;&lt;h4&gt;Scalaでwith（っぽいもの）を実装&lt;/h4&gt;
+pythonのwith文と同様の記述方法をScalaでやるとしたら…こんな感じでしょうか。
+&lt;script src=&#34;https://gist.github.com/813385.js?file=FileReader.scala&#34;&gt;&lt;/script&gt;&lt;/p&gt;
+
+&lt;p&gt;ファイルの自動クローズについてはこちらを参考にさせていただきました。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://d.hatena.ne.jp/syttru/20080322/1206212125&#34;&gt;Scalaでファイル操作 - syttruの日記&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>NettyでWebSocketサーバーを実装する</title>
+      <link>http://blog.restartr.com/2010/12/29/websocket-server-written-in-scala-with-netty</link>
+      <pubDate>Wed, 29 Dec 2010 18:45:53 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2010/12/29/websocket-server-written-in-scala-with-netty</guid>
+      <description>&lt;p&gt;この記事は &lt;a href=&#34;http://atnd.org/events/10683&#34;&gt;Scala Advent Calendar JP 2010&lt;/a&gt; 23 日目(12/29)です。&lt;/p&gt;
+&lt;p&gt;前日の &lt;a href=&#34;http://twitter.com/cooldaemon&#34;&gt;@cooldaemon&lt;/a&gt; さんが&lt;a href=&#34;http://d.hatena.ne.jp/cooldaemon/20101228&#34;&gt;Scala Actor + NIO&lt;/a&gt;という、ものすごい記事を書いていらっしゃったのでこの流れの中で投稿するのが忍びないくらいです。&lt;br /&gt;
+＃まさか前日にNIOネタがくるとはぁぁぁ…&lt;/p&gt;
+&lt;p&gt;さて、今回はNettyを使ってWebSocketサーバーを実装してみました。&lt;br /&gt;
+JavaではなくScalaで、です。&lt;br /&gt;
+とはいっても、目的はJavaコードをScalaに直す練習も兼ねて、公式サンプルにあるJavaコードをScalaに書きなおしただけですが。&lt;br /&gt;
+ご指摘などありましたら謹んでお受けいたします…&lt;br /&gt;
+&lt;a id=&#34;more&#34;&gt;&lt;/a&gt;&lt;a id=&#34;more-465&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;h3&gt;Netty&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.jboss.org/netty/&#34;&gt;Netty - the Java NIO Client Server Socket Framework - JBoss Community&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Nettyの概要はこのへんで。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://ameblo.jp/principia-ca/entry-10629939611.html&#34;&gt;JavaネットワークアプリケーションフレームワークNettyの紹介｜サイバーエージェント 公式エンジニアブログ&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;開発環境&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Scala-2.8.0&lt;/li&gt;
+&lt;li&gt;Netty-3.2.3.Final&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;Echoサーバー&lt;/h3&gt;
+&lt;p&gt;サンプル的にEchoサーバーから書いてみます。&lt;/p&gt;
+&lt;h4&gt;やること&lt;/h4&gt;
+&lt;ol&gt;
+&lt;li&gt;Echoハンドラを実装&lt;/li&gt;
+&lt;li&gt;NioChannelFactoryにスレッドプールを登録&lt;/li&gt;
+&lt;li&gt;BootstrapにNioChannelFactoryを登録&lt;/li&gt;
+&lt;li&gt;PipelineFactoryにEchoハンドラを登録&lt;/li&gt;
+&lt;li&gt;BootstrapにPipelineFactoryを登録&lt;/li&gt;
+&lt;li&gt;InetSocketAddressに（ホストと）ポート番号を指定してBootstrapに登録してサービス開始&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/ReSTARTR/nettyws/blob/master/src/main/scala/com/restartr/nettyws/EchoServer.scala&#34;&gt;EchoServer.scala&lt;/a&gt;&lt;br /&gt;
+まずは起動元から。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;object EchoServer {
+  @throws(classOf[Exception])
+  def main(args:Array[String]) {
+    // サーバーのセットアップ
+    val bootstrap = new ServerBootstrap(
+      new NioServerSocketChannelFactory(
+        Executors.newCachedThreadPool(), // bossExecutor
+        Executors.newCachedThreadPool()  // workerExecutor
+      ))
+
+    bootstrap.setPipelineFactory(
+      // リクエストをそのまま返すハンドラを実装して登録
+      new ChannelPipelineFactory() {
+        def getPipeline() = Channels.pipeline(new EchoServerHandler())
+      }
+    )
+
+    // 8080番で待ち受け開始
+    bootstrap.bind(new InetSocketAddress(8080))
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;で、ハンドラ側がこんなかんじ。&lt;br /&gt;
+
+SimpleChannelUpstreamHandlerの&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;messageReceived(ctx:ChannelHandlerContext, e:MessageEvent)&lt;/li&gt;
+&lt;li&gt;def exceptionCaught(ctx: ChannelHandlerContext, e: ExceptionEvent) &lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;をオーバーライドして処理内容を定義すればOK。&lt;br /&gt;
+何かを呼び出し元に返すには、&#34;e.getChannel().write( {レスポンス} )&#34;で。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;class EchoServerHandler extends SimpleChannelUpstreamHandler {
+  val logger = java.util.logging.Logger.getLogger(&amp;quot;EchoServerHandler&amp;quot;)
+  val transferredBytes = new AtomicLong()
+
+  // そのまま返す
+  override def messageReceived(ctx:ChannelHandlerContext, e:MessageEvent) {
+    transferredBytes.addAndGet(
+      e.getMessage().asInstanceOf[ChannelBuffer].readableBytes())
+
+    println(&amp;quot;echo_server: message received: &amp;quot; + e.getMessage())
+    // レスポンスを返す
+    e.getChannel().write(e.getMessage())
+  }
+
+  // 例外発生時はここにくる
+  override def exceptionCaught(ctx: ChannelHandlerContext, e: ExceptionEvent) {
+    logger.log(Level.WARNING,
+               &amp;quot;Unexpected exception from downstream.&amp;quot;,
+               e.getCause())
+
+    e.getChannel().close()
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;h3&gt;WebSocketサーバー&lt;/h3&gt;
+&lt;p&gt;本題のWebSocketサーバーです。&lt;br /&gt;
+Echoサーバーの応用で、WebSocket用のハンドラを作成して、Bootstrapに登録すれば良い訳です。&lt;/p&gt;
+&lt;h4&gt;仕様&lt;/h4&gt;
+&lt;ul&gt;
+&lt;li&gt;WebSocketServer: 起動元&lt;/li&gt;
+&lt;li&gt;WebSocketServerHandler: プロトコルハンドラ。肝の部分。&lt;/li&gt;
+&lt;li&gt;WebSocketServerPipelineFactory: パイプライン生成。&lt;/li&gt;
+&lt;li&gt;WebSocketServeIndexPage: WebSocketクライアント用HTMLの生成&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4&gt;実装&lt;/h4&gt;
+&lt;p&gt;すべて書くと冗長なので要所だけ抜き出しました。&lt;br /&gt;
+&lt;a href=&#34;https://github.com/ReSTARTR/nettyws/tree/master/src/main/scala/com/restartr/nettyws&#34;&gt;全ソースはGithubを見てください。&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;b&gt;WebSocketServerIndexPage.scala&lt;/b&gt;&lt;br /&gt;
+まずはクライアント側はこんな感じで、インプットフォームに入力した文字列をWebSocketサーバーに投げ、結果をdivに追記するだけです。&lt;/p&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;      var socket;
+      if (window.WebSocket) {
+        socket = new WebSocket( &#39;ws://localhost:8080/uppercase&#39; );
+        socket.onmessage = function(event) { log(event.data) }
+        socket.onopen = function(event) { log(&#39;web socket opened&#39;) }
+        socket.onclose = function(event) { log(&#39;web socket closed&#39;) }
+      } else {
+        alert(&#39;your browser does not supported web socket&#39;)
+      }
+      function log(message) {
+        p = document.createElement(&#39;p&#39;);
+        p.innerHTML = message
+        document.getElementById(&#39;log&#39;).appendChild(p) ;
+      }
+      function send(message) {
+        if (!window.WebSocket) { return; }
+        if (socket.readyState == WebSocket.OPEN) {
+          socket.send(message)
+        } else {
+          alert(&#39;the socket is not open.&#39;)
+        }
+      }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;b&gt;WebSocketServer.scala&lt;/b&gt;&lt;br /&gt;
+サーバー起動オブジェクトです。&lt;br /&gt;
+HTML/WebSocketを扱うハンドラを登録してポートで待ち受けます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;    // WebSocket用ハンドラを含むPipelineFactoryを登録
+    bootstrap.setPipelineFactory(new WebSocketServerPipelineFactory())
+
+    // 8080番で待ち受け開始
+    bootstrap.bind(new InetSocketAddress(&amp;quot;localhost&amp;quot;, 8080))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;b&gt;WebSocketServerHandler.scala&lt;/b&gt;&lt;br /&gt;
+実装するのは、Echoサーバーと同じく、messageReceived()とexceptionCaught()の２つ。&lt;br /&gt;
+処理を分割しているのですこしだけメソッド多めです。&lt;br /&gt;
+messageRecieved()で受信内容によって実際のハンドラをHttp/WebSocketのどちらかに切り替えます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;class WebSocketServerHandler extends SimpleChannelUpstreamHandler {
+  val WEBSOCKET_PATH = &amp;quot;/uppercase&amp;quot;
+
+  /**
+   * メッセージ受信時の処理
+   *   メッセージの内容によってWebSocketかHttpかハンドラを切り替える
+   */
+  @throws(classOf[Exception])
+  override def messageReceived(ctx: ChannelHandlerContext, e: MessageEvent) {
+    val msg:Object = e.getMessage()
+    msg match {
+      case frame: WebSocketFrame =&amp;gt; {
+          handleWebSocketFrame(ctx, frame)
+        }
+      case req: HttpRequest =&amp;gt; {
+          handleHttpRequest(ctx, req)
+        }
+    }
+  }
+  /**
+   * HTTPリクエスト時の処理
+   */
+  @throws(classOf[Exception])
+  def handleHttpRequest(ctx: ChannelHandlerContext, req: HttpRequest) {
+    // DEBUG
+    println(&amp;quot;handleHttpRequest: &amp;quot; + Thread.currentThread().getName())
+
+    // GETリクエスト以外は処理しない
+    // &amp;quot;/&amp;quot;にきたらWebSocketクライアント用ページを送信
+    // &amp;quot;/uppercase&amp;quot;にきたらリクエスト文字列を大文字に変換して返す
+    if (req.getMethod() != GET) {
+      sendHttpResponse(
+        ctx,
+        req,
+        new DefaultHttpResponse(HTTP_1_1, FORBIDDEN))
+    } else if (req.getUri().equalsIgnoreCase(&amp;quot;/&amp;quot;)) {
+
+      // (中略) デフォルトHTMLの送信
+
+    } else if (req.getUri().equalsIgnoreCase(WEBSOCKET_PATH) &amp;amp;&amp;amp;
+               Values.UPGRADE.equalsIgnoreCase(req.getHeader(Names.CONNECTION)) &amp;amp;&amp;amp;
+               Values.WEBSOCKET.equalsIgnoreCase(req.getHeader(Names.UPGRADE))) {
+
+      // (中略) WebSocket接続処理
+
+      // ハンドラをHTTPからWebSocketに切り替えて、
+      // send the handshake response
+      val p = ctx.getChannel().getPipeline()
+      p.remove(&amp;quot;aggregator&amp;quot;)
+      p.replace(&amp;quot;decoder&amp;quot;, &amp;quot;wsdecoder&amp;quot;, new WebSocketFrameDecoder())
+
+      ctx.getChannel().write(res)
+
+      p.replace(&amp;quot;encoder&amp;quot;, &amp;quot;wsencoder&amp;quot;, new WebSocketFrameEncoder())
+    } else {
+      sendHttpResponse(
+        ctx, req, new DefaultHttpResponse(HTTP_1_1, FORBIDDEN))
+    }
+  }
+  /**
+   * WebSocketリクエスト時の処理
+   */
+  @throws(classOf[Exception])
+  def handleWebSocketFrame(ctx: ChannelHandlerContext, frame: WebSocketFrame) {
+    // 大文字に変換するして、WebSocketFrameにのせてレスポンスを返す。
+    ctx.getChannel().write(
+      new DefaultWebSocketFrame(
+        frame.getTextData().toUpperCase))
+  }
+  /**
+   * HTTPレスポンスの送信
+   */
+  @throws(classOf[Exception])
+  def sendHttpResponse(ctx: ChannelHandlerContext, req: HttpRequest, res: HttpResponse) {
+    // ステータスコードが200じゃなければエラーページの表示
+    if (res.getStatus().getCode() != 200) {
+      res.setContent(
+        ChannelBuffers.copiedBuffer(
+          res.getStatus().toString(), CharsetUtil.UTF_8))
+      HttpHeaders.setContentLength(res, res.getContent().readableBytes())
+    }
+
+    // keep-aliveでなければ接続を閉じる
+    val f = ctx.getChannel().write(res)
+    if (!HttpHeaders.isKeepAlive(req) || res.getStatus().getCode() != 200) {
+      f.addListener(ChannelFutureListener.CLOSE)
+    }
+  }
+  /**
+   * 例外発生時の処理
+   */
+  @throws(classOf[Exception])
+  override def exceptionCaught(ctx: ChannelHandlerContext, e: ExceptionEvent) {
+    println(&amp;quot;server: exception caught: &amp;quot;)
+    e.getCause().printStackTrace()
+    e.getChannel().close()
+  }
+  /**
+   * WebSocket接続情報
+   */
+  def getWebSocketLocation(req: HttpRequest) =
+    &amp;quot;ws://&amp;quot; + req.getHeader(HttpHeaders.Names.HOST) + WEBSOCKET_PATH
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;b&gt;WebSocketServerPipelineFactory.scala&lt;/b&gt;&lt;br /&gt;
+パイプラインへの登録を定義します。&lt;br /&gt;
+リクエストはDecoderを通り、ハンドラで処理され、Encoderを通って返される、という流れです。&lt;br /&gt;
+ここでは初期状態としてHttp用の設定になっていますが、一旦WebSocket通信開始のリクエストを受け取ると、そのあとはWebSocketのDecoder/Encoderに切り替わります。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;&amp;lt;pre class=&amp;quot;brush:scala&amp;quot;&amp;gt;
+class WebSocketServerPipelineFactory extends ChannelPipelineFactory{
+  @throws(classOf[Exception])
+  def getPipeline(): ChannelPipeline = {
+    val pipeline = Channels.pipeline()
+
+    pipeline.addLast(&amp;quot;decoder&amp;quot;    , new HttpRequestDecoder())
+    pipeline.addLast(&amp;quot;aggregator&amp;quot; , new HttpChunkAggregator(65536))
+    pipeline.addLast(&amp;quot;encoder&amp;quot;    , new HttpResponseEncoder())
+    pipeline.addLast(&amp;quot;handler&amp;quot;    , new WebSocketServerHandler())
+
+    pipeline
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;実際、ブラウザでひらいてみると、Webフォームに入力されている「hello, world」が大文字に変換されてフォーム下部に追記されていきます。&lt;br /&gt;
+まぁWebSocketサーバーを実装するだけなら、jetty7を使ったほうがシンプルに早くかけると思います。&lt;br /&gt;
+Memcacheプロトコルを話すサービスをつくる場合とかには便利ですね。（messagepack-rpcでもnetty使っているとか。)&lt;/p&gt;
+
+&lt;p&gt;参考：&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://gihyo.jp/dev/feature/01/websocket&#34;&gt;Jettyで始めるWebSocket超入門&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://d.hatena.ne.jp/yuroyoro/20100316/1268735022&#34;&gt;Jetty7のWebSocketをScalaから使う - ゆろよろ日記&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;以上、お粗末様でした。。。&lt;/p&gt;
+&lt;p&gt;# あれ？Scalaあんまり関係ない？？&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>ScalaとErlangとPHPと私</title>
+      <link>http://blog.restartr.com/2010/11/23/scala-erlang-php-and-me</link>
+      <pubDate>Tue, 23 Nov 2010 18:57:35 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2010/11/23/scala-erlang-php-and-me</guid>
+      <description>&lt;p&gt;PHPよりScalaが簡単である、という議論に対するふたつのポストがあったので、自分向けにまとめました。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;元記事：&lt;a href=&#34;http://wadearnold.com/blog/scala/scala-is-easier-than-php&#34;&gt;Wade Arnold ? Scala is easier than PHP&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;返信：&lt;a href=&#34;http://videlalvaro.github.com/2010/11/reply-to-scala-is-easier-than-php.html&#34;&gt;Reply to &#34;Scala is Easier than PHP&#34;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;概要&lt;/h3&gt;
+&lt;p&gt;ざっとこんな感じにまとめてしまいました。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;議論の中心はWebページ生成言語としての言語の比較ではない&lt;/li&gt;
+&lt;li&gt;ふたりともWebページ生成ならPHPが優れているという立場にかわりはない&lt;/li&gt;
+&lt;li&gt;議論の中心は主にスケーラビリティの確保とプロセス間通信&lt;/li&gt;
+&lt;li&gt;元記事のWade ArnoldさんはScala推進派&lt;/li&gt;
+&lt;li&gt;返信者のvidelalvaroさんはErlang推進派&lt;/li&gt;
+&lt;li&gt;スケーラビリティ確保のためには関数型言語という結論&lt;/li&gt;
+&lt;li&gt;ScalaかErlangどちらが簡単か、という議論はない&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;a id=&#34;more&#34;&gt;&lt;/a&gt;&lt;a id=&#34;more-410&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;h3&gt;ScalaがPHPより簡単な理由&lt;/h3&gt;
+&lt;p&gt;Wade Arnoldさんが元記事「Scala is easier than PHP」において、マルチコア時代にはScalaが必要だ、みたいなことを書きました。彼はPHP３のころからPHPの開発に関わっていて、最近はZendFrameworkのコミッタをやっていたそうです。&lt;br /&gt;
+PHPはいまだに最高の言語であると最初に断っておきつつ、Scalaの技術的な点を整理しておこう、という内容。&lt;/p&gt;
+&lt;p&gt;スケーラビリティの確保のためには、PHPのようにたくさんのツールを必要とせずとも、言語仕様的に多くをサポートするScalaが簡単な理由である、と。Scalaへの移行は時間を必要とするが、スケーラビリティには必要な選択であるといっています。&lt;/p&gt;
+&lt;blockquote&gt;&lt;p&gt;No need for amqp with actors, no beanstalkd with mutable queues, and it’s fast as hell!&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;&lt;em&gt;ActorによってAMQPはいらなくなる。ミュータブルなキューもbeanstalkdなしに。そしてそれはものすごく速い。&lt;br /&gt;
+&lt;/em&gt;&lt;/p&gt;
+&lt;h3&gt;PHPの代わりにErlangを使う理由&lt;/h3&gt;
+&lt;p&gt;それに対してvidelalvaroさんが「Reply to &#34;Scala is easier than PHP&#34;」でコメントをしています。&lt;br /&gt;
+おおむねWadeさんの意見に同意で、彼はScalaではなくErlangを推しているようです。&lt;/p&gt;
+&lt;p&gt;意見としてはこんな感じでしょうか。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;サーバーのような長時間実行するプログラムにはErlangつかうといい&lt;/li&gt;
+&lt;li&gt;スレッド間通信にはErlangをつかうといい&lt;/li&gt;
+&lt;li&gt;Webページを生成するだけならPHPをつかうといい&lt;/li&gt;
+&lt;li&gt;CPUの全コアを利用したいだけならPHP-FPMをつかうといい&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;スケーラビリティ確保のために必要なもの&lt;/h3&gt;
+&lt;p&gt;元記事ではPHPのスケーラビリティ確保のために必要なものをあげ、これらを使うのは大変骨が折れると言っています。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;Fantastic at PHP internals&lt;/li&gt;
+&lt;li&gt;Amazing at Apache HTTPD and compiling appropriate PHP extensions.&lt;/li&gt;
+&lt;li&gt;Nginx&lt;/li&gt;
+&lt;li&gt;BigIP ? More than round robin load balancing&lt;/li&gt;
+&lt;li&gt;Intimately know how sessions work and probably write your own handlers&lt;/li&gt;
+&lt;li&gt;Memcached&lt;/li&gt;
+&lt;li&gt;APC&lt;/li&gt;
+&lt;li&gt;AMQP&lt;/li&gt;
+&lt;li&gt;BeanStalkd&lt;/li&gt;
+&lt;li&gt;Code based sharding or at least master/slave logic&lt;/li&gt;
+&lt;li&gt;C/C++&lt;/li&gt;
+&lt;li&gt;Lots of security! It’s a problem with all dynamic languages.&lt;/li&gt;
+&lt;li&gt;Zend Framework.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;それに対してScalaはたった５つ。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;6 months of scala&lt;/li&gt;
+&lt;li&gt;Functional programming&lt;/li&gt;
+&lt;li&gt;&lt;a onclick=&#34;javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-article&#39;,&#39;akkasource.org&#39;]);&#34; href=&#34;http://akkasource.org/&#34;&gt;Akka Framework&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a onclick=&#34;javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-article&#39;,&#39;liftweb.net&#39;]);&#34; href=&#34;http://liftweb.net/&#34;&gt;Lift Framework&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Nginx / Jetty&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;ツールに頼らずとも言語が機能を備えているから気にすべきところが非常にシンプルになるようです。&lt;/p&gt;
+&lt;h3&gt;個人的感想&lt;/h3&gt;
+&lt;p&gt;PHPをWebページ生成以外で対決させるのはどうなんだろうと思いつつも、Scalaをどのような場面で使っていけばよいか考える良い機会になりました。&lt;br /&gt;
+個人的な話をすると、Scalaは言語仕様を学ぶばかりで実際のプログラムを書くまでには至っていませんし、性能評価もまだやってないので「PHPからScalaに移行すべきだ」、と言い切るには至っていないのが現状です。&lt;br /&gt;
+が、Wadeさんは後ほどもっと突っ込んだ記事を書くと冒頭に言っていますし、videlalvaroさんも最後に&lt;/p&gt;
+&lt;blockquote&gt;&lt;p&gt;if we want to sell functional languages like Erlang or Scala to the PHP programmer then we have to look for more compelling features that may attract them to look into these languages. What I think are those features ?I guess?, should be part of another blog post.&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;と、ScalaやErlangをPHPerに売り込むための魅力的な点をPOSTしてくれるかも。&lt;br /&gt;
+それも楽しみにしておこうと思います。&lt;/p&gt;
+&lt;h3&gt;余談&lt;/h3&gt;
+&lt;p&gt;最近思うのが、Scalaって言語仕様があまりに多くて、それを学ぶことが楽しいです。&lt;br /&gt;
+が、学ぶべき仕様がどこまでなのか見えてこず、さらに、仕様を学ぶこと自体が目的になってきているような気がします。&lt;br /&gt;
+ということで(?)そろそろ、実際につくりたいプログラムを書きながら仕様を学ぶ方向にシフトしようと思います。&lt;/p&gt;
+&lt;p&gt;※あとPHP-FPMもちゃんと調査・検証したいし、Kestrelのソースも読みたい。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>TSVファイルを処理する</title>
+      <link>http://blog.restartr.com/2010/09/05/processing-the-file-formatted-tsv</link>
+      <pubDate>Sun, 05 Sep 2010 18:22:53 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2010/09/05/processing-the-file-formatted-tsv</guid>
+      <description>&lt;p&gt;Scalaプログラミング入門をざっと読んでから少し間が空いてしまいました。&lt;br /&gt;
+第１回Scala座を見たりして刺激もらったのでちょっとScala弄りなど。&lt;br /&gt;
+※Scala座については非公式にトゥギャらせてもらっています。：&lt;a href=&#34;http://togetter.com/li/47287&#34;&gt;第１回Scala座非公式勝手まとめ&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;ちょっと雰囲気を振り返るため、普段PHPでよくやるTSVファイルの読み込みでテスト。&lt;/p&gt;
+&lt;p&gt;foo.tsvの中身はこんな感じ。&lt;/p&gt;
+&lt;pre class=&#34;brush:c&#34;&gt;
+u01,Tokyo
+u02,Osaka
+u03,Nagoya
+u04,Tokyo
+u05,Fukuoka
+u06,Nagoya
+u07,Nagoya
+u08,Shiga
+u09,Hokkaido
+u10,Osaka
+&lt;/pre&gt;
+&lt;p&gt;これの転置インデックスを作成したい。&lt;/p&gt;
+&lt;p&gt;で、&lt;a href=&#34;http://rainyday.blog.so-net.ne.jp/2007-12-01&#34;&gt;こちらのブログ記事&lt;/a&gt;とかを参考にしたりして、何回か試行錯誤してできたのがこちらのソース。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;import scala.collection.mutable.HashMap
+import scala.io.Source
+import scala.io.BufferedSource
+object ReadTsv
+{
+  def main( args: Array[String] )
+  {
+    val source = Source.fromFile( &amp;quot;foo.txt&amp;quot; )
+    try {
+      var m = new HashMap[String,List[String]]
+      for( line &amp;lt;- source.getLines ) {
+        val x:Array[String] = line.stripLineEnd.split(&amp;quot;,&amp;quot;)
+        m.update(x(1) , m.get(x(1)) match {
+          case Some(s) =&amp;gt; x(0) :: s
+          case None    =&amp;gt; List( x(0) )
+        })
+      }
+      println( m )
+    } finally {
+      source.asInstanceOf[BufferedSource].close
+    }
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;実行&lt;/p&gt;
+```bash
+$ scalac ReadTsv.scala
+$ scala ReadTsv
+Map(Shiga -&gt; List(u08), Nagoya -&gt; List(u07, u06, u03), Tokyo -&gt; List(u04, u01), Osaka -&gt; List(u10, u02), Fukuoka -&gt; List(u05), Hokkaido -&gt; List(u09))
+```
+&lt;p&gt;手続き型な感じが色濃い気がするけど、もっと関数型的になるのでしょうか。。&lt;br /&gt;
+とりあえずコレクションとパターンマッチの練習にはなりました。&lt;/p&gt;
+&lt;p&gt;他人のプログラムを拝見するなどして、もっとScalaの理解を深める必要がありそうです。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Scalaプログラミング入門(とその他Scala本)</title>
+      <link>http://blog.restartr.com/2010/08/23/beginning-scala</link>
+      <pubDate>Mon, 23 Aug 2010 00:21:16 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2010/08/23/beginning-scala</guid>
+      <description>&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/4822284239&#34;&gt;SCALAプログラミング入門 [単行本]&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;お盆前にScalaプログラミング入門を購入して、少しづつScalaについて学んでいます。&lt;/p&gt;
+
+&lt;p&gt;&lt;a id=&#34;more&#34;&gt;&lt;/a&gt;&lt;a id=&#34;more-295&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;通称「コップ本」と読み比べた上で、とっつきやすく実践寄りな「Scalaプログラミング入門」を選択しました。&lt;br /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/4844327453&#34;&gt;Scalaスケーラブルプログラミング&lt;a href=&#34;Programming in Scala&#34;&gt;コンセプト&amp;amp;コーディング&lt;/a&gt; [単行本]&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;正直、「Scalaプログラミング入門」は自分にとっては手強いです。&lt;/p&gt;
+
+&lt;p&gt;その文脈で説明している以外のところで唐突に新しい文法が含まれたコードが説明なしに含まれていたり。いきなり&amp;rdquo;sealed”とか書かれましても…&lt;/p&gt;
+
+&lt;p&gt;まず文法について一通り把握するなら、こちらの「ボクらのScala」のほうが良いと思います。&lt;br /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/4797359404&#34;&gt;ボクらのScala ~ 次世代Java徹底入門 [単行本]&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;「Scalaプログラミング入門」を一通り読んでモヤモヤがたまったあとに「ボクらのScala」を立ち読みして、「これはわかりやすい！ちゃんと整理されている！」と驚きました。&lt;/p&gt;
+
+&lt;p&gt;順序良く学ぶなら、「ボクらのScala」→「Scalaプログラミング入門」→「Scalaスケーラブルプログラミング」の順が良いのではないでしょうか。&lt;br /&gt;
+必要最低限の言語仕様を学び、実践よりの解説に目を通し、言語仕様の深いところを学ぶ、という流れになると思います。（すごく個人的な感想ですが。）&lt;/p&gt;
+
+&lt;p&gt;まぁ、本の内容をひとつづつこのブログで解説する、なんてことはしませんが、少しづつでも得た知識をこのブログで整理していこうと思います。&lt;/p&gt;
+
+&lt;p&gt;当面の目標は「ScalaでHadoopのジョブを書く」ですかね。&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

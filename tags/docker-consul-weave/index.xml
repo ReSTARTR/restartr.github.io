@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Docker Consul Weave on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/docker-consul-weave/</link>
+    <description>Recent content in Docker Consul Weave on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Mon, 09 Mar 2015 00:22:13 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/docker-consul-weave/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>DockerとWeaveを使って1台のマシンでConsulを複数動かしてみる</title>
+      <link>http://blog.restartr.com/2015/03/09/consul-cluster-with-docker</link>
+      <pubDate>Mon, 09 Mar 2015 00:22:13 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2015/03/09/consul-cluster-with-docker</guid>
+      <description>
+
+&lt;p&gt;軽くConsulを試してみたくて、でもVagrantで複数台仮想マシンを立ち上げるのはちょっと気が重い…ということでUbuntu14.10 on MacBookAirにDockerコンテナを複数立ち上げてクラスタを構築してみるテストをしました。&lt;/p&gt;
+
+&lt;p&gt;Dockerfileとか簡単な動かし方(を適当英語で書いたもの)をgithubにあげてあります&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/ReSTARTR/test-consul-with-docker&#34;&gt;ReSTARTR/test-consul-with-docker&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Docker内のプロセスがLISTENするポートに対してコンテナ外から接続する場合、&lt;code&gt;-p&lt;/code&gt;でホストのポートにひもづけるか、&lt;code&gt;--link&lt;/code&gt;でコンテナ同士をつなぐのが最も手軽な方法です。が、consulは複数のポート（HTTP API用、DNS用、ゴシッププロトコル用等）を使うため、この手軽な方法でクラスタを構築することができません。&lt;/p&gt;
+
+&lt;p&gt;Dockerコンテナの接続パターンとしてはいくつかあって、deeeetさんのブログ記事に詳しく書かれています。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://deeeet.com/writing/2014/12/01/docker-link-pattern/&#34;&gt;Dockerコンテナ接続パターン (2014年冬) | SOTA&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;今回は手元のMacBook Airだけで完結させたかったので、weaveを使ったコンテナ間ネットワークを利用することにしました。&lt;/p&gt;
+
+&lt;h3 id=&#34;weave:eb7384652550cf95d9fa5f789a7acdb6&#34;&gt;weave&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://zettio.github.io/weave/&#34;&gt;weave  | weave, the Docker network&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;dockerコンテナ間の内部ネットワークを構築するものです。詳しくはjacopenさんのSlideShareを。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.slideshare.net/jacopen/weave-40871981&#34;&gt;Weaveを試してみた&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;使い方はとても簡単で、weaveコンテナを立ち上げて、weaveコマンド経由でdockerコマンドを実行するだけ。
+これならVagrantのような仮想マシンのためにメモリとディスク容量を割く必要もなくなります。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ sudo weave launch
+$ sudo docker ps
+CONTAINER ID        IMAGE                COMMAND                CREATED             STATUS              PORTS                                            NAMES
+2eda921c011e        zettio/weave:0.9.0   &amp;quot;/home/weave/weaver    31 seconds ago      Up 30 seconds       0.0.0.0:6783-&amp;gt;6783/tcp, 0.0.0.0:6783-&amp;gt;6783/udp   weave
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これだけで仮想ネットワークができあがります。ホストOSで必要なポートは6783だけです。&lt;/p&gt;
+
+&lt;p&gt;あとはweaveコマンドにIPを指定しつつdockerコマンドのオプションを付けて起動すればOK。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ C=$(sudo weave run 10.0.0.1/24 -it ubuntu)
+$ sudo docker exec $C -it /bin/bash
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ただ、さくらVPSのCentOS6では動きませんでした。面倒なので深く追ってません。。。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ sudo /usr/local/bin/weave launch
+WARNING: Linux kernel version 3.5 or newer is required (you have 2.6)
+ERROR: ip utility, iproute2-ss091226 does not support network namespaces.
+       Please install iproute2-ss111010 or later.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;consul:eb7384652550cf95d9fa5f789a7acdb6&#34;&gt;consul&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.consul.io/&#34;&gt;consul&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Hashicorp謹製クラスタのオーケストレーションツール。今更説明する必要もないと思うので詳細は省略します。
+consul（と周辺ツールのconsul-templateやenvconsul)を使えば複数のホスト間で設定を共有できる、というのを試すのが今回の目的でしたが、とりあえず複数のconsulを動かすところまでを書きます。&lt;/p&gt;
+
+&lt;h3 id=&#34;consulを起動してクラスタを構築する:eb7384652550cf95d9fa5f789a7acdb6&#34;&gt;consulを起動してクラスタを構築する&lt;/h3&gt;
+
+&lt;p&gt;weaveネットワークに接続したコンテナを4台立ち上げて、consul1, consul2をserverとして、consul3, consul4をclientとして起動します。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ sudo weave run 10.0.0.1/24 -it -v $(pwd -P):/opt --name=consul1 restartr/consul-ready
+$ sudo weave run 10.0.0.2/24 -it -v $(pwd -P):/opt --name=consul2 restartr/consul-ready
+$ sudo weave run 10.0.0.3/24 -it -v $(pwd -P):/opt --name=consul3 restartr/consul-ready
+$ sudo weave run 10.0.0.4/24 -it -v $(pwd -P):/opt --name=consul4 restartr/consul-ready
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;あとはconsul agentを順に起動するだけ。&lt;/p&gt;
+
+&lt;p&gt;ここで注意するのが&lt;code&gt;-bind&lt;/code&gt;オプション。
+これを指定しないとdockerデフォルトのeth0のでクラスタにjoinすることになってしまい、このネットワークは他のコンテナとつながっていないためにクラスタ構築に失敗します。
+必ず&lt;code&gt;weave run 10.0.0.X/24&lt;/code&gt;で指定したIPにbindしておきましょう。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ sudo docker exec -d consul1 consul agent -server -data-dir=/tmp/consul -bootstrap-expect 1 -bind 10.0.0.1
+$ sudo docker exec -d consul2 consul agent -server -data-dir=/tmp/consul -config-dir=/opt/consul.d/web.json -bind 10.0.0.2
+$ sudo docker exec -d consul3 consul agent -data-dir=/tmp/consul -config-dir=/opt/consul.d/web.json -bind 10.0.0.3
+$ sudo docker exec -d consul4 consul agent -data-dir=/tmp/consul -config-dir=/opt/consul.d/web.json -bind 10.0.0.4
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;で、先に起動したconsul1に対して残りのコンテナ内のconsul agentをjoinさせていきます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ sudo docker exec consul2 consul join 10.0.0.1
+$ sudo docker exec consul3 consul join 10.0.0.1
+$ sudo docker exec consul4 consul join 10.0.0.1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;と、&lt;code&gt;consul members&lt;/code&gt;でjoinしている一覧が見えるようになります。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ sudo docker exec consul1 consul members
+Node          Address        Status  Type    Build  Protocol
+725dca3980ea  10.0.0.1:8301  alive   server  0.5.0  2
+f82001d6a7b4  10.0.0.2:8301  alive   server  0.5.0  2
+dcf304f77fdf  10.0.0.3:8301  alive   client  0.5.0  2
+3be672bd18b1  10.0.0.4:8301  alive   client  0.5.0  2
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;クラスタから離れるときは&lt;code&gt;consul leave&lt;/code&gt;です。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ sudo docker exec consul4 consul leave
+Graceful leave complete
+
+$ sudo docker exec consul1 consul members
+Node          Address        Status  Type    Build  Protocol
+dcf304f77fdf  10.0.0.3:8301  alive   client  0.5.0  2
+3be672bd18b1  10.0.0.4:8301  left    client  0.5.0  2       # &amp;lt;- Statusが&#39;alive&#39;から&#39;left&#39;に変わる
+725dca3980ea  10.0.0.1:8301  alive   server  0.5.0  2
+f82001d6a7b4  10.0.0.2:8301  alive   server  0.5.0  2
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;という感じで、複数のマシンをいじってる感じがまったくしないくらい&lt;code&gt;weave&lt;/code&gt; &amp;amp; &lt;code&gt;docker exec&lt;/code&gt;は便利です。
+weaveがプロダクション環境で使えるか、という点については未知ですが。&lt;/p&gt;
+
+&lt;p&gt;次回（があれば）consulを使った設定の管理について試したメモを書きたいと思います。&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

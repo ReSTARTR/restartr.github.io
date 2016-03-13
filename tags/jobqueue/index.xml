@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Jobqueue on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/jobqueue/</link>
+    <description>Recent content in Jobqueue on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 31 Jan 2010 00:16:51 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/jobqueue/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Gearmanでqueueing</title>
+      <link>http://blog.restartr.com/2010/01/31/gearmane381a7queueing</link>
+      <pubDate>Sun, 31 Jan 2010 00:16:51 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2010/01/31/gearmane381a7queueing</guid>
+      <description>&lt;p&gt;&lt;h3&gt;queueing&lt;/h3&gt;
+&lt;p&gt;webページを生成する際には、今すぐやらなきゃいけないことと、今すぐでなくても良いものがあります。&lt;br /&gt;
+今すぐやらなきゃいけないこととは、ユーザーリクエストに対するDB参照結果等のことで、今すぐでなくても良いものとはアクセスログなどの処理をDBに書き込んだりメール送信したりなど。それ以外にもあるかもですが大体そんな感じです。&lt;/p&gt;
+&lt;p&gt;通常であればすべて一回のHTTPリクエストの中でやるわけですが、queueingをすれば今やるべきでないことを後回しにできます。他にもメリットはありますが割愛で。&lt;/p&gt;
+&lt;p&gt;で、phpでqueuingをやるとしたら、こんなのがあるそうです。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://q4m.31tools.com/&#34;&gt;Q4M&lt;br /&gt;
+&lt;/a&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://gearman.org&#34;&gt;Gearman&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://activemq.apache.org/&#34;&gt;ActiveMQ&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://kr.github.com/beanstalkd/&#34;&gt;beanstalkd&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;で、Q4Mを試そうとしたらMySQL5.1以降でないとダメとか。&lt;br /&gt;
+ちょっとした事情で「5.1以降」という制約は避けたいので、Gearmanを試してみる事に。&lt;br /&gt;
+※最後のbeanstalkdは&lt;a href=&#34;http://rad-dev.org/&#34;&gt;lithium&lt;/a&gt;から使えるみたいです(&lt;a href=&#34;http://rad-dev.org/li3_queue&#34;&gt;li3_queue&lt;/a&gt;)。&lt;br /&gt;
+&lt;a id=&#34;more&#34;&gt;&lt;/a&gt;&lt;a id=&#34;more-190&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;h3&gt;仕組み&lt;/h3&gt;
+&lt;p&gt;図解は&lt;a href=&#34;http://gearman.org/images/gearman_stack.png&#34;&gt;公式サイトの図&lt;/a&gt;を見て下さい。&lt;/p&gt;
+&lt;p&gt;登場人物は大きく３つ。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt; ・Client：処理を依頼する人&lt;/li&gt;
+&lt;li&gt; ・Worker：依頼された処理を実行する人&lt;/li&gt;
+&lt;li&gt; ・JobServer：ClientとWorkerの橋渡しをする人&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;JobServerはdaemonで常駐していて、&lt;br /&gt;
+Clientからの要求がある度に、別途常駐しているWorkerに対して処理を投げます。&lt;br /&gt;
+かなりシンプルです。&lt;/p&gt;
+&lt;h3&gt;使い道&lt;/h3&gt;
+&lt;p&gt;Client側から処理を依頼するパターンはだいたい４つ。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;今すぐ依頼して、その結果を受け取る&lt;/li&gt;
+&lt;li&gt;今すぐ依頼して、結果を待たずに終了する&lt;/li&gt;
+&lt;li&gt;タスクを追加して、最後にまとめて実行して、その結果を受け取る&lt;/li&gt;
+&lt;li&gt;タスクを追加して、最後にまとめて実行して、結果を待たずに終了する&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;インストール&lt;/h3&gt;
+&lt;p&gt;Gearmanサーバーのインストール&lt;/p&gt;
+&lt;blockquote&gt;&lt;p&gt;wget &lt;a href=&#34;http://launchpad.net/gearmand/trunk/0.11/+download/gearmand-0.11.tar.gz&#34;&gt;http://launchpad.net/gearmand/trunk/0.11/+download/gearmand-0.11.tar.gz&lt;/a&gt;&lt;br /&gt;
+tar zxf gearmand-0.11.tar.gz&lt;br /&gt;
+cd gearmand-0.11&lt;br /&gt;
+./configure&lt;br /&gt;
+make; make install&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;起動&lt;/p&gt;
+&lt;blockquote&gt;&lt;p&gt;/usr/local/sbin/gearmand  -u root &amp;ndash;daemon&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;php extensionのインストール&lt;/p&gt;
+&lt;blockquote&gt;&lt;p&gt;wget &lt;a href=&#34;http://pecl.php.net/get/gearman-0.6.0.tgz&#34;&gt;http://pecl.php.net/get/gearman-0.6.0.tgz&lt;/a&gt;&lt;br /&gt;
+tar zxf gearman-0.6.0.tgz&lt;br /&gt;
+cd gearman-0.6.0&lt;br /&gt;
+phpize&lt;br /&gt;
+./configure&lt;br /&gt;
+make; make install&lt;/p&gt;&lt;/blockquote&gt;
+&lt;h3&gt;サンプル&lt;/h3&gt;
+&lt;h4&gt;今すぐ依頼して、結果を受け取るパターン&lt;/h4&gt;
+&lt;p&gt;worker.php&lt;/p&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;&amp;lt;? php
+$worker = new GearmanWorker();
+$worker-&amp;gt;addServer();
+$worker-&amp;amp;gt;addFunction(&#39;hoge&#39;,&#39;hoge_func&#39;);
+// 常駐
+while($worker-&amp;amp;gt;work());
+
+function hoge_func(GearmanJob $job)
+{
+    return &#39;hoge&#39;.$job-&amp;amp;gt;workload();
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&amp;lt;? php&lt;/p&gt;
+
+&lt;p&gt;client.php&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;&amp;lt;? php
+$worker = new GearmanWorker();
+$worker-&amp;gt;addServer();
+echo  $client-&amp;amp;gt;do(&#39;hoge&#39;, &#39;hello&#39;);
+echo &amp;quot;\n&amp;quot;;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;実行してみる&lt;/p&gt;
+&lt;blockquote&gt;&lt;p&gt;$ php woker.php &amp;amp;&lt;br /&gt;
+$ php client.php&lt;br /&gt;
+hello, hoge&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;これだけだとほぼ意味ないので、重い処理を遅延実行させてみます。&lt;/p&gt;
+&lt;h4&gt;今すぐ依頼して、結果を待たずに終了するパターン&lt;/h4&gt;
+&lt;p&gt;worker.php&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;&amp;lt;? php
+$worker = new GearmanWorker();
+$worker-&amp;amp;gt;addServer();
+$worker-&amp;amp;gt;addFunction(&#39;hoge&#39;,&#39;hoge_func&#39;);
+$worker-&amp;amp;gt;addFunction(&#39;heavy&#39;,&#39;heavy_func&#39;);
+// 常駐
+while($worker-&amp;amp;gt;work());
+
+function hoge_func(GearmanJob $job)
+{
+    return &#39;hoge, &#39;.$job-&amp;amp;gt;workload();
+}
+function heavy_func(GearmanJob $job)
+{
+        echo &amp;quot;wait...&amp;quot;;
+        sleep(10);
+    return &#39;hoge, &#39;.$job-&amp;amp;gt;workload();
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;client.php&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;&amp;lt;? php
+$client = new GearmanClient();
+$client-&amp;gt;addServer();
+echo  $client-&amp;amp;gt;do(&#39;hoge&#39;, &#39;hello&#39;);
+echo &amp;quot;\n&amp;quot;;
+echo $client-&amp;amp;gt;do(&#39;heavy&#39;, &#39;hello (sync)&#39;);
+echo &amp;quot;\n&amp;quot;;
+$client-&amp;amp;gt;doBackground(&#39;heavy&#39;, &#39;hello (async)&#39;);
+echo &amp;quot;\n&amp;quot;;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;実行してみる&lt;/p&gt;
+&lt;blockquote&gt;&lt;p&gt;$ php worker.php &amp;amp;&lt;br /&gt;
+$ php client.php&lt;br /&gt;
+hoge, hello&lt;br /&gt;
+hoge, hello (sync)&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;とまぁ、doBackgroundで依頼したキューの場合、clientでは結果を受け取ってません。&lt;br /&gt;
+これが基本的な使い方。&lt;/p&gt;
+&lt;h4&gt;タスクを追加して、最後にまとめて実行して、その結果を受け取る&lt;/h4&gt;
+&lt;p&gt;task_client.php&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;&amp;lt;? php
+$client = new GearmanClient();
+$client-&amp;gt;addServer();
+$client-&amp;gt;setCompleteCallback(&#39;task_cb&#39;);
+$client-&amp;gt;addTask(&#39;hoge&#39;, &#39;arg1&#39;);
+$client-&amp;gt;addTask(&#39;heavy&#39;, &#39;arg2&#39;);
+$client-&amp;gt;runTasks();
+function task_cb(GearmanTask $task)
+{
+    echo &#39;[result]&#39;.$task-&amp;gt;data();
+    echo &amp;quot;\n&amp;quot;;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;blockquote&gt;&lt;p&gt;
+$ worker.php &amp;&lt;br /&gt;
+$ task_client.php&lt;br /&gt;
+[result]hoge, arg1&lt;br /&gt;
+[result]hoge, arg2
+&lt;/p&gt;&lt;/blockquote&gt;
+
+&lt;p&gt;と、ひとつめの結果表示のあとには重い処理待ちが発生します。&lt;/p&gt;
+&lt;h4&gt;タスクを追加して、最後にまとめて実行して、結果を待たずに終了する&lt;/h4&gt;
+&lt;p&gt;重い処理をバックグラウンドのタスクとして登録します。&lt;br /&gt;
+task_client.php&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-php&#34;&gt;&amp;lt;? php
+
+$client = new GearmanClient();
+$client-&amp;gt;addServer();
+$client-&amp;gt;setCompleteCallback(&#39;task_cb&#39;);
+$client-&amp;gt;addTask(&#39;hoge&#39;, &#39;arg1&#39;);
+$client-&amp;gt;addTaskBackground(&#39;heavy&#39;, &#39;arg2&#39;);
+$client-&amp;gt;runTasks();
+
+function task_cb(GearmanTask $task)
+{
+        echo &#39;[result]&#39;.$task-&amp;gt;data();
+        echo &amp;quot;\n&amp;quot;;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;実行&lt;/p&gt;
+
+&lt;p&gt;&lt;blockquote&gt;&lt;p&gt;
+[result]hoge, arg1
+&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;addTaskBackgroundで追加したタスクの結果のみ待たずに処理が終了します。&lt;br /&gt;
+この例だと意味ないですが、今すぐ結果を必要としない処理を後回しにすることでユーザーへのレスポンスを高速化することができます。&lt;/p&gt;
+&lt;h3&gt;注意点&lt;/h3&gt;
+&lt;h4&gt;引数は数字と文字列のみ&lt;/h4&gt;
+&lt;p&gt;配列やオブジェクトではやりとりできないので、&lt;br /&gt;
+そういったものはシリアライズするとかjsonにするとかして渡さないとだめです。&lt;/h4&gt;
+&lt;h4&gt;workerが見つかるまで待つ&lt;/h4&gt;
+&lt;p&gt;clientからリクエストするworker名が存在しない（常駐していない場合）は、&lt;br /&gt;
+JobServerはworkerが見つかるまで待ちます。clientがバックグラウンドで依頼しなければそちらでも待ちが発生します。で、対象workerを起動すると即座にJobServerはキュー処理をworkerに渡します。当然ですが。&lt;/p&gt;
+&lt;p&gt;もう少し現実的な処理の中でqueueingして試したかったのですが、&lt;br /&gt;
+まずは入り口ということで。次回はもうちょっと突っ込んだ処理をやってみたいと。&lt;/p&gt;
+&lt;h3&gt;参考資料&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://gearman.org&#34;&gt;Gearman(公式サイト)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.php.net/manual/en/book.gearman.php&#34;&gt;PHP: Gearman - Manual&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.ibm.com/developerworks/jp/opensource/library/os-php-gearman/&#34;&gt;Gearman を使って PHP アプリケーションのワークロードを分散する&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

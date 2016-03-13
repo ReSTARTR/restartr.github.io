@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Character Set on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/character-set/</link>
+    <description>Recent content in Character Set on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Mon, 07 Apr 2014 08:12:32 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/character-set/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>MySQLでutf8mb4を扱う場合は必要なカラムと接続時だけ明示的に指定する</title>
+      <link>http://blog.restartr.com/2014/04/07/mysql-character-set-utf8mb4</link>
+      <pubDate>Mon, 07 Apr 2014 08:12:32 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2014/04/07/mysql-character-set-utf8mb4</guid>
+      <description>
+
+&lt;p&gt;結論はタイトルの通り。&lt;/p&gt;
+
+&lt;h2 id=&#34;まとめ:92573dc8333c8459780952b1c4bbdcda&#34;&gt;まとめ&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;systemのエンコードが&lt;code&gt;character_set_system&lt;/code&gt;に反映される. clientの接続時のデフォルトはシステムのエンコードが使用される（未検証）&lt;/li&gt;
+&lt;li&gt;clientの接続時の指定が優先される。ただし、&lt;code&gt;character_set_database&lt;/code&gt;, &lt;code&gt;character_set_filesystem&lt;/code&gt;, &lt;code&gt;character_set_server&lt;/code&gt;については上書きされない。&lt;/li&gt;
+&lt;li&gt;my.cnfの&lt;code&gt;mysql.default-character-set&lt;/code&gt;は意味ある？（未検証）&lt;/li&gt;
+&lt;li&gt;my.cnfの&lt;code&gt;mysqld.character-set-server&lt;/code&gt;はfilesystemとsystem以外のデフォルトに影響する。clientの接続時に無指定の場合にもデフォルトとして利用される&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;以下の理由によって、デフォルトはutf8で、必要なカラムとクライアント接続時にだけutf8mb4を適用することとした。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;インデックスに使える文字数がutf8だと255文字までに対してutf8mb4だと191文字まで。
+
+&lt;ul&gt;
+&lt;li&gt;サーバー側の設定はデフォルトutf8.クライアントの設定はデフォルトutf8mb4.が良い&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;検証:92573dc8333c8459780952b1c4bbdcda&#34;&gt;検証&lt;/h3&gt;
+
+&lt;p&gt;server/clientともにremiのMySQL5.5を使用&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ mysql --version
+mysql  Ver 14.14 Distrib 5.5.37, for Linux (x86_64) using readline 5.1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;utf8なカラム&lt;code&gt;name1&lt;/code&gt;と、utf8mb4なカラム&lt;code&gt;name2&lt;/code&gt;を用意.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ mysql -uroot test -e &#39;show create table user2\G&#39;
+*************************** 1. row ***************************
+       Table: user2
+Create Table: CREATE TABLE `user2` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name1` varchar(255) DEFAULT NULL,
+  `name2` varchar(255) CHARACTER SET utf8mb4 DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;デフォルトの状態&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ mysql -uroot test -e &#39;show global variables like &amp;quot;character_set%&amp;quot;; show variables like &amp;quot;character_set%&amp;quot;&#39;
++--------------------------+----------------------------+
+| Variable_name            | Value                      |
++--------------------------+----------------------------+
+| character_set_client     | latin1                     |
+| character_set_connection | latin1                     |
+| character_set_database   | latin1                     |
+| character_set_filesystem | binary                     |
+| character_set_results    | latin1                     |
+| character_set_server     | latin1                     |
+| character_set_system     | utf8                       |
+| character_sets_dir       | /usr/share/mysql/charsets/ |
++--------------------------+----------------------------+
++--------------------------+----------------------------+
+| Variable_name            | Value                      |
++--------------------------+----------------------------+
+| character_set_client     | utf8                       |
+| character_set_connection | utf8                       |
+| character_set_database   | latin1                     |
+| character_set_filesystem | binary                     |
+| character_set_results    | utf8                       |
+| character_set_server     | latin1                     |
+| character_set_system     | utf8                       |
+| character_sets_dir       | /usr/share/mysql/charsets/ |
++--------------------------+----------------------------+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;clientが&lt;code&gt;--default-character-set=utf8mb4&lt;/code&gt;をつけて接続した場合&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ mysql --default-character-set=utf8 -uroot test -e &#39;show global variables like &amp;quot;character_set%&amp;quot;; show variables like &amp;quot;character_set%&amp;quot;&#39;
++--------------------------+----------------------------+
+| Variable_name            | Value                      |
++--------------------------+----------------------------+
+| character_set_client     | latin1                     |
+| character_set_connection | latin1                     |
+| character_set_database   | latin1                     |
+| character_set_filesystem | binary                     |
+| character_set_results    | latin1                     |
+| character_set_server     | latin1                     |
+| character_set_system     | utf8                       |
+| character_sets_dir       | /usr/share/mysql/charsets/ |
++--------------------------+----------------------------+
++--------------------------+----------------------------+
+| Variable_name            | Value                      |
++--------------------------+----------------------------+
+| character_set_client     | utf8                       |
+| character_set_connection | utf8                       |
+| character_set_database   | latin1                     |
+| character_set_filesystem | binary                     |
+| character_set_results    | utf8                       |
+| character_set_server     | latin1                     |
+| character_set_system     | utf8                       |
+| character_sets_dir       | /usr/share/mysql/charsets/ |
++--------------------------+----------------------------+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;my.cnfに&lt;code&gt;mysql.default-character-set&lt;/code&gt;を指定した場合&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-ini&#34;&gt;[mysql]
+default-character-set=utf8
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ mysql -uroot test -e &#39;show global variables like &amp;quot;character_set%&amp;quot;; show variables like &amp;quot;character_set%&amp;quot;&#39;
++--------------------------+----------------------------+
+| Variable_name            | Value                      |
++--------------------------+----------------------------+
+| character_set_client     | latin1                     |
+| character_set_connection | latin1                     |
+| character_set_database   | latin1                     |
+| character_set_filesystem | binary                     |
+| character_set_results    | latin1                     |
+| character_set_server     | latin1                     |
+| character_set_system     | utf8                       |
+| character_sets_dir       | /usr/share/mysql/charsets/ |
++--------------------------+----------------------------+
++--------------------------+----------------------------+
+| Variable_name            | Value                      |
++--------------------------+----------------------------+
+| character_set_client     | utf8                       |
+| character_set_connection | utf8                       |
+| character_set_database   | latin1                     |
+| character_set_filesystem | binary                     |
+| character_set_results    | utf8                       |
+| character_set_server     | latin1                     |
+| character_set_system     | utf8                       |
+| character_sets_dir       | /usr/share/mysql/charsets/ |
++--------------------------+----------------------------+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;my.cnfに&lt;code&gt;mysqd.character-set-server=utf8&lt;/code&gt;を指定した場合&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-ini&#34;&gt;[mysqld]
+character-set-server=utf8
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ mysql -uroot test -e &#39;show global variables like &amp;quot;character_set%&amp;quot;; show variables like &amp;quot;character_set%&amp;quot;&#39;
++--------------------------+----------------------------+
+| Variable_name            | Value                      |
++--------------------------+----------------------------+
+| character_set_client     | utf8                       |
+| character_set_connection | utf8                       |
+| character_set_database   | utf8                       |
+| character_set_filesystem | binary                     |
+| character_set_results    | utf8                       |
+| character_set_server     | utf8                       |
+| character_set_system     | utf8                       |
+| character_sets_dir       | /usr/share/mysql/charsets/ |
++--------------------------+----------------------------+
++--------------------------+----------------------------+
+| Variable_name            | Value                      |
++--------------------------+----------------------------+
+| character_set_client     | utf8                       |
+| character_set_connection | utf8                       |
+| character_set_database   | utf8                       |
+| character_set_filesystem | binary                     |
+| character_set_results    | utf8                       |
+| character_set_server     | utf8                       |
+| character_set_system     | utf8                       |
+| character_sets_dir       | /usr/share/mysql/charsets/ |
++--------------------------+----------------------------+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;rails-activerecord-から接続する場合:92573dc8333c8459780952b1c4bbdcda&#34;&gt;Rails（ActiveRecord）から接続する場合　&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-yaml&#34;&gt;db:
+  encoding: &amp;quot;utf8mb4&amp;quot; # SET NAMES &amp;quot;utf8mb4&amp;quot;と等価
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;さらに、&lt;code&gt;SET NAMES utf8mb4&lt;/code&gt;は以下全てを実行した場合と等価&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-sql&#34;&gt;SET character_set_client = utf8mb4;
+SET character_set_results = utf8mb4;
+SET character_set_connection = utf8mb4;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;utf8なカラムの文字列検索:92573dc8333c8459780952b1c4bbdcda&#34;&gt;utf8なカラムの文字列検索&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;utf8mb4なカラムには、utf8mb4で接続してinsertすること&lt;/li&gt;
+&lt;li&gt;utf8なカラムには、utf8でもutf8mb4でもどちらでinsertしてもselectしても問題ない&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ mysql -uroot test -e &#39;set names &amp;quot;utf8mb4&amp;quot;; select * from user2 where name2 like &amp;quot;%だよ%&amp;quot; limit 3&#39;
++----+----------------+------------------+
+| id | name1          | name2            |
++----+----------------+------------------+
+|  1 | firstだよ♬     | firstだよ♬       |
+|  2 | secondだよ     | secondだよ????   |
+|  3 | secondだよ?    | secondだよ♨      |
++----+----------------+------------------+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ mysql -uroot test -e &#39;set names &amp;quot;utf8mb4&amp;quot;; select * from user2 where name2 like &amp;quot;%だよ♨&amp;quot; limit 3&#39;
++----+--------------------+---------------------+
+| id | name1              | name2               |
++----+--------------------+---------------------+
+|  3 | secondだよ?        | secondだよ♨          |
+|  8 | テストだよ♬        | テストだよ♨          |
+| 13 | テストだよ♬        | テストだよ♨          |
++----+--------------------+---------------------+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ただし、utf8mb4なカラムに対して4バイト文字列を投げると、utf8で接続した時にエラーになる&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ mysql -uroot test -e &#39;set names &amp;quot;utf8&amp;quot;; select * from user2 where name2 like &amp;quot;%だよ♨&amp;quot; limit 3&#39;
+ERROR 1267 (HY000) at line 1: Illegal mix of collations (utf8mb4_general_ci,IMPLICIT) and (utf8_general_ci,COERCIBLE) for operation &#39;like&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;なので、データとしてutf8mb4が格納される可能性があるDBに対しては、utf8mb4で必ず接続すること。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ mysql -uroot test -e &#39;set names &amp;quot;utf8mb4&amp;quot;; select * from user2 where name2 like &amp;quot;%だよ♨&amp;quot; limit 3&#39;
++----+--------------------+---------------------+
+| id | name1              | name2               |
++----+--------------------+---------------------+
+|  3 | secondだよ?        | secondだよ♨          |
+|  8 | テストだよ♬        | テストだよ♨          |
+| 13 | テストだよ♬        | テストだよ♨          |
++----+--------------------+---------------------+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;クライアントが5-1の場合:92573dc8333c8459780952b1c4bbdcda&#34;&gt;クライアントが5.1の場合&lt;/h3&gt;
+
+&lt;p&gt;my.cnfやmysqlコマンドのオプションに&lt;code&gt;client.default_character_set=utf8mb4&lt;/code&gt;は指定できない&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ mysql --default-character-set=utf8mb4 -h 192.168.1.164 -uroot test -e &#39;select * from user&#39;
+mysql: Character set &#39;utf8mb4&#39; is not a compiled character set and is not specified in the &#39;/usr/share/mysql/charsets/Index.xml&#39; file
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ただし、SQLでの&lt;code&gt;set names utf8mb4&lt;/code&gt;の指定は有効。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ mysql -h 192.168.1.164 -uroot test -e &#39;set names utf8mb4; select * from user&#39;
++----+------------+---------------+
+| id | name1      | name2         |
++----+------------+---------------+
+| 14 | テスト  | テスト???? |
+| 15 | テスト? | テスト♨ |
++----+------------+---------------+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ActiveRecord等でmysql2を使用している場合、encodingにutf8mb4を指定すると例外が起きる&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;Character set &#39;utf8mb4&#39; is not a compiled character set and is not specified in the &#39;/usr/share/mysql/charsets/Index.xml&#39; file
+/home/yoshida/hoge/vendor/bundle/ruby/2.0.0/gems/mysql2-0.3.13/lib/mysql2/client.rb:58:in `connect&#39;: Can&#39;t initialize character set utf8mb4 (path: /usr/share/mysql/charsets/) (Mysql2::Error)
+        from /home/yoshida/hoge/vendor/bundle/ruby/2.0.0/gems/mysql2-0.3.13/lib/mysql2/client.rb:58:in `initialize&#39;
+        from test_mysql.rb:3:in `new&#39;
+        from test_mysql.rb:3:in `&amp;lt;main&amp;gt;&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;なので、接続時にset namesすれば良い&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;require &#39;mysql2&#39;
+client = Mysql2::Client.new(:host =&amp;gt; &amp;quot;localhost&amp;quot;, :username =&amp;gt; &amp;quot;root&amp;quot;, db: &#39;test&#39;)
+client.query(&#39;SET NAMES utf8mb4&#39;)
+puts client.query(&#39;SELECT * FROM user&#39;).map { |r| r[&#39;name2&#39;] }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ ruby test.rb
+[&amp;quot;テスト????&amp;quot;, &amp;quot;テスト🌸&amp;quot;]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;参考:92573dc8333c8459780952b1c4bbdcda&#34;&gt;参考&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://dev.mysql.com/doc/refman/5.1/ja/charset-database.html&#34;&gt;MySQL ::   MySQL 5.1 リファレンスマニュアル :: 9.3.2 データベースのキャラクタセットおよび照合順序&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://d.hatena.ne.jp/maeyan/20090811/1250008156&#34;&gt;MySQLでutf8を扱う場合。 - ×××Diary&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://apps.timwhitlock.info/emoji/tables/unicode&#34;&gt;Emoji unicode characters for use on the web&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

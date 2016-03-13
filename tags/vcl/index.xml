@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Vcl on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/vcl/</link>
+    <description>Recent content in Vcl on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 06 Apr 2014 15:38:08 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/vcl/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>VarnishのVCLを再起動なしに再読み込みする</title>
+      <link>http://blog.restartr.com/2014/04/06/reload-varnish-vcl</link>
+      <pubDate>Sun, 06 Apr 2014 15:38:08 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2014/04/06/reload-varnish-vcl</guid>
+      <description>
+
+&lt;p&gt;/etc/varnish/default.vclを書き換えた時、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;/etc/init.d/varnishd restart
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ってやってたけど、reloadできることを今更知った。&lt;/p&gt;
+
+&lt;h3 id=&#34;vcl-list-現在の読み込んでるvclの一覧を見る:8660b18fcf14c6f9cc062a68395bb13a&#34;&gt;vcl.list: 現在の読み込んでるVCLの一覧を見る&lt;/h3&gt;
+
+&lt;p&gt;CentOSのyumで入れたvarnishはデフォルトでこんなふうになってる&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ varnishadm -T localhost:6082 vcl.list
+active        579 boot
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;vcl-load-新規にvclをロードする:8660b18fcf14c6f9cc062a68395bb13a&#34;&gt;vcl.load: 新規にVCLをロードする&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ varnishadm -T localhost:6082 vcl.load boot-`date+%Y%m%d%H%M%S` /etc/varnish/default.vcl
+VCL compiled.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;この時点では利用可能な状態であって、まだ変更は反映されていない&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ varnishadm -T localhost:6082 vcl.list
+active        579 boot
+available       0 boot-20140406153127
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;vcl-use-ロードしたvclに切り替える:8660b18fcf14c6f9cc062a68395bb13a&#34;&gt;vcl.use: ロードしたVCLに切り替える&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ varnishadm -T localhost:6082 vcl.use boot-20140406153127
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;何も表示されないけどちゃんと切り替わっている&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ varnishadm -T localhost:6082 vcl.list
+available     526 boot
+active         53 boot-20140406153127
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ちなみに、真ん中の数値はactiveの場合は経過秒数で、availableになると数値が減っていく。
+でも、0になっても居座り続ける。この数値の変化のルールはよくわかってない。&lt;/p&gt;
+
+&lt;p&gt;ということで不要な過去のvclは定期的に消さないとずっと残り続けてしまうので注意。&lt;/p&gt;
+
+&lt;h3 id=&#34;vcl-discard-ロード済みvclの破棄:8660b18fcf14c6f9cc062a68395bb13a&#34;&gt;vcl.discard: ロード済みvclの破棄&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ varnishadm -T localhost:6082 vcl.discard boot
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ここでも結果が表示されないけどちゃんと消えている。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ varnishadm -T localhost:6082 vcl.list
+available       11 boot-20140406155155
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;本当はinitスクリプト化すると便利なんだろうけど、手動でも良いかなと。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.xcir.net/?p=124&#34;&gt;Varnishで再起動無しで設定ファイルを適用する方法(reload) &amp;raquo; cat /dev/random &amp;gt; /dev/null &amp;amp;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

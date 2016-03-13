@@ -1,0 +1,576 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Android on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/android/</link>
+    <description>Recent content in Android on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 01 May 2011 22:18:15 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/android/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>SIMフリーのandroid端末でSoftBankのMMSを受信する方法</title>
+      <link>http://blog.restartr.com/2011/05/01/how-to-send-and-receive-softbank-mms-on-sim-free-android</link>
+      <pubDate>Sun, 01 May 2011 22:18:15 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2011/05/01/how-to-send-and-receive-softbank-mms-on-sim-free-android</guid>
+      <description>
+
+&lt;p&gt;Desire SでS!メールを受信しようと、apnの設定をしてみたのですが、全く送受信が成功しませんでした。
+いろいろ調査していたところ、SoftBankメールのアプリのバージョンが原因だと判明しました。
+古いバージョンをインストールすれば問題ないようです。&lt;/p&gt;
+
+&lt;p&gt;SoftBankメールを送受信するための手順を下記に記しておきます。&lt;/p&gt;
+
+&lt;h3 id=&#34;1-apn設定:f19db98a2463d62c89b1e15e991dd2b1&#34;&gt;1.apn設定&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align=&#34;left&#34;&gt;項目名&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;設定値&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;名前&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;＜任意＞&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;APN&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;smile.world&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;プロキシ&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;＜未設定＞&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;ポート&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;＜未設定＞&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;ユーザー名&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;dna1trop&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;パスワード&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;so2t3k3m2a&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;MMSC&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;&lt;a href=&#34;http://mms/&#34;&gt;http://mms/&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;MMSプロキシ&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;smilemms.softbank.ne.jp&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;MMSポート&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;8080&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;MCC&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;440&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;MNC&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;20&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;認証タイプ&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;＜未設定&amp;gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;APNタイプ&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;＜未設定＞&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;※こちらを参考にしました。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.yukinishijima.net/android/android-dev-phone-1-%E3%81%A7mms%E3%82%92%E4%BD%BF%E3%81%88%E3%82%8B%E3%82%88%E3%81%86%E3%81%AB%E3%81%99%E3%82%8B%E3%81%BE%E3%81%A7%E3%81%AE%E9%81%93%E3%81%AE%E3%82%8A&#34;&gt;Android Dev Phone 1 でMMSを使えるようにするまでの道のり&amp;nbsp;|&amp;nbsp;Yuki Nishijima Blog&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;2-softbankメールをインストール:f19db98a2463d62c89b1e15e991dd2b1&#34;&gt;2.SoftBankメールをインストール&lt;/h3&gt;
+
+&lt;p&gt;最新版(2011.05.01時点でv2.1)の&lt;a href=&#34;https://market.android.com/details?id=jp.softbank.mb.mail&#34;&gt;SoftBankメール&lt;/a&gt;では送受信に失敗します。&lt;/p&gt;
+
+&lt;p&gt;なので、下記ブログ記事よりv1.6の古いバージョンをダウンロード＆インストールします。
+※既にAndroidマーケットから最新版をダウンロードしている場合は、そちらを先にアンインストールしておく必要があります。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://gadgetordiary.wordpress.com/2011/04/13/softbank%E3%83%A1%E3%83%BC%E3%83%AB%E3%82%A2%E3%83%97%E3%83%AA1-6%E3%82%92%E5%86%8D%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB/&#34;&gt;Softbankメールアプリ1.6を再インストール &amp;laquo; デジタルガジェッター日記&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;端末のブラウザからダウンロードしてインストールするか、android-sdkの入っているPCから&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;adb install jp.softbank.mb.mail-1.6.apk
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;でインストールできます。&lt;/p&gt;
+
+&lt;p&gt;あとは、アプリを起動すればメールの閲覧や送信が自由にできます。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Desire SをiPhone3GSと比較してみた ? カメラ編 </title>
+      <link>http://blog.restartr.com/2011/04/28/compare-iphone3gs-to-desire-s-e28093camera</link>
+      <pubDate>Thu, 28 Apr 2011 09:00:42 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2011/04/28/compare-iphone3gs-to-desire-s-e28093camera</guid>
+      <description>
+
+&lt;p&gt;今回は、Desire Sのカメラ性能がどの程度なのか、iPhone3GSとデジカメを比較しながらみていきます。&lt;/p&gt;
+
+&lt;p&gt;iPhoneもDesire Sどちらもデフォルトのカメラアプリをデフォルトの設定で使用しました。
+あと、Degital Cameraは具体的なモデル名は言及しませんが2年くらい前の所謂&amp;rdquo;普通のデジカメ&amp;rdquo;です。&lt;/p&gt;
+
+&lt;h2 id=&#34;desire-sで撮影してみての感想:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;Desire Sで撮影してみての感想&lt;/h2&gt;
+
+&lt;p&gt;最近の携帯のカメラってこんなもんなんですかね。あまり携帯カメラ事情に詳しくないのもあって、正直想像以上に綺麗で驚きました。とくに順光の性能が良いです。Desire Sは多少青味が強くでますが、あとから少し補正する前提なら満足度が高いと思いました。&lt;/p&gt;
+
+&lt;p&gt;ただ、夕暮れ以降になるととたんに脆くなり、フォーカスが迷いまくります。iPhone3GSの方が合焦速度は早いくらいです。かつ、合焦したはずが実際はピンぼけってことも。ISOはAUTO/100/200/400/800まであるのですが、日中〜明るめの屋内までがカバー範囲でしょうか。&lt;/p&gt;
+
+&lt;p&gt;もちろん、ビンテージカメラ風に加工してくれるアプリを用いた楽しみ方(instagramやpicplzなど)もあると思います。が、私の場合、手軽に撮れるスナップ機として必要最低限の機能を求めており、基本性能を重要視していました。
+使ってみるとiPhone3GSではストレスフルだった起動速度が非常に満足のいくもので、起動?撮影?確認みたいなフローがストレスなく行えます。（あくまでiPhone3GSとの比較であり、最近のスマートフォンなら大体こんな感じなのかもしれません。)&lt;/p&gt;
+
+&lt;h2 id=&#34;desire-sとiphone3gsとの比較撮影サンプル:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;Desire SとiPhone3GSとの比較撮影サンプル&lt;/h2&gt;
+
+&lt;p&gt;Desire Sのフォーマットは5:3と4:3に切り替え可能ですが、今回は5:3のワイドで撮影しました。
+（※というか撮影後に切り替え可能なことに気づいた…orz)&lt;/p&gt;
+
+&lt;p&gt;コメントはDesire S中心に書きました。&lt;/p&gt;
+
+&lt;h3 id=&#34;風景その１:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;風景その１&lt;/h3&gt;
+
+&lt;p&gt;太陽を背にした順光での比較です。&lt;/p&gt;
+
+&lt;h4 id=&#34;iphone-3gs:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;iPhone 3GS&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.flickr.com/photos/53244662@N04/5653782282/&#34; title=&#34;001_IP by ReSTARTR_y, on Flickr&#34;&gt;&lt;img src=&#34;http://farm6.static.flickr.com/5303/5653782282_b4d5cf3d97_z.jpg&#34; width=&#34;500&#34; height=&#34;375&#34; alt=&#34;001_IP&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;desire-s:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;Desire S&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.flickr.com/photos/53244662@N04/5653778670/&#34; title=&#34;001_DS by ReSTARTR_y, on Flickr&#34;&gt;&lt;img src=&#34;http://farm6.static.flickr.com/5265/5653778670_5886531d9c_z.jpg&#34; width=&#34;500&#34; height=&#34;333&#34; alt=&#34;001_DS&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;degital-camera:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;Degital Camera&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.flickr.com/photos/53244662@N04/5653775032/&#34; title=&#34;001_DC by ReSTARTR_y, on Flickr&#34;&gt;&lt;img src=&#34;http://farm6.static.flickr.com/5067/5653775032_76f7ac9abf_z.jpg&#34; width=&#34;500&#34; height=&#34;300&#34; alt=&#34;001_DC&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;風景その２:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;風景その２&lt;/h3&gt;
+
+&lt;p&gt;左前方に太陽があります。&lt;/p&gt;
+
+&lt;h4 id=&#34;iphone-3gs-1:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;iPhone 3GS&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.flickr.com/photos/53244662@N04/5653211387/&#34; title=&#34;002_IP by ReSTARTR_y, on Flickr&#34;&gt;&lt;img src=&#34;http://farm6.static.flickr.com/5262/5653211387_0076831cc3_z.jpg&#34; width=&#34;500&#34; height=&#34;375&#34; alt=&#34;002_IP&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;desire-s-1:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;Desire S&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.flickr.com/photos/53244662@N04/5653208715/&#34; title=&#34;002_DS by ReSTARTR_y, on Flickr&#34;&gt;&lt;img src=&#34;http://farm6.static.flickr.com/5187/5653208715_6d4e0d0523_z.jpg&#34; width=&#34;500&#34; height=&#34;333&#34; alt=&#34;002_DS&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;degital-camera-1:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;Degital Camera&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.flickr.com/photos/53244662@N04/5653204723/&#34; title=&#34;002_DC by ReSTARTR_y, on Flickr&#34;&gt;&lt;img src=&#34;http://farm6.static.flickr.com/5305/5653204723_3c3e7052f2_z.jpg&#34; width=&#34;500&#34; height=&#34;300&#34; alt=&#34;002_DC&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;逆光性能:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;逆光性能&lt;/h3&gt;
+
+&lt;p&gt;フォーカスはクレーン本体にあわせています。
+Desire Sのカメラのレンズ前面をプラスチックが覆っているせいかフレアが目立ちます。あえて狙うこともできると思いますが。
+暗い部分もディティールも割と残っています。&lt;/p&gt;
+
+&lt;h4 id=&#34;iphone-3gs-2:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;iPhone 3GS&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.flickr.com/photos/53244662@N04/5653782540/&#34; title=&#34;003_IP by ReSTARTR_y, on Flickr&#34;&gt;&lt;img src=&#34;http://farm6.static.flickr.com/5226/5653782540_7f2971459f_z.jpg&#34; width=&#34;500&#34; height=&#34;375&#34; alt=&#34;003_IP&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;desire-s-2:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;Desire S&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.flickr.com/photos/53244662@N04/5653778984/&#34; title=&#34;003_DS by ReSTARTR_y, on Flickr&#34;&gt;&lt;img src=&#34;http://farm6.static.flickr.com/5146/5653778984_62109ea1c3_z.jpg&#34; width=&#34;500&#34; height=&#34;333&#34; alt=&#34;003_DS&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;degital-camera-2:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;Degital Camera&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.flickr.com/photos/53244662@N04/5653204925/&#34; title=&#34;003_DC by ReSTARTR_y, on Flickr&#34;&gt;&lt;img src=&#34;http://farm6.static.flickr.com/5062/5653204925_cd2962bae4_z.jpg&#34; width=&#34;500&#34; height=&#34;300&#34; alt=&#34;003_DC&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;ダイナミックレンジ:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;ダイナミックレンジ&lt;/h3&gt;
+
+&lt;p&gt;明るい部分から暗い部分までちゃんとつぶれず残っています。&lt;/p&gt;
+
+&lt;h4 id=&#34;iphone-3gs-3:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;iPhone 3GS&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.flickr.com/photos/53244662@N04/5653782852/&#34; title=&#34;004_IP by ReSTARTR_y, on Flickr&#34;&gt;&lt;img src=&#34;http://farm6.static.flickr.com/5022/5653782852_0236fd9b22_z.jpg&#34; width=&#34;500&#34; height=&#34;375&#34; alt=&#34;004_IP&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;desire-s-3:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;Desire S&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.flickr.com/photos/53244662@N04/5653209073/&#34; title=&#34;004_DS by ReSTARTR_y, on Flickr&#34;&gt;&lt;img src=&#34;http://farm6.static.flickr.com/5146/5653209073_9c4225cd50_z.jpg&#34; width=&#34;500&#34; height=&#34;333&#34; alt=&#34;004_DS&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;degital-camera-3:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;Degital Camera&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.flickr.com/photos/53244662@N04/5653775946/&#34; title=&#34;004_DC by ReSTARTR_y, on Flickr&#34;&gt;&lt;img src=&#34;http://farm6.static.flickr.com/5188/5653775946_73fa06e8fd_z.jpg&#34; width=&#34;500&#34; height=&#34;300&#34; alt=&#34;004_DC&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;夕日を逆光で撮る:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;夕日を逆光で撮る&lt;/h3&gt;
+
+&lt;p&gt;これは私が割とよく好んで撮るシーンですが、ちゃんと暗い部分まで残っています。&lt;/p&gt;
+
+&lt;h4 id=&#34;iphone-3gs-4:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;iPhone 3GS&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.flickr.com/photos/53244662@N04/5653212703/&#34; title=&#34;005_IP by ReSTARTR_y, on Flickr&#34;&gt;&lt;img src=&#34;http://farm6.static.flickr.com/5066/5653212703_b5c493e234_z.jpg&#34; width=&#34;500&#34; height=&#34;375&#34; alt=&#34;005_IP&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;desire-s-4:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;Desire S&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.flickr.com/photos/53244662@N04/5653209315/&#34; title=&#34;005_DS by ReSTARTR_y, on Flickr&#34;&gt;&lt;img src=&#34;http://farm6.static.flickr.com/5103/5653209315_4d578dc3f6_z.jpg&#34; width=&#34;500&#34; height=&#34;333&#34; alt=&#34;005_DS&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;degital-camera-4:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;Degital Camera&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.flickr.com/photos/53244662@N04/5653776184/&#34; title=&#34;005_DC by ReSTARTR_y, on Flickr&#34;&gt;&lt;img src=&#34;http://farm6.static.flickr.com/5070/5653776184_cf12b0a47a_z.jpg&#34; width=&#34;500&#34; height=&#34;300&#34; alt=&#34;005_DC&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;トワイライト:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;トワイライト&lt;/h3&gt;
+
+&lt;p&gt;このあたりの時間からDesire Sの挙動が怪しくなります。とくに暗所にノイズが目立つようになりました。&lt;/p&gt;
+
+&lt;h4 id=&#34;iphone-3gs-5:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;iPhone 3GS&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.flickr.com/photos/53244662@N04/5653212949/&#34; title=&#34;006_IP by ReSTARTR_y, on Flickr&#34;&gt;&lt;img src=&#34;http://farm6.static.flickr.com/5308/5653212949_bcd0001834_z.jpg&#34; width=&#34;500&#34; height=&#34;375&#34; alt=&#34;006_IP&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;desire-s-5:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;Desire S&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.flickr.com/photos/53244662@N04/5653209585/&#34; title=&#34;006_DS by ReSTARTR_y, on Flickr&#34;&gt;&lt;img src=&#34;http://farm6.static.flickr.com/5068/5653209585_fafbf35f56_z.jpg&#34; width=&#34;500&#34; height=&#34;333&#34; alt=&#34;006_DS&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;degital-camera-5:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;Degital Camera&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.flickr.com/photos/53244662@N04/5653776478/&#34; title=&#34;006_DC by ReSTARTR_y, on Flickr&#34;&gt;&lt;img src=&#34;http://farm6.static.flickr.com/5267/5653776478_d209130e42_z.jpg&#34; width=&#34;500&#34; height=&#34;300&#34; alt=&#34;006_DC&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;ライトアップされた建造物:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;ライトアップされた建造物&lt;/h3&gt;
+
+&lt;p&gt;Desire Sの写真、フォーカスあってません…&lt;/p&gt;
+
+&lt;h4 id=&#34;iphone-3gs-6:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;iPhone 3GS&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.flickr.com/photos/53244662@N04/5653213723/&#34; title=&#34;007_IP by ReSTARTR_y, on Flickr&#34;&gt;&lt;img src=&#34;http://farm6.static.flickr.com/5223/5653213723_355085e054_z.jpg&#34; width=&#34;375&#34; height=&#34;500&#34; alt=&#34;007_IP&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;desire-s-6:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;Desire S&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.flickr.com/photos/53244662@N04/5653210185/&#34; title=&#34;007_DS by ReSTARTR_y, on Flickr&#34;&gt;&lt;img src=&#34;http://farm6.static.flickr.com/5029/5653210185_1862065604_z.jpg&#34; width=&#34;333&#34; height=&#34;500&#34; alt=&#34;007_DS&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;degital-camera-6:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;Degital Camera&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.flickr.com/photos/53244662@N04/5653206365/&#34; title=&#34;007_DC by ReSTARTR_y, on Flickr&#34;&gt;&lt;img src=&#34;http://farm6.static.flickr.com/5223/5653206365_7aed7efdd2_z.jpg&#34; width=&#34;300&#34; height=&#34;500&#34; alt=&#34;007_DC&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;街灯のある暗がり:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;街灯のある暗がり&lt;/h3&gt;
+
+&lt;p&gt;こちらも、Desire Sの写真はフォーカスあってないです。&lt;/p&gt;
+
+&lt;h4 id=&#34;iphone-3gs-7:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;iPhone 3GS&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.flickr.com/photos/53244662@N04/5653214051/&#34; title=&#34;008_IP by ReSTARTR_y, on Flickr&#34;&gt;&lt;img src=&#34;http://farm6.static.flickr.com/5061/5653214051_ec8f359063_z.jpg&#34; width=&#34;500&#34; height=&#34;375&#34; alt=&#34;008_IP&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;desire-s-7:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;Desire S&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.flickr.com/photos/53244662@N04/5653780952/&#34; title=&#34;008_DS by ReSTARTR_y, on Flickr&#34;&gt;&lt;img src=&#34;http://farm6.static.flickr.com/5061/5653780952_74bb8d6c3e_z.jpg&#34; width=&#34;500&#34; height=&#34;333&#34; alt=&#34;008_DS&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;degital-camera-7:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;Degital Camera&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.flickr.com/photos/53244662@N04/5653777348/&#34; title=&#34;008_DC by ReSTARTR_y, on Flickr&#34;&gt;&lt;img src=&#34;http://farm6.static.flickr.com/5263/5653777348_a4328aa334_z.jpg&#34; width=&#34;500&#34; height=&#34;300&#34; alt=&#34;008_DC&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;夜の寺院:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;夜の寺院&lt;/h3&gt;
+
+&lt;p&gt;iPhone3GSよりはDesire Sが色味など幾分かマシ。&lt;/p&gt;
+
+&lt;h4 id=&#34;iphone-3gs-8:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;iPhone 3GS&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.flickr.com/photos/53244662@N04/5653213413/&#34; title=&#34;011_IP by ReSTARTR_y, on Flickr&#34;&gt;&lt;img src=&#34;http://farm6.static.flickr.com/5108/5653213413_7d06759434_z.jpg&#34; width=&#34;500&#34; height=&#34;375&#34; alt=&#34;011_IP&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;desire-s-8:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;Desire S&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.flickr.com/photos/53244662@N04/5653209905/&#34; title=&#34;011_DS by ReSTARTR_y, on Flickr&#34;&gt;&lt;img src=&#34;http://farm6.static.flickr.com/5110/5653209905_010d44e046_z.jpg&#34; width=&#34;500&#34; height=&#34;333&#34; alt=&#34;011_DS&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;degital-camera-8:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;Degital Camera&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.flickr.com/photos/53244662@N04/5653207079/&#34; title=&#34;011_DC by ReSTARTR_y, on Flickr&#34;&gt;&lt;img src=&#34;http://farm6.static.flickr.com/5270/5653207079_20d043dc28_z.jpg&#34; width=&#34;500&#34; height=&#34;300&#34; alt=&#34;011_DC&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;街の夜景:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;街の夜景&lt;/h3&gt;
+
+&lt;p&gt;ここまで暗いと、手前の暗い部分にノイズがのりまくります。&lt;/p&gt;
+
+&lt;h4 id=&#34;iphone-3gs-9:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;iPhone 3GS&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.flickr.com/photos/53244662@N04/5653214545/&#34; title=&#34;009_IP by ReSTARTR_y, on Flickr&#34;&gt;&lt;img src=&#34;http://farm6.static.flickr.com/5265/5653214545_67f3c03688_z.jpg&#34; width=&#34;500&#34; height=&#34;375&#34; alt=&#34;009_IP&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;desire-s-9:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;Desire S&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.flickr.com/photos/53244662@N04/5653781294/&#34; title=&#34;009_DS by ReSTARTR_y, on Flickr&#34;&gt;&lt;img src=&#34;http://farm6.static.flickr.com/5270/5653781294_42844e1e51_z.jpg&#34; width=&#34;500&#34; height=&#34;333&#34; alt=&#34;009_DS&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;degital-camera-9:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;Degital Camera&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.flickr.com/photos/53244662@N04/5653777944/&#34; title=&#34;009_DC by ReSTARTR_y, on Flickr&#34;&gt;&lt;img src=&#34;http://farm6.static.flickr.com/5023/5653777944_dc9478b928_z.jpg&#34; width=&#34;500&#34; height=&#34;300&#34; alt=&#34;009_DC&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;ほぼ暗闇の河川沿い:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;ほぼ暗闇の河川沿い&lt;/h3&gt;
+
+&lt;p&gt;肉眼だと&amp;rdquo;Degital Camera&amp;rdquo;の写真くらいの明るさなのですが、Desire SもiPhone3GSも街灯以外ほぼまっ暗。ここまでくると携帯カメラには不利すぎるシチュエーションですかね。&lt;/p&gt;
+
+&lt;h4 id=&#34;iphone-3gs-10:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;iPhone 3GS&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.flickr.com/photos/53244662@N04/5653214277/&#34; title=&#34;010_IP by ReSTARTR_y, on Flickr&#34;&gt;&lt;img src=&#34;http://farm6.static.flickr.com/5306/5653214277_9cd4145e14_z.jpg&#34; width=&#34;500&#34; height=&#34;375&#34; alt=&#34;010_IP&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;desire-s-10:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;Desire S&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.flickr.com/photos/53244662@N04/5653781498/&#34; title=&#34;010_DS by ReSTARTR_y, on Flickr&#34;&gt;&lt;img src=&#34;http://farm6.static.flickr.com/5143/5653781498_4ededbb142_z.jpg&#34; width=&#34;500&#34; height=&#34;333&#34; alt=&#34;010_DS&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;degital-camera-10:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;Degital Camera&lt;/h4&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.flickr.com/photos/53244662@N04/5653207725/&#34; title=&#34;010_DC by ReSTARTR_y, on Flickr&#34;&gt;&lt;img src=&#34;http://farm6.static.flickr.com/5187/5653207725_8f2e979f83_z.jpg&#34; width=&#34;500&#34; height=&#34;300&#34; alt=&#34;010_DC&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;参考リンク:ea6efd2db3f85ad460684c0ceb4068a0&#34;&gt;参考リンク&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://pocketnow.com/android/htc-desire-s-review&#34;&gt;HTC Desire S Review&lt;/a&gt;(簡単なレビューとカメラ・ビデオのサンプルがあります。)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Desire Sのインプレは多分これで終了です。&lt;/p&gt;
+
+&lt;p&gt;今後はiOSと比較しながらandroid端末の良さについていろいろ考えてみようと思います。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Desire SをiPhone3GSと比較してみた - 外観編</title>
+      <link>http://blog.restartr.com/2011/04/27/compare-desire-s-andiphone-3gs-f</link>
+      <pubDate>Wed, 27 Apr 2011 09:00:30 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2011/04/27/compare-desire-s-andiphone-3gs-f</guid>
+      <description>
+
+&lt;p&gt;先日購入したばかりのHTC Desire S。
+今回は基本スペックの確認と、今まで現役使用していたiPhone3GSとの外観の比較をしてみます。&lt;/p&gt;
+
+&lt;h3 id=&#34;基本スペック:3654b4ec0097189b49592aeb9954c65d&#34;&gt;基本スペック&lt;/h3&gt;
+
+&lt;p&gt;各所に公表されているとおりなのでここでは細かく触れませんが、比較するとこんな感じになります。
+Desire S, iPhone3GS, iPhone4, Nexus Sの主要項目(独断と偏見)の比較表になります。&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align=&#34;left&#34;&gt;&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;DesireS&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;iPhone3GS&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;iPhone4&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;Nexus S&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;縦幅&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;115mm&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;115.5mm&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;115.2mm&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;123.9mm&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;横幅&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;59.8mm&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;62.1mm&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;58.6mm&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;63mm&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;奥行き&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;11.63mm&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;12.3mm&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;9.3mm&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;10.88mm&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;重量&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;130g&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;135g&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;137g&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;129g&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;CPU&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;1.1GHz&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;600MHz&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;1GHz&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;1GHz&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;RAM&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;768MB&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;256MB&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;512MB&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;512MB&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;背面カメラ&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;5.0M&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;3.0M&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;5.0M&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;5.0M&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;電池&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;1450mAh&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;1219mAh&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;1420mAh&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;1500mAh&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;ディスプレイ&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;3.7&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;3.5&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;3.5&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;4.0&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;解像度&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;800x480&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;480x320&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;960x640&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;800x480&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;microSD&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;o&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;-&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;-&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;-&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;Wi-Fi&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;802.11b/g/n&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;802.11b/g&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;802.11b/g&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;802.11b/g/n&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;OS&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;android2.3.3&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;iOS&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;iOS&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;android2.3.3&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;スペックだけみると最後発のDesireSが非常にバランス良く見えます。
+もちろん、OSや諸々の組み合わせによって満足度は変わるので一概には言えないでしょう。&lt;/p&gt;
+
+&lt;p&gt;iPhone3GSが出た当時はそのスペックもかなり魅力的に感じていたのですが、さすがに二年後の現役モデルと比較するとくすんで見えますね…&lt;/p&gt;
+
+&lt;h3 id=&#34;外観についてiphone3gsと比較:3654b4ec0097189b49592aeb9954c65d&#34;&gt;外観についてiPhone3GSと比較&lt;/h3&gt;
+
+&lt;p&gt;ボタンの位置やサイズ感など、比べてみればみるほどよく似ていることがわかります。&lt;/p&gt;
+
+&lt;p&gt;まずは表側。パッと見は同サイズ。
+ディスプレイはDesireSが若干縦長です。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.flickr.com/photos/53244662@N04/5653202925/&#34; title=&#34;IMG_4574 by ReSTARTR_y, on Flickr&#34;&gt;&lt;img src=&#34;http://farm6.static.flickr.com/5185/5653202925_aa51ca6efb_z.jpg&#34; width=&#34;500&#34; height=&#34;333&#34; alt=&#34;IMG_4574&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;裏面。こちらも同様の形状をしていて、中心に向かってカーブしているデザイン。
+カメラの位置もほぼ同じですね。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.flickr.com/photos/53244662@N04/5653773818/&#34; title=&#34;IMG_4575 by ReSTARTR_y, on Flickr&#34;&gt;&lt;img src=&#34;http://farm6.static.flickr.com/5147/5653773818_cd430ae2af_z.jpg&#34; width=&#34;500&#34; height=&#34;333&#34; alt=&#34;IMG_4575&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;上面。イヤホンジャックと電源ボタンがありますが、こちらも同じ配置です。&lt;/p&gt;
+
+&lt;p&gt;ただ、ジャックの口がDesire Sは平面に切られているのに対して、iPhone3GSはカーブに沿って口の形状が加工されています。
+仕上げの細かさで言えばiPhone3GSのほうが上ということでしょうか。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.flickr.com/photos/53244662@N04/5653773240/&#34; title=&#34;IMG_4581 by ReSTARTR_y, on Flickr&#34;&gt;&lt;img src=&#34;http://farm6.static.flickr.com/5107/5653773240_821093e634_z.jpg&#34; width=&#34;500&#34; height=&#34;333&#34; alt=&#34;IMG_4581&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;厚みもほぼ同じ。&lt;/p&gt;
+
+&lt;p&gt;iPhoneは表面が一直線ですが、DesireSはボディ末端がカーブしています。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.flickr.com/photos/53244662@N04/5653774040/&#34; title=&#34;IMG_4585 by ReSTARTR_y, on Flickr&#34;&gt;&lt;img src=&#34;http://farm6.static.flickr.com/5187/5653774040_22573c28bb_z.jpg&#34; width=&#34;500&#34; height=&#34;333&#34; alt=&#34;IMG_4585&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;iPhone 3GSのカバーをつけてみると、少しDesire Sが小さいことがよくわかります。&lt;/p&gt;
+
+&lt;p&gt;特に縦のサイズがコンパクトさが際立ちますね。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.flickr.com/photos/53244662@N04/5653203875/&#34; title=&#34;Desire S that is wared cover for iPhone3GS by ReSTARTR_y, on Flickr&#34;&gt;&lt;img src=&#34;http://farm6.static.flickr.com/5307/5653203875_2a1048bd3a_z.jpg&#34; width=&#34;500&#34; height=&#34;333&#34; alt=&#34;Desire S that is wared cover for iPhone3GS&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;DesireSはiPhone3GSよりは少し小さいです。
+手に持ってみると、裏面のカーブが大きいDesireSのほうがしっくり手になじむ感じがします。
+ただ、つや消し塗装のユニボディなせいか、サラサラした感じで滑って落としそう。。。&lt;/p&gt;
+
+&lt;p&gt;現在はiPhone3GSの黒SIMをつけて使用しています。
+あと、SDカードは最初からSANDISKの8GBが挿入されていました。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.flickr.com/photos/53244662@N04/5653223571/&#34; title=&#34;IMG_4590 by ReSTARTR_y, on Flickr&#34;&gt;&lt;img src=&#34;http://farm6.static.flickr.com/5029/5653223571_8bc82103b3_z.jpg&#34; width=&#34;500&#34; height=&#34;333&#34; alt=&#34;IMG_4590&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;ちなみにDesire SにはDesireの保護シートをつけている為サイズが足りていませんがご愛嬌ってことでｗ&lt;/p&gt;
+
+&lt;p&gt;次回は、カメラ性能について比較してみようと思います。&lt;/p&gt;
+
+&lt;h3 id=&#34;参考リンク:3654b4ec0097189b49592aeb9954c65d&#34;&gt;参考リンク:&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.htc.com/www/product/desires/overview.html&#34;&gt;HTC - Products - HTC Desire S - Overview&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.samsung.com/us/mobile/cell-phones/GT-I9020FSTTMB&#34;&gt;Nexus S from Google | Samsung Nexus&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.apple.com/jp/iphone/&#34;&gt;アップル - iPhone - 携帯電話、iPod、インターネットデバイスがひとつに。&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.knowyourmobile.com/comparisons/854017/samsung_google_nexus_s_vs_htc_desire_s.html&#34;&gt;Samsung Google Nexus S vs HTC Desire S&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://ja.wikipedia.org/wiki/IPhone&#34;&gt;iPhone - Wikipedia&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>HTC Desire Sを買ってみた</title>
+      <link>http://blog.restartr.com/2011/04/25/bought-htc-desire-s</link>
+      <pubDate>Mon, 25 Apr 2011 23:12:59 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2011/04/25/bought-htc-desire-s</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;http://www.flickr.com/photos/53244662@N04/5653772980/&#34; title=&#34;IMG_4557 by ReSTARTR_y, on Flickr&#34;&gt;&lt;img src=&#34;http://farm6.static.flickr.com/5310/5653772980_b12c71a761_z.jpg&#34; width=&#34;640&#34; height=&#34;427&#34; alt=&#34;IMG_4557&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;はじめてのAndroidとして&lt;a href=&#34;http://www.htc.com/www/product/desires/overview.html&#34;&gt;HTC Desire S&lt;/a&gt;を買ってみました。&lt;/p&gt;
+
+&lt;p&gt;購入したのは秋葉原の&lt;a href=&#34;http://www.jan-gle.com/&#34;&gt;JAN-GLE&lt;/a&gt;。&lt;/p&gt;
+
+&lt;p&gt;通販で買うつもりでしたが、たまたま下記ツイートを見かけたので週末に店舗に行って買ってきたというわけです。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://blog.restartr.com/wp-content/uploads/2011/04/4ee8a29b22700d15be20990984897581.png&#34;&gt;&lt;img src=&#34;http://blog.restartr.com/wp-content/uploads/2011/04/4ee8a29b22700d15be20990984897581.png&#34; alt=&#34;&#34; title=&#34;4ee8a29b22700d15be20990984897581&#34; width=&#34;738&#34; height=&#34;338&#34; class=&#34;aligncenter size-full wp-image-850&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;今まではiPhone3GSを使い続けていましたが、そろそろ2年縛りが解ける頃だったこともあり、android機に手を出してみようという気になりました。
+何を買うかはずいぶん迷った挙句、Sumsung Nexus SとHTC Desire Sの2機種に絞り込み。
+最後は店員さんと話し合った結果HTC Desire Sを選択しました。&lt;/p&gt;
+
+&lt;p&gt;いろいろいじり中ですが、なかなか完成度が高い印象をうけています。
+追ってインプレを書いてみようと思います。&lt;/p&gt;
+
+&lt;p&gt;※せっかくなのでScalaでAndroidアプリでも書いてみようかなとも思ったり。&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

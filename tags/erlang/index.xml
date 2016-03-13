@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Erlang on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/erlang/</link>
+    <description>Recent content in Erlang on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Tue, 23 Nov 2010 18:57:35 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/erlang/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>ScalaとErlangとPHPと私</title>
+      <link>http://blog.restartr.com/2010/11/23/scala-erlang-php-and-me</link>
+      <pubDate>Tue, 23 Nov 2010 18:57:35 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2010/11/23/scala-erlang-php-and-me</guid>
+      <description>&lt;p&gt;PHPよりScalaが簡単である、という議論に対するふたつのポストがあったので、自分向けにまとめました。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;元記事：&lt;a href=&#34;http://wadearnold.com/blog/scala/scala-is-easier-than-php&#34;&gt;Wade Arnold ? Scala is easier than PHP&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;返信：&lt;a href=&#34;http://videlalvaro.github.com/2010/11/reply-to-scala-is-easier-than-php.html&#34;&gt;Reply to &#34;Scala is Easier than PHP&#34;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;概要&lt;/h3&gt;
+&lt;p&gt;ざっとこんな感じにまとめてしまいました。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;議論の中心はWebページ生成言語としての言語の比較ではない&lt;/li&gt;
+&lt;li&gt;ふたりともWebページ生成ならPHPが優れているという立場にかわりはない&lt;/li&gt;
+&lt;li&gt;議論の中心は主にスケーラビリティの確保とプロセス間通信&lt;/li&gt;
+&lt;li&gt;元記事のWade ArnoldさんはScala推進派&lt;/li&gt;
+&lt;li&gt;返信者のvidelalvaroさんはErlang推進派&lt;/li&gt;
+&lt;li&gt;スケーラビリティ確保のためには関数型言語という結論&lt;/li&gt;
+&lt;li&gt;ScalaかErlangどちらが簡単か、という議論はない&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;a id=&#34;more&#34;&gt;&lt;/a&gt;&lt;a id=&#34;more-410&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;h3&gt;ScalaがPHPより簡単な理由&lt;/h3&gt;
+&lt;p&gt;Wade Arnoldさんが元記事「Scala is easier than PHP」において、マルチコア時代にはScalaが必要だ、みたいなことを書きました。彼はPHP３のころからPHPの開発に関わっていて、最近はZendFrameworkのコミッタをやっていたそうです。&lt;br /&gt;
+PHPはいまだに最高の言語であると最初に断っておきつつ、Scalaの技術的な点を整理しておこう、という内容。&lt;/p&gt;
+&lt;p&gt;スケーラビリティの確保のためには、PHPのようにたくさんのツールを必要とせずとも、言語仕様的に多くをサポートするScalaが簡単な理由である、と。Scalaへの移行は時間を必要とするが、スケーラビリティには必要な選択であるといっています。&lt;/p&gt;
+&lt;blockquote&gt;&lt;p&gt;No need for amqp with actors, no beanstalkd with mutable queues, and it’s fast as hell!&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;&lt;em&gt;ActorによってAMQPはいらなくなる。ミュータブルなキューもbeanstalkdなしに。そしてそれはものすごく速い。&lt;br /&gt;
+&lt;/em&gt;&lt;/p&gt;
+&lt;h3&gt;PHPの代わりにErlangを使う理由&lt;/h3&gt;
+&lt;p&gt;それに対してvidelalvaroさんが「Reply to &#34;Scala is easier than PHP&#34;」でコメントをしています。&lt;br /&gt;
+おおむねWadeさんの意見に同意で、彼はScalaではなくErlangを推しているようです。&lt;/p&gt;
+&lt;p&gt;意見としてはこんな感じでしょうか。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;サーバーのような長時間実行するプログラムにはErlangつかうといい&lt;/li&gt;
+&lt;li&gt;スレッド間通信にはErlangをつかうといい&lt;/li&gt;
+&lt;li&gt;Webページを生成するだけならPHPをつかうといい&lt;/li&gt;
+&lt;li&gt;CPUの全コアを利用したいだけならPHP-FPMをつかうといい&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;スケーラビリティ確保のために必要なもの&lt;/h3&gt;
+&lt;p&gt;元記事ではPHPのスケーラビリティ確保のために必要なものをあげ、これらを使うのは大変骨が折れると言っています。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;Fantastic at PHP internals&lt;/li&gt;
+&lt;li&gt;Amazing at Apache HTTPD and compiling appropriate PHP extensions.&lt;/li&gt;
+&lt;li&gt;Nginx&lt;/li&gt;
+&lt;li&gt;BigIP ? More than round robin load balancing&lt;/li&gt;
+&lt;li&gt;Intimately know how sessions work and probably write your own handlers&lt;/li&gt;
+&lt;li&gt;Memcached&lt;/li&gt;
+&lt;li&gt;APC&lt;/li&gt;
+&lt;li&gt;AMQP&lt;/li&gt;
+&lt;li&gt;BeanStalkd&lt;/li&gt;
+&lt;li&gt;Code based sharding or at least master/slave logic&lt;/li&gt;
+&lt;li&gt;C/C++&lt;/li&gt;
+&lt;li&gt;Lots of security! It’s a problem with all dynamic languages.&lt;/li&gt;
+&lt;li&gt;Zend Framework.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;それに対してScalaはたった５つ。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;6 months of scala&lt;/li&gt;
+&lt;li&gt;Functional programming&lt;/li&gt;
+&lt;li&gt;&lt;a onclick=&#34;javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-article&#39;,&#39;akkasource.org&#39;]);&#34; href=&#34;http://akkasource.org/&#34;&gt;Akka Framework&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a onclick=&#34;javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-article&#39;,&#39;liftweb.net&#39;]);&#34; href=&#34;http://liftweb.net/&#34;&gt;Lift Framework&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Nginx / Jetty&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;ツールに頼らずとも言語が機能を備えているから気にすべきところが非常にシンプルになるようです。&lt;/p&gt;
+&lt;h3&gt;個人的感想&lt;/h3&gt;
+&lt;p&gt;PHPをWebページ生成以外で対決させるのはどうなんだろうと思いつつも、Scalaをどのような場面で使っていけばよいか考える良い機会になりました。&lt;br /&gt;
+個人的な話をすると、Scalaは言語仕様を学ぶばかりで実際のプログラムを書くまでには至っていませんし、性能評価もまだやってないので「PHPからScalaに移行すべきだ」、と言い切るには至っていないのが現状です。&lt;br /&gt;
+が、Wadeさんは後ほどもっと突っ込んだ記事を書くと冒頭に言っていますし、videlalvaroさんも最後に&lt;/p&gt;
+&lt;blockquote&gt;&lt;p&gt;if we want to sell functional languages like Erlang or Scala to the PHP programmer then we have to look for more compelling features that may attract them to look into these languages. What I think are those features ?I guess?, should be part of another blog post.&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;と、ScalaやErlangをPHPerに売り込むための魅力的な点をPOSTしてくれるかも。&lt;br /&gt;
+それも楽しみにしておこうと思います。&lt;/p&gt;
+&lt;h3&gt;余談&lt;/h3&gt;
+&lt;p&gt;最近思うのが、Scalaって言語仕様があまりに多くて、それを学ぶことが楽しいです。&lt;br /&gt;
+が、学ぶべき仕様がどこまでなのか見えてこず、さらに、仕様を学ぶこと自体が目的になってきているような気がします。&lt;br /&gt;
+ということで(?)そろそろ、実際につくりたいプログラムを書きながら仕様を学ぶ方向にシフトしようと思います。&lt;/p&gt;
+&lt;p&gt;※あとPHP-FPMもちゃんと調査・検証したいし、Kestrelのソースも読みたい。&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

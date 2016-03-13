@@ -1,181 +1,81 @@
-
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+	<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <meta charset="utf-8">
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.15" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
   <title>TSVファイルを処理する - I Will Survive</title>
-  <meta name="author" content="ReSTARTR">
-  <link rel="author" href="https://plus.google.com/103216164658230535238" />
-  <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="TSVファイルを処理する .sharing { clear: both; } .sharing li{ display: inline; list-style-type: none; float: left; height: 1em; line-height: 1em; padding: 0 &hellip;">
-  
-
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/poole.css">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/syntax.css">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/hyde.css">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/custom.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
 
   
-  <link rel="canonical" href="http://blog.restartr.com/2010/09/05/processing-the-file-formatted-tsv/">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-   <link href="/stylesheets/data-table.css" media="screen, projection" rel="stylesheet" type="text/css" />
-  <script src="/javascripts/modernizr-2.0.js"></script>
-  <script src="/javascripts/ender.js"></script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  <link href="/atom.xml" rel="alternate" title="I Will Survive" type="application/atom+xml">
-  <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
-
-<!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
-<link href='http://fonts.googleapis.com/css?family=Lato:400,100,100italic,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
-<link href='http://fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
-<link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:200,300,400,500,600,700,900' rel='stylesheet' type='text/css'>
-
-
-	<!-- mathjax config similar to math.stackexchange -->
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    tex2jax: {
-      inlineMath: [ ['$$','$$'], ["\\(","\\)"] ],
-      processEscapes: true
-    }
-  });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      tex2jax: {
-        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-      }
-    });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax(), i;
-        for(i=0; i < all.length; i += 1) {
-            all[i].SourceElement().parentNode.className += ' has-jax';
-        }
-    });
-</script>
-
-<script type="text/javascript"
-   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
-
-
-
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://blog.restartr.com/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="http://blog.restartr.com/favicon.png">
 
   
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-894530-10']);
-    _gaq.push(['_trackPageview']);
-
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
-
-
-  <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
-  <style>html{background: url("/images/background.png") no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;}</style>
+  <link href="" rel="alternate" type="application/rss+xml" title="I Will Survive" />
 </head>
 
-<body   >
-  <header role="banner"><hgroup>
-</hgroup>
+	<body class="theme-base-0d">
+		<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="http://blog.restartr.com"><h1>I Will Survive</h1></a>
+      <p class="lead">
+       An application depelopper&#39;s blog. 
+      </p>
+    </div>
 
-</header>
-  <!-- <nav role="navigation"><ul class="subscription" data-subscription="rss">
-  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-  
-</ul>
-  
-<form action="https://www.google.com/search" method="get">
-  <fieldset role="search">
-    <input type="hidden" name="q" value="site:blog.restartr.com" />
-    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
-  </fieldset>
-</form>
-  
-<ul class="main-navigation">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives">Archives</a></li>
-</ul>
-
-</nav> -->
-  <div id="main">
-    <div id="content">
-      <div>
-<article class="hentry" role="article">
-  
-  <header>
-    
-      <h1 class="entry-title">TSVファイルを処理する</h1>
+    <ul class="sidebar-nav">
+      <li><a href="http://blog.restartr.com/">Home</a> </li>
       
-      <style type="text/css">
-  .sharing {
-     clear: both;
-  }
-  .sharing li{
-    display: inline;
-    list-style-type: none;
-    float: left;
-    height: 1em;
-    line-height: 1em;
-    padding: 0 10px 0 0 ;
-    margin: 10px 0;
-  }
-  .sharing ul {
-    margin: 1em 0;
-    padding: 1em 0;
-  }
-</style>
-<div class="sharing">
+        <li><a href="http://blog.restartr.com/about/"> About </a></li>
+      
+        <li><a href="http://blog.restartr.com/index.xml"> Feed </a></li>
+      
+        <li><a href="https://github.com/ReSTARTR"> GitHub </a></li>
+      
+        <li><a href="https://twitter.com/ReSTARTR"> Twitter </a></li>
+      
+    </ul>
+
+    <p>Copyright ©2016 - ReSTARTR. All rights reserved.</p>
+  </div>
+</div>
+
+
+		<div class="content container">
+			<div class="post">
+			 	<h1>TSVファイルを処理する</h1>
+        <span class="post-date">2010-09-05(Sun) - [Scala]</span>
+			  <div class="sharing">
   <ul>
-  <li><a href="http://blog.restartr.com/2010/09/05/processing-the-file-formatted-tsv/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
-  
-  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2010/09/05/processing-the-file-formatted-tsv/" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2010/09/05/processing-the-file-formatted-tsv/" >Tweet</a></li>
-  
+  <li><a href="http://blog.restartr.com/2010/09/05/processing-the-file-formatted-tsv" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2010/09/05/processing-the-file-formatted-tsv" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2010/09/05/processing-the-file-formatted-tsv" >Tweet</a></li>
   <li><a data-pocket-label="pocket" data-pocket-count="horizontal" class="pocket-btn" data-lang="en"></a><script type="text/javascript">!function(d,i){if(!d.getElementById(i)){var j=d.createElement("script");j.id=i;j.src="https://widgets.getpocket.com/v1/j/btn.js?v=1";var w=d.getElementById(i);d.body.appendChild(j);}}(document,"pocket-btn-js");</script></li>
-  
-  
   </ul>
 </div>
-<p />
+<script type="text/javascript">
+  (function(){
+    var twitterWidgets = document.createElement('script');
+    twitterWidgets.type = 'text/javascript';
+    twitterWidgets.async = true;
+    twitterWidgets.src = '//platform.twitter.com/widgets.js';
+    document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+  })();
+</script>
+<hr />
 
-      
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2010-09-05T18:22:53+09:00" pubdate data-updated="true">2010-09-05 (Sun)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Scalaプログラミング入門をざっと読んでから少し間が空いてしまいました。<br />
+			      <p>Scalaプログラミング入門をざっと読んでから少し間が空いてしまいました。<br />
 第１回Scala座を見たりして刺激もらったのでちょっとScala弄りなど。<br />
 ※Scala座については非公式にトゥギャらせてもらっています。：<a href="http://togetter.com/li/47287">第１回Scala座非公式勝手まとめ</a></p>
 <p>ちょっと雰囲気を振り返るため、普段PHPでよくやるTSVファイルの読み込みでテスト。</p>
@@ -195,294 +95,74 @@ u10,Osaka
 <p>これの転置インデックスを作成したい。</p>
 <p>で、<a href="http://rainyday.blog.so-net.ne.jp/2007-12-01">こちらのブログ記事</a>とかを参考にしたりして、何回か試行錯誤してできたのがこちらのソース。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-<span class="line-number">15</span>
-<span class="line-number">16</span>
-<span class="line-number">17</span>
-<span class="line-number">18</span>
-<span class="line-number">19</span>
-<span class="line-number">20</span>
-<span class="line-number">21</span>
-<span class="line-number">22</span>
-<span class="line-number">23</span>
-</pre></td><td class="code"><pre><code class="scala"><span class="line"><span class="k">import</span> <span class="nn">scala.collection.mutable.HashMap</span>
-</span><span class="line"><span class="k">import</span> <span class="nn">scala.io.Source</span>
-</span><span class="line"><span class="k">import</span> <span class="nn">scala.io.BufferedSource</span>
-</span><span class="line"><span class="k">object</span> <span class="nc">ReadTsv</span>
-</span><span class="line"><span class="o">{</span>
-</span><span class="line">  <span class="k">def</span> <span class="n">main</span><span class="o">(</span> <span class="n">args</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="o">)</span>
-</span><span class="line">  <span class="o">{</span>
-</span><span class="line">    <span class="k">val</span> <span class="n">source</span> <span class="k">=</span> <span class="nc">Source</span><span class="o">.</span><span class="n">fromFile</span><span class="o">(</span> <span class="s">&quot;foo.txt&quot;</span> <span class="o">)</span>
-</span><span class="line">    <span class="k">try</span> <span class="o">{</span>
-</span><span class="line">      <span class="k">var</span> <span class="n">m</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">HashMap</span><span class="o">[</span><span class="kt">String</span>,<span class="kt">List</span><span class="o">[</span><span class="kt">String</span><span class="o">]]</span>
-</span><span class="line">      <span class="k">for</span><span class="o">(</span> <span class="n">line</span> <span class="k">&lt;-</span> <span class="n">source</span><span class="o">.</span><span class="n">getLines</span> <span class="o">)</span> <span class="o">{</span>
-</span><span class="line">        <span class="k">val</span> <span class="n">x</span><span class="k">:</span><span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">]</span> <span class="k">=</span> <span class="n">line</span><span class="o">.</span><span class="n">stripLineEnd</span><span class="o">.</span><span class="n">split</span><span class="o">(</span><span class="s">&quot;,&quot;</span><span class="o">)</span>
-</span><span class="line">        <span class="n">m</span><span class="o">.</span><span class="n">update</span><span class="o">(</span><span class="n">x</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span> <span class="o">,</span> <span class="n">m</span><span class="o">.</span><span class="n">get</span><span class="o">(</span><span class="n">x</span><span class="o">(</span><span class="mi">1</span><span class="o">))</span> <span class="k">match</span> <span class="o">{</span>
-</span><span class="line">          <span class="k">case</span> <span class="nc">Some</span><span class="o">(</span><span class="n">s</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">x</span><span class="o">(</span><span class="mi">0</span><span class="o">)</span> <span class="o">::</span> <span class="n">s</span>
-</span><span class="line">          <span class="k">case</span> <span class="nc">None</span>    <span class="k">=&gt;</span> <span class="nc">List</span><span class="o">(</span> <span class="n">x</span><span class="o">(</span><span class="mi">0</span><span class="o">)</span> <span class="o">)</span>
-</span><span class="line">        <span class="o">})</span>
-</span><span class="line">      <span class="o">}</span>
-</span><span class="line">      <span class="n">println</span><span class="o">(</span> <span class="n">m</span> <span class="o">)</span>
-</span><span class="line">    <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
-</span><span class="line">      <span class="n">source</span><span class="o">.</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">BufferedSource</span><span class="o">].</span><span class="n">close</span>
-</span><span class="line">    <span class="o">}</span>
-</span><span class="line">  <span class="o">}</span>
-</span><span class="line"><span class="o">}</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<pre><code class="language-scala">import scala.collection.mutable.HashMap
+import scala.io.Source
+import scala.io.BufferedSource
+object ReadTsv
+{
+  def main( args: Array[String] )
+  {
+    val source = Source.fromFile( &quot;foo.txt&quot; )
+    try {
+      var m = new HashMap[String,List[String]]
+      for( line &lt;- source.getLines ) {
+        val x:Array[String] = line.stripLineEnd.split(&quot;,&quot;)
+        m.update(x(1) , m.get(x(1)) match {
+          case Some(s) =&gt; x(0) :: s
+          case None    =&gt; List( x(0) )
+        })
+      }
+      println( m )
+    } finally {
+      source.asInstanceOf[BufferedSource].close
+    }
+  }
+}
+</code></pre>
+
 <p>実行</p>
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>scalac ReadTsv.scala
-</span><span class="line"><span class="nv">$ </span>scala ReadTsv
-</span><span class="line">Map<span class="o">(</span>Shiga -&gt; List<span class="o">(</span>u08<span class="o">)</span>, Nagoya -&gt; List<span class="o">(</span>u07, u06, u03<span class="o">)</span>, Tokyo -&gt; List<span class="o">(</span>u04, u01<span class="o">)</span>, Osaka -&gt; List<span class="o">(</span>u10, u02<span class="o">)</span>, Fukuoka -&gt; List<span class="o">(</span>u05<span class="o">)</span>, Hokkaido -&gt; List<span class="o">(</span>u09<span class="o">))</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+```bash
+$ scalac ReadTsv.scala
+$ scala ReadTsv
+Map(Shiga -> List(u08), Nagoya -> List(u07, u06, u03), Tokyo -> List(u04, u01), Osaka -> List(u10, u02), Fukuoka -> List(u05), Hokkaido -> List(u09))
+```
 <p>手続き型な感じが色濃い気がするけど、もっと関数型的になるのでしょうか。。<br />
 とりあえずコレクションとパターンマッチの練習にはなりました。</p>
 <p>他人のプログラムを拝見するなどして、もっとScalaの理解を深める必要がありそうです。</p>
-</div>
 
-
-
-
-<style type="text/css">
-  .sharing {
-     clear: both;
-  }
-  .sharing li{
-    display: inline;
-    list-style-type: none;
-    float: left;
-    height: 1em;
-    line-height: 1em;
-    padding: 0 10px 0 0 ;
-    margin: 10px 0;
-  }
-  .sharing ul {
-    margin: 1em 0;
-    padding: 1em 0;
-  }
-</style>
-<div class="sharing">
+			  <div class="sharing">
   <ul>
-  <li><a href="http://blog.restartr.com/2010/09/05/processing-the-file-formatted-tsv/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
-  
-  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2010/09/05/processing-the-file-formatted-tsv/" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2010/09/05/processing-the-file-formatted-tsv/" >Tweet</a></li>
-  
+  <li><a href="http://blog.restartr.com/2010/09/05/processing-the-file-formatted-tsv" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2010/09/05/processing-the-file-formatted-tsv" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2010/09/05/processing-the-file-formatted-tsv" >Tweet</a></li>
   <li><a data-pocket-label="pocket" data-pocket-count="horizontal" class="pocket-btn" data-lang="en"></a><script type="text/javascript">!function(d,i){if(!d.getElementById(i)){var j=d.createElement("script");j.id=i;j.src="https://widgets.getpocket.com/v1/j/btn.js?v=1";var w=d.getElementById(i);d.body.appendChild(j);}}(document,"pocket-btn-js");</script></li>
-  
-  
   </ul>
 </div>
-<p />
+<script type="text/javascript">
+  (function(){
+    var twitterWidgets = document.createElement('script');
+    twitterWidgets.type = 'text/javascript';
+    twitterWidgets.async = true;
+    twitterWidgets.src = '//platform.twitter.com/widgets.js';
+    document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+  })();
+</script>
+<hr />
 
-
-
-
-  <footer>
-    <p class="meta">
-      
-  
-
-<span class="byline author vcard">Posted by <span class="fn">ReSTARTR</span></span>
-
-      
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2010-09-05T18:22:53+09:00" pubdate data-updated="true">2010-09-05 (Sun)</time>
-      
-
-<span class="categories">
-  
-    <a class='category' href='/category/scala/'>Scala</a>
-  
-</span>
-
-
-    </p>
-    <hr />
-    <p class="meta">
-      
-        <a class="basic-alignment left" href="/2010/08/23/beginning-scala/" title="Previous Post: Scalaプログラミング入門(とその他Scala本)">&laquo; Scalaプログラミング入門(とその他Scala本)</a>
-      
-      
-        <a class="basic-alignment right" href="/2010/09/11/set-button-for-mixi-check-and-tweet-button-on-wordpress/" title="Next Post: wordpressにmixiチェックボタンを設置(公式tweetボタンも)">wordpressにmixiチェックボタンを設置(公式tweetボタンも) &raquo;</a>
-      
-    </p>
-  </footer>
-</article>
-
-</div>
-
-<aside class="sidebar">
-  
-    <section id="titles">
-  <a href="http://blog.restartr.com" title="I Will Survive"><img id="logo" src="http://blog.restartr.com/images/portrait.jpg" /></a>
-  <h1 id="site_title"><a href="http://blog.restartr.com" title="I Will Survive">I Will Survive</a></h1>
-  <h3 id="site_subtitle">An application depelopper's blog.</h3>
-</section>
-
-<section id="menu">
-  <ul>
-    <li><i class="fa fa-home fa-lg"></i><a href="http://blog.restartr.com"> Home </a></li>
-    <li><i class="fa fa-calendar fa-lg"></i><a href="http://blog.restartr.com/blog/archives/"> Archives </a></li>
-    <li><i class="fa fa-user fa-lg"></i><a href="http://blog.restartr.com/about/"> About </a></li>
-    <li><i class="fa fa-rss fa-lg"></i><a href="http://blog.restartr.com/atom.xml"> Feed </a></li>
-  </ul>
-</section>
-
-<section id="social">
-  
-
-  
-
-  
-    <a href="" title="g+#103216164658230535238"><i class="fa fa-google-plus fa-2x"></i></a>
-  
-
-  
-    <a href="https://github.com/ReSTARTR" title="ReSTARTR"><i class="fa fa-github fa-2x"></i></a>
-  
-
-  
-
-  
-    <a href="https://twitter.com/ReSTARTR" title="ReSTARTR"><i class="fa fa-twitter fa-2x"></i></a>
-  
-
-  
-</section>
-
-
-<section>
-  <h1>Recent Posts</h1>
-  <ul id="recent_posts">
-    
-      <li class="post">
-        <a href="/2016/02/27/ec2-ls-hosts/">ec2-ls-hosts: EC2インスタンスを一覧するだけのシンプルツール</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2016/02/17/ergodox-ez/">ErgoDox EZを注文した(けどまだ届いてない)</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/12/31/things-of-2015/">2015年ふりかえり</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix/">Elixir/PhoenixでISUCON5予選の参考実装を書いた</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/10/15/go-programming-blueprints/">"Go Programming Blueprints"を読んだ</a>
-      </li>
-    
-  </ul>
-</section>
-<section>
-  <h1>Categories</h1>
-  <ul id="categories">
-    <li><a href='/category/architecture/'>architecture</a></li><li><a href='/category/docker/'>docker</a></li><li><a href='/category/elixir/'>Elixir</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/go/'>go</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/ruby/'>ruby</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
-  </ul>
-</section>
-<section>
-  <h1>GitHub Repos</h1>
-  <ul id="gh_repos">
-    <li class="loading">Status updating...</li>
-  </ul>
-  
-  <a href="https://github.com/ReSTARTR">@ReSTARTR</a> on GitHub
-  
-  <script type="text/javascript">
-    $.domReady(function(){
-        if (!window.jXHR){
-            var jxhr = document.createElement('script');
-            jxhr.type = 'text/javascript';
-            jxhr.src = '/javascripts/libs/jXHR.js';
-            var s = document.getElementsByTagName('script')[0];
-            s.parentNode.insertBefore(jxhr, s);
-        }
-
-        github.showRepos({
-            user: 'ReSTARTR',
-            count: 4,
-            skip_forks: true,
-            target: '#gh_repos'
-        });
-    });
-  </script>
-  <script src="/javascripts/github.js" type="text/javascript"> </script>
-</section>
-
-
-
-<section class="googleplus">
-  <h1>
-    <a href="https://plus.google.com/103216164658230535238?rel=author">
-      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
-      Google+
-    </a>
-  </h1>
-</section>
-
-
-
-  
-</aside>
-
-
-    </div>
-  </div>
-  <footer role="contentinfo"><p>
-  Copyright &copy; 2016 - ReSTARTR -
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
-</p>
-
+			   <footer>
+  <p class="meta">
+    <ul class="params">
+    <li>Category: [Scala]</li>
+    <li class="">Tags: [Scala csv fileio]</li>
+    <li><span class="byline author vcard">Posted by <span class="fn">ReSTARTR</span></span></li>
+    <li><time datetime="2010-09-05 18:22:53 &#43;0900 JST" pubdate data-updated="true">2010-09-05(Sun)</time></li>
+    </ul>
+  </p>
 </footer>
-  
 
+			</div>
 
+			
+		</div>
 
-
-
-
-
-  <script type="text/javascript">
-    (function(){
-      var twitterWidgets = document.createElement('script');
-      twitterWidgets.type = 'text/javascript';
-      twitterWidgets.async = true;
-      twitterWidgets.src = '//platform.twitter.com/widgets.js';
-      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
-    })();
-  </script>
-
-
-
-
-
-</body>
+  </body>
 </html>

@@ -1,0 +1,32 @@
+div.sharing {
+   clear: both;
+}
+div.sharing li{
+  display: inline;
+  list-style-type: none;
+  float: left;
+  height: 1em;
+  line-height: 1em;
+  padding: 0 10px 0 0 ;
+  margin: 10px 0;
+}
+div.sharing ul {
+  margin: 1em 0;
+  padding: 1em 0;
+}
+div.pagination {
+   clear: both;
+}
+div.pagination li{
+  display: inline;
+  list-style-type: none;
+  float: left;
+  height: 1em;
+  line-height: 1em;
+  padding: 0 10px 0 0 ;
+  margin: 10px 0;
+}
+div.pagination ul {
+  margin: 1em 0;
+  padding: 1em 0;
+}

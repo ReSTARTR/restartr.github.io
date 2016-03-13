@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Zeromq on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/zeromq/</link>
+    <description>Recent content in Zeromq on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Fri, 26 Apr 2013 23:34:48 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/zeromq/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>GoとPythonをZeroMQで繋ぐ</title>
+      <link>http://blog.restartr.com/2013/04/26/connect-go-and-python-with-zeromq</link>
+      <pubDate>Fri, 26 Apr 2013 23:34:48 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2013/04/26/connect-go-and-python-with-zeromq</guid>
+      <description>&lt;p&gt;最近Rubyでプロジェクトオイラーを解きながらRubyに慣れようとしてるのですが、ちょっと飽きてきたので息抜きにGoを書いたりしています。&lt;/p&gt;
+
+&lt;p&gt;ついでにZeroMQも試してみたかったので、GoとPythonをZeroMQで繋いでみました。&lt;/p&gt;
+
+&lt;p&gt;構成はこんな感じで、Python(かGo)clientを起動し、Goで動くmonitorq経由でGoのserverにつながります。PUB/SUBでmonitorからモニタリングできるのがミソです。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-ruby&#34;&gt;                  +----------------------------------------+
+                  |                                        |
+  +------+        |--------------------------+     +-----+ |
+  |client|--------|9001     monitorq     9002|-----|serv | |
+  |(REQ) |        |(ROUTER)   9003   (DEALER)|     |(REP)| |
+  +------+        |--------------------------+     +-----+ |
+                  |          |(PUB)                        |
+                  |          |                             |
+                  |          |                             |
+                  |          |(SUB)                        |
+                  |      +-------+                         |
+                  |      |monitor|                         |
+                  |      +-------+                         |
+                  +----------------------------------------+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;em&gt;※client/server/monitorは複数たちあげるとよしなに振り分けてくれます。&lt;/em&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;monitorqでfan-in/outする&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ go run queue.go monitorq
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;clientから&amp;rdquo;PING&amp;rdquo;を投げる(と、&amp;rdquo;PONG#&lt;pid&gt;&amp;ldquo;が帰る)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ python run queue.py client
+PONG#&amp;lt;28870&amp;gt;
+PONG#&amp;lt;28870&amp;gt;
+ :
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;serverから&amp;rdquo;PONG&amp;rdquo;を返す(clientからのPINGを表示)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ go run queue.go serv
+Recv: PING#&amp;lt;73835&amp;gt;
+Recv: PING#&amp;lt;73835&amp;gt;
+ :
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;monitorでリクエスト総数をモニタリング&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ go run queue.go monitor
+MONITOR: IN: 2082, OUT 2082
+MONITOR: IN: 2083, OUT 2083
+ :
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;コードはgistにあげてます。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://gist.github.com/ReSTARTR/5467656&#34;&gt;gist&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;ZeroMQなら他にもいろんな構成がとれるので、使いどころは結構あるのではないかと。&lt;/p&gt;
+
+&lt;p&gt;今回、不慣れなGoで書いてみましたが、これくらいであればもわりと素直にかけるなぁという印象です。&lt;/p&gt;
+
+&lt;p&gt;Goで書かれたZeroMQのサンプルは以下githubリポジトリにたくさんあるので、覗いてみると色々勉強になります。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/imatix/zguide/tree/master/examples/Go&#34;&gt;zguide/examples/Go at master ? imatix/zguide&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

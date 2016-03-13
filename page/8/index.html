@@ -1,467 +1,207 @@
-
 <!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <meta charset="utf-8">
-  <title>I Will Survive</title>
-  <meta name="author" content="ReSTARTR">
-  <link rel="author" href="https://plus.google.com/103216164658230535238" />
-  <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.15" />
 
   
-  <meta name="description" content="rubyやpythonなど通常のプログラムを書く場合は、基本的にソフトタブ(2spaces)でインデントされるようにvimを設定しています。 1
-2
-3
-set noexpandtab
-set tabstop=2
-set shiftwidth=2 けれど、Goの場合はインデントはハードタブが通例 &hellip;">
-  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
 
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>I Will Survive - I Will Survive</title>
 
   
-  <link rel="canonical" href="http://blog.restartr.com/page/8/">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-   <link href="/stylesheets/data-table.css" media="screen, projection" rel="stylesheet" type="text/css" />
-  <script src="/javascripts/modernizr-2.0.js"></script>
-  <script src="/javascripts/ender.js"></script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  <link href="/atom.xml" rel="alternate" title="I Will Survive" type="application/atom+xml">
-  <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
-
-<!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
-<link href='http://fonts.googleapis.com/css?family=Lato:400,100,100italic,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
-<link href='http://fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
-<link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:200,300,400,500,600,700,900' rel='stylesheet' type='text/css'>
-
-
-	<!-- mathjax config similar to math.stackexchange -->
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    tex2jax: {
-      inlineMath: [ ['$$','$$'], ["\\(","\\)"] ],
-      processEscapes: true
-    }
-  });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      tex2jax: {
-        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-      }
-    });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax(), i;
-        for(i=0; i < all.length; i += 1) {
-            all[i].SourceElement().parentNode.className += ' has-jax';
-        }
-    });
-</script>
-
-<script type="text/javascript"
-   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
-
-
-
+  <link rel="stylesheet" href="http://blog.restartr.comcss/poole.css">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/syntax.css">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/hyde.css">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/custom.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
 
   
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-894530-10']);
-    _gaq.push(['_trackPageview']);
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://blog.restartr.com/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="http://blog.restartr.com/favicon.png">
 
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
-
-
-  <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
-  <style>html{background: url("/images/background.png") no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;}</style>
+  
+  <link href="http://blog.restartr.com/index.xml" rel="alternate" type="application/rss+xml" title="I Will Survive" />
 </head>
 
-<body   >
-  <header role="banner"><hgroup>
-</hgroup>
+<body class="theme-base-0d">
 
-</header>
-  <!-- <nav role="navigation"><ul class="subscription" data-subscription="rss">
-  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-  
-</ul>
-  
-<form action="https://www.google.com/search" method="get">
-  <fieldset role="search">
-    <input type="hidden" name="q" value="site:blog.restartr.com" />
-    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
-  </fieldset>
-</form>
-  
-<ul class="main-navigation">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives">Archives</a></li>
-</ul>
-
-</nav> -->
-  <div id="main">
-    <div id="content">
-      <div class="blog-index">
-  
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/2014/04/20/vimrc-noexpandtab-in-golang/">Vimで特定のファイルタイプだけタブインデントにする方法</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-04-20T16:15:21+09:00" pubdate data-updated="true">2014-04-20 (Sun)</time>
-        
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="http://blog.restartr.com"><h1>I Will Survive</h1></a>
+      <p class="lead">
+       An application depelopper&#39;s blog. 
       </p>
-    
-  </header>
+    </div>
 
-
-  <div class="entry-content"><p>rubyやpythonなど通常のプログラムを書く場合は、基本的にソフトタブ(2spaces)でインデントされるようにvimを設定しています。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class="vim"><span class="line"><span class="k">set</span> <span class="nb">noexpandtab</span>
-</span><span class="line"><span class="k">set</span> <span class="nb">tabstop</span><span class="p">=</span><span class="m">2</span>
-</span><span class="line"><span class="k">set</span> <span class="nb">shiftwidth</span><span class="p">=</span><span class="m">2</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>けれど、Goの場合はインデントはハードタブが通例。</p>
-
-<p>なので拡張子が”.go”の場合だけハードタブでインデントするための設定を.vimrcに書いておきます。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-</pre></td><td class="code"><pre><code class="vim"><span class="line"><span class="k">if</span> expand<span class="p">(</span><span class="s2">&quot;%:t&quot;</span><span class="p">)</span> <span class="p">=~</span> <span class="s2">&quot;.*\.go&quot;</span>
-</span><span class="line">  <span class="k">set</span> <span class="nb">noexpandtab</span>
-</span><span class="line">  <span class="k">set</span> <span class="nb">tabstop</span><span class="p">=</span><span class="m">4</span>
-</span><span class="line">  <span class="k">set</span> <span class="nb">shiftwidth</span><span class="p">=</span><span class="m">4</span>
-</span><span class="line"><span class="k">endif</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p><code>%:t</code>はディレクトリ含まないファイル名。</p>
-
-<p>autocmd使うほうが良いかも。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="vim"><span class="line"><span class="k">au</span> <span class="nb">BufNewFile</span><span class="p">,</span><span class="nb">BufRead</span> *.<span class="k">go</span> <span class="k">set</span> <span class="nb">noexpandtab</span> <span class="nb">tabstop</span><span class="p">=</span><span class="m">4</span> <span class="nb">shiftwidth</span><span class="p">=</span><span class="m">4</span>
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>ちなみに、<code>set expandtab</code>してる状態でタブを入力する場合は<code>Ctrl-v + &lt;tab&gt;</code>でハードタブが入力できます。</p>
-</div>
-  
-  
-
-
-
-
-    </article>
-  
-  
-    <article>
+    <ul class="sidebar-nav">
+      <li><a href="http://blog.restartr.com/">Home</a> </li>
       
-  <header>
-    
-      <h1 class="entry-title"><a href="/2014/04/06/reload-varnish-vcl/">VarnishのVCLを再起動なしに再読み込みする</a></h1>
-    
-    
-      <p class="meta">
-        
+        <li><a href="http://blog.restartr.com/about/"> About </a></li>
+      
+        <li><a href="http://blog.restartr.com/index.xml"> Feed </a></li>
+      
+        <li><a href="https://github.com/ReSTARTR"> GitHub </a></li>
+      
+        <li><a href="https://twitter.com/ReSTARTR"> Twitter </a></li>
+      
+    </ul>
 
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2014-04-06T15:38:08+09:00" pubdate data-updated="true">2014-04-06 (Sun)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>/etc/varnish/default.vclを書き換えた時、</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">/etc/init.d/varnishd restart
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>ってやってたけど、reloadできることを今更知った。</p>
-
-<h3 id="vcllist-vcl">vcl.list: 現在の読み込んでるVCLの一覧を見る</h3>
-
-<p>CentOSのyumで入れたvarnishはデフォルトでこんなふうになってる</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>varnishadm -T localhost:6082 vcl.list
-</span><span class="line">active        579 boot
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h3 id="vclload-vcl">vcl.load: 新規にVCLをロードする</h3>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>varnishadm -T localhost:6082 vcl.load boot-<span class="sb">`</span>date+%Y%m%d%H%M%S<span class="sb">`</span> /etc/varnish/default.vcl
-</span><span class="line">VCL compiled.
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>この時点では利用可能な状態であって、まだ変更は反映されていない</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>varnishadm -T localhost:6082 vcl.list
-</span><span class="line">active        579 boot
-</span><span class="line">available       0 boot-20140406153127
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<h3 id="vcluse-vcl">vcl.use: ロードしたVCLに切り替える</h3>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>varnishadm -T localhost:6082 vcl.use boot-20140406153127
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-<p>何も表示されないけどちゃんと切り替わっている</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>varnishadm -T localhost:6082 vcl.list
-</span><span class="line">available     526 boot
-</span><span class="line">active         53 boot-20140406153127
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>ちなみに、真ん中の数値はactiveの場合は経過秒数で、availableになると数値が減っていく。
-でも、0になっても居座り続ける。この数値の変化のルールはよくわかってない。</p>
-
-<p>ということで不要な過去のvclは定期的に消さないとずっと残り続けてしまうので注意。</p>
-
-<h3 id="vcldiscard-vcl">vcl.discard: ロード済みvclの破棄</h3>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>varnishadm -T localhost:6082 vcl.discard boot
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>ここでも結果が表示されないけどちゃんと消えている。</p>
-
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>varnishadm -T localhost:6082 vcl.list
-</span><span class="line">available       11 boot-20140406155155
-</span></code></pre></td></tr></table></div></figure></notextile></div>
-
-<p>本当はinitスクリプト化すると便利なんだろうけど、手動でも良いかなと。</p>
-
-<ul>
-  <li><a href="http://blog.xcir.net/?p=124">Varnishで再起動無しで設定ファイルを適用する方法(reload) » cat /dev/random &gt; /dev/null &amp;</a></li>
-</ul>
+    <p>Copyright ©2016 - ReSTARTR. All rights reserved.</p>
+  </div>
 </div>
+
+
+    <div class="content container">
+<div class="posts">
+
   
+  <div class="post">
+    <h1 class="post-title">
+      <a href="http://blog.restartr.com/2009/12/31/good-bye-2009">
+        さようなら、2009年
+      </a>
+    </h1>
+
+    <span class="post-date">2009-12-31(Thu) - [雑記]</span>
+
+    <blockquote>今年も残すところあとわずか。
+
+今はアカウントの整理に追われていますw
+
+お仕事やプライベートなど、いろんなところでいろんな方にお世話になりました。
+
+故郷の方では悲しいお別れもあったし、姉の結婚式もありました。
+
+今年やったことを総括してみます
+
+</blockquote>
+    <a href="http://blog.restartr.com/2009/12/31/good-bye-2009">read more</a>
+  </div>
   
+  <div class="post">
+    <h1 class="post-title">
+      <a href="http://blog.restartr.com/2009/12/31/twig-is-the-template-engine-written-in-php">
+        phpのテンプレートエンジンtwigとは
+      </a>
+    </h1>
 
+    <span class="post-date">2009-12-31(Thu) - [PHP]</span>
 
+    <blockquote>最近、PHPのテンプレートエンジンの紹介記事をちらほら見かけるようになってきました。</blockquote>
+    <a href="http://blog.restartr.com/2009/12/31/twig-is-the-template-engine-written-in-php">read more</a>
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
+      <a href="http://blog.restartr.com/2009/12/31/hello-word-press">
+        はじめまして、WP。
+      </a>
+    </h1>
 
+    <span class="post-date">2009-12-31(Thu) - [雑記]</span>
 
-    </article>
+    <blockquote>２００９年も残すところ２４時間を切りました。
+
+新規ブログを立ち上げてみます。
+
+新しいブログを立ち上げるのはもう何度目かわかりませんw
+
+</blockquote>
+    <a href="http://blog.restartr.com/2009/12/31/hello-word-press">read more</a>
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
+      <a href="http://blog.restartr.com/2009/12/30/about">
+        プロフィール
+      </a>
+    </h1>
+
+    <span class="post-date">2009-12-30(Wed) - [雑記]</span>
+
+    
+    <a href="http://blog.restartr.com/2009/12/30/about">read more</a>
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
+      <a href="http://blog.restartr.com/1/01/01/">
+        
+      </a>
+    </h1>
+
+    <span class="post-date">0001-01-01(Mon) - </span>
+
+    
+    <a href="http://blog.restartr.com/1/01/01/">read more</a>
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
+      <a href="http://blog.restartr.com/about/">
+        About me
+      </a>
+    </h1>
+
+    <span class="post-date">0001-01-01(Mon) - </span>
+
+    
+    <a href="http://blog.restartr.com/about/">read more</a>
+  </div>
   
   <div class="pagination">
     
-      <a class="prev" href="/page/9/">&larr; Older</a>
-    
-    <a href="/blog/archives/"> Archives </a>
-    
-    <a class="next" href="/page/7/">Newer &rarr;</a>
-    
-  </div>
-</div>
-<aside class="sidebar">
-  
-    <section id="titles">
-  <a href="http://blog.restartr.com" title="I Will Survive"><img id="logo" src="http://blog.restartr.com/images/portrait.jpg" /></a>
-  <h1 id="site_title"><a href="http://blog.restartr.com" title="I Will Survive">I Will Survive</a></h1>
-  <h3 id="site_subtitle">An application depelopper&#8217;s blog.</h3>
-</section>
-
-<section id="menu">
-  <ul>
-    <li><i class="fa fa-home fa-lg"></i><a href="http://blog.restartr.com"> Home </a></li>
-    <li><i class="fa fa-calendar fa-lg"></i><a href="http://blog.restartr.com/blog/archives/"> Archives </a></li>
-    <li><i class="fa fa-user fa-lg"></i><a href="http://blog.restartr.com/about/"> About </a></li>
-    <li><i class="fa fa-rss fa-lg"></i><a href="http://blog.restartr.com/atom.xml"> Feed </a></li>
-  </ul>
-</section>
-
-<section id="social">
-  
-
-  
-
-  
-    <a href="" title="g+#103216164658230535238"><i class="fa fa-google-plus fa-2x"></i></a>
-  
-
-  
-    <a href="https://github.com/ReSTARTR" title="ReSTARTR"><i class="fa fa-github fa-2x"></i></a>
-  
-
-  
-
-  
-    <a href="https://twitter.com/ReSTARTR" title="ReSTARTR"><i class="fa fa-twitter fa-2x"></i></a>
-  
-
-  
-</section>
-
-
-<section>
-  <h1>Recent Posts</h1>
-  <ul id="recent_posts">
-    
-      <li class="post">
-        <a href="/2016/02/27/ec2-ls-hosts/">ec2-ls-hosts: EC2インスタンスを一覧するだけのシンプルツール</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2016/02/17/ergodox-ez/">ErgoDox EZを注文した(けどまだ届いてない)</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/12/31/things-of-2015/">2015年ふりかえり</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix/">Elixir/PhoenixでISUCON5予選の参考実装を書いた</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/10/15/go-programming-blueprints/">&#8220;Go Programming Blueprints&#8221;を読んだ</a>
-      </li>
-    
-  </ul>
-</section>
-<section>
-  <h1>Categories</h1>
-  <ul id="categories">
-    <li><a href='/category/architecture/'>architecture</a></li><li><a href='/category/docker/'>docker</a></li><li><a href='/category/elixir/'>Elixir</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/go/'>go</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/ruby/'>ruby</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
-  </ul>
-</section>
-<section>
-  <h1>GitHub Repos</h1>
-  <ul id="gh_repos">
-    <li class="loading">Status updating&#8230;</li>
-  </ul>
-  
-  <a href="https://github.com/ReSTARTR">@ReSTARTR</a> on GitHub
-  
-  <script type="text/javascript">
-    $.domReady(function(){
-        if (!window.jXHR){
-            var jxhr = document.createElement('script');
-            jxhr.type = 'text/javascript';
-            jxhr.src = '/javascripts/libs/jXHR.js';
-            var s = document.getElementsByTagName('script')[0];
-            s.parentNode.insertBefore(jxhr, s);
-        }
-
-        github.showRepos({
-            user: 'ReSTARTR',
-            count: 4,
-            skip_forks: true,
-            target: '#gh_repos'
-        });
-    });
-  </script>
-  <script src="/javascripts/github.js" type="text/javascript"> </script>
-</section>
-
-
-
-<section class="googleplus">
-  <h1>
-    <a href="https://plus.google.com/103216164658230535238?rel=author">
-      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
-      Google+
-    </a>
-  </h1>
-</section>
-
-
-
-  
-</aside>
-
+    <ul class="pagination">
+        
+        <li>
+            <a href="http://blog.restartr.com/" aria-label="First"><span aria-hidden="true">&laquo;&laquo;</span></a>
+        </li>
+        
+        <li
+        >
+        <a href="http://blog.restartr.com/page/7/" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+        </li>
+        
+        <li
+        ><a href="http://blog.restartr.com/">1</a></li>
+        
+        <li
+        ><a href="http://blog.restartr.com/page/2/">2</a></li>
+        
+        <li
+        ><a href="http://blog.restartr.com/page/3/">3</a></li>
+        
+        <li
+        ><a href="http://blog.restartr.com/page/4/">4</a></li>
+        
+        <li
+        ><a href="http://blog.restartr.com/page/5/">5</a></li>
+        
+        <li
+        ><a href="http://blog.restartr.com/page/6/">6</a></li>
+        
+        <li
+        ><a href="http://blog.restartr.com/page/7/">7</a></li>
+        
+        <li
+        class="active"><a href="http://blog.restartr.com/page/8/">8</a></li>
+        
+        <li
+        class="disabled">
+        <a href="" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+        </li>
+        
+        <li>
+            <a href="http://blog.restartr.com/page/8/" aria-label="Last"><span aria-hidden="true">&raquo;&raquo;</span></a>
+        </li>
+        
+    </ul>
     </div>
-  </div>
-  <footer role="contentinfo"><p>
-  Copyright &copy; 2016 - ReSTARTR -
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
-</p>
+</div>
+</div>
 
-</footer>
-  
-
-
-
-
-
-
-
-  <script type="text/javascript">
-    (function(){
-      var twitterWidgets = document.createElement('script');
-      twitterWidgets.type = 'text/javascript';
-      twitterWidgets.async = true;
-      twitterWidgets.src = '//platform.twitter.com/widgets.js';
-      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
-    })();
-  </script>
-
-
-
-
-
-</body>
+  </body>
 </html>

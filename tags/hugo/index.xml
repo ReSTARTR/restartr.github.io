@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Hugo on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/hugo/</link>
+    <description>Recent content in Hugo on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 13 Mar 2016 20:00:00 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/hugo/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>OctopressからHugoに移行</title>
+      <link>http://blog.restartr.com/2016/03/13/from-octopress-to-hugo</link>
+      <pubDate>Sun, 13 Mar 2016 20:00:00 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2016/03/13/from-octopress-to-hugo</guid>
+      <description>
+
+&lt;p&gt;Octopressを使い始めて約2年。&lt;a href=&#34;http://gohugo.io/&#34;&gt;Hugo&lt;/a&gt;に乗り換えました。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://blog.restartr.com/2014/04/06/move-from-wordpress-to-octopress/&#34;&gt;WordpressからOctopressに移行&lt;/a&gt;が2014年の4月なので約2年です。
+そんなに記事はたくさん書いているわけでなはいのですが、それでも&lt;code&gt;rake preview&lt;/code&gt;しながら編集しているときのストレスはそれなりにありました。
+なので、快適さを得るためにHugoに乗り換えました。&lt;/p&gt;
+
+&lt;h3 id=&#34;やったこと:d50ea5a11adcf7e2a2a926330a4f05a0&#34;&gt;やったこと&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;hugo new&lt;/code&gt;でプロジェクト生成した
+
+&lt;ul&gt;
+&lt;li&gt;Octopressのmarkdownファイルのみ&lt;code&gt;content/post&lt;/code&gt;以下にコピー&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;permalinkの設定を維持できず、シェルスクリプトでslugを追加した
+
+&lt;ul&gt;
+&lt;li&gt;config.tomlで&lt;code&gt;post = /:year/:month/:day/:title&lt;/code&gt;とすると&lt;code&gt;/2016/01/01/2016-01-01-hogehoge&lt;/code&gt;のようなパーマリンクになってしまう&lt;/li&gt;
+&lt;li&gt;slugを設定しておけばそのままいけるので修正した。&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;生成元がマルチバイト含んでるとエスケープ処理まわりで互換性が壊れるのでaliasを設定した
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://yet.unresolved.xyz/blog/2015/01/07/how-to-use-multibyte-title-in-hugo/&#34;&gt;Hugoでマルチバイトのタイトルをうまいこと使う - Unresolved&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://gohugo.io/extras/aliases/&#34;&gt;https://gohugo.io/extras/aliases/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;テーマのhydeをカスタムして、最低限の要素を取り入れた
+
+&lt;ul&gt;
+&lt;li&gt;ページネーション&lt;/li&gt;
+&lt;li&gt;ソーシャルボタン&lt;/li&gt;
+&lt;li&gt;トップページの要素削減&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;テーマはforkしたリポジトリにpushした
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/ReSTARTR/hyde/commit/d98a487257865470f17d5682632fe37568907ea4&#34;&gt;github.com/ReSTARTR/hyde&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;本当はもう少しマシにしたいけどとりあえずここまで。&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;最後に手動で1ファイルずつ調整した
+
+&lt;ul&gt;
+&lt;li&gt;Wordpress時代の設定とか残ってたり、descrptionが雑だったりしたので最終的に1つずつメタデータを修正&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;ファイル名からslugを追記するシェルスクリプト:d50ea5a11adcf7e2a2a926330a4f05a0&#34;&gt;ファイル名からslugを追記するシェルスクリプト&lt;/h3&gt;
+
+&lt;p&gt;※シンタックスハイライト効かせたい&amp;hellip;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;#!/bin/bash
+
+for file in $(ls content/post | grep &#39;\.markdown$&#39;); do
+  SLUG=&amp;quot;$(echo ${file:11} | sed -E &#39;s/.markdown$//&#39;)&amp;quot;
+  [ -z $SLUG ] &amp;amp;&amp;amp; continue
+
+  file=&amp;quot;./content/post/$file&amp;quot;
+  echo $file
+  cat &amp;lt;&amp;lt;EOF &amp;gt; $file.tmp
+---
+slug: &amp;quot;${SLUG}&amp;quot;
+EOF
+  cat $file.tmp
+  sed -e &#39;1,1d&#39; ${file} &amp;gt;&amp;gt; $file.tmp
+  mv $file.tmp $file
+done
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これを実行する前に、content/post以下はコミットしておいたほうが安心かと。
+で、実行おわったら再度&lt;code&gt;git add&lt;/code&gt;して&lt;code&gt;git commit&lt;/code&gt;。&lt;/p&gt;
+
+&lt;h3 id=&#34;github-pagesのリポジトリへの登録:d50ea5a11adcf7e2a2a926330a4f05a0&#34;&gt;github pagesのリポジトリへの登録&lt;/h3&gt;
+
+&lt;p&gt;あとは&lt;a href=&#34;https://github.com/ReSTARTR/restartr.github.io&#34;&gt;ReSTARTR/restartr.github.io&lt;/a&gt;をsubmoduleにしてそこに生成ファイルを配置&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;git submodule add git@github.com:restartr/restartr.github.io public
+hugo -d public
+cd publid
+git add -A .
+git commit -m &#39;Migrate to Hugo&#39;
+git push origin master
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;CNAMEファイルとか、octopressで使用していたものはhugo用のリポジトリにコピーしてgit管理下にしておくのも忘れずに。&lt;/p&gt;
+
+&lt;p&gt;テーマとか周辺環境はOctopressに比べると貧弱ですが、一度もろもろ設定してしまったらそんなにいじることもないしまぁ問題ないかと思います。&lt;/p&gt;
+
+&lt;p&gt;ストレス感じながら文章かくよりは、気持よく文章書けるほうが良い。&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

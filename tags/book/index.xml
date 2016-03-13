@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Book on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/book/</link>
+    <description>Recent content in Book on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Thu, 31 Dec 2015 18:59:46 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/book/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>2015年ふりかえり</title>
+      <link>http://blog.restartr.com/2015/12/31/things-of-2015</link>
+      <pubDate>Thu, 31 Dec 2015 18:59:46 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2015/12/31/things-of-2015</guid>
+      <description>
+
+&lt;p&gt;2015年も終わりが近づいているということでご報告もかねてふりかえりを…&lt;/p&gt;
+
+&lt;h3 id=&#34;個人的トピック:54b1dc2a806cccc9f9d83a7637b5250c&#34;&gt;個人的トピック&lt;/h3&gt;
+
+&lt;p&gt;ブログには書いてませんでしたが、8月で2年とすこしお世話になった株式会社VASILYを退職しました。
+それからいくつかの会社とお話した後、11月から&lt;a href=&#34;https://www.wantedly.com/companies/hitomedia&#34;&gt;株式会社ヒトメディア&lt;/a&gt;に転職しました。
+(あらためて転職エントリを書こうとおもっていたのに年末になってしまい、完全にタイミングを逃した感じです&amp;hellip;)&lt;/p&gt;
+
+&lt;p&gt;といってもあまり本社にはおらず、もっぱら新宿で勤務している日々です。やっていることもいまのところ前職とあまり変わっておらず、アプリケーションの改善やインフラまわり全般をやっています。個人的にはもっとアプリケーションよりの仕事をしていきたいのですが、まずは目先の改善からということで。&lt;/p&gt;
+
+&lt;p&gt;あと、今年とかやったこととか読んだ本のまとめです。&lt;/p&gt;
+
+&lt;h3 id=&#34;やったこと:54b1dc2a806cccc9f9d83a7637b5250c&#34;&gt;やったこと&lt;/h3&gt;
+
+&lt;h4 id=&#34;仕事:54b1dc2a806cccc9f9d83a7637b5250c&#34;&gt;仕事&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Railsアプリのチューニング&lt;/li&gt;
+&lt;li&gt;Docker, AWS ECS&lt;/li&gt;
+&lt;li&gt;AWSまわり全般&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;2014年にくらべるとセキュリティまわりの脆弱性対応もめっきり少なくなって、インフラ的にはありがたい年でした。&lt;/p&gt;
+
+&lt;h4 id=&#34;個人:54b1dc2a806cccc9f9d83a7637b5250c&#34;&gt;個人&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Consul&lt;/li&gt;
+&lt;li&gt;GCE&lt;/li&gt;
+&lt;li&gt;ISUCON5予選のElixir実装&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;ElixirConfあたりで興味もちはじめて、そのあと爆発的にElixirがヒットしていったのが印象的でした。Goはすでにスタンダード化しているためか、大きな話題はあまりなかったように思います。年末ギリギリにラズパイ入門したので、来年はフィジカルコンピューティングもやっていく所存です。Rails5は普及するかな？&lt;/p&gt;
+
+&lt;h3 id=&#34;書籍:54b1dc2a806cccc9f9d83a7637b5250c&#34;&gt;書籍&lt;/h3&gt;
+
+&lt;p&gt;プログラミング・設計&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp//dp/4774171417/&#34;&gt;WEB+DB PRESS vol.85&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/4873115892/&#34;&gt;SQLアンチパターン&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp//dp/4774171972/&#34;&gt;理論から学ぶ データベース実践入門&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/B00SY2UKHY/1&#34;&gt;Webエンジニアが知っておきたいインフラの基本 &lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/B00UX9VJGW/&#34;&gt;実践ドメイン駆動設計&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp//dp/B00PKTGM9O/&#34;&gt;Programming Elixir&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/4774173010/&#34;&gt;SQL実践入門&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.manning.com/books/the-little-elixir-and-otp-guidebook&#34;&gt;The Little Elixir &amp;amp; OTP Guidebook&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/4873116937/&#34;&gt;ZooKeeperによる分散システム管理 &lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/B00T4ACPA0/&#34;&gt;Go Programming Blueprints&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;開発体制&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/4774172367/&#34;&gt;スクラム実践入門&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp//dp/B00MGGW9MI/&#34;&gt;DevOps 逆転だ！究極の継続的デリバリー&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp//dp/B00O8GIJ1E/&#34;&gt;カンバン-ソフトウェア開発の変革&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/B00DIM6BMI/&#34;&gt;SCRUM BOOT CAMP THE BOOK&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;その他&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/1617292397&#34;&gt;Soft Skills&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp//dp/4121022823/&#34;&gt;地方消滅-東京一極集中が招く人口急減&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;ということで、2015年中はお世話になりました。
+2016年もどうぞよろしくおねがいします :bow:&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>&#34;Go Programming Blueprints&#34;を読んだ</title>
+      <link>http://blog.restartr.com/2015/10/15/go-programming-blueprints</link>
+      <pubDate>Thu, 15 Oct 2015 19:54:29 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2015/10/15/go-programming-blueprints</guid>
+      <description>
+
+&lt;p&gt;&lt;a href=&#34;http://www.amazon.co.jp/gp/product/B00T4ACPA0)&#34;&gt;
+&lt;img src=&#34;https://raw.githubusercontent.com/matryer/goblueprints/master/artwork/bookcover.jpg&#34; alt=&#34;Go Blueprints by Mat Ryer book cover&#34; /&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/gp/product/B00T4ACPA0&#34;&gt;Go Programming Blueprints - Solving Development Challenges with Golang&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;最近Kindleで購入したので、でひととおり読んで写経してみました。&lt;/p&gt;
+
+&lt;h3 id=&#34;概要と雑感:8fb6d052d7c346df71849845ab713680&#34;&gt;概要と雑感&lt;/h3&gt;
+
+&lt;p&gt;2015年1月に発売された書籍であり、Goのバージョンでいうと1.3から1.4の頃に書かれたものです。
+著者はGolang UK Conference 2015でトークもしていた&lt;a href=&#34;https://twitter.com/matryer&#34;&gt;@matryer&lt;/a&gt;さん。
+(&lt;em&gt;※&lt;a href=&#34;https://www.youtube.com/watch?v=tIm8UkSf6RA&#34;&gt;Golang UK Conference 2015 - Mat Ryer - Building APIs - YouTube&lt;/a&gt;&lt;/em&gt;)&lt;/p&gt;
+
+&lt;p&gt;いくつかのGo製アプリケーション開発を通じて、Goの機能・パターンを学習する、という感じのもの。機能やパターンについて網羅的ではないものの、特定のユースケースをベースにしているため、パターンの理解は容易に感じます。取り扱うトピックも、web/apiサーバーとコマンドラインツールがバランスよく取り上げられています。&lt;/p&gt;
+
+&lt;p&gt;対象読者は「すべてのGoプログラマー」と記載がありますが、&lt;a href=&#34;https://tour.golang.org&#34;&gt;A Tour of Go&lt;/a&gt;をひととおりやったあとくらいがちょうど良い気がします。&lt;/p&gt;
+
+&lt;p&gt;リファレンス的な構成の他書や&lt;a href=&#34;https://golang.org/doc/effective_go.html&#34;&gt;Effective Go&lt;/a&gt;のような公式ドキュメントのものとうまくすみ分けができているのではないかと。&lt;/p&gt;
+
+&lt;p&gt;ただ誤字・脱字が少し目立つかな（章ごとに1,2個程度ですが)という点が残念ではありますが、比較的わかりやすいミスなので読んでいて混乱するほどではありません。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/golang/go/wiki/Books&#34;&gt;Go Books&lt;/a&gt;としては比較的マイナーっぽく、日本語圏の情報もないので購入はちょっとしたギャンブルでしたが、ある程度まとまったストーリーとして読めるGo関連の書籍は少ない印象ですし、自分としてはちょうど良い買い物だったかなと思います。&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;※ソースコードも&lt;a href=&#34;https://github.com/matryer/goblueprints&#34;&gt;matryer/goblueprints&lt;/a&gt;に公開されています&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;_※当然英語ですが、さほど読みにくい感じはなかったです&lt;/p&gt;
+
+&lt;h3 id=&#34;構成:8fb6d052d7c346df71849845ab713680&#34;&gt;構成&lt;/h3&gt;
+
+&lt;p&gt;全8章で作成するアプリケーションのうち、1章で簡潔するものと章をまたがるものがあり、構成は以下のようになっています。&lt;/p&gt;
+
+&lt;h4 id=&#34;1-2-3-websocketによるチャットアプリケーション:8fb6d052d7c346df71849845ab713680&#34;&gt;1, 2, 3: websocketによるチャットアプリケーション&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;http.Handle/HandleFuncの基本的な使い方とか、TDDによるパッケージ開発、&lt;/li&gt;
+&lt;li&gt;ソーシャルログイン機能の追加(OAuthは&lt;a href=&#34;https://github.com/stretchr/gomniauth&#34;&gt;stretchr/gomniauth&lt;/a&gt;を利用)&lt;/li&gt;
+&lt;li&gt;アイコン画像のアップロード機能の追加&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;4-空きドメイン検索ツール:8fb6d052d7c346df71849845ab713680&#34;&gt;4: 空きドメイン検索ツール&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Unixコマンドのように、STDIN/OUTを使った複数コマンドによる連携
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;$ 単語生成 | 単語の補正 | TLDの付与 | WHOISチェック&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;これらをos.Command.Stdin,Stdoutで束ねるコマンド&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;.o(シェルスクリプトでも良いのではと思いますが、外部プロセスとの連携の練習ということで&amp;hellip;)&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;5-6-twitterのリアルタイムカウンター:8fb6d052d7c346df71849845ab713680&#34;&gt;5, 6: Twitterのリアルタイムカウンター&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;複数のプロセスで構成される分散システム
+
+&lt;ol&gt;
+&lt;li&gt;twitter streaming apiから拾ったツイートを&lt;a href=&#34;http://nsq.io&#34;&gt;NSQ&lt;/a&gt;に追加するプログラム&lt;/li&gt;
+&lt;li&gt;NSQのsubscriberが単語別件数を集計して、1秒ごとにMongoDBを更新するプログラム&lt;/li&gt;
+&lt;li&gt;MongoDBの内容を管理・閲覧ツール(RESTful APIとWEBアプリ)&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;トピック&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;シグナルトラップによる安全なプロセス終了処理&lt;/li&gt;
+&lt;li&gt;sync.Mutexによる協調動作の実装&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/stretchr/graceful&#34;&gt;stretchr/graceful&lt;/a&gt;での安全な終了処理&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;7-google-places-apiを使ったロケーション推薦アプリケーション:8fb6d052d7c346df71849845ab713680&#34;&gt;7: Google Places APIを使ったロケーション推薦アプリケーション&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;iotaによるEnum相当の実現&lt;/li&gt;
+&lt;li&gt;TDDでパッケージ開発
+
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;.o(ここで&lt;a href=&#34;https://github.com/cheekybits&#34;&gt;cheekybits/is&lt;/a&gt;が出てきたけど、全体で統一感出してほしい&amp;hellip;)&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;型アサーションによるキャスト&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;8-ファイル自動バックアップシステム:8fb6d052d7c346df71849845ab713680&#34;&gt;8 ファイル自動バックアップシステム&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;2つのCLIツールの作成
+
+&lt;ul&gt;
+&lt;li&gt;backup: バックアップする対象リストの管理コマンド
+
+&lt;ul&gt;
+&lt;li&gt;メタデータ管理は&lt;a href=&#34;https://github.com/mattyer/filedb&#34;&gt;mattyer/filedb&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;backupd: メタデータをもとに実ファイル監視とバックアップ実行する常駐プログラム&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;蛇足:8fb6d052d7c346df71849845ab713680&#34;&gt;蛇足&lt;/h3&gt;
+
+&lt;p&gt;そういえば、カーニハン著のThe Go Programming Languageが11月発売とのこと&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/gp/product/0134190440&#34;&gt;The Go Programming Language&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>2014年に購入した技術書</title>
+      <link>http://blog.restartr.com/2014/12/31/books-2014</link>
+      <pubDate>Wed, 31 Dec 2014 20:22:02 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2014/12/31/books-2014</guid>
+      <description>
+
+&lt;p&gt;投稿数を稼ぐべく、とりあえず今年購入した（であろう）本をリストアップしつつ、今年の振り返りでも。&lt;/p&gt;
+
+&lt;p&gt;購入しただけで読めてないものや、途中のものもありますが、技術書なんてリファレンスなので全部読む必要もないわけで(言い訳)。
+一度手放した本とか角川祭りとかでKindleストアでの購入が増えた年でした。Kindle3からPaperwhiteにアップデートしたのも大きい。
+仕事上フロントエンド以外の広範囲を取り扱う機会が増えたため、読んだ本もわりと多岐にわたってます。&lt;/p&gt;
+
+&lt;p&gt;世の中的には、Immutable Infrastractureが一段落して、Docker, Golang, Microservicesなんかがバズワード化してました。&lt;/p&gt;
+
+&lt;p&gt;とくにGolangは日本語書籍は増えてないものの、Go製プロダクトが大量発生している状況は当分継続しそう。なので、いろんなRuby/Python/Perl/PHPなどLL製プロダクトのリプレースが進んでいくのでは。新しい流行としてはGolangにつづいてRust, Clojure, Elixrあたりがじわじわ来るんじゃないでしょうかね。&lt;/p&gt;
+
+&lt;p&gt;インフラ周りでいうと、コンテナ化、マルチクラウド、モニタリングまわりが大きく変化しそうです。&lt;/p&gt;
+
+&lt;p&gt;では、購入した書籍一覧です。購入日時はよくわからないので購入順には並んでません。(すべてアフィ無しリンクです)&lt;/p&gt;
+
+&lt;h3 id=&#34;プログラミング:9cb2f801aeb0f47fac1ec1855771aa70&#34;&gt;プログラミング&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/gp/product/B0096BYG7C&#34;&gt;Practical Object-Oriented Design in Ruby&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/gp/product/B00HUEG8LE&#34;&gt;Build Awesome Command-Line Applications in Ruby 2&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.manning.com/ketelsen/&#34;&gt;Go in Action&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/B00MLUGZIS/&#34;&gt;すごいErlangゆかいに学ぼう！&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://tatsu-zine.com/books/naruhounix&#34;&gt;なるほどUnixプロセス ― Rubyで学ぶUnixの基礎&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;(未読) &lt;a href=&#34;http://www.jstorimer.com/products/working-with-tcp-sockets&#34;&gt;Working With TCP Sockets&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;(未読) &lt;a href=&#34;http://www.amazon.co.jp/dp/4756136494&#34;&gt;プログラミング作法&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;アーキテクチャ:9cb2f801aeb0f47fac1ec1855771aa70&#34;&gt;アーキテクチャ&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/gp/product/B00GRKD6XU&#34;&gt;エリック・エヴァンスのドメイン駆動設計&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://shop.oreilly.com/product/0636920033158.do&#34;&gt;Building Microservices&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;ミドルウェア:9cb2f801aeb0f47fac1ec1855771aa70&#34;&gt;ミドルウェア&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/gp/product/B00HSC64P8&#34;&gt;Redis入門　インメモリKVSによる高速データ管理&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.manning.com/grainger/&#34;&gt;Solr in Action&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://shop.oreilly.com/product/0636920026136.do&#34;&gt;ZeroMQ&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/gp/product/B00J4KDYZU&#34;&gt;高速スケーラブル検索エンジン　ElasticSearch Server&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;インフラ:9cb2f801aeb0f47fac1ec1855771aa70&#34;&gt;インフラ&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/4873116767/&#34;&gt;ハイパフォーマンス ブラウザネットワーキング&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/gp/product/B00FLYU9T2&#34;&gt;Systems Performance: Enterprise and the Cloud &lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/477416500X&#34;&gt;Chef実践入門 ~コードによるインフラ構成の自動化 &lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/gp/product/B00LRROTI4&#34;&gt;The Docker Book: Containerization is the new virtualization &lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/B00JWM4W2E&#34;&gt;Docker入門 Immutable Infrastructureを実現する&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;読み物:9cb2f801aeb0f47fac1ec1855771aa70&#34;&gt;読み物&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/gp/product/B00OJVMK5O&#34;&gt;How Google Works &lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/4274068471&#34;&gt;Coders at Work プログラミングの技をめぐる探求&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/4873114713&#34;&gt;言語設計者たちが考えること&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;(未読) &lt;a href=&#34;http://www.amazon.co.jp/gp/product/B00MIFE3BC&#34;&gt;アカマイ　知られざるインターネットの巨人&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;(未読) &lt;a href=&#34;http://www.amazon.co.jp/dp/4274064069&#34;&gt;UNIXという考え方―その設計思想と哲学&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

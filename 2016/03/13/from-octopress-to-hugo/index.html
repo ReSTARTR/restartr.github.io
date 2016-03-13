@@ -1,0 +1,204 @@
+	<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.15" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>OctopressからHugoに移行 - I Will Survive</title>
+
+  
+  <link rel="stylesheet" href="http://blog.restartr.comcss/poole.css">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/syntax.css">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/hyde.css">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/custom.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://blog.restartr.com/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="http://blog.restartr.com/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="I Will Survive" />
+</head>
+
+	<body class="theme-base-0d">
+		<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="http://blog.restartr.com"><h1>I Will Survive</h1></a>
+      <p class="lead">
+       An application depelopper&#39;s blog. 
+      </p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="http://blog.restartr.com/">Home</a> </li>
+      
+        <li><a href="http://blog.restartr.com/about/"> About </a></li>
+      
+        <li><a href="http://blog.restartr.com/index.xml"> Feed </a></li>
+      
+        <li><a href="https://github.com/ReSTARTR"> GitHub </a></li>
+      
+        <li><a href="https://twitter.com/ReSTARTR"> Twitter </a></li>
+      
+    </ul>
+
+    <p>Copyright ©2016 - ReSTARTR. All rights reserved.</p>
+  </div>
+</div>
+
+
+		<div class="content container">
+			<div class="post">
+			 	<h1>OctopressからHugoに移行</h1>
+        <span class="post-date">2016-03-13(Sun) - [雑記]</span>
+			  <div class="sharing">
+  <ul>
+  <li><a href="http://blog.restartr.com/2016/03/13/from-octopress-to-hugo" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2016/03/13/from-octopress-to-hugo" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2016/03/13/from-octopress-to-hugo" >Tweet</a></li>
+  <li><a data-pocket-label="pocket" data-pocket-count="horizontal" class="pocket-btn" data-lang="en"></a><script type="text/javascript">!function(d,i){if(!d.getElementById(i)){var j=d.createElement("script");j.id=i;j.src="https://widgets.getpocket.com/v1/j/btn.js?v=1";var w=d.getElementById(i);d.body.appendChild(j);}}(document,"pocket-btn-js");</script></li>
+  </ul>
+</div>
+<script type="text/javascript">
+  (function(){
+    var twitterWidgets = document.createElement('script');
+    twitterWidgets.type = 'text/javascript';
+    twitterWidgets.async = true;
+    twitterWidgets.src = '//platform.twitter.com/widgets.js';
+    document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+  })();
+</script>
+<hr />
+
+			      
+
+<p>Octopressを使い始めて約2年。<a href="http://gohugo.io/">Hugo</a>に乗り換えました。</p>
+
+<p><a href="http://blog.restartr.com/2014/04/06/move-from-wordpress-to-octopress/">WordpressからOctopressに移行</a>が2014年の4月なので約2年です。
+そんなに記事はたくさん書いているわけでなはいのですが、それでも<code>rake preview</code>しながら編集しているときのストレスはそれなりにありました。
+なので、快適さを得るためにHugoに乗り換えました。</p>
+
+<h3 id="やったこと:d50ea5a11adcf7e2a2a926330a4f05a0">やったこと</h3>
+
+<ul>
+<li><code>hugo new</code>でプロジェクト生成した
+
+<ul>
+<li>Octopressのmarkdownファイルのみ<code>content/post</code>以下にコピー</li>
+</ul></li>
+<li>permalinkの設定を維持できず、シェルスクリプトでslugを追加した
+
+<ul>
+<li>config.tomlで<code>post = /:year/:month/:day/:title</code>とすると<code>/2016/01/01/2016-01-01-hogehoge</code>のようなパーマリンクになってしまう</li>
+<li>slugを設定しておけばそのままいけるので修正した。</li>
+</ul></li>
+<li>生成元がマルチバイト含んでるとエスケープ処理まわりで互換性が壊れるのでaliasを設定した
+
+<ul>
+<li><a href="http://yet.unresolved.xyz/blog/2015/01/07/how-to-use-multibyte-title-in-hugo/">Hugoでマルチバイトのタイトルをうまいこと使う - Unresolved</a></li>
+<li><a href="https://gohugo.io/extras/aliases/">https://gohugo.io/extras/aliases/</a></li>
+</ul></li>
+<li>テーマのhydeをカスタムして、最低限の要素を取り入れた
+
+<ul>
+<li>ページネーション</li>
+<li>ソーシャルボタン</li>
+<li>トップページの要素削減</li>
+</ul></li>
+<li>テーマはforkしたリポジトリにpushした
+
+<ul>
+<li><a href="https://github.com/ReSTARTR/hyde/commit/d98a487257865470f17d5682632fe37568907ea4">github.com/ReSTARTR/hyde</a></li>
+<li>本当はもう少しマシにしたいけどとりあえずここまで。</li>
+</ul></li>
+<li>最後に手動で1ファイルずつ調整した
+
+<ul>
+<li>Wordpress時代の設定とか残ってたり、descrptionが雑だったりしたので最終的に1つずつメタデータを修正</li>
+</ul></li>
+</ul>
+
+<h3 id="ファイル名からslugを追記するシェルスクリプト:d50ea5a11adcf7e2a2a926330a4f05a0">ファイル名からslugを追記するシェルスクリプト</h3>
+
+<p>※シンタックスハイライト効かせたい&hellip;</p>
+
+<pre><code class="language-bash">#!/bin/bash
+
+for file in $(ls content/post | grep '\.markdown$'); do
+  SLUG=&quot;$(echo ${file:11} | sed -E 's/.markdown$//')&quot;
+  [ -z $SLUG ] &amp;&amp; continue
+
+  file=&quot;./content/post/$file&quot;
+  echo $file
+  cat &lt;&lt;EOF &gt; $file.tmp
+---
+slug: &quot;${SLUG}&quot;
+EOF
+  cat $file.tmp
+  sed -e '1,1d' ${file} &gt;&gt; $file.tmp
+  mv $file.tmp $file
+done
+</code></pre>
+
+<p>これを実行する前に、content/post以下はコミットしておいたほうが安心かと。
+で、実行おわったら再度<code>git add</code>して<code>git commit</code>。</p>
+
+<h3 id="github-pagesのリポジトリへの登録:d50ea5a11adcf7e2a2a926330a4f05a0">github pagesのリポジトリへの登録</h3>
+
+<p>あとは<a href="https://github.com/ReSTARTR/restartr.github.io">ReSTARTR/restartr.github.io</a>をsubmoduleにしてそこに生成ファイルを配置</p>
+
+<pre><code>git submodule add git@github.com:restartr/restartr.github.io public
+hugo -d public
+cd publid
+git add -A .
+git commit -m 'Migrate to Hugo'
+git push origin master
+</code></pre>
+
+<p>CNAMEファイルとか、octopressで使用していたものはhugo用のリポジトリにコピーしてgit管理下にしておくのも忘れずに。</p>
+
+<p>テーマとか周辺環境はOctopressに比べると貧弱ですが、一度もろもろ設定してしまったらそんなにいじることもないしまぁ問題ないかと思います。</p>
+
+<p>ストレス感じながら文章かくよりは、気持よく文章書けるほうが良い。</p>
+
+			  <div class="sharing">
+  <ul>
+  <li><a href="http://blog.restartr.com/2016/03/13/from-octopress-to-hugo" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2016/03/13/from-octopress-to-hugo" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2016/03/13/from-octopress-to-hugo" >Tweet</a></li>
+  <li><a data-pocket-label="pocket" data-pocket-count="horizontal" class="pocket-btn" data-lang="en"></a><script type="text/javascript">!function(d,i){if(!d.getElementById(i)){var j=d.createElement("script");j.id=i;j.src="https://widgets.getpocket.com/v1/j/btn.js?v=1";var w=d.getElementById(i);d.body.appendChild(j);}}(document,"pocket-btn-js");</script></li>
+  </ul>
+</div>
+<script type="text/javascript">
+  (function(){
+    var twitterWidgets = document.createElement('script');
+    twitterWidgets.type = 'text/javascript';
+    twitterWidgets.async = true;
+    twitterWidgets.src = '//platform.twitter.com/widgets.js';
+    document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+  })();
+</script>
+<hr />
+
+			   <footer>
+  <p class="meta">
+    <ul class="params">
+    <li>Category: [雑記]</li>
+    <li class="">Tags: [hugo octopress]</li>
+    <li><span class="byline author vcard">Posted by <span class="fn">ReSTARTR</span></span></li>
+    <li><time datetime="2016-03-13 20:00:00 &#43;0900 JST" pubdate data-updated="true">2016-03-13(Sun)</time></li>
+    </ul>
+  </p>
+</footer>
+
+			</div>
+
+			
+		</div>
+
+  </body>
+</html>

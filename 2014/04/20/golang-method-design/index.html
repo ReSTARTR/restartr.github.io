@@ -1,0 +1,148 @@
+	<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.15" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>Goのメソッド設計 - I Will Survive</title>
+
+  
+  <link rel="stylesheet" href="http://blog.restartr.comcss/poole.css">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/syntax.css">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/hyde.css">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/custom.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://blog.restartr.com/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="http://blog.restartr.com/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="I Will Survive" />
+</head>
+
+	<body class="theme-base-0d">
+		<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="http://blog.restartr.com"><h1>I Will Survive</h1></a>
+      <p class="lead">
+       An application depelopper&#39;s blog. 
+      </p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="http://blog.restartr.com/">Home</a> </li>
+      
+        <li><a href="http://blog.restartr.com/about/"> About </a></li>
+      
+        <li><a href="http://blog.restartr.com/index.xml"> Feed </a></li>
+      
+        <li><a href="https://github.com/ReSTARTR"> GitHub </a></li>
+      
+        <li><a href="https://twitter.com/ReSTARTR"> Twitter </a></li>
+      
+    </ul>
+
+    <p>Copyright ©2016 - ReSTARTR. All rights reserved.</p>
+  </div>
+</div>
+
+
+		<div class="content container">
+			<div class="post">
+			 	<h1>Goのメソッド設計</h1>
+        <span class="post-date">2014-04-20(Sun) - [golang]</span>
+			  <div class="sharing">
+  <ul>
+  <li><a href="http://blog.restartr.com/2014/04/20/golang-method-design" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2014/04/20/golang-method-design" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2014/04/20/golang-method-design" >Tweet</a></li>
+  <li><a data-pocket-label="pocket" data-pocket-count="horizontal" class="pocket-btn" data-lang="en"></a><script type="text/javascript">!function(d,i){if(!d.getElementById(i)){var j=d.createElement("script");j.id=i;j.src="https://widgets.getpocket.com/v1/j/btn.js?v=1";var w=d.getElementById(i);d.body.appendChild(j);}}(document,"pocket-btn-js");</script></li>
+  </ul>
+</div>
+<script type="text/javascript">
+  (function(){
+    var twitterWidgets = document.createElement('script');
+    twitterWidgets.type = 'text/javascript';
+    twitterWidgets.async = true;
+    twitterWidgets.src = '//platform.twitter.com/widgets.js';
+    document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+  })();
+</script>
+<hr />
+
+			      <p><a href="https://github.com/youtube/vitess/blob/master/go/memcache/memcache.go">vitessのmemcacheクライアント実装</a>を見てて思ったこと。</p>
+
+<p>golangのメソッドは値とエラーを返す。
+つまり、呼び出す側としては、エラーを受け取るメソッドを呼び出すごとにエラー制御が必要になる。
+これを１つのメソッドの中で複数エラー制御してると可読性が下がる。
+なので、エラー制御が必要になるごとにメソッドに切り出す。</p>
+
+<p>たぶんこんなふうに分割してくんだと思いました。</p>
+
+<pre><code class="language-go">func main() {
+	conn, err := net.Dial(&quot;tcp&quot;, &quot;localhost:11211&quot;)
+}
+</code></pre>
+
+<p>を使うなら</p>
+
+<pre><code class="language-go">func NewConn() (conn net.Conn, err error) {
+	conn, err := net.Dial(&quot;tcp&quot;, &quot;localhost:11211&quot;)
+	if err != nil {
+		return nil, err
+	}
+	return conn, nil
+}
+
+func main() {
+	conn, err := NewConn()
+	if err != nil {
+		panic(err)
+	}
+	//
+}
+</code></pre>
+
+<p>と言った感じ。</p>
+
+			  <div class="sharing">
+  <ul>
+  <li><a href="http://blog.restartr.com/2014/04/20/golang-method-design" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2014/04/20/golang-method-design" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2014/04/20/golang-method-design" >Tweet</a></li>
+  <li><a data-pocket-label="pocket" data-pocket-count="horizontal" class="pocket-btn" data-lang="en"></a><script type="text/javascript">!function(d,i){if(!d.getElementById(i)){var j=d.createElement("script");j.id=i;j.src="https://widgets.getpocket.com/v1/j/btn.js?v=1";var w=d.getElementById(i);d.body.appendChild(j);}}(document,"pocket-btn-js");</script></li>
+  </ul>
+</div>
+<script type="text/javascript">
+  (function(){
+    var twitterWidgets = document.createElement('script');
+    twitterWidgets.type = 'text/javascript';
+    twitterWidgets.async = true;
+    twitterWidgets.src = '//platform.twitter.com/widgets.js';
+    document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+  })();
+</script>
+<hr />
+
+			   <footer>
+  <p class="meta">
+    <ul class="params">
+    <li>Category: [golang]</li>
+    <li class="">Tags: [golang memcached]</li>
+    <li><span class="byline author vcard">Posted by <span class="fn">ReSTARTR</span></span></li>
+    <li><time datetime="2014-04-20 21:32:32 &#43;0900 JST" pubdate data-updated="true">2014-04-20(Sun)</time></li>
+    </ul>
+  </p>
+</footer>
+
+			</div>
+
+			
+		</div>
+
+  </body>
+</html>

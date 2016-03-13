@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Golang Go Aws Ec2 Cli on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/golang-go-aws-ec2-cli/</link>
+    <description>Recent content in Golang Go Aws Ec2 Cli on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sat, 27 Feb 2016 17:28:53 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/golang-go-aws-ec2-cli/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>ec2-ls-hosts: EC2インスタンスを一覧するだけのシンプルツール</title>
+      <link>http://blog.restartr.com/2016/02/27/ec2-ls-hosts</link>
+      <pubDate>Sat, 27 Feb 2016 17:28:53 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2016/02/27/ec2-ls-hosts</guid>
+      <description>
+
+&lt;p&gt;EC2インスタンスの一覧を表示するツールをgolangでつくりました。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/ReSTARTR/ec2-ls-hosts&#34;&gt;ReSTARTR/ec2-ls-hosts&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;以下のように、ただインスタンスの情報を列挙するだけのシンプルなツールです。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ ls-hosts
+i-00001 10.0.0.1 app01
+i-00002 10.0.0.2 app02
+i-00003 10.0.0.3 app03
+i-00004 10.0.0.4 app04
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;何がうれしいか:b29e9fe288f2c1afa8d247d1c61296b1&#34;&gt;何がうれしいか&lt;/h3&gt;
+
+&lt;p&gt;以下のような状況において、多少便利になるツールです。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;EC2インスタンスを複数台運用している&lt;/li&gt;
+&lt;li&gt;台数が数十台規模である&lt;/li&gt;
+&lt;li&gt;AutoScalingを利用していて、IPやドメインが頻繁に変わる&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;aws ec2 describe-instances&lt;/code&gt;のレスポンスが遅い&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;aws ec2 describe-instances&lt;/code&gt;のオプション指定が複雑かつ指定が面倒&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;このような状況を改善するため、ec2-ls-hostsをつくりました。
+このツールは、&lt;code&gt;aws ec2 describe-instances&lt;/code&gt;に変わる、シンプルなオプションを備えたCLIツールになります。&lt;/p&gt;
+
+&lt;h3 id=&#34;ec2-ls-hostsで出来ること:b29e9fe288f2c1afa8d247d1c61296b1&#34;&gt;ec2-ls-hostsで出来ること&lt;/h3&gt;
+
+&lt;p&gt;主に以下のオプションを備えています&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;-filters&lt;/code&gt;: 絞込み条件&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;-tags&lt;/code&gt;   : タグによる絞込み&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;-fileds&lt;/code&gt; : 表示項目の設定&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;実行時のオプションでも指定できるのですが、いちいち指定するのは面倒なので、&lt;code&gt;~/.ls-hosts&lt;/code&gt; か &lt;code&gt;/etc/ls-hosts&lt;/code&gt; に設定を保存できます。
+このファイルが存在していたらそれを読み込みます。(両方ある場合は&lt;code&gt;~/.ls-hosts&lt;/code&gt;のほうが優先されます)
+設定はこんなかんじで。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[options]
+tags   = Env:production,Role:app
+fields = instance-id,tag:Name,public-ip,instance-state
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;認証は以下の優先順位で可能なものを利用します。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;環境変数 &lt;code&gt;AWS_ACCESS_KEY_ID&lt;/code&gt;, &lt;code&gt;AWS_SECRET_ACCESS_KEY&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;SharedCredentials (&lt;code&gt;~/.aws/credentials&lt;/code&gt;のdefaultプロファイルを利用)&lt;/li&gt;
+&lt;li&gt;EC2 Instance Profile&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;インスタンスプロファイルに対応しているので、たとえばEC2のReadOnly権限をを付与してあるゲートウェイインスタンスに配置することで、認証情報を直接管理せずに利用することもできます。&lt;/p&gt;
+
+&lt;h3 id=&#34;インストール方法:b29e9fe288f2c1afa8d247d1c61296b1&#34;&gt;インストール方法&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;git clone https://github.com/ReSTARTR/ec2-ls-hosts.git
+cd ./ec2-ls-hosts
+make build -B
+cp ./build/ls-hosts /path/to/bin/ls-hosts
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;コマンド名は&lt;code&gt;ls-hosts&lt;/code&gt;にしています。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;$PATH&lt;/code&gt;の通っているところに配置してください:bow:&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;zsh-pecoでインタラクティブにsshする:b29e9fe288f2c1afa8d247d1c61296b1&#34;&gt;zsh + pecoでインタラクティブにSSHする&lt;/h3&gt;
+
+&lt;p&gt;ec2-ls-hosts単体でも多少便利にはなるのですが、ツールを組み合わせた応用例も書いておきます。&lt;/p&gt;
+
+&lt;p&gt;たとえば以下のような結果が得られるEC2環境があったとします。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ ls-hosts -filters instance-state-name:running -tags Env:production,Role:app -fields private-ip,tag:Name,tag:Role
+10.0.0.1 app app01
+10.0.0.2 app app02
+10.0.0.3 app app03
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これをpecoでインタラクティブに選択してそのままSSHするには、以下のようにzshrcを設定しておきます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;function peco-ec2-ls-hosts () {
+  # NOTE: ~/.ls-hostsに設定したほうがより良いです
+  BUFFER=$(
+    ls-hosts -filters instance-state-name:running -tags Env:production,Role:app -fields private-ip,tag:Name,tag:Role | \
+    peco --prompt &amp;quot;EC2 &amp;gt;&amp;quot; --query &amp;quot;$LBUFFER&amp;quot; | \
+    awk &#39;{echo &amp;quot;Login to %s; printf &amp;quot;ssh %s\n&amp;quot;, $3,$1}&#39;
+  )
+  CURSOR=$#BUFFER
+  zle accept-line
+  zle clear-screen
+}
+zle -N peco-ec2-ls-hosts
+# キーバインドはおこのみで
+bindkey &#39;^oo&#39; peco-ec2-ls-hosts
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;とすることで、インタラクティブにSSHできてヒストリーにも残ります。
+以下キャプチャでは対象インスタンスがダミーなのでSSできてませんがちゃんと使えます。
+(実環境の実行結果は載せられないので泣く泣くダミーです&amp;hellip;)&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://gyazo.com/ae45206ad8215934f5e0a897b91b3d2a&#34;&gt;&lt;img src=&#34;https://i.gyazo.com/ae45206ad8215934f5e0a897b91b3d2a.gif&#34; alt=&#34;https://gyazo.com/ae45206ad8215934f5e0a897b91b3d2a&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;※クライアントPCからパブリックIPとかで直接SSHできない場合はプロキシコマンドを利用して踏み台経由とかでプライベートIPできるssh-configを設定しておくと、この応用例を使って透過的にSSHできます（これは別記事としたほうがよいかも？)&lt;/p&gt;
+
+&lt;h3 id=&#34;余談:b29e9fe288f2c1afa8d247d1c61296b1&#34;&gt;余談&lt;/h3&gt;
+
+&lt;p&gt;さいごの応用例はもともとaws-cli + jq + pecoで実現していたのですが、管理台数が増えるに連れてレスポンスが極端に劣化。
+キャッシュ機構を入れてみたりしたものの、快適とはいえない状況になったので、「aws-sdk-goで書くだけで軽くなるのでは？」という発想から開発に至りました。&lt;/p&gt;
+
+&lt;p&gt;mackerel導入環境であれば&lt;code&gt;mkr&lt;/code&gt;でも似たようなことができるかもしれないですが、mackerel前提ではないソリューションとしても十分使えるかな、と。&lt;/p&gt;
+
+&lt;p&gt;社内利用に特化したかたちでつくったものの、ちょっとだけ汎用化すればべつに誰でも使えるようなきがしたので、手を加えたうえでgithubにて公開となりました。
+まだまだ貧弱ですが、最低限役目は果たしています。&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

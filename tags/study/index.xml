@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Study on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/study/</link>
+    <description>Recent content in Study on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Tue, 21 Jun 2011 23:56:40 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/study/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Varnish勉強会 #tokyovcl に行ってきた</title>
+      <link>http://blog.restartr.com/2011/06/21/go-to-varnish-study-tokyovc</link>
+      <pubDate>Tue, 21 Jun 2011 23:56:40 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2011/06/21/go-to-varnish-study-tokyovc</guid>
+      <description>
+
+&lt;p&gt;&lt;a href=&#34;http://www.flickr.com/photos/53244662@N04/5856931526/&#34; title=&#34;IMAG0053 by ReSTARTR_y, on Flickr&#34;&gt;&lt;img src=&#34;http://farm6.static.flickr.com/5029/5856931526_1119c53a87.jpg&#34; width=&#34;500&#34; height=&#34;299&#34; alt=&#34;IMAG0053&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;sup&gt;6&lt;/sup&gt;&amp;frasl;&lt;sub&gt;18&lt;/sub&gt;(土)に開催された&lt;a href=&#34;http://atnd.org/events/16681&#34;&gt;Varnish勉強会 Tokyo.vcl : ATND&lt;/a&gt;に行ってきました。
+初のクックパッドさんオフィス訪問です。&lt;/p&gt;
+
+&lt;p&gt;Varnish3のリリースパーティーも兼ねての開催だったようで、ステッカーもいただいてしまいました。
+インフラ屋じゃない上に、Varnish触ったのは前日の晩という超初心者だったので結構不安でしたが、
+ビアバッシュを含め色々な話しが聞けた実りある良い勉強会でした。&lt;/p&gt;
+
+&lt;p&gt;主催の@hmskさんをはじめ登壇者の皆様、ならびにビアバッシュで交流してくださった皆様ありがとうございました。&lt;/p&gt;
+
+&lt;h3 id=&#34;雑感:513d68d854003f583ea929a20a7a7c49&#34;&gt;雑感&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Varnishは画像配信の事例が多い&lt;/li&gt;
+&lt;li&gt;HTTPサーバーの前だけじゃなくてSolrのような内部ネットワーク間の通信にも適用できる。&lt;/li&gt;
+&lt;li&gt;Varnish落ちたときにApacheの負荷を避けるためにSquidが使える。&lt;/li&gt;
+&lt;li&gt;拡張次第でHTTPサーバーにもKVSにも化ける（やりすぎ注意？）。&lt;/li&gt;
+&lt;li&gt;クラウドでの運用はフロンティア。&lt;/li&gt;
+&lt;li&gt;設定ファイルのvclはもはやプログラム&lt;/li&gt;
+&lt;li&gt;ESIの事例なかったけど使いにくいのかな？&lt;/li&gt;
+&lt;li&gt;とりあえず実戦投入して様子見ないとわからないことが多そう。&lt;/li&gt;
+&lt;li&gt;あ、どれだけ高速化したかについての言及がなかったような…&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;各発表メモ:513d68d854003f583ea929a20a7a7c49&#34;&gt;各発表メモ&lt;/h2&gt;
+
+&lt;p&gt;スライドと、その丸写しみたいな感じのメモをペタペタ。&lt;/p&gt;
+
+&lt;h3 id=&#34;varnishcache3-0新機能とvupの仕方-xcir:513d68d854003f583ea929a20a7a7c49&#34;&gt;VarnishCache3.0新機能とVUPの仕方(@xcir)&lt;/h3&gt;
+
+&lt;div style=&#34;width:425px&#34; id=&#34;__ss_8344516&#34;&gt; &lt;strong style=&#34;display:block;margin:12px 0 4px&#34;&gt;&lt;a href=&#34;http://www.slideshare.net/xcir/tokyovclvarnishcache30vup&#34; title=&#34;tokyo.vcl発表資料（VarnishCache3.0新機能とVUPの仕方）&#34;&gt;tokyo.vcl発表資料（VarnishCache3.0新機能とVUPの仕方）&lt;/a&gt;&lt;/strong&gt; &lt;iframe src=&#34;http://www.slideshare.net/slideshow/embed_code/8344516&#34; width=&#34;425&#34; height=&#34;355&#34; frameborder=&#34;0&#34; marginwidth=&#34;0&#34; marginheight=&#34;0&#34; scrolling=&#34;no&#34;&gt;&lt;/iframe&gt;
+&lt;div style=&#34;padding:5px 0 12px&#34;&gt; View more &lt;a href=&#34;http://www.slideshare.net/&#34;&gt;presentations&lt;/a&gt; from &lt;a href=&#34;http://www.slideshare.net/xcir&#34;&gt;xcir&lt;/a&gt; &lt;/div&gt;
+
+&lt;p&gt;&lt;/div&gt;
+   * ESIでのgzip
+      * ブロックが圧縮されているとESIできなかった(~2）
+      * defaultパラメータが改善された
+   * stream support
+      * 別のストリームは待機させられる（？&lt;/p&gt;
+
+&lt;h3 id=&#34;イカ娘も終わったしvarnishでも使うか-phji:513d68d854003f583ea929a20a7a7c49&#34;&gt;イカ娘も終わったしVarnishでも使うか(@phji)&lt;/h3&gt;
+
+&lt;div style=&#34;width:425px&#34; id=&#34;__ss_8366215&#34;&gt; &lt;strong style=&#34;display:block;margin:12px 0 4px&#34;&gt;&lt;a href=&#34;http://www.slideshare.net/phji/varnishika&#34; title=&#34;イカ娘も終わったしVarnishでも使うか&#34;&gt;イカ娘も終わったしVarnishでも使うか&lt;/a&gt;&lt;/strong&gt; &lt;iframe src=&#34;http://www.slideshare.net/slideshow/embed_code/8366215&#34; width=&#34;425&#34; height=&#34;355&#34; frameborder=&#34;0&#34; marginwidth=&#34;0&#34; marginheight=&#34;0&#34; scrolling=&#34;no&#34;&gt;&lt;/iframe&gt;
+&lt;div style=&#34;padding:5px 0 12px&#34;&gt; View more &lt;a href=&#34;http://www.slideshare.net/&#34;&gt;presentations&lt;/a&gt; from &lt;a href=&#34;http://www.slideshare.net/phji&#34;&gt;Kazutoshi Fujimoto&lt;/a&gt; &lt;/div&gt;
+
+&lt;p&gt;&lt;/div&gt;
+   * [RAM8G Xeon 4core SSD256GB ] x 20servers
+   * pixiv
+      * nginx -&amp;gt; (consistent hash) -&amp;gt; quid -&amp;gt; nginx -&amp;gt; apache
+      * lookupとかかないとキャッシュされないｗ&lt;/p&gt;
+
+&lt;h3 id=&#34;twitter検索-yats-でvarnish使ってみた-penguinana:513d68d854003f583ea929a20a7a7c49&#34;&gt;twitter検索(yats)でvarnish使ってみた(@PENGUINANA_)&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;API 7000M req/month&lt;/li&gt;
+&lt;li&gt;PV 150Mreq/month&lt;/li&gt;
+&lt;li&gt;varnish(vps) -&amp;gt; nginx[ webAPI -&amp;gt; varnish -&amp;gt; Solr ]&lt;/li&gt;
+&lt;li&gt;service : cache + failover&lt;/li&gt;
+&lt;li&gt;Solr: slaveのキャッシュクリアーが重いので、その前面にVarnishをおいている(ラウンドロビンとFailover）&lt;/li&gt;
+&lt;li&gt;autocomplete
+
+&lt;ul&gt;
+&lt;li&gt;キャッシュと相性よさそう&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;ec2とvarnishで画像配信-mirakui:513d68d854003f583ea929a20a7a7c49&#34;&gt;EC2とvarnishで画像配信(@mirakui)&lt;/h3&gt;
+
+&lt;div style=&#34;width:425px&#34; id=&#34;__ss_8352369&#34;&gt; &lt;strong style=&#34;display:block;margin:12px 0 4px&#34;&gt;&lt;a href=&#34;http://www.slideshare.net/mirakui/ec2varnish&#34; title=&#34;EC2とVarnishで画像配信&#34;&gt;EC2とVarnishで画像配信&lt;/a&gt;&lt;/strong&gt; &lt;iframe src=&#34;http://www.slideshare.net/slideshow/embed_code/8352369&#34; width=&#34;425&#34; height=&#34;355&#34; frameborder=&#34;0&#34; marginwidth=&#34;0&#34; marginheight=&#34;0&#34; scrolling=&#34;no&#34;&gt;&lt;/iframe&gt;
+&lt;div style=&#34;padding:5px 0 12px&#34;&gt; View more &lt;a href=&#34;http://www.slideshare.net/&#34;&gt;presentations&lt;/a&gt; from &lt;a href=&#34;http://www.slideshare.net/mirakui&#34;&gt;Issei Naruta&lt;/a&gt; &lt;/div&gt;
+
+&lt;p&gt;&lt;/div&gt;
+   * 失敗談
+   * TOFU
+      * アップロード時ではなくオンデマンドでリサイズ
+      * akamai（CDN)に7000RPSのうち、ELBには700RPSくる。60%受けるリクエストをキャッシュできればApache負荷軽減できるのでは？
+         * という導入経緯（からの失敗
+      * 1st challenge
+         * EC2(M2.XLARGE[17.1GB RAM] + EBS[100GB for swap])
+         * 300rps
+         * 結果：オンメモリだけなら順調だけど、あふれてきてOSにSWAPさせたとたんLOADAVERAGEが爆発して死亡。
+      * 2nd challenge
+         * EC2(M2.XLARGE[17.1GB RAM] + EBS[100GB for ext3])
+         * &amp;ldquo;file storage&amp;rdquo;を使っても結局メモリ容量が大量に必要
+      * ec2のxlargeインスタンスには、IO性能「標準」と「高」がある
+         * 今回は「標準」を利用して失敗
+         * 「高」ならうまくいくかも
+   * varnish3
+      * hash director
+         * consistent hashingができるかも？
+         * nginxいらずに複数varnish運用ができるかも？&lt;/p&gt;
+
+&lt;h3 id=&#34;puppetでvarnishもsquidも面倒みる-ar1:513d68d854003f583ea929a20a7a7c49&#34;&gt;Puppetでvarnishもsquidも面倒みる(@ar1)&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;ふつうはvarnishは落ちるのでLBつかって並列で運用&lt;/li&gt;
+&lt;li&gt;varnishおちるとWebサーバーが負荷かかってしまう
+
+&lt;ul&gt;
+&lt;li&gt;LB -&amp;gt; varnish -&amp;gt; squid -&amp;gt; apache&lt;/li&gt;
+&lt;li&gt;squidどうしでキャッシュを共有できるので、１つSquidおちてもWebサーバーにききにいかずにすむ。&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;puppet
+
+&lt;ul&gt;
+&lt;li&gt;設定をらくにする&lt;/li&gt;
+&lt;li&gt;cacheのExpire&lt;/li&gt;
+&lt;li&gt;サーバーのぬきさし&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;楽天でvarnish-spchidren:513d68d854003f583ea929a20a7a7c49&#34;&gt;楽天でvarnish(@spchidren)&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;L7 balancingがやりたくてVarnish導入
+
+&lt;ul&gt;
+&lt;li&gt;URLによってWebサーバーのグループを切り替えたい&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;akamai -&amp;gt; LB -&amp;gt; varnish(RAM24G[malloc18G/hitrate 75%] -&amp;gt; apache(+mod_thumb)&lt;/li&gt;
+&lt;li&gt;LBからVarnishを切り離すのはどうやる？&lt;/li&gt;
+&lt;li&gt;CDNやVarnishのcache clearをどうやるか
+
+&lt;ul&gt;
+&lt;li&gt;画像登録されたときにMQに登録して、必要に応じて消す&lt;/li&gt;
+&lt;li&gt;CDNは常にExpireされない状態にしておける。&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;ImageMagicおもい
+
+&lt;ul&gt;
+&lt;li&gt;varnishにサムネイルをつくるしくみを組み込んでみれば？（FreeImage)&lt;/li&gt;
+&lt;li&gt;cc_commandでインクルードさせて、C言語でサムネイルつくるしくみをくみこむ&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;varnishのいくさき
+
+&lt;ul&gt;
+&lt;li&gt;nginxにも近いしredisにもちかづいてきてる&lt;/li&gt;
+&lt;li&gt;どこにいくんでしょ&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;tddでvcl書いてデプロイ-hmsk:513d68d854003f583ea929a20a7a7c49&#34;&gt;TDDでVCL書いてデプロイ(@hmsk)&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;varnishtest
+
+&lt;ul&gt;
+&lt;li&gt;RSpecぽい書き方できる&lt;/li&gt;
+&lt;li&gt;xxx.vcltestファイルにケースを記述&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;vmod
+
+&lt;ul&gt;
+&lt;li&gt;vclの設定をC言語っぽく描ける&lt;/li&gt;
+&lt;li&gt;パージや圧縮、エラーなどに使える&lt;/li&gt;
+&lt;li&gt;モバイル端末のリストのチェックにもVCLから外出しできる&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;関連リンク:513d68d854003f583ea929a20a7a7c49&#34;&gt;関連リンク&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;ATND
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://atnd.org/events/16681&#34;&gt;Varnish勉強会 Tokyo.vcl : ATND&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Ustream
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.ustream.tv/recorded/15453305&#34;&gt;http://www.ustream.tv/recorded/15453305&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.ustream.tv/recorded/15453834&#34;&gt;http://www.ustream.tv/recorded/15453834&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Togetter
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://togetter.com/li/151585&#34;&gt;Togetter - 「第一回 Varnish勉強会 Tokyo.vcl」&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;勉強会レポート
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://d.hatena.ne.jp/hxmasaki/20110620/1308547067&#34;&gt;Varnish勉強会 Tokyo.vclを行いました - ククラフト&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://d.hatena.ne.jp/mirakui/20110619/1308497959&#34;&gt;私がクックパッドの画像配信野郎です - 床のトルストイ、ゲイとするとのこと&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.xcir.net/?p=438&#34;&gt;Tokyo.vclでVarnishCache3の新機能とVUPの仕方を話してきました &amp;laquo; cat /dev/random &amp;gt; /dev/null &amp;amp;&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.udzura.jp/2011/06/20/summary-of-tokyo-varnish-study-on-20110618/&#34;&gt;東京varnish勉強会(Tokyo.vcl)まとめ &amp;laquo;  blog.udzura.jp&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

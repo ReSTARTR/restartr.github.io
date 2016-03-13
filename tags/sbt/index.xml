@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Sbt on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/sbt/</link>
+    <description>Recent content in Sbt on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Mon, 09 May 2011 23:35:43 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/sbt/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>ScalaをDotCloudにアップロードするためのsbtサンプル</title>
+      <link>http://blog.restartr.com/2011/05/09/sample-sbt-project-for-dotcloud</link>
+      <pubDate>Mon, 09 May 2011 23:35:43 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2011/05/09/sample-sbt-project-for-dotcloud</guid>
+      <description>
+
+&lt;p&gt;&lt;a href=&#34;http://dotcloud.com/&#34;&gt;dotcloud&lt;/a&gt;を必要最低限操作するためのactionをsbtに追加してみました。&lt;/p&gt;
+
+&lt;p&gt;sbtのアクション自体はじめてなので作法がよくわかってないので、間違っているかも知れませんが。&lt;/p&gt;
+
+&lt;h3 id=&#34;使い方:0bbc900d9426631008618c5d05350acf&#34;&gt;使い方&lt;/h3&gt;
+
+&lt;p&gt;※scalaファイルは最後に掲載しています。
+とりあえず下記を作成するサービス名に置き換えればOKです。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;  val dotApplicationName = &amp;quot;APPNAME&amp;quot;
+  val dotServiceName = dotApplicationName + &amp;quot;.SERVNAME&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;あとは、下記を順に実行すればOK(dot_prepareはdot_pushの前に必ず実行されるので省略可能)&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&amp;ldquo;sbt dot_create&amp;rdquo; : サービスの作成&lt;/li&gt;
+&lt;li&gt;&amp;ldquo;sbt dot_prepare&amp;rdquo; : リリース用ディレクトリ作成とwarファイルのコピー&lt;/li&gt;
+&lt;li&gt;&amp;ldquo;sbt dot_push&amp;rdquo; : dotcloudへのwarファイルpush&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;dotcloud用に注意すべきこと:0bbc900d9426631008618c5d05350acf&#34;&gt;dotcloud用に注意すべきこと&lt;/h3&gt;
+
+&lt;p&gt;&amp;ldquo;sbt package&amp;rdquo;を使用すると、&amp;rdquo;＜projectName＞-＜scala_ver＞-＜app_ver＞.war&amp;rdquo;の形式でwarファイルが作成されます。
+が、dotcloudのドキュメントにはこう書いてあるので、&amp;rdquo;root.war&amp;rdquo;で作成するのが望ましいです。&lt;/p&gt;
+
+&lt;p&gt;&lt;blockquote&gt;
+The java service will make your application available at &lt;a href=&#34;http://frontend.myapp.dotcloud.com/&#34;&gt;http://frontend.myapp.dotcloud.com/&lt;/a&gt; if your archive is named root.war or &lt;a href=&#34;http://frontend.myapp.dotcloud.com/webapp/&#34;&gt;http://frontend.myapp.dotcloud.com/webapp/&lt;/a&gt; if your archive is named webapp.war (../foobar/ if the archive was named foobar.war and so on). So, you can effectively serve multiple web applications with the same java service.&lt;/p&gt;
+
+&lt;p&gt;&lt;/blockquote&gt;
+&lt;a href=&#34;http://docs.dotcloud.com/components/java/&#34;&gt;Java &amp;mdash; DotCloud documentation&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;さらに、&amp;rdquo;dotcloud push&amp;rdquo;はwarファイルを含むディレクトリを指定することになり、それ以下がすべて同期されてしまいます。デフォルトだと、&amp;rdquo;./target/scala_2.8.1/&amp;ldquo;以下のすべてが。&lt;/p&gt;
+
+&lt;p&gt;なので、warのみ格納する&amp;rdquo;release&amp;rdquo;ディレクトリを作り、 そこに&amp;rdquo;root.war&amp;rdquo;としてひとつだけ存在させておきました。
+順番に書くと、&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;sbt packageでtarget/scala_2.8.1/＜projectName＞-＜scala_ver＞-＜app_ver＞.warを生成&lt;/li&gt;
+&lt;li&gt;そのwarファイルをtarget/release/root.warにコピー&lt;/li&gt;
+&lt;li&gt;&amp;ldquo;dotcloud push ＜dotcloud_appname＞ target/release/&amp;rdquo; でwarのみアップロード&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;という方法で対応しました。&lt;/p&gt;
+
+&lt;p&gt;以下、サンプルのプロジェクト設定です。&lt;/p&gt;
+
+&lt;script src=&#34;https://gist.github.com/962534.js?file=RameeProject.scala&#34;&gt;&lt;/script&gt;
+
+&lt;h3 id=&#34;参考リンク:0bbc900d9426631008618c5d05350acf&#34;&gt;参考リンク&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://docs.dotcloud.com/cli/&#34;&gt;DotCloud command line &amp;mdash; DotCloud documentation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://code.google.com/p/simple-build-tool/wiki/Process&#34;&gt;Process - simple-build-tool - A build tool for Scala - Google Project Hosting&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Unfiltered on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/unfiltered/</link>
+    <description>Recent content in Unfiltered on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Wed, 28 Dec 2011 21:27:52 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/unfiltered/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>EventStatsはherokuとMongoLabとさくらVPSで動いている</title>
+      <link>http://blog.restartr.com/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps</link>
+      <pubDate>Wed, 28 Dec 2011 21:27:52 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps</guid>
+      <description>
+
+&lt;p&gt;今月頭に&lt;a href=&#34;http://blog.restartr.com/2011/12/10/eventststs&#34;&gt;ブログ書きました&lt;/a&gt;が、EventStatsという勉強会の参加者の推移が見れるサービスを公開しました。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://eventstats.restartr.com&#34;&gt;EventStats - イベントの統計情報が見れます&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;まぁ自分が欲しかっただけなんですけど、使ってみて頂ければ幸いです。
+今回はそのサービスの構成とかについて書いてみます。&lt;/p&gt;
+
+&lt;h3 id=&#34;アジェンダ:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;アジェンダ&lt;/h3&gt;
+
+&lt;ol&gt;
+&lt;li&gt;全体像&lt;/li&gt;
+&lt;li&gt;システム構成&lt;/li&gt;
+&lt;li&gt;Gitリポジトリ&lt;/li&gt;
+&lt;li&gt;MongoDBのPaaS&lt;/li&gt;
+&lt;li&gt;各イベント管理サービスAPIの違い&lt;/li&gt;
+&lt;li&gt;開発メモ&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;1-全体像:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;1.全体像&lt;/h3&gt;
+
+&lt;p&gt;開発環境も含めて全体像を図にしてみました。(初Cacooですが超べんりですね！)&lt;/p&gt;
+
+&lt;p&gt;赤い線がGit操作で、黒い点線がMongoDBへのアクセスです。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://cacoo.com/diagrams/Cp2yo6tQNlxCm5av&#34;&gt;&lt;img border=&#34;1&#34; alt=&#34;全体像&#34; src=&#34;https://cacoo.com/diagrams/Cp2yo6tQNlxCm5av-2260A.png&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;2-システム構成:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;2.システム構成&lt;/h3&gt;
+
+&lt;p&gt;大きく分けてwebとクローラーの２つです。
+webはherokuに、クローラーはさくらのVPSに配置。&lt;/p&gt;
+
+&lt;p&gt;まずは優先してデータ蓄積を…ということでクローラーをpythonとmongodbで作成しました。
+(サービス的にはやいとこデータためないと意味ないので。)&lt;/p&gt;
+
+&lt;p&gt;クローラーは５分おきに起動するのでScalaよりPythonを選択しました。起動コスト重視です。
+(Scalaでサクサク開発できる程のスキルではないというのもありますが… )&lt;/p&gt;
+
+&lt;p&gt;実行場所はherokuのworkerも考えたましたが、最終的に既に利用していたさくらVPSでcronジョブとして運用することに。&lt;/p&gt;
+
+&lt;p&gt;ということでScalaのWebはデータ参照のみで、データの更新はしません。&lt;/p&gt;
+
+&lt;h3 id=&#34;3-gitリポジトリ:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;3.Gitリポジトリ&lt;/h3&gt;
+
+&lt;p&gt;webとクローラーは分けてGitで管理。リモートリポジトリはどちらもさくらのVPS上においています。
+ただし、本番リリースは開発PCからherokuに別途pushします。&lt;/p&gt;
+
+&lt;p&gt;※webもさくらVPSにリモートリポジトリを持って、本番データを参照するステージング環境として利用しています。&lt;/p&gt;
+
+&lt;h4 id=&#34;eventstats-web:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;eventstats-web&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;host: &lt;a href=&#34;http://www.heroku.com/&#34;&gt;heroku&lt;/a&gt; (Chedar)&lt;/li&gt;
+&lt;li&gt;scala
+
+&lt;ul&gt;
+&lt;li&gt;フレームワーク: &lt;a href=&#34;https://github.com/unfiltered/unfiltered&#34;&gt;unfiltered&lt;/a&gt; 0.5.1&lt;/li&gt;
+&lt;li&gt;mongodb接続: &lt;a href=&#34;http://api.mongodb.org/scala/casbah/2.1.5.0/&#34;&gt;casbah&lt;/a&gt; 2.1.5-1&lt;/li&gt;
+&lt;li&gt;テンプレートエンジン: &lt;a href=&#34;https://github.com/unfiltered/unfiltered/tree/master/scalate&#34;&gt;unfiltered-scalate&lt;/a&gt; (ssp)&lt;/li&gt;
+&lt;li&gt;テスティングライブラリ: &lt;a href=&#34;https://github.com/unfiltered/unfiltered/tree/master/spec&#34;&gt;unfiltered-specs&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;チャートのレンダリング: &lt;a href=&#34;http://code.google.com/apis/chart/index.html&#34;&gt;Google Chart Tools&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;eventstats-crawler:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;eventstats-crawler&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;host: さくらのvps&lt;/li&gt;
+&lt;li&gt;python 2.6
+
+&lt;ul&gt;
+&lt;li&gt;フレームワーク: なし&lt;/li&gt;
+&lt;li&gt;mongodb接続: &lt;a href=&#34;http://api.mongodb.org/python/1.11/&#34;&gt;pymongo&lt;/a&gt; 1.11&lt;/li&gt;
+&lt;li&gt;テスティングライブラリ: &lt;a href=&#34;http://readthedocs.org/docs/nose/en/latest/&#34;&gt;nose&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;その他: &lt;a href=&#34;http://www.crummy.com/software/BeautifulSoup/&#34;&gt;BeautifulSoup&lt;/a&gt; (&lt;em&gt;partake.inのwebスクレイピングに利用&lt;/em&gt;)&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;4-mongodbのpaas:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;4.MongoDBのPaas&lt;/h3&gt;
+
+&lt;p&gt;herokuプラグインとして&lt;a href=&#34;https://addons.heroku.com/mongolab&#34;&gt;MongoLab&lt;/a&gt;と&lt;a href=&#34;https://addons.heroku.com/mongohq&#34;&gt;MongoHQ&lt;/a&gt;の２つが提供されています。どちらも無料枠があるのですが、MongoLabの方が無料で利用できる容量が大きいのでこちらを選択。&lt;/p&gt;
+
+&lt;p&gt;月額の利用料金は以下です。（括弧内は1MBあたりの金額の目安です）
+&lt;em&gt;これ以上の容量も利用可能ですが個人で払う範囲ではないと思い除外してます。&lt;/em&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;mongolab:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;MongoLab&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;$ 0.00/240MB&lt;/li&gt;
+&lt;li&gt;$10.00/0.5GB  ($0.020/MB)&lt;/li&gt;
+&lt;li&gt;$20.00/2.0GB  ($0.009/MB)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;mongohq:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;MongoHQ&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;$ 0.00/ 16MB&lt;/li&gt;
+&lt;li&gt;$ 5.00/256MB  ($0.019/MB)&lt;/li&gt;
+&lt;li&gt;$15.00/2.0GB  ($0.007/MB)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;5-各イベント管理サービスapiの違い:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;5.各イベント管理サービスAPIの違い&lt;/h3&gt;
+
+&lt;p&gt;まずは&lt;strong&gt;atnd, zusaar, partake.inの３サービスに対応&lt;/strong&gt;。&lt;/p&gt;
+
+&lt;p&gt;それぞれ検索APIを提供してくれているのですが、当然ながら規格とかもないのでリクエストもレスポンスも違いがあります。&lt;/p&gt;
+
+&lt;p&gt;データ蓄積する際にそのAPIの差異を吸収して、webアプリから参照する際は気にしなくていい戦略をとりました。
+APIの違い検索のみに特化して違いをまとめると以下の通りです。&lt;/p&gt;
+
+&lt;h4 id=&#34;atnd:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;atnd&lt;/h4&gt;
+
+&lt;p&gt;イベント数も多いので、このAPIをスタンダードに設定。
+* API仕様
+ * &lt;a href=&#34;http://api.atnd.org/&#34;&gt;http://api.atnd.org/&lt;/a&gt;
+* リクエストパス
+ * &lt;a href=&#34;http://api.atnd.org/events/&#34;&gt;/events/&lt;/a&gt;
+   * イベントの検索
+ * &lt;a href=&#34;http://api.atnd.org/events/users/&#34;&gt;/events/users/&lt;/a&gt;
+   * イベントに参加しているユーザーの検索&lt;/p&gt;
+
+&lt;h4 id=&#34;zusaar:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;zusaar&lt;/h4&gt;
+
+&lt;p&gt;基本的にはatnd準拠っぽい感じだけど細かい違いがあります。
+ * API仕様
+   * &lt;a href=&#34;http://www.zusaar.com/doc/api.html&#34;&gt;http://www.zusaar.com/doc/api.html&lt;/a&gt;
+ * リクエストパス
+   * &lt;a href=&#34;http://www.zusaar.com/api/event/&#34;&gt;/api/event/&lt;/a&gt;
+     * イベントの検索
+   * &lt;a href=&#34;http://www.zusaar.com/api/event/user/&#34;&gt;/api/event/user/&lt;/a&gt;
+     * イベントに参加しているユーザーの検索
+atndとの違い
+ * エントリポイントやデータのキー名が単数形
+   * events→event
+   * users→user
+ * 明確なフィールドとしてのtwitter_idが無い
+    * 管理者も参加ユーザーも
+ * ハッシュタグがない
+ * レスポンスはjson一択&lt;/p&gt;
+
+&lt;h4 id=&#34;partake-in:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;partake.in&lt;/h4&gt;
+
+&lt;p&gt;全然違うAPI。APIリストにあっても未実装がほとんどなので、利用する際はソースを確認したほうが良いです。
+今回必要になりそうなAPIは２つくらいでした。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;API仕様
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://code.google.com/p/partakein/wiki/PublicWebAPI&#34;&gt;http://code.google.com/p/partakein/wiki/PublicWebAPI&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;リクエストパス
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://partake.in/api/event/search/&#34;&gt;/api/event/search&lt;/a&gt;
+
+&lt;ul&gt;
+&lt;li&gt;イベントの検索&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://partake.in/api/event/get/&#34;&gt;/api/event/get&lt;/a&gt;
+
+&lt;ul&gt;
+&lt;li&gt;イベントの詳細データ取得&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;APIのソース(抜粋)
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://code.google.com/p/partakein/source/browse/trunk/Partake/src/main/java/in/partake/controller/api/event/SearchAction.java&#34;&gt;in.partake.controller.api.event.SearchAction.java&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://code.google.com/p/partakein/source/browse/trunk/Partake/src/main/java/in/partake/controller/api/event/EventAction.java&#34;&gt;in.partake.controller.api.event.EventAction.java&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;その他の特徴は以下。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;複数イベントを特定して一括取得するAPIはない&lt;/li&gt;
+&lt;li&gt;フィールド名がcamelCase形式&lt;/li&gt;
+&lt;li&gt;レスポンスはjson一択&lt;/li&gt;
+&lt;li&gt;検索パラメータも特殊かつ少数&lt;/li&gt;
+&lt;li&gt;検索APIで取得できるのはイベントの固定情報のみ
+
+&lt;ul&gt;
+&lt;li&gt;参加枠数はAPIから取得可能&lt;/li&gt;
+&lt;li&gt;変動するユーザー数は取得不可能&lt;/li&gt;
+&lt;li&gt;→Webページをスクレイピングするしかないという結論&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;上記をふまえ、atnd/zusaarはJSON形式でAPIからデータ取得。&lt;/p&gt;
+
+&lt;p&gt;partake.inのみイベントのリストをAPIから取得して、ユーザー数はWebページのスクレイピングで対応しました。&lt;/p&gt;
+
+&lt;h3 id=&#34;6-開発メモ:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;6.開発メモ&lt;/h3&gt;
+
+&lt;h4 id=&#34;web-heroku-からもクローラー-さくらのvps-からも離れた場所にある:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;web(heroku)からもクローラー(さくらのvps)からも離れた場所にある&lt;/h4&gt;
+
+&lt;p&gt;開発PC上だと気にならなかったのですが、1件1件findしてinsertやupdateをしていると当然遅いです。なのである程度まとめて一気にinsertする方針に変更しました(ベンチ結果はありません ^^;)。
+更新はクローラーの１プロセスからのみ実行されるので、トランザクションとか意識しなくて良いです。なので比較的自由な構成がとれます。&lt;/p&gt;
+
+&lt;h4 id=&#34;scalaでjson-api:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;ScalaでJSON API&lt;/h4&gt;
+
+&lt;p&gt;まずはUnfilteredでJSON APIを作成。けど、jsでjson取得〜チャート生成の実行時間が思いの外大きいので、jsonも１枚のHTMLに埋め込む方針に変更。&lt;/p&gt;
+
+&lt;h3 id=&#34;さいごに:6303adaa3c3f634af9e1676edb8bfdd3&#34;&gt;さいごに&lt;/h3&gt;
+
+&lt;p&gt;ざっと書きだすとこんな感じです。まぁこんな構成もあるよ、ってくらいにしか言えませんが。&lt;/p&gt;
+
+&lt;p&gt;webとクローラーを分けたことで、開発中のスキーマ変更が柔軟に行えたのは良かったのですが、スキーマ定義を共通で管理していないので、そのあたりうまく管理できると良いなと思ったり。
+当初はもう少しwebの機能も多かったのですが、効率化をしているうちにシンプルな形に落ち着きました。Scalaのコードもかなり小規模なものになっています。
+イベント管理者の方からのご意見ご要望などいただけると嬉しいです :)&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://eventstats.restartr.com&#34;&gt;EventStats - イベントの統計情報が見れます&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

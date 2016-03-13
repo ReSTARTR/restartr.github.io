@@ -1,0 +1,1961 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>I Will Survive</title>
+    <link>http://blog.restartr.com/</link>
+    <description>Recent content on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 13 Mar 2016 20:00:00 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>OctopressからHugoに移行</title>
+      <link>http://blog.restartr.com/2016/03/13/from-octopress-to-hugo</link>
+      <pubDate>Sun, 13 Mar 2016 20:00:00 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2016/03/13/from-octopress-to-hugo</guid>
+      <description>
+
+&lt;p&gt;Octopressを使い始めて約2年。&lt;a href=&#34;http://gohugo.io/&#34;&gt;Hugo&lt;/a&gt;に乗り換えました。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://blog.restartr.com/2014/04/06/move-from-wordpress-to-octopress/&#34;&gt;WordpressからOctopressに移行&lt;/a&gt;が2014年の4月なので約2年です。
+そんなに記事はたくさん書いているわけでなはいのですが、それでも&lt;code&gt;rake preview&lt;/code&gt;しながら編集しているときのストレスはそれなりにありました。
+なので、快適さを得るためにHugoに乗り換えました。&lt;/p&gt;
+
+&lt;h3 id=&#34;やったこと:d50ea5a11adcf7e2a2a926330a4f05a0&#34;&gt;やったこと&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;hugo new&lt;/code&gt;でプロジェクト生成した
+
+&lt;ul&gt;
+&lt;li&gt;Octopressのmarkdownファイルのみ&lt;code&gt;content/post&lt;/code&gt;以下にコピー&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;permalinkの設定を維持できず、シェルスクリプトでslugを追加した
+
+&lt;ul&gt;
+&lt;li&gt;config.tomlで&lt;code&gt;post = /:year/:month/:day/:title&lt;/code&gt;とすると&lt;code&gt;/2016/01/01/2016-01-01-hogehoge&lt;/code&gt;のようなパーマリンクになってしまう&lt;/li&gt;
+&lt;li&gt;slugを設定しておけばそのままいけるので修正した。&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;生成元がマルチバイト含んでるとエスケープ処理まわりで互換性が壊れるのでaliasを設定した
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://yet.unresolved.xyz/blog/2015/01/07/how-to-use-multibyte-title-in-hugo/&#34;&gt;Hugoでマルチバイトのタイトルをうまいこと使う - Unresolved&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://gohugo.io/extras/aliases/&#34;&gt;https://gohugo.io/extras/aliases/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;テーマのhydeをカスタムして、最低限の要素を取り入れた
+
+&lt;ul&gt;
+&lt;li&gt;ページネーション&lt;/li&gt;
+&lt;li&gt;ソーシャルボタン&lt;/li&gt;
+&lt;li&gt;トップページの要素削減&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;テーマはforkしたリポジトリにpushした
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/ReSTARTR/hyde/commit/d98a487257865470f17d5682632fe37568907ea4&#34;&gt;github.com/ReSTARTR/hyde&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;本当はもう少しマシにしたいけどとりあえずここまで。&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;最後に手動で1ファイルずつ調整した
+
+&lt;ul&gt;
+&lt;li&gt;Wordpress時代の設定とか残ってたり、descrptionが雑だったりしたので最終的に1つずつメタデータを修正&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;ファイル名からslugを追記するシェルスクリプト:d50ea5a11adcf7e2a2a926330a4f05a0&#34;&gt;ファイル名からslugを追記するシェルスクリプト&lt;/h3&gt;
+
+&lt;p&gt;※シンタックスハイライト効かせたい&amp;hellip;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;#!/bin/bash
+
+for file in $(ls content/post | grep &#39;\.markdown$&#39;); do
+  SLUG=&amp;quot;$(echo ${file:11} | sed -E &#39;s/.markdown$//&#39;)&amp;quot;
+  [ -z $SLUG ] &amp;amp;&amp;amp; continue
+
+  file=&amp;quot;./content/post/$file&amp;quot;
+  echo $file
+  cat &amp;lt;&amp;lt;EOF &amp;gt; $file.tmp
+---
+slug: &amp;quot;${SLUG}&amp;quot;
+EOF
+  cat $file.tmp
+  sed -e &#39;1,1d&#39; ${file} &amp;gt;&amp;gt; $file.tmp
+  mv $file.tmp $file
+done
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これを実行する前に、content/post以下はコミットしておいたほうが安心かと。
+で、実行おわったら再度&lt;code&gt;git add&lt;/code&gt;して&lt;code&gt;git commit&lt;/code&gt;。&lt;/p&gt;
+
+&lt;h3 id=&#34;github-pagesのリポジトリへの登録:d50ea5a11adcf7e2a2a926330a4f05a0&#34;&gt;github pagesのリポジトリへの登録&lt;/h3&gt;
+
+&lt;p&gt;あとは&lt;a href=&#34;https://github.com/ReSTARTR/restartr.github.io&#34;&gt;ReSTARTR/restartr.github.io&lt;/a&gt;をsubmoduleにしてそこに生成ファイルを配置&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;git submodule add git@github.com:restartr/restartr.github.io public
+hugo -d public
+cd publid
+git add -A .
+git commit -m &#39;Migrate to Hugo&#39;
+git push origin master
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;CNAMEファイルとか、octopressで使用していたものはhugo用のリポジトリにコピーしてgit管理下にしておくのも忘れずに。&lt;/p&gt;
+
+&lt;p&gt;テーマとか周辺環境はOctopressに比べると貧弱ですが、一度もろもろ設定してしまったらそんなにいじることもないしまぁ問題ないかと思います。&lt;/p&gt;
+
+&lt;p&gt;ストレス感じながら文章かくよりは、気持よく文章書けるほうが良い。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>ec2-ls-hosts: EC2インスタンスを一覧するだけのシンプルツール</title>
+      <link>http://blog.restartr.com/2016/02/27/ec2-ls-hosts</link>
+      <pubDate>Sat, 27 Feb 2016 17:28:53 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2016/02/27/ec2-ls-hosts</guid>
+      <description>
+
+&lt;p&gt;EC2インスタンスの一覧を表示するツールをgolangでつくりました。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/ReSTARTR/ec2-ls-hosts&#34;&gt;ReSTARTR/ec2-ls-hosts&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;以下のように、ただインスタンスの情報を列挙するだけのシンプルなツールです。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ ls-hosts
+i-00001 10.0.0.1 app01
+i-00002 10.0.0.2 app02
+i-00003 10.0.0.3 app03
+i-00004 10.0.0.4 app04
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;何がうれしいか:b29e9fe288f2c1afa8d247d1c61296b1&#34;&gt;何がうれしいか&lt;/h3&gt;
+
+&lt;p&gt;以下のような状況において、多少便利になるツールです。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;EC2インスタンスを複数台運用している&lt;/li&gt;
+&lt;li&gt;台数が数十台規模である&lt;/li&gt;
+&lt;li&gt;AutoScalingを利用していて、IPやドメインが頻繁に変わる&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;aws ec2 describe-instances&lt;/code&gt;のレスポンスが遅い&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;aws ec2 describe-instances&lt;/code&gt;のオプション指定が複雑かつ指定が面倒&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;このような状況を改善するため、ec2-ls-hostsをつくりました。
+このツールは、&lt;code&gt;aws ec2 describe-instances&lt;/code&gt;に変わる、シンプルなオプションを備えたCLIツールになります。&lt;/p&gt;
+
+&lt;h3 id=&#34;ec2-ls-hostsで出来ること:b29e9fe288f2c1afa8d247d1c61296b1&#34;&gt;ec2-ls-hostsで出来ること&lt;/h3&gt;
+
+&lt;p&gt;主に以下のオプションを備えています&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;-filters&lt;/code&gt;: 絞込み条件&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;-tags&lt;/code&gt;   : タグによる絞込み&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;-fileds&lt;/code&gt; : 表示項目の設定&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;実行時のオプションでも指定できるのですが、いちいち指定するのは面倒なので、&lt;code&gt;~/.ls-hosts&lt;/code&gt; か &lt;code&gt;/etc/ls-hosts&lt;/code&gt; に設定を保存できます。
+このファイルが存在していたらそれを読み込みます。(両方ある場合は&lt;code&gt;~/.ls-hosts&lt;/code&gt;のほうが優先されます)
+設定はこんなかんじで。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[options]
+tags   = Env:production,Role:app
+fields = instance-id,tag:Name,public-ip,instance-state
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;認証は以下の優先順位で可能なものを利用します。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;環境変数 &lt;code&gt;AWS_ACCESS_KEY_ID&lt;/code&gt;, &lt;code&gt;AWS_SECRET_ACCESS_KEY&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;SharedCredentials (&lt;code&gt;~/.aws/credentials&lt;/code&gt;のdefaultプロファイルを利用)&lt;/li&gt;
+&lt;li&gt;EC2 Instance Profile&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;インスタンスプロファイルに対応しているので、たとえばEC2のReadOnly権限をを付与してあるゲートウェイインスタンスに配置することで、認証情報を直接管理せずに利用することもできます。&lt;/p&gt;
+
+&lt;h3 id=&#34;インストール方法:b29e9fe288f2c1afa8d247d1c61296b1&#34;&gt;インストール方法&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code&gt;git clone https://github.com/ReSTARTR/ec2-ls-hosts.git
+cd ./ec2-ls-hosts
+make build -B
+cp ./build/ls-hosts /path/to/bin/ls-hosts
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;コマンド名は&lt;code&gt;ls-hosts&lt;/code&gt;にしています。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;$PATH&lt;/code&gt;の通っているところに配置してください:bow:&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;zsh-pecoでインタラクティブにsshする:b29e9fe288f2c1afa8d247d1c61296b1&#34;&gt;zsh + pecoでインタラクティブにSSHする&lt;/h3&gt;
+
+&lt;p&gt;ec2-ls-hosts単体でも多少便利にはなるのですが、ツールを組み合わせた応用例も書いておきます。&lt;/p&gt;
+
+&lt;p&gt;たとえば以下のような結果が得られるEC2環境があったとします。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ ls-hosts -filters instance-state-name:running -tags Env:production,Role:app -fields private-ip,tag:Name,tag:Role
+10.0.0.1 app app01
+10.0.0.2 app app02
+10.0.0.3 app app03
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これをpecoでインタラクティブに選択してそのままSSHするには、以下のようにzshrcを設定しておきます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;function peco-ec2-ls-hosts () {
+  # NOTE: ~/.ls-hostsに設定したほうがより良いです
+  BUFFER=$(
+    ls-hosts -filters instance-state-name:running -tags Env:production,Role:app -fields private-ip,tag:Name,tag:Role | \
+    peco --prompt &amp;quot;EC2 &amp;gt;&amp;quot; --query &amp;quot;$LBUFFER&amp;quot; | \
+    awk &#39;{echo &amp;quot;Login to %s; printf &amp;quot;ssh %s\n&amp;quot;, $3,$1}&#39;
+  )
+  CURSOR=$#BUFFER
+  zle accept-line
+  zle clear-screen
+}
+zle -N peco-ec2-ls-hosts
+# キーバインドはおこのみで
+bindkey &#39;^oo&#39; peco-ec2-ls-hosts
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;とすることで、インタラクティブにSSHできてヒストリーにも残ります。
+以下キャプチャでは対象インスタンスがダミーなのでSSできてませんがちゃんと使えます。
+(実環境の実行結果は載せられないので泣く泣くダミーです&amp;hellip;)&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://gyazo.com/ae45206ad8215934f5e0a897b91b3d2a&#34;&gt;&lt;img src=&#34;https://i.gyazo.com/ae45206ad8215934f5e0a897b91b3d2a.gif&#34; alt=&#34;https://gyazo.com/ae45206ad8215934f5e0a897b91b3d2a&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;※クライアントPCからパブリックIPとかで直接SSHできない場合はプロキシコマンドを利用して踏み台経由とかでプライベートIPできるssh-configを設定しておくと、この応用例を使って透過的にSSHできます（これは別記事としたほうがよいかも？)&lt;/p&gt;
+
+&lt;h3 id=&#34;余談:b29e9fe288f2c1afa8d247d1c61296b1&#34;&gt;余談&lt;/h3&gt;
+
+&lt;p&gt;さいごの応用例はもともとaws-cli + jq + pecoで実現していたのですが、管理台数が増えるに連れてレスポンスが極端に劣化。
+キャッシュ機構を入れてみたりしたものの、快適とはいえない状況になったので、「aws-sdk-goで書くだけで軽くなるのでは？」という発想から開発に至りました。&lt;/p&gt;
+
+&lt;p&gt;mackerel導入環境であれば&lt;code&gt;mkr&lt;/code&gt;でも似たようなことができるかもしれないですが、mackerel前提ではないソリューションとしても十分使えるかな、と。&lt;/p&gt;
+
+&lt;p&gt;社内利用に特化したかたちでつくったものの、ちょっとだけ汎用化すればべつに誰でも使えるようなきがしたので、手を加えたうえでgithubにて公開となりました。
+まだまだ貧弱ですが、最低限役目は果たしています。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>ErgoDox EZを注文した(けどまだ届いてない)</title>
+      <link>http://blog.restartr.com/2016/02/17/ergodox-ez</link>
+      <pubDate>Wed, 17 Feb 2016 22:57:45 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2016/02/17/ergodox-ez</guid>
+      <description>
+
+&lt;p&gt;&lt;img src=&#34;http://res.cloudinary.com/indiegogo-media-prod-cld/image/upload/c_limit,w_620/v1435062448/e209onukdbrkpy4fygew.png&#34; alt=&#34;ErgoDox EZ&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;大きなプロジェクトが一区切りついたこともあって、勢いでErgoDox EZを買いました。&lt;/p&gt;
+
+&lt;p&gt;お高めキーボード遍歴としては、FILCO Majestouch(黒軸)を1年程使った後、ここ5年くらいずっとHHKBpro2(墨黒無刻印)を使っていました。が、ずっとこれに変わるコンパクトかつ親指をもてあまさない最高なキーボードがないかなと思ってました。&lt;/p&gt;
+
+&lt;p&gt;つい最近「&lt;a href=&#34;http://nippondanji.blogspot.jp/2016/01/ergodox.html&#34;&gt;漢(オトコ)のコンピュータ道: キーボードを新しくした話(ErgoDox)&lt;/a&gt;」を目にしたこともあって、また理想のキーボードを探してみることにした結果、ErgoDox EZに行き着いた、といういきさつです。&lt;/p&gt;
+
+&lt;p&gt;本当なら届いてからポストしようと考えてたのですが、確認したら4月あたりまで1ヶ月程かかるらしいので、とりあえず注文するまでに調べたことを書いておきます。&lt;/p&gt;
+
+&lt;p&gt;&lt;blockquote class=&#34;twitter-tweet&#34; data-lang=&#34;ja&#34;&gt;&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;&lt;a href=&#34;https://twitter.com/ReSTARTR&#34;&gt;@restartr&lt;/a&gt; Hello, and thank you for supporting us! We expect to ship current orders around April, working hard to cut down lead times.&lt;/p&gt;&amp;mdash; ErgoDox EZ (@ErgoDoxEZ) &lt;a href=&#34;https://twitter.com/ErgoDoxEZ/status/699937511099863041&#34;&gt;2016, 2月 17&lt;/a&gt;&lt;/blockquote&gt; &lt;script async src=&#34;//platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;&lt;/p&gt;
+
+&lt;p&gt;まじか&amp;hellip;orz&lt;/p&gt;
+
+&lt;h2 id=&#34;ergodoxを買えるところ:67beeeb1249322c24a3e836816b31d7f&#34;&gt;ErgoDoxを買えるところ&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://ergodox.org&#34;&gt;ErgoDox&lt;/a&gt;そのものは&lt;a href=&#34;http://www.key64.org&#34;&gt;The Key64 Keyboard&lt;/a&gt;の流れから生まれた設計とかコードが公開されたプロジェクトであり、実際にはパーツを揃えて組み立てたりしないといけないのが敷居の高いところ。
+ですが、クラウドファンディングで製造販売する流れができていて非常にありがたいです。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.indiegogo.com/projects/ergodox-ez-an-incredible-mechanical-keyboard#/&#34;&gt;ErgoDox EZ: An incredible mechanical keyboard | Indiegogo&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://falbatech.pl/prestashop/index.php&#34;&gt;FalbaTech&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.massdrop.com/buy/ergodox&#34;&gt;ErgoDox Ergonomic Mechanical Keyboard Kit Drop - Massdrop&lt;/a&gt;(今は買えない)&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.massdrop.com/buy/infinity-ergodox&#34;&gt;Infinity ErgoDox Ergonomic Keyboard Kit Drop - Massdrop&lt;/a&gt;(今は買えない)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;完成形だったり、組み立て式だったり、細部の造形がイマイチだったり様々です。&lt;/p&gt;
+
+&lt;p&gt;ErgoDox EZが写真で見る限りかなり質感よさそうですし、傾斜できるスタンドが用意されていたりキートップとスイッチ(後述)を6種類から選べるのが気の利いている点が気に入ってこれにしました。&lt;/p&gt;
+
+&lt;h2 id=&#34;ergodox-ezについて:67beeeb1249322c24a3e836816b31d7f&#34;&gt;ErgoDox EZについて&lt;/h2&gt;
+
+&lt;p&gt;サイトを眺めているといろいろ知らない要素が出てきて「はて?」となったので、ざっと重要なポイントを抜き出しつつ軽く補足をくわえて以下に書き出してみます。&lt;/p&gt;
+
+&lt;h3 id=&#34;概要:67beeeb1249322c24a3e836816b31d7f&#34;&gt;概要&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;完成形（組み立てでない）&lt;/li&gt;
+&lt;li&gt;2年保証&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.maruichirubber.co.jp/rubber/newpage2-2.htm&#34;&gt;インジェクションモールドABS製&lt;/a&gt;フレーム
+
+&lt;ul&gt;
+&lt;li&gt;他の成形手法より大量生産に向いているが高価、らしい&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;刻印のあるキーキャップも選択可能
+
+&lt;ul&gt;
+&lt;li&gt;基本は無刻印&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;アクセサリー
+
+&lt;ul&gt;
+&lt;li&gt;Tilt/Tentキット&lt;/li&gt;
+&lt;li&gt;リストレスト&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;強力なカスタマイズ力、オープンソースなファームウェア(QMK)&lt;/li&gt;
+&lt;li&gt;Nキーロールオーバーと&lt;a href=&#34;https://ja.wikipedia.org/wiki/マウスキー&#34;&gt;マウスキー&lt;/a&gt;に対応&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;価格:67beeeb1249322c24a3e836816b31d7f&#34;&gt;価格&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;本体、Tilt/Tentキット、リストレスト $295&lt;/li&gt;
+&lt;li&gt;本体のみ(キースイッチあり、キーキャップなし) $205&lt;/li&gt;
+&lt;li&gt;本体のみ(無刻印キートップ) $240&lt;/li&gt;
+&lt;li&gt;本体のみ(刻印キートップ) $240&lt;/li&gt;
+&lt;li&gt;本体のみ(キースイッチあり、キーキャップなし)、Tilt/Tent Kit、リストレスト $260&lt;/li&gt;
+&lt;li&gt;Tilt/Tentキット、リストレスト $85&lt;/li&gt;
+&lt;li&gt;Tilt/Tentキット $45&lt;/li&gt;
+&lt;li&gt;リストレスト $45&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;バラで買うと$240 + $45 + $45の$330なので、全部入りを買うのが良いかと。
+あとでキーキャップを変えるにしても揃えるのが大変そうなので。&lt;/p&gt;
+
+&lt;p&gt;全部入りの場合、120円/ドル換算で約35,000円程度です。HHKBpro2とかREALFORCEが2万円強なので、それより1.5倍くらいお高めです。が、Kinesisが定価45,000を超えることを考えるとなかなか良いポジションではないかと思います。(一般的なキーボードからしたら十分すぎるほど高価ですけど&amp;hellip;)&lt;/p&gt;
+
+&lt;h3 id=&#34;キーキャップ:67beeeb1249322c24a3e836816b31d7f&#34;&gt;キーキャップ&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;PBT樹脂DCS キーキャップ
+
+&lt;ul&gt;
+&lt;li&gt;刻印ありの場合はDSA(DCSよりもフラットな並び)&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;PBTは樹脂の種類で、ABSに比べて耐久性に優れている
+
+&lt;ul&gt;
+&lt;li&gt;HHKBpro2のキーキャップはPBTでケースはABS&lt;a href=&#34;https://www.pfu.fujitsu.com/hhkeyboard/notice.html&#34;&gt;とのこと&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;DCSはキーキャップ形状の一種
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.keycapsdirect.com/pdfs/DCSFamily.pdf&#34;&gt;DCS FAMILY(PDF)&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;おそらく&lt;a href=&#34;http://www.gateron.com/page153?product_id=57&#34;&gt;Gateron製&lt;/a&gt;ではないかと思います(キースイッチがgateron製なので)&lt;/p&gt;
+
+&lt;h3 id=&#34;キースイッチ-軸:67beeeb1249322c24a3e836816b31d7f&#34;&gt;キースイッチ（軸）&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Gateron製キースイッチ
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.gateron.com/page152?product_category=1&amp;amp;brd=1&#34;&gt;机械键盘轴开关，国产cherry轴开关，gateron轴青轴红轴茶轴黑轴gateron官网官方网站&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Cherryスイッチクローン(中国製?)&lt;/li&gt;
+&lt;li&gt;Cherryに比べて滑らか&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;ErgoDox EZでは6つのスイッチから選べます。
+このスイッチについてさんざん調べまわった結果、僕は&amp;rdquo;Gateron White&amp;rdquo;を選択しました。&lt;/p&gt;
+
+&lt;p&gt;ちなみに、注文した後のメールに各スイッチの仕様書(PDF)が添付されていますので、そちらも見つつ選ぶと良いです。
+(すべての注文処理が終わった後にこの添付ファイルに気づきました&amp;hellip;)&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Gateron White(リニア・35g)&lt;/li&gt;
+&lt;li&gt;Gateron Red(リニア・45g =&lt;a href=&#34;https://deskthority.net/wiki/Cherry_MX_Red&#34;&gt;Cherry MX赤軸&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;Gateron Black(リニア・50g, =&lt;a href=&#34;https://deskthority.net/wiki/Cherry_MX_Black&#34;&gt;Cherry MX黒軸&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;Gateron Yellow(リニア・50g)&lt;/li&gt;
+&lt;li&gt;Gateron Brown(タクタイル・45g =&lt;a href=&#34;https://deskthority.net/wiki/Cherry_MX_Brown&#34;&gt;Cherry MX茶軸&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;Gateron Blue(タクタイル・55g =&lt;a href=&#34;https://deskthority.net/wiki/Cherry_MX_Blue&#34;&gt;Cherry MX青軸&lt;/a&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;PDFに表記されていた図を雑に並べてみました。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://gyazo.com/c6e7e025230e6c79b0727c506b93fff4&#34;&gt;&lt;img src=&#34;https://i.gyazo.com/c6e7e025230e6c79b0727c506b93fff4.png&#34; alt=&#34;https://gyazo.com/c6e7e025230e6c79b0727c506b93fff4&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;参考までに、他のキースイッチの数値はこんな感じ。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;HHKB Pro2 荷重45g 4mmストローク&lt;/li&gt;
+&lt;li&gt;REALFORCE 荷重30~45g(変荷重と固定の3種)  4mmストローク&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;自分の場合、クリック感があるタクタイルより、リニアが好き（FILCO時代は黒軸でした)なので、白、赤、黄、黒あたりが選択肢となります。
+HHKB pro2が荷重45gなので、赤軸がいちばん近いです。REALFORCEなら白軸35gが近いでしょうか。&lt;/p&gt;
+
+&lt;p&gt;Youtubeにもいろいろがあがっていましたので、こちらも参考に。&lt;/p&gt;
+
+&lt;iframe width=&#34;560&#34; height=&#34;315&#34; src=&#34;https://www.youtube.com/embed/gy2C1Of0oQk&#34; frameborder=&#34;0&#34; allowfullscreen&gt;&lt;/iframe&gt;
+
+&lt;iframe width=&#34;560&#34; height=&#34;315&#34; src=&#34;https://www.youtube.com/embed/A2Px2f6A5dM&#34; frameborder=&#34;0&#34; allowfullscreen&gt;&lt;/iframe&gt;
+
+&lt;p&gt;とまぁそんな感じの製品です。到着までまだまだ待たないといけないのがつらいです。。。
+いまのところ注文してから到着まで1ヶ月とのことなので、はやめに注文したほうが良いかと思います。
+購入してみようかな？と思った方はこちらからどうぞ:-)&lt;/p&gt;
+
+&lt;iframe src=&#34;https://www.indiegogo.com/project/ergodox-ez-an-incredible-mechanical-keyboard/embedded&#34; width=&#34;222px&#34; height=&#34;445px&#34; frameborder=&#34;0&#34; scrolling=&#34;no&#34;&gt;&lt;/iframe&gt;
+
+&lt;p&gt;ちなみに、&lt;a href=&#34;http://www.jw-shop.com/menu-row/keyboard.htm&#34;&gt;キーボード カスタム制作&lt;/a&gt;というサービスもあるみたいです。&lt;/p&gt;
+
+&lt;h2 id=&#34;参考にしたところ:67beeeb1249322c24a3e836816b31d7f&#34;&gt;参考にしたところ&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://nippondanji.blogspot.jp/2016/01/ergodox.html&#34;&gt;漢(オトコ)のコンピュータ道: キーボードを新しくした話(ErgoDox)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://kammers.aa0.netvolante.jp/20150928201048/&#34;&gt;ergodoxを買いました | kammers&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://deskthority.net/wiki/ErgoDox&#34;&gt;ErgoDox - Deskthority wiki&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.massdrop.com/buy/gateron-switches&#34;&gt;Gateron Switches Drop - Massdrop&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://deskthority.net/wiki/Gateron_KS-3_series&#34;&gt;Gateron KS-3 series - Deskthority wiki&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://g-chan.dip.jp/square/archives/2016/02/nisse_nisse.html&#34;&gt;G-chan Square - [キーボード][NISSE] エスリルのキーボード&amp;rdquo;NISSE&amp;rdquo; 3台目を購入しました&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>2015年ふりかえり</title>
+      <link>http://blog.restartr.com/2015/12/31/things-of-2015</link>
+      <pubDate>Thu, 31 Dec 2015 18:59:46 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2015/12/31/things-of-2015</guid>
+      <description>
+
+&lt;p&gt;2015年も終わりが近づいているということでご報告もかねてふりかえりを…&lt;/p&gt;
+
+&lt;h3 id=&#34;個人的トピック:54b1dc2a806cccc9f9d83a7637b5250c&#34;&gt;個人的トピック&lt;/h3&gt;
+
+&lt;p&gt;ブログには書いてませんでしたが、8月で2年とすこしお世話になった株式会社VASILYを退職しました。
+それからいくつかの会社とお話した後、11月から&lt;a href=&#34;https://www.wantedly.com/companies/hitomedia&#34;&gt;株式会社ヒトメディア&lt;/a&gt;に転職しました。
+(あらためて転職エントリを書こうとおもっていたのに年末になってしまい、完全にタイミングを逃した感じです&amp;hellip;)&lt;/p&gt;
+
+&lt;p&gt;といってもあまり本社にはおらず、もっぱら新宿で勤務している日々です。やっていることもいまのところ前職とあまり変わっておらず、アプリケーションの改善やインフラまわり全般をやっています。個人的にはもっとアプリケーションよりの仕事をしていきたいのですが、まずは目先の改善からということで。&lt;/p&gt;
+
+&lt;p&gt;あと、今年とかやったこととか読んだ本のまとめです。&lt;/p&gt;
+
+&lt;h3 id=&#34;やったこと:54b1dc2a806cccc9f9d83a7637b5250c&#34;&gt;やったこと&lt;/h3&gt;
+
+&lt;h4 id=&#34;仕事:54b1dc2a806cccc9f9d83a7637b5250c&#34;&gt;仕事&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Railsアプリのチューニング&lt;/li&gt;
+&lt;li&gt;Docker, AWS ECS&lt;/li&gt;
+&lt;li&gt;AWSまわり全般&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;2014年にくらべるとセキュリティまわりの脆弱性対応もめっきり少なくなって、インフラ的にはありがたい年でした。&lt;/p&gt;
+
+&lt;h4 id=&#34;個人:54b1dc2a806cccc9f9d83a7637b5250c&#34;&gt;個人&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Consul&lt;/li&gt;
+&lt;li&gt;GCE&lt;/li&gt;
+&lt;li&gt;ISUCON5予選のElixir実装&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;ElixirConfあたりで興味もちはじめて、そのあと爆発的にElixirがヒットしていったのが印象的でした。Goはすでにスタンダード化しているためか、大きな話題はあまりなかったように思います。年末ギリギリにラズパイ入門したので、来年はフィジカルコンピューティングもやっていく所存です。Rails5は普及するかな？&lt;/p&gt;
+
+&lt;h3 id=&#34;書籍:54b1dc2a806cccc9f9d83a7637b5250c&#34;&gt;書籍&lt;/h3&gt;
+
+&lt;p&gt;プログラミング・設計&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp//dp/4774171417/&#34;&gt;WEB+DB PRESS vol.85&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/4873115892/&#34;&gt;SQLアンチパターン&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp//dp/4774171972/&#34;&gt;理論から学ぶ データベース実践入門&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/B00SY2UKHY/1&#34;&gt;Webエンジニアが知っておきたいインフラの基本 &lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/B00UX9VJGW/&#34;&gt;実践ドメイン駆動設計&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp//dp/B00PKTGM9O/&#34;&gt;Programming Elixir&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/4774173010/&#34;&gt;SQL実践入門&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.manning.com/books/the-little-elixir-and-otp-guidebook&#34;&gt;The Little Elixir &amp;amp; OTP Guidebook&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/4873116937/&#34;&gt;ZooKeeperによる分散システム管理 &lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/B00T4ACPA0/&#34;&gt;Go Programming Blueprints&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;開発体制&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/4774172367/&#34;&gt;スクラム実践入門&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp//dp/B00MGGW9MI/&#34;&gt;DevOps 逆転だ！究極の継続的デリバリー&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp//dp/B00O8GIJ1E/&#34;&gt;カンバン-ソフトウェア開発の変革&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/B00DIM6BMI/&#34;&gt;SCRUM BOOT CAMP THE BOOK&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;その他&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/1617292397&#34;&gt;Soft Skills&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp//dp/4121022823/&#34;&gt;地方消滅-東京一極集中が招く人口急減&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;ということで、2015年中はお世話になりました。
+2016年もどうぞよろしくおねがいします :bow:&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Elixir/PhoenixでISUCON5予選の参考実装を書いた</title>
+      <link>http://blog.restartr.com/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix</link>
+      <pubDate>Wed, 21 Oct 2015 19:32:17 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix</guid>
+      <description>
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/isucon/isucon5-qualify&#34;&gt;ISUCON5予選の参考実装&lt;/a&gt;を、Elixir/Phoenixで実装してみました。&lt;/p&gt;
+
+&lt;p&gt;&lt;blockquote class=&#34;twitter-tweet&#34; lang=&#34;ja&#34;&gt;&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;It (partially) works! &lt;a href=&#34;https://twitter.com/hashtag/myelixirstatus?src=hash&#34;&gt;#myelixirstatus&lt;/a&gt; &lt;a href=&#34;https://t.co/NuhhufXAwC&#34;&gt;pic.twitter.com/NuhhufXAwC&lt;/a&gt;&lt;/p&gt;&amp;mdash; Masaki YOSHIDA (@ReSTARTR) &lt;a href=&#34;https://twitter.com/ReSTARTR/status/656434698730639360&#34;&gt;2015, 10月 20&lt;/a&gt;&lt;/blockquote&gt; &lt;script async src=&#34;//platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;&lt;/p&gt;
+
+&lt;p&gt;汚いながらもとりあえずひととおり動いたので現時点でのコードをGithubにpush。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/ReSTARTR/isucon5-qualify-elixir&#34;&gt;github.com/ReSTARTR/isucon5-qualify-elixir&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;実装について補足:efe39066a01c868bb9b83d761df0ba42&#34;&gt;実装について補足&lt;/h3&gt;
+
+&lt;p&gt;まずは他言語の初期実装と同等のSQLを再現することを目標としました。&lt;/p&gt;
+
+&lt;p&gt;Goの実装を参考に、まずは各ページを実装してブラウザでひととおり機能が実装できているか確認。
+その後ベンチマークをすべて通過するまでひたすら修正するという手順ですすめました。&lt;/p&gt;
+
+&lt;p&gt;そのため、テンプレートの細かい表示(時刻フォーマット等)の不備や、ベンチマーカーがチェックしない機能が抜けている可能性があります。&lt;/p&gt;
+
+&lt;h3 id=&#34;注意点:efe39066a01c868bb9b83d761df0ba42&#34;&gt;注意点&lt;/h3&gt;
+
+&lt;p&gt;ベンチマーカーがCSSファイルのサイズを厳密にチェックしていて、なぜか1バイト余計に増えてしまってパスしない問題が発生します。
+&lt;a href=&#34;https://github.com/isucon/isucon5-qualify/blob/42cec755d41b1573af3dd4735d78523494fd42dd/bench/src/main/java/net/isucon/isucon5q/bench/scenario/BootstrapChecker.java#L186&#34;&gt;チェック箇所のサイズ&lt;/a&gt;を&lt;code&gt;122540&lt;/code&gt;から&lt;code&gt;122541&lt;/code&gt;にすることで無理やりとおしました。
+原因は追って調査ですが、機能的に問題ないはずなので一時しのぎです。&lt;/p&gt;
+
+&lt;h3 id=&#34;ベンチマーク結果:efe39066a01c868bb9b83d761df0ba42&#34;&gt;ベンチマーク結果&lt;/h3&gt;
+
+&lt;p&gt;気になる性能ですが、Goと比較すると以下のような結果となりました。&lt;/p&gt;
+
+&lt;p&gt;※VirtualBox上にたてたMySQLにたいして、ホストのMacOSX上でアプリケーションを実行しています&lt;/p&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align=&#34;left&#34;&gt;Lang&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;requests&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;elapsed&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;success&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;redirect&lt;/th&gt;
+&lt;th align=&#34;right&#34;&gt;failure&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;Elixir/Phoenix&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;333&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;76093&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;239&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;93&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;Go&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;138&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;106728&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;98&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;39&lt;/td&gt;
+&lt;td align=&#34;right&#34;&gt;1&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/isucon/isucon5-qualify/blob/master/eventapp/lib/score.rb&#34;&gt;スコア計算式&lt;/a&gt;をもとに計算してみると以下のようなスコアとなります(eror, exception, violationsはないので減点は無し)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-ruby&#34;&gt;# Elixir/Phoenix
+irb(main):001:0&amp;gt; base_score = 239 + 93 * 0.1
+=&amp;gt; 248.3
+# Go
+irb(main):002:0&amp;gt; base_score = 98 + 39 * 0.1
+=&amp;gt; 101.9
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;同じクエリを再現したうえで、だいたい2.5倍くらいの性能差？でしょうか。
+が、完全に模倣できているか自信はないのであくまで参考程度ということで…&lt;/p&gt;
+
+&lt;p&gt;以下にベンチマーカーの出力内容も貼っておきます。&lt;/p&gt;
+
+&lt;p&gt;elixir/phoenix版の結果&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
+  &amp;quot;valid&amp;quot; : true,
+  &amp;quot;requests&amp;quot; : 333,
+  &amp;quot;elapsed&amp;quot; : 76093,
+  &amp;quot;done&amp;quot; : &amp;quot;[{Isucon5InitExecutor},{BootstrapChecker},{Isucon5Load,Isucon5Load,Isucon5Load,Isucon5Load,Isucon5Checker}]&amp;quot;,
+  &amp;quot;responses&amp;quot; : {
+    &amp;quot;success&amp;quot; : 239,
+    &amp;quot;redirect&amp;quot; : 93,
+    &amp;quot;failure&amp;quot; : 1,
+    &amp;quot;error&amp;quot; : 0,
+    &amp;quot;exception&amp;quot; : 0
+  },
+  &amp;quot;violations&amp;quot; : [ ]
+}
+
+BUILD SUCCESSFUL
+
+Total time: 1 mins 27.449 secs
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;go版の結果&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-json&#34;&gt;{
+  &amp;quot;valid&amp;quot; : true,
+  &amp;quot;requests&amp;quot; : 138,
+  &amp;quot;elapsed&amp;quot; : 106728,
+  &amp;quot;done&amp;quot; : &amp;quot;[{Isucon5InitExecutor},{BootstrapChecker},{Isucon5Load,Isucon5Load,Isucon5Load,Isucon5Load,Isucon5Checker}]&amp;quot;,
+  &amp;quot;responses&amp;quot; : {
+    &amp;quot;success&amp;quot; : 98,
+    &amp;quot;redirect&amp;quot; : 39,
+    &amp;quot;failure&amp;quot; : 1,
+    &amp;quot;error&amp;quot; : 0,
+    &amp;quot;exception&amp;quot; : 0
+  },
+  &amp;quot;violations&amp;quot; : [ ]
+}
+
+BUILD SUCCESSFUL
+
+Total time: 1 mins 54.937 secs
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;今後:efe39066a01c868bb9b83d761df0ba42&#34;&gt;今後&lt;/h3&gt;
+
+&lt;p&gt;今回のISUCONアプリは結構機能を積んでいるため、Elixir/Phoenixに慣れるにはちょうど良いテーマなのではないかと思います。&lt;/p&gt;
+
+&lt;p&gt;ただPhoenix初心者ということもあり、実装していたほとんどの時間は&amp;rdquo;Ectoでどうやってクエリを再現するか&amp;rdquo;に使っていて、
+ロジックの書き方とか各モジュールの使い分けとかまであまり気にできてません。
+Phoenix/Ectoの有効性を台無しにしていること間違いなし…
+まぁ、そこんところはおいおい感覚をつかんでいこうかな、と。&lt;/p&gt;
+
+&lt;p&gt;このあとはEctoの抽象化を活かしつつさらに最適化をすすめていったときに、どのような性能を発揮するのか気になるところです。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>&#34;Go Programming Blueprints&#34;を読んだ</title>
+      <link>http://blog.restartr.com/2015/10/15/go-programming-blueprints</link>
+      <pubDate>Thu, 15 Oct 2015 19:54:29 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2015/10/15/go-programming-blueprints</guid>
+      <description>
+
+&lt;p&gt;&lt;a href=&#34;http://www.amazon.co.jp/gp/product/B00T4ACPA0)&#34;&gt;
+&lt;img src=&#34;https://raw.githubusercontent.com/matryer/goblueprints/master/artwork/bookcover.jpg&#34; alt=&#34;Go Blueprints by Mat Ryer book cover&#34; /&gt;
+&lt;/a&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/gp/product/B00T4ACPA0&#34;&gt;Go Programming Blueprints - Solving Development Challenges with Golang&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;最近Kindleで購入したので、でひととおり読んで写経してみました。&lt;/p&gt;
+
+&lt;h3 id=&#34;概要と雑感:8fb6d052d7c346df71849845ab713680&#34;&gt;概要と雑感&lt;/h3&gt;
+
+&lt;p&gt;2015年1月に発売された書籍であり、Goのバージョンでいうと1.3から1.4の頃に書かれたものです。
+著者はGolang UK Conference 2015でトークもしていた&lt;a href=&#34;https://twitter.com/matryer&#34;&gt;@matryer&lt;/a&gt;さん。
+(&lt;em&gt;※&lt;a href=&#34;https://www.youtube.com/watch?v=tIm8UkSf6RA&#34;&gt;Golang UK Conference 2015 - Mat Ryer - Building APIs - YouTube&lt;/a&gt;&lt;/em&gt;)&lt;/p&gt;
+
+&lt;p&gt;いくつかのGo製アプリケーション開発を通じて、Goの機能・パターンを学習する、という感じのもの。機能やパターンについて網羅的ではないものの、特定のユースケースをベースにしているため、パターンの理解は容易に感じます。取り扱うトピックも、web/apiサーバーとコマンドラインツールがバランスよく取り上げられています。&lt;/p&gt;
+
+&lt;p&gt;対象読者は「すべてのGoプログラマー」と記載がありますが、&lt;a href=&#34;https://tour.golang.org&#34;&gt;A Tour of Go&lt;/a&gt;をひととおりやったあとくらいがちょうど良い気がします。&lt;/p&gt;
+
+&lt;p&gt;リファレンス的な構成の他書や&lt;a href=&#34;https://golang.org/doc/effective_go.html&#34;&gt;Effective Go&lt;/a&gt;のような公式ドキュメントのものとうまくすみ分けができているのではないかと。&lt;/p&gt;
+
+&lt;p&gt;ただ誤字・脱字が少し目立つかな（章ごとに1,2個程度ですが)という点が残念ではありますが、比較的わかりやすいミスなので読んでいて混乱するほどではありません。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/golang/go/wiki/Books&#34;&gt;Go Books&lt;/a&gt;としては比較的マイナーっぽく、日本語圏の情報もないので購入はちょっとしたギャンブルでしたが、ある程度まとまったストーリーとして読めるGo関連の書籍は少ない印象ですし、自分としてはちょうど良い買い物だったかなと思います。&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;※ソースコードも&lt;a href=&#34;https://github.com/matryer/goblueprints&#34;&gt;matryer/goblueprints&lt;/a&gt;に公開されています&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;_※当然英語ですが、さほど読みにくい感じはなかったです&lt;/p&gt;
+
+&lt;h3 id=&#34;構成:8fb6d052d7c346df71849845ab713680&#34;&gt;構成&lt;/h3&gt;
+
+&lt;p&gt;全8章で作成するアプリケーションのうち、1章で簡潔するものと章をまたがるものがあり、構成は以下のようになっています。&lt;/p&gt;
+
+&lt;h4 id=&#34;1-2-3-websocketによるチャットアプリケーション:8fb6d052d7c346df71849845ab713680&#34;&gt;1, 2, 3: websocketによるチャットアプリケーション&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;http.Handle/HandleFuncの基本的な使い方とか、TDDによるパッケージ開発、&lt;/li&gt;
+&lt;li&gt;ソーシャルログイン機能の追加(OAuthは&lt;a href=&#34;https://github.com/stretchr/gomniauth&#34;&gt;stretchr/gomniauth&lt;/a&gt;を利用)&lt;/li&gt;
+&lt;li&gt;アイコン画像のアップロード機能の追加&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;4-空きドメイン検索ツール:8fb6d052d7c346df71849845ab713680&#34;&gt;4: 空きドメイン検索ツール&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Unixコマンドのように、STDIN/OUTを使った複数コマンドによる連携
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;$ 単語生成 | 単語の補正 | TLDの付与 | WHOISチェック&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;これらをos.Command.Stdin,Stdoutで束ねるコマンド&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;.o(シェルスクリプトでも良いのではと思いますが、外部プロセスとの連携の練習ということで&amp;hellip;)&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;5-6-twitterのリアルタイムカウンター:8fb6d052d7c346df71849845ab713680&#34;&gt;5, 6: Twitterのリアルタイムカウンター&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;複数のプロセスで構成される分散システム
+
+&lt;ol&gt;
+&lt;li&gt;twitter streaming apiから拾ったツイートを&lt;a href=&#34;http://nsq.io&#34;&gt;NSQ&lt;/a&gt;に追加するプログラム&lt;/li&gt;
+&lt;li&gt;NSQのsubscriberが単語別件数を集計して、1秒ごとにMongoDBを更新するプログラム&lt;/li&gt;
+&lt;li&gt;MongoDBの内容を管理・閲覧ツール(RESTful APIとWEBアプリ)&lt;/li&gt;
+&lt;/ol&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;トピック&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;シグナルトラップによる安全なプロセス終了処理&lt;/li&gt;
+&lt;li&gt;sync.Mutexによる協調動作の実装&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/stretchr/graceful&#34;&gt;stretchr/graceful&lt;/a&gt;での安全な終了処理&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;7-google-places-apiを使ったロケーション推薦アプリケーション:8fb6d052d7c346df71849845ab713680&#34;&gt;7: Google Places APIを使ったロケーション推薦アプリケーション&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;iotaによるEnum相当の実現&lt;/li&gt;
+&lt;li&gt;TDDでパッケージ開発
+
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;.o(ここで&lt;a href=&#34;https://github.com/cheekybits&#34;&gt;cheekybits/is&lt;/a&gt;が出てきたけど、全体で統一感出してほしい&amp;hellip;)&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;型アサーションによるキャスト&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;8-ファイル自動バックアップシステム:8fb6d052d7c346df71849845ab713680&#34;&gt;8 ファイル自動バックアップシステム&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;2つのCLIツールの作成
+
+&lt;ul&gt;
+&lt;li&gt;backup: バックアップする対象リストの管理コマンド
+
+&lt;ul&gt;
+&lt;li&gt;メタデータ管理は&lt;a href=&#34;https://github.com/mattyer/filedb&#34;&gt;mattyer/filedb&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;backupd: メタデータをもとに実ファイル監視とバックアップ実行する常駐プログラム&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;蛇足:8fb6d052d7c346df71849845ab713680&#34;&gt;蛇足&lt;/h3&gt;
+
+&lt;p&gt;そういえば、カーニハン著のThe Go Programming Languageが11月発売とのこと&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/gp/product/0134190440&#34;&gt;The Go Programming Language&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>DockerとWeaveを使って1台のマシンでConsulを複数動かしてみる</title>
+      <link>http://blog.restartr.com/2015/03/09/consul-cluster-with-docker</link>
+      <pubDate>Mon, 09 Mar 2015 00:22:13 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2015/03/09/consul-cluster-with-docker</guid>
+      <description>
+
+&lt;p&gt;軽くConsulを試してみたくて、でもVagrantで複数台仮想マシンを立ち上げるのはちょっと気が重い…ということでUbuntu14.10 on MacBookAirにDockerコンテナを複数立ち上げてクラスタを構築してみるテストをしました。&lt;/p&gt;
+
+&lt;p&gt;Dockerfileとか簡単な動かし方(を適当英語で書いたもの)をgithubにあげてあります&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/ReSTARTR/test-consul-with-docker&#34;&gt;ReSTARTR/test-consul-with-docker&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Docker内のプロセスがLISTENするポートに対してコンテナ外から接続する場合、&lt;code&gt;-p&lt;/code&gt;でホストのポートにひもづけるか、&lt;code&gt;--link&lt;/code&gt;でコンテナ同士をつなぐのが最も手軽な方法です。が、consulは複数のポート（HTTP API用、DNS用、ゴシッププロトコル用等）を使うため、この手軽な方法でクラスタを構築することができません。&lt;/p&gt;
+
+&lt;p&gt;Dockerコンテナの接続パターンとしてはいくつかあって、deeeetさんのブログ記事に詳しく書かれています。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://deeeet.com/writing/2014/12/01/docker-link-pattern/&#34;&gt;Dockerコンテナ接続パターン (2014年冬) | SOTA&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;今回は手元のMacBook Airだけで完結させたかったので、weaveを使ったコンテナ間ネットワークを利用することにしました。&lt;/p&gt;
+
+&lt;h3 id=&#34;weave:eb7384652550cf95d9fa5f789a7acdb6&#34;&gt;weave&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://zettio.github.io/weave/&#34;&gt;weave  | weave, the Docker network&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;dockerコンテナ間の内部ネットワークを構築するものです。詳しくはjacopenさんのSlideShareを。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.slideshare.net/jacopen/weave-40871981&#34;&gt;Weaveを試してみた&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;使い方はとても簡単で、weaveコンテナを立ち上げて、weaveコマンド経由でdockerコマンドを実行するだけ。
+これならVagrantのような仮想マシンのためにメモリとディスク容量を割く必要もなくなります。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ sudo weave launch
+$ sudo docker ps
+CONTAINER ID        IMAGE                COMMAND                CREATED             STATUS              PORTS                                            NAMES
+2eda921c011e        zettio/weave:0.9.0   &amp;quot;/home/weave/weaver    31 seconds ago      Up 30 seconds       0.0.0.0:6783-&amp;gt;6783/tcp, 0.0.0.0:6783-&amp;gt;6783/udp   weave
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これだけで仮想ネットワークができあがります。ホストOSで必要なポートは6783だけです。&lt;/p&gt;
+
+&lt;p&gt;あとはweaveコマンドにIPを指定しつつdockerコマンドのオプションを付けて起動すればOK。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ C=$(sudo weave run 10.0.0.1/24 -it ubuntu)
+$ sudo docker exec $C -it /bin/bash
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ただ、さくらVPSのCentOS6では動きませんでした。面倒なので深く追ってません。。。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ sudo /usr/local/bin/weave launch
+WARNING: Linux kernel version 3.5 or newer is required (you have 2.6)
+ERROR: ip utility, iproute2-ss091226 does not support network namespaces.
+       Please install iproute2-ss111010 or later.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;consul:eb7384652550cf95d9fa5f789a7acdb6&#34;&gt;consul&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.consul.io/&#34;&gt;consul&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Hashicorp謹製クラスタのオーケストレーションツール。今更説明する必要もないと思うので詳細は省略します。
+consul（と周辺ツールのconsul-templateやenvconsul)を使えば複数のホスト間で設定を共有できる、というのを試すのが今回の目的でしたが、とりあえず複数のconsulを動かすところまでを書きます。&lt;/p&gt;
+
+&lt;h3 id=&#34;consulを起動してクラスタを構築する:eb7384652550cf95d9fa5f789a7acdb6&#34;&gt;consulを起動してクラスタを構築する&lt;/h3&gt;
+
+&lt;p&gt;weaveネットワークに接続したコンテナを4台立ち上げて、consul1, consul2をserverとして、consul3, consul4をclientとして起動します。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ sudo weave run 10.0.0.1/24 -it -v $(pwd -P):/opt --name=consul1 restartr/consul-ready
+$ sudo weave run 10.0.0.2/24 -it -v $(pwd -P):/opt --name=consul2 restartr/consul-ready
+$ sudo weave run 10.0.0.3/24 -it -v $(pwd -P):/opt --name=consul3 restartr/consul-ready
+$ sudo weave run 10.0.0.4/24 -it -v $(pwd -P):/opt --name=consul4 restartr/consul-ready
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;あとはconsul agentを順に起動するだけ。&lt;/p&gt;
+
+&lt;p&gt;ここで注意するのが&lt;code&gt;-bind&lt;/code&gt;オプション。
+これを指定しないとdockerデフォルトのeth0のでクラスタにjoinすることになってしまい、このネットワークは他のコンテナとつながっていないためにクラスタ構築に失敗します。
+必ず&lt;code&gt;weave run 10.0.0.X/24&lt;/code&gt;で指定したIPにbindしておきましょう。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ sudo docker exec -d consul1 consul agent -server -data-dir=/tmp/consul -bootstrap-expect 1 -bind 10.0.0.1
+$ sudo docker exec -d consul2 consul agent -server -data-dir=/tmp/consul -config-dir=/opt/consul.d/web.json -bind 10.0.0.2
+$ sudo docker exec -d consul3 consul agent -data-dir=/tmp/consul -config-dir=/opt/consul.d/web.json -bind 10.0.0.3
+$ sudo docker exec -d consul4 consul agent -data-dir=/tmp/consul -config-dir=/opt/consul.d/web.json -bind 10.0.0.4
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;で、先に起動したconsul1に対して残りのコンテナ内のconsul agentをjoinさせていきます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ sudo docker exec consul2 consul join 10.0.0.1
+$ sudo docker exec consul3 consul join 10.0.0.1
+$ sudo docker exec consul4 consul join 10.0.0.1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;と、&lt;code&gt;consul members&lt;/code&gt;でjoinしている一覧が見えるようになります。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ sudo docker exec consul1 consul members
+Node          Address        Status  Type    Build  Protocol
+725dca3980ea  10.0.0.1:8301  alive   server  0.5.0  2
+f82001d6a7b4  10.0.0.2:8301  alive   server  0.5.0  2
+dcf304f77fdf  10.0.0.3:8301  alive   client  0.5.0  2
+3be672bd18b1  10.0.0.4:8301  alive   client  0.5.0  2
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;クラスタから離れるときは&lt;code&gt;consul leave&lt;/code&gt;です。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ sudo docker exec consul4 consul leave
+Graceful leave complete
+
+$ sudo docker exec consul1 consul members
+Node          Address        Status  Type    Build  Protocol
+dcf304f77fdf  10.0.0.3:8301  alive   client  0.5.0  2
+3be672bd18b1  10.0.0.4:8301  left    client  0.5.0  2       # &amp;lt;- Statusが&#39;alive&#39;から&#39;left&#39;に変わる
+725dca3980ea  10.0.0.1:8301  alive   server  0.5.0  2
+f82001d6a7b4  10.0.0.2:8301  alive   server  0.5.0  2
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;という感じで、複数のマシンをいじってる感じがまったくしないくらい&lt;code&gt;weave&lt;/code&gt; &amp;amp; &lt;code&gt;docker exec&lt;/code&gt;は便利です。
+weaveがプロダクション環境で使えるか、という点については未知ですが。&lt;/p&gt;
+
+&lt;p&gt;次回（があれば）consulを使った設定の管理について試したメモを書きたいと思います。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Peek - Railsアプリのプロファイリングツール</title>
+      <link>http://blog.restartr.com/2015/01/18/peek-for-profiling-rails-app</link>
+      <pubDate>Sun, 18 Jan 2015 13:26:53 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2015/01/18/peek-for-profiling-rails-app</guid>
+      <description>
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/peek/peek&#34;&gt;Peek&lt;/a&gt;という、Railsアプリケーションに組み込めるプロファイリングツール（群）があります。
+&lt;a href=&#34;https://github.com/blog/1252-how-we-keep-github-fast&#34;&gt;How we keep Github fast&lt;/a&gt;でも言及されているツールです。(2012年なので少し古いですが。)&lt;/p&gt;
+
+&lt;h3 id=&#34;プロファイリングツールと適正:80f3a3d87dff3340fadb3d942d4923d0&#34;&gt;プロファイリングツールと適正&lt;/h3&gt;
+
+&lt;p&gt;プロファイリング用のツールはたくさんあって、時間がかかる特定の処理を改善するために使うものもあれば、常時記録して特異な変化を監視するものもあります。&lt;/p&gt;
+
+&lt;p&gt;今回は後者寄りの要件であり、これに見合うものとしてPeekを取り上げました。&lt;/p&gt;
+
+&lt;p&gt;Railsでこれ以外のツールとしては、&lt;a href=&#34;https://github.com/MiniProfiler/rack-mini-profiler&#34;&gt;rack-mini-profiler&lt;/a&gt;や&lt;a href=&#34;https://github.com/newrelic/rpm&#34;&gt;newrelic/rpm&lt;/a&gt;などがあり、それらについて今回の要件と照合してみました。&lt;/p&gt;
+
+&lt;h4 id=&#34;newrelic-rpm:80f3a3d87dff3340fadb3d942d4923d0&#34;&gt;newrelic rpm&lt;/h4&gt;
+
+&lt;p&gt;newrelicのサービス上で結果が確認出来るだけではなく、&lt;a href=&#34;https://github.com/newrelic/rpm#developer-mode&#34;&gt;デベロッパーモード&lt;/a&gt;の場合に&amp;rdquo;/newrelic&amp;rdquo;にアクセスするとリクエストごとのプロファイル結果が見れます。
+ただ、別途&amp;rdquo;/newrelic&amp;rdquo;のURLを開く必要があり、パフォーマンスチェックを忘れがちになる可能性があります。&lt;/p&gt;
+
+&lt;h4 id=&#34;rack-mini-profiler:80f3a3d87dff3340fadb3d942d4923d0&#34;&gt;rack-mini-profiler&lt;/h4&gt;
+
+&lt;p&gt;トータルの処理時間は画面隅に表示されるけれど、個々の処理時間については画面隅のボックスをクリックして詳細を開かないといけません。&lt;/p&gt;
+
+&lt;h4 id=&#34;peek:80f3a3d87dff3340fadb3d942d4923d0&#34;&gt;peek&lt;/h4&gt;
+
+&lt;p&gt;Peekは適切な粒度で常に目に入れることができるツールであり、常用するのにちょうど良いのでは、という印象です。&lt;/p&gt;
+
+&lt;p&gt;先のGihtubのブログでは&amp;rdquo;Mission controll bar&amp;rdquo;いう、スタッフがプロダクション環境でも常にパフォーマンスを確認できる仕組みが整えられています。&lt;/p&gt;
+
+&lt;h3 id=&#34;peekのしくみ:80f3a3d87dff3340fadb3d942d4923d0&#34;&gt;Peekのしくみ&lt;/h3&gt;
+
+&lt;p&gt;しくみは以下ブログ記事が詳しいです。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://r7kamura.hatenablog.com/entry/2014/09/24/004607&#34;&gt;Railsの性能測定用プラグイン peek/peek - ✘╹◡╹✘&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;リクエストごとにIDを発行し、そのリクエストごとに各種計測値をデータストア（ファイル、Redis、Memcached等）に保存。
+ページ表示後に別リクエスト(&amp;ldquo;/peek/&amp;hellip;&amp;rdquo;)として非同期で計測値を取得して、画面の要素を置換する、というしくみ。&lt;/p&gt;
+
+&lt;h3 id=&#34;peekの拡張:80f3a3d87dff3340fadb3d942d4923d0&#34;&gt;Peekの拡張&lt;/h3&gt;
+
+&lt;p&gt;Peek自体はプラットフォームを提供するだけで、実際の個々の値を記録したりするのはそのプラグイン。&lt;/p&gt;
+
+&lt;p&gt;対応しているのは&lt;a href=&#34;https://github.com/peek/peek#available-peek-views&#34;&gt;Available Peek views&lt;/a&gt;
+に記載されています。仮にほしいものが見つからなかったとしても、わりと手軽に追加できるような仕組みになっています。&lt;/p&gt;
+
+&lt;p&gt;ということでmemcached用のプラグインをつくりました。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/ReSTARTR/peek-memcached&#34;&gt;peek-memcached&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/evan/memcached&#34;&gt;evan/memcached&lt;/a&gt;という、cで実装されたruby用memcachedクライアントがあって、それを使ったmemcachedアクセスを記録するプラグインです。&lt;/p&gt;
+
+&lt;p&gt;このプラグインでは&lt;code&gt;Memcached#get&lt;/code&gt;&lt;code&gt;Memcached#set&lt;/code&gt;メソッドにモンキーパッチあてて、回数と時間を記録しています。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;呼び出し回数(calls)&lt;/li&gt;
+&lt;li&gt;総処理時間(duration)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;に加えて、下記も記録できるようになっています。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;キャッシュヒット数(Get[HIT])&lt;/li&gt;
+&lt;li&gt;キャッシュミス数(Get[MISS])&lt;/li&gt;
+&lt;li&gt;キャッシュ更新数(Set)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;peekの惜しいところ:80f3a3d87dff3340fadb3d942d4923d0&#34;&gt;Peekの惜しいところ&lt;/h3&gt;
+
+&lt;p&gt;要素が増えるとブラウザの横幅に収まりきらなくなって、折り返し＆はみ出します。本当に必要な要素に絞る抑止力にはなりますが、もう少しコンパクトに収められるとよりよいかな、と。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>2014年に購入した技術書</title>
+      <link>http://blog.restartr.com/2014/12/31/books-2014</link>
+      <pubDate>Wed, 31 Dec 2014 20:22:02 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2014/12/31/books-2014</guid>
+      <description>
+
+&lt;p&gt;投稿数を稼ぐべく、とりあえず今年購入した（であろう）本をリストアップしつつ、今年の振り返りでも。&lt;/p&gt;
+
+&lt;p&gt;購入しただけで読めてないものや、途中のものもありますが、技術書なんてリファレンスなので全部読む必要もないわけで(言い訳)。
+一度手放した本とか角川祭りとかでKindleストアでの購入が増えた年でした。Kindle3からPaperwhiteにアップデートしたのも大きい。
+仕事上フロントエンド以外の広範囲を取り扱う機会が増えたため、読んだ本もわりと多岐にわたってます。&lt;/p&gt;
+
+&lt;p&gt;世の中的には、Immutable Infrastractureが一段落して、Docker, Golang, Microservicesなんかがバズワード化してました。&lt;/p&gt;
+
+&lt;p&gt;とくにGolangは日本語書籍は増えてないものの、Go製プロダクトが大量発生している状況は当分継続しそう。なので、いろんなRuby/Python/Perl/PHPなどLL製プロダクトのリプレースが進んでいくのでは。新しい流行としてはGolangにつづいてRust, Clojure, Elixrあたりがじわじわ来るんじゃないでしょうかね。&lt;/p&gt;
+
+&lt;p&gt;インフラ周りでいうと、コンテナ化、マルチクラウド、モニタリングまわりが大きく変化しそうです。&lt;/p&gt;
+
+&lt;p&gt;では、購入した書籍一覧です。購入日時はよくわからないので購入順には並んでません。(すべてアフィ無しリンクです)&lt;/p&gt;
+
+&lt;h3 id=&#34;プログラミング:9cb2f801aeb0f47fac1ec1855771aa70&#34;&gt;プログラミング&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/gp/product/B0096BYG7C&#34;&gt;Practical Object-Oriented Design in Ruby&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/gp/product/B00HUEG8LE&#34;&gt;Build Awesome Command-Line Applications in Ruby 2&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.manning.com/ketelsen/&#34;&gt;Go in Action&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/B00MLUGZIS/&#34;&gt;すごいErlangゆかいに学ぼう！&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://tatsu-zine.com/books/naruhounix&#34;&gt;なるほどUnixプロセス ― Rubyで学ぶUnixの基礎&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;(未読) &lt;a href=&#34;http://www.jstorimer.com/products/working-with-tcp-sockets&#34;&gt;Working With TCP Sockets&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;(未読) &lt;a href=&#34;http://www.amazon.co.jp/dp/4756136494&#34;&gt;プログラミング作法&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;アーキテクチャ:9cb2f801aeb0f47fac1ec1855771aa70&#34;&gt;アーキテクチャ&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/gp/product/B00GRKD6XU&#34;&gt;エリック・エヴァンスのドメイン駆動設計&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://shop.oreilly.com/product/0636920033158.do&#34;&gt;Building Microservices&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;ミドルウェア:9cb2f801aeb0f47fac1ec1855771aa70&#34;&gt;ミドルウェア&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/gp/product/B00HSC64P8&#34;&gt;Redis入門　インメモリKVSによる高速データ管理&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.manning.com/grainger/&#34;&gt;Solr in Action&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://shop.oreilly.com/product/0636920026136.do&#34;&gt;ZeroMQ&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/gp/product/B00J4KDYZU&#34;&gt;高速スケーラブル検索エンジン　ElasticSearch Server&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;インフラ:9cb2f801aeb0f47fac1ec1855771aa70&#34;&gt;インフラ&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/4873116767/&#34;&gt;ハイパフォーマンス ブラウザネットワーキング&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/gp/product/B00FLYU9T2&#34;&gt;Systems Performance: Enterprise and the Cloud &lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/477416500X&#34;&gt;Chef実践入門 ~コードによるインフラ構成の自動化 &lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/gp/product/B00LRROTI4&#34;&gt;The Docker Book: Containerization is the new virtualization &lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/B00JWM4W2E&#34;&gt;Docker入門 Immutable Infrastructureを実現する&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;読み物:9cb2f801aeb0f47fac1ec1855771aa70&#34;&gt;読み物&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/gp/product/B00OJVMK5O&#34;&gt;How Google Works &lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/4274068471&#34;&gt;Coders at Work プログラミングの技をめぐる探求&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/4873114713&#34;&gt;言語設計者たちが考えること&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;(未読) &lt;a href=&#34;http://www.amazon.co.jp/gp/product/B00MIFE3BC&#34;&gt;アカマイ　知られざるインターネットの巨人&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;(未読) &lt;a href=&#34;http://www.amazon.co.jp/dp/4274064069&#34;&gt;UNIXという考え方―その設計思想と哲学&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>InfoQ eMAG: Microservicesを少し読んだまとめと感想</title>
+      <link>http://blog.restartr.com/2014/08/20/microservices-architecture</link>
+      <pubDate>Wed, 20 Aug 2014 00:14:35 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2014/08/20/microservices-architecture</guid>
+      <description>
+
+&lt;p&gt;なんだか、世間的にMicroservicesが次の注目対象になりそうな感じです。&lt;/p&gt;
+
+&lt;p&gt;DockerConでも複数のセッションで言及があったり、はてブにもたまに関連記事があがってきたりしてます。&lt;/p&gt;
+
+&lt;p&gt;実態はどんなものかイメージしにくかったのですが、最近InfoQで公開されたeMAGが情報としてまとまっている気がしたので、これを読み進めています。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.infoq.com/minibooks/emag-microservices&#34;&gt;InfoQ eMAG: Microservices&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;本に含まれている内容:3bc6d647f365463ddc39c1b6a009ea70&#34;&gt;本に含まれている内容&lt;/h3&gt;
+
+&lt;p&gt;この本は、過去のInfoQ記事や各ブログを再構成したもので、以下の記事タイトルがまとめられています。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Microservices: Decomposing Applications for Deployability and Scalability&lt;/li&gt;
+&lt;li&gt;Microservices and SOA&lt;/li&gt;
+&lt;li&gt;Adrian Cockcroft on Microservices and DevOps&lt;/li&gt;
+&lt;li&gt;Microservices? What about Nanoservices?&lt;/li&gt;
+&lt;li&gt;Building Products at SoundCloud&lt;/li&gt;
+&lt;li&gt;The Strengths and Weaknesses of Microservices&lt;/li&gt;
+&lt;li&gt;GOTO Berlin: Microservices as an Alternative to Monoliths&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;そのうち、以下を読んだので、まとめと雑感を書きます。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Microservices: Decomposing Applications for Deployability and Scalability&lt;/li&gt;
+&lt;li&gt;Building Products at SoundCloud&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;本の主題はMicroservices Architectureですが、それに伴うソフトウェアの設計手法などの参照もたくさん含まれているので、いろんな情報への入口としても勉強になると思います。&lt;/p&gt;
+
+&lt;h4 id=&#34;microservices-decomposing-applications-for-deployability-and-scalability:3bc6d647f365463ddc39c1b6a009ea70&#34;&gt;Microservices: Decomposing Applications for Deployability and Scalability&lt;/h4&gt;
+
+&lt;ul&gt;
+&lt;li&gt;ドメイン単位で複数に分割されたもの小さなサービスのの集合体をMicroservices Architectureと呼ぶ&lt;/li&gt;
+&lt;li&gt;既存フレームワークとかでservice層として定義していた単位が別々のプロセスに切りだされているイメージ&lt;/li&gt;
+&lt;li&gt;一方、既存のシステムはMonolithic Architectureと呼ばれる&lt;/li&gt;
+&lt;li&gt;システム設計における単一責任原則の適用ともいえる&lt;/li&gt;
+&lt;li&gt;現実に則したSOAの焼き直しである&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;メリット&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;個々にデプロイ可能である&lt;/li&gt;
+&lt;li&gt;個々のMicroserviceが独立しているため、サービス全体の可用性向上を期待できる&lt;/li&gt;
+&lt;li&gt;開発チームを小さい単位に分割しやすい&lt;/li&gt;
+&lt;li&gt;言語やフレームワークの移行が容易になる。変更が小規模なので仮に失敗しても取り戻しやすい。&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;デメリット&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;個々にはシンプルでも全体の複雑性は増す&lt;/li&gt;
+&lt;li&gt;サービス間のIPCメカニズムが必要&lt;/li&gt;
+&lt;li&gt;サービス間をまたいだテストがやりにくい&lt;/li&gt;
+&lt;li&gt;他サービスに影響する変更のデプロイは手順を十分に検討する必要がある&lt;/li&gt;
+&lt;li&gt;運用が大変。ハイレベルな自動化が要求される&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;building-products-at-soundcloud:3bc6d647f365463ddc39c1b6a009ea70&#34;&gt;Building Products at SoundCloud&lt;/h4&gt;
+
+&lt;p&gt;SoundCloudのMicroservices移行話は「Building Products at SoundCLoud」という三回分のブログ記事を再構成してまとめた内容になっています。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://developers.soundcloud.com/blog/building-products-at-soundcloud-part-1-dealing-with-the-monolith&#34;&gt;Building Products at SoundCloud—Part I: Dealing with the Monolith&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://developers.soundcloud.com/blog/building-products-at-soundcloud-part-2-breaking-the-monolith&#34;&gt;Building Products at SoundCloud—Part II: Breaking the Monolith&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://developers.soundcloud.com/blog/building-products-at-soundcloud-part-3-microservices-in-scala-and-finagle&#34;&gt;Building Products at SoundCloud—Part III: Microservices in Scala and Finagle&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;MonolithicなRailsアプリからMicroservicesに移行するまでの手順や失敗が紹介されていて、これから移行を進めるチームにとって有益になるでしょう。&lt;/p&gt;
+
+&lt;p&gt;彼らは既存アプリの機能をいきなり別言語で切り出すのではなく、&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;分析→リファクタリング→Service分割→新技術の採用&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;という手順を踏んでいます。この移行における重要な点は、どのような新技術を採用するかではなく、DDDをベースとしたドメイン分析を行うことにあると思います。分割の単位を誤ったなら個々のサービスの依存性を排除しきれなくなり全体の複雑性は確実に高くなります。&lt;/p&gt;
+
+&lt;p&gt;ドメイン分割の一例として、&lt;a href=&#34;http://martinfowler.com/bliki/BoundedContext.html&#34;&gt;Bounded Context&lt;/a&gt;を利用した例が紹介されています。&lt;/p&gt;
+
+&lt;p&gt;また、依存性の低い個々のMicroserviceにできることで、それぞれに独立したチームを配置することも可能になります。
+ただ、それぞれのチームが無秩序に技術選定を行うことでスキルや情報の局所性(&lt;a href=&#34;http://en.wikipedia.org/wiki/Bus_factor&#34;&gt;Bus Factor&lt;/a&gt;の低下)を招くことになるため、一定のルールを決めることも重要になるようです。結果として彼らはJVMベースのScala,ClojureJRubyを中心としたシステムを作ることを決定しています。(同時にGoとRubyもサポート)&lt;/p&gt;
+
+&lt;h4 id=&#34;雑感:3bc6d647f365463ddc39c1b6a009ea70&#34;&gt;雑感&lt;/h4&gt;
+
+&lt;p&gt;Microservicesへ移行するにはサービス規模・システム規模・開発チーム規模が大きいことが前提であり、そうでない限りはMonolithicなシステムで頑張るほうが良いかな、というのが個人的な意見です。また、DDDのような適切なドメイン分析ができるアーキテクトが存在しない場合にもMicroservicesはあまり良い選択肢とはいえないと思います。それらの前提をクリアできるのであれば、長いプロダクトのライフスパンにおいて、システムそのものだけでなく開発チームも含めて良い影響をもらたすことになるのではないでしょうか。&lt;/p&gt;
+
+&lt;p&gt;ということで「Microservicesの本質はドメイン分析であり、デプロイ単位や技術選定などのメリットは副次的なものである」というのがこのeMAGを読んで得たとりあえずの結論です。&lt;/p&gt;
+
+&lt;h4 id=&#34;参考リンク:3bc6d647f365463ddc39c1b6a009ea70&#34;&gt;参考リンク&lt;/h4&gt;
+
+&lt;p&gt;Martin Fowler氏の記事だけでなく、DockerConでのYelpのスライドやInfoQのbitlyの記事も参考になります。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://martinfowler.com/articles/microservices.html&#34;&gt;Microservices&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://recompile.net/posts/microservices.html&#34;&gt;マイクロサービス（microservices）とは何か — recompile.net&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.slideshare.net/dotCloud/building-a-smarter&#34;&gt;Building a smarter application Stack by Tomas Doran from Yelp&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.infoq.com/jp/news/2014/08/bitly-lessons-learned&#34;&gt;bitlyでの分散システム構築から学んだこと&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Goのjson.Marshal/Unmarshalの仕様を整理してみる</title>
+      <link>http://blog.restartr.com/2014/08/13/golang-json-marshal-unmarshal</link>
+      <pubDate>Wed, 13 Aug 2014 00:02:42 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2014/08/13/golang-json-marshal-unmarshal</guid>
+      <description>
+
+&lt;h3 id=&#34;tl-dr:95b5ef122b0628eff42f880d34516c78&#34;&gt;TL;DR&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;goの構造体につけるタグは、フォーマットが不正だと読み込まれない(当然)&lt;/li&gt;
+&lt;li&gt;json.Marshalは、構造体のjsonタグがあればその値をキーとしてJSON文字列を生成する&lt;/li&gt;
+&lt;li&gt;json.Unmarshalは、構造体のjsonタグがあればその値を対応するフィールドにマッピングする
+
+&lt;ul&gt;
+&lt;li&gt;jsonタグがなければ、完全一致もしくはcase-insensitiveなフィールドにマッピングする&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;では、ひとつづつ確認していきます。&lt;/p&gt;
+
+&lt;h3 id=&#34;goの構造体につけるタグは-フォーマットが不正だと読み込まれない-当然:95b5ef122b0628eff42f880d34516c78&#34;&gt;goの構造体につけるタグは、フォーマットが不正だと読み込まれない(当然)&lt;/h3&gt;
+
+&lt;p&gt;goの構造体にはタグの機能があって、型の後に特定のフォーマットでアノテーションが記述できます&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;type MyType struct {
+  Hoge string `foo:&amp;quot;1&amp;quot; bar:&amp;quot;2&amp;quot;`
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;key:&amp;quot;value&amp;quot;&lt;/code&gt;をスペース区切りで複数かけます。
+で、アクセスするにはリフレクションを使います。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;t := reflect.TypeOf(MyType{})
+tagFoo := t.Field(0).Get(&amp;quot;foo&amp;quot;)
+tagBar := t.Field(0).Get(&amp;quot;bar&amp;quot;)
+fmt.Printf(&amp;quot;foo=%s, bar=%s\n&amp;quot;, tagFoo, tagBar)
+// foo=1, bar=2
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;タグのフォーマットが不正な場合は、値が空になります。コンパイルエラーにはなりません。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;type MyType struct {
+  Hoge string `foo:1`
+}
+t := reflect.TypeOf(MyType{})
+tagFoo := t.Field(0).Get(&amp;quot;foo&amp;quot;)
+fmt.Printf(&amp;quot;foo=%#v\n&amp;quot;, tagFoo)
+// foo=&amp;quot;&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;このエラーをコンパイルする前に検知するには、&lt;code&gt;go vet&lt;/code&gt;コマンドが使えます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ go vet my_type.go
+my_type.go:10: struct field tag `foo:1` not compatible with reflect.StructTag.Get
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;できれば&lt;code&gt;go compile&lt;/code&gt;実行したときに自動的にチェックしてほしいところですが…&lt;/p&gt;
+
+&lt;p&gt;で、jsonパッケージのMarshal/Unmarshalは、このタグを使ってアノテーションを記述することができます。&lt;/p&gt;
+
+&lt;h3 id=&#34;json-marshalは-構造体のjsonタグがあればその値をキーとしてjson文字列を生成する:95b5ef122b0628eff42f880d34516c78&#34;&gt;json.Marshalは、構造体のjsonタグがあればその値をキーとしてJSON文字列を生成する&lt;/h3&gt;
+
+&lt;p&gt;json.Marshalは構造体からJSON文字列への変換する関数です。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;type MyType struct {
+  A string
+  FooBar string
+}
+
+mt := MyType{&amp;quot;aaaa&amp;quot;, &amp;quot;baz&amp;quot;}
+b, _ := json.Marshal(mt)
+fmt.Printf(&amp;quot;%s\n&amp;quot;, string(b))
+// {&amp;quot;A&amp;quot;:&amp;quot;aaaa&amp;quot;,&amp;quot;FooBar&amp;quot;:&amp;quot;baz&amp;quot;}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;普通にやると、フィールド名がそのままJSONのキーになります。&lt;/p&gt;
+
+&lt;p&gt;ここで構造体のタグ機能をつかって、フィールド名のアノテーションを書くことで、任意のフィールド名でJSONが生成できます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;type MyType struct {
+  A string `json:&amp;quot;a&amp;quot;`
+  FooBar string `json:&amp;quot;foo_bar&amp;quot;`
+}
+
+mt := MyType{&amp;quot;aaaa&amp;quot;, &amp;quot;baz&amp;quot;}
+b, _ := json.Marshal(mt)
+fmt.Printf(&amp;quot;%s\n&amp;quot;, string(b))
+// {&amp;quot;a&amp;quot;:&amp;quot;aaaa&amp;quot;,&amp;quot;foo_bar&amp;quot;:&amp;quot;baz&amp;quot;}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;アノテーション指定した&amp;rdquo;a&amp;rdquo;がJSONのキーとして使用されていることが確認できます。&lt;/p&gt;
+
+&lt;h3 id=&#34;json-unmarshalは-構造体のjsonタグがあればその値を対応するフィールドにマッピングする:95b5ef122b0628eff42f880d34516c78&#34;&gt;json.Unmarshalは、構造体のjsonタグがあればその値を対応するフィールドにマッピングする&lt;/h3&gt;
+
+&lt;p&gt;json.UnmarshalはJSON文字列から構造体へ変換する関数です。&lt;/p&gt;
+
+&lt;p&gt;まずはタグなしのパターン&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;type MyType struct {
+  A string
+  FooBar string
+}
+
+var mt MyType
+json.Unarshal([]byte(`{&amp;quot;A&amp;quot;:&amp;quot;aaa&amp;quot;, &amp;quot;FooBar&amp;quot;:&amp;quot;baz&amp;quot;}`, &amp;amp;mt)
+fmt.Printf(&amp;quot;%#v\n&amp;quot;, mt) // main.MyType{A:&amp;quot;aaaa&amp;quot;,FooBar:&amp;quot;baz&amp;quot;}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;JSONのフィールド名がsnake_caseのパターン&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;var mt MyType
+json.Unarshal([]byte(`{&amp;quot;a&amp;quot;:&amp;quot;aaa&amp;quot;,&amp;quot;foo_bar&amp;quot;:&amp;quot;baz&amp;quot;}`, &amp;amp;mt)
+fmt.Printf(&amp;quot;%#v\n&amp;quot;, mt) // main.MyType{A:&amp;quot;aaaa&amp;quot;, FooBar:&amp;quot;&amp;quot;}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ここで「ん？」となるわけです。タグによるアノテーションがないのになぜ小文字のフィールドがちゃんと読み込まれているのか…と。&lt;/p&gt;
+
+&lt;p&gt;この仕様、json.Unmarshalのgodocにちゃんと書いてあります。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://golang.org/pkg/encoding/json/#Unmarshal&#34;&gt;func Unmarshal&lt;/a&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;To unmarshal JSON into a struct, Unmarshal matches incoming object keys to the keys used by Marshal (either the struct field name or its tag), preferring an exact match but also accepting a case-insensitive match.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;どうやら、json.Unmarshalは、JSONに含まれるキーと完全一致か、case-insensitiveに一致する構造体のフィールドにマッピングする仕様となっているようです。もちろん、snake_caseなJSONのキーはアノテーションがないとマッピングされず無視されます。（構造体のフィールドとしてsnale_caseが存在しない限りは)&lt;/p&gt;
+
+&lt;h3 id=&#34;経緯:95b5ef122b0628eff42f880d34516c78&#34;&gt;経緯&lt;/h3&gt;
+
+&lt;p&gt;先日、&lt;a href=&#34;http://connpass.com/event/7914/&#34;&gt;ヒカルのGO! hikarie.go #2&lt;/a&gt;で&lt;a href=&#34;https://twitter.com/yosuke_furukawa&#34;&gt;@yosuke_furukawa&lt;/a&gt;さんによるGoでJSON APIを書いてみるというハンズオンを体験してきました。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/yosuke-furukawa/golang-study&#34;&gt;yosuke-furukawa/golang-study&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;そこで、アノテーションをつけた構造体を使ってMarshalした時に、書いたコードがこれです。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;type User struct {
+  Name string `json:name`
+}
+user := User{&amp;quot;restartr&amp;quot;}
+b, _ := json.Marshal(user)
+fmt.Printf(&amp;quot;%s\n&amp;quot;, string(b)) // {&amp;quot;Name&amp;quot;:&amp;quot;restartr&amp;quot;}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;小文字で出力してほしいのに、アノテーションが効かない…となったわけです。
+他の参加者が&lt;code&gt;json:&amp;quot;name&amp;quot;&lt;/code&gt;でないといけないことに気づいて、この件は一件落着。&lt;/p&gt;
+
+&lt;p&gt;だったのですが、もう少し詳しく調べると上に整理したような仕様が見えてきたというわけです。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;type User struct {
+  Name string `json:name` // 実際は無視されている
+}
+var user User
+json.Unmarshal([]byte(`{&amp;quot;name&amp;quot;:&amp;quot;restartr&amp;quot;}`, &amp;amp;user)
+fmt.Printf(&amp;quot;%s\n&amp;quot;, user) // main.User{Name:&amp;quot;restartr&amp;quot;}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;実はこの時書いた&lt;code&gt;json:name&lt;/code&gt;というアノテーションは不正なフォーマットとして無視されていて、たまたまUser.Nameというフィールドにcase-insensitiveでUnmarshalした時にマッピングができていたにすぎなかったようです。&lt;/p&gt;
+
+&lt;p&gt;とまぁそんな感じでJSONの取り扱いについて正しい知識を得られたのですが、一人でやってた時には気づかなかった疑問とか知識として不足している点に気付けるので、ハンズオン形式も良いものですね。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Docker謹製ライブラリのlibchanについて調べてみた</title>
+      <link>http://blog.restartr.com/2014/06/28/about-docker-libchan</link>
+      <pubDate>Sat, 28 Jun 2014 14:44:23 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2014/06/28/about-docker-libchan</guid>
+      <description>
+
+&lt;p&gt;DockerCon2014で発表された&lt;a href=&#34;https://github.com/docker/libchan&#34;&gt;libchan&lt;/a&gt;について調べたことをまとめてみます。&lt;/p&gt;
+
+&lt;p&gt;libchanは&lt;a href=&#34;https://github.com/docker/libcontainer&#34;&gt;libcontainer&lt;/a&gt;や&lt;a href=&#34;https://github.com/docker/libswarm&#34;&gt;libswarm&lt;/a&gt;と共に発表されました。
+libswarmはDockerを中心にしたエコシステムにおけるベンダーロックインを回避するためのソリューションであり、libcontainerは&lt;a href=&#34;http://d.hatena.ne.jp/mainyaa/20140311/p1&#34;&gt;Docker 0.9リリースドキュメント日本語訳: Execution driversとlibcontainer導入 - Happy New World&lt;/a&gt;を参照するのがよいでしょう。&lt;/p&gt;
+
+&lt;p&gt;では、libchanとは何なのでしょうか。&lt;/p&gt;
+
+&lt;p&gt;READMEには&lt;code&gt;like Go channels over the network&lt;/code&gt;とあります。ネットワーク上のgo channel?よくかりませんね。。。&lt;/p&gt;
+
+&lt;p&gt;README.mdとPROTOCOL.md、いくつかのテストコードをもとに簡単な実装をしてみた結果をまとめます。&lt;/p&gt;
+
+&lt;h3 id=&#34;libchanとはなにか:420542fbd67b0f03cfaa082edb6d06ae&#34;&gt;libchanとはなにか&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/docker/libchan/README.md&#34;&gt;README&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;libchanは超軽量なネットワークライブラリであり、多様な通信プロトコルの土台となるものです。
+同一プロセス内でも、同一ホストの別プロセス間でも、ネットワークを超えた別ホストの別プロセス間でも双方向通信可能にするための基礎的なAPIを提供しています。
+モダンなmicro-serviesなどRPCやRESTプロトコルにはフィットしない領域で、libchanを使うことが想定されています。&lt;/p&gt;
+
+&lt;p&gt;利用例はいまのところlibswarmのみです。というかlibswarmから抽出された汎用的な通信ライブラリだと思います。
+APIが安定してくると他のフレームワーク等への導入などもあるかもしれません。&lt;/p&gt;
+
+&lt;p&gt;では、具体的にどうやって双方向通信を可能にしてるのでしょう。&lt;/p&gt;
+
+&lt;h3 id=&#34;libchanのプロトコル:420542fbd67b0f03cfaa082edb6d06ae&#34;&gt;libchanのプロトコル&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/docker/libchan/PROTOCOL.md&#34;&gt;PROTOCOL&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;libchanは以下のコンポーネントで構成されています。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;channel&lt;/li&gt;
+&lt;li&gt;session&lt;/li&gt;
+&lt;li&gt;message&lt;/li&gt;
+&lt;li&gt;byte stream&lt;/li&gt;
+&lt;li&gt;nesting&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;channelとは、並行プログラム間の双方向通信用オブジェクトです。goのchannelに似てるけどそのものではありません。Sender/Receiverがそれぞれ1方向ずつの経路を持つため、ソケットというよりパイプの概念に近いです。&lt;/p&gt;
+
+&lt;p&gt;この２つの通信経路がsessionとなり、その間を流れるのがbyte stream。
+で、byte streamにはmessageが乗っかり、messageにはchannelを含めることができるという概念です。&lt;/p&gt;
+
+&lt;h3 id=&#34;libchanのメッセージ:420542fbd67b0f03cfaa082edb6d06ae&#34;&gt;libchanのメッセージ&lt;/h3&gt;
+
+&lt;p&gt;メッセージはlibchan.Message。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;type libchan.Message struct {
+  Data []byte // メッセージの内容
+  Fd *os.File
+  Ret Sender  // 受信者が返答するためのchannel
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;このメッセージ型を、各種通信方式に対応したSender/Receiver経由でやりとりすることになります。&lt;/p&gt;
+
+&lt;h3 id=&#34;メッセージの構造化:420542fbd67b0f03cfaa082edb6d06ae&#34;&gt;メッセージの構造化&lt;/h3&gt;
+
+&lt;p&gt;メッセージは以下のようにして生成します。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;message := libchan.Message{Data: []byte(&amp;quot;Hello, libchan&amp;quot;), Ret: libchan.RetPipe}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;で、ただのテキストではなく構造化されたデータも送れます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;import &amp;quot;github.com/docker/libchan/data&amp;quot;
+
+d := data.Empty().Set(&amp;quot;foo&amp;quot;, &amp;quot;bar&amp;quot;)
+d.Get(&amp;quot;foo&amp;quot;) // &amp;quot;bar&amp;quot;
+d.Pretty() // foo=bar
+message := libchan.Message{Data: d, Ret: libchan.RetPipe))
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ちなみに、各メソッド(Add,Set,Get,Del)はMessageのポインタをかえさないので、変数を上書きするかメソッドチェインにする必要があります。&lt;/p&gt;
+
+&lt;h3 id=&#34;メッセージの送受信:420542fbd67b0f03cfaa082edb6d06ae&#34;&gt;メッセージの送受信&lt;/h3&gt;
+
+&lt;p&gt;作成したメッセージををSender経由で送ります。（ここでのSender/Receiverは擬似コードです）&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;sender.Send(&amp;amp;libchan.Message{Data: []byte(msg)})
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;で、Receiverが受信したメッセージは&lt;code&gt;data.Decode()&lt;/code&gt;で&lt;code&gt;map[string][]string&lt;/code&gt;に変換できます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;message, _ := receiver.Receive(0)
+decoded, _ := data.Decode(string(message.Data))
+fmt.Printf(&amp;quot;%$v\n&amp;quot;, docoded) // map[string][]string{&amp;quot;foo&amp;quot;:[]string{&amp;quot;bar&amp;quot;}}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;sender-receiver:420542fbd67b0f03cfaa082edb6d06ae&#34;&gt;Sender/Receiver&lt;/h3&gt;
+
+&lt;p&gt;実際にメッセージを送受信するのは、Send/Receiverメソッドを持つinterfaceを実装したものを使います。
+定義はだいたいこんなかんじになっています。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;type Sender interface {
+  Send(msg *Message) (Receiver, error)
+}
+
+func (s *Sender) Send(msg *libchan.Message) (libchan.Receiver, error)
+
+type Receiver interface {
+  Receiver(mode int) (*Message, error)
+}
+
+func (r *Receiver) Receive(mode int) (*libchan.Message, error)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;主要な実装は以下&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/docker/libchan/blob/master/nop.go&#34;&gt;nop&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/docker/libchan/blob/master/inmem.go&#34;&gt;inmem&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/docker/libchan/blob/master/unix&#34;&gt;unix&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/docker/libchan/blob/master/http2&#34;&gt;http2&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;inmem-in-memory-go-channel:420542fbd67b0f03cfaa082edb6d06ae&#34;&gt;inmem (In-memory Go channel)&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/docker/libchan/blob/master/inmem_test.go&#34;&gt;inmem_test.go&lt;/a&gt;を参考に実装してみます。&lt;/p&gt;
+
+&lt;p&gt;まずは&lt;code&gt;libchan.Pipe()&lt;/code&gt;を使って、receiver/senderを取得します。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;receiver, sender := libchan.Pipe()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;送信側はgorutine内でsender経由でメッセージを送信して、送信側から受信したメッセージに対してさらに返信します。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;go func() {
+  recv, _ := sender.Send(&amp;amp;libchan.Message{
+    Data: []byte(&amp;quot;Hello&amp;quot;),
+    Ret: libchan.RetPipe,
+  )
+  msg, _ := recv.Receive(0) // mode=0で自動Close()
+  fmt.Println(string(msg.Data)) // &amp;quot;World&amp;quot;
+}()
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;受信側はreceiver経由でメッセージ受信して、それに対して返信します。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;msg, err := receiver.Receive(libchan.Ret)
+fmt.Println(string(msg.Data)) // &amp;quot;Hello&amp;quot;
+// msg.Retが返信用のchannelとなっている
+_, err := msg.Ret.Send(&amp;amp;libchan.Message{Data: []byte(&amp;quot;World&amp;quot;)})
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;unix-http2の実装:420542fbd67b0f03cfaa082edb6d06ae&#34;&gt;unix/http2の実装&lt;/h3&gt;
+
+&lt;p&gt;それぞれにテストコードがあるので覗いてみるとだいたいのイメージがつかめます。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/docker/libchan/blob/master/unix/unix_test.go&#34;&gt;unix/unix_test.go&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/docker/libchan/blob/master/http2/listener_test.go&#34;&gt;http2/listener_test.go&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;まとめ:420542fbd67b0f03cfaa082edb6d06ae&#34;&gt;まとめ&lt;/h2&gt;
+
+&lt;p&gt;libchanにおけるchannelとgoのchannel、名前は同じでも別モノです。
+今のところこれといった用途が思いつかないですが、libswarmから派生したものとすると多様なプロトコルの差異を吸収するためのアダプター実装を手助けしてくれるレイヤーと考えるのがよさそうです。&lt;/p&gt;
+
+&lt;p&gt;というか、DockerConでちょくちょく言及されていた「マイクロサービス」という概念のほうが興味あります。&lt;/p&gt;
+
+&lt;h2 id=&#34;追記:420542fbd67b0f03cfaa082edb6d06ae&#34;&gt;追記&lt;/h2&gt;
+
+&lt;p&gt;&lt;blockquote class=&#34;twitter-tweet&#34; lang=&#34;ja&#34;&gt;&lt;p&gt;そういえば書き忘れてたけど、アプリケーションが成長する過程においてlibchanの統一的なインターフェースによって比較的容易にスケールできるんだよ、ってことをDockerConのキーノートでいってたような。。。あとでみかえそう。&lt;/p&gt;&amp;mdash; Masaki YOSHIDA (@ReSTARTR) &lt;a href=&#34;https://twitter.com/ReSTARTR/statuses/482775493511376896&#34;&gt;2014, 6月 28&lt;/a&gt;&lt;/blockquote&gt;
+&lt;script async src=&#34;//platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;&lt;/p&gt;
+
+&lt;p&gt;ということに気づき、再度キーノートを見返してました。libchanについては以下動画の30:45あたりからどうぞ。&lt;/p&gt;
+
+&lt;iframe width=&#34;640&#34; height=&#34;360&#34; src=&#34;//www.youtube.com/embed/_DOXBVrlW78&#34; frameborder=&#34;0&#34; allowfullscreen&gt;&lt;/iframe&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Dockerを使って任意のrubyバージョンのrpmを作成する</title>
+      <link>http://blog.restartr.com/2014/05/11/build-rpm-on-docker-container</link>
+      <pubDate>Sun, 11 May 2014 00:00:00 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2014/05/11/build-rpm-on-docker-container</guid>
+      <description>
+
+&lt;p&gt;CentOSを使ってて不便なのがruby2系のインストール。&lt;/p&gt;
+
+&lt;p&gt;rbenvやruby-buildを使うかソースからインストールするのですが、この場合、環境を構築するたびにビルドすることになり時間もかかるし大変面倒です。&lt;/p&gt;
+
+&lt;p&gt;なのでDockerを使ってクリーンな環境でRubyの最新rpmをビルドしてみました。&lt;/p&gt;
+
+&lt;p&gt;Dockerを使えばビルド環境がすぐに立ち上げられるので、rpmビルドに必要なパッケージを確認したりするのに最適です。&lt;/p&gt;
+
+&lt;p&gt;今回のソースはgithubにpushしてあります。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/ReSTARTR/ruby-rpmbuild-container&#34;&gt;ReSTARTR/ruby-rpmbuild-container&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;環境:fbab2b1e29ed5eba7b45d118a6879eff&#34;&gt;環境&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;ゲストOS：Vagrantで起動したUbuntu-14.04&lt;/li&gt;
+&lt;li&gt;コンテナ：centos:6.4&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;ファイルの配置:fbab2b1e29ed5eba7b45d118a6879eff&#34;&gt;ファイルの配置&lt;/h2&gt;
+
+&lt;p&gt;以下ファイルを同一ディレクトリに入れておきます。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Vagrantfile&lt;/li&gt;
+&lt;li&gt;provision.sh&lt;/li&gt;
+&lt;li&gt;Dockerfile&lt;/li&gt;
+&lt;li&gt;rubybuild.sh&lt;/li&gt;
+&lt;li&gt;ruby-2.0.0-p481.spec&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;手順:fbab2b1e29ed5eba7b45d118a6879eff&#34;&gt;手順&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;ゲストOSの起動(Vagrant)&lt;/li&gt;
+&lt;li&gt;ゲストOSにsshログイン&lt;/li&gt;
+&lt;li&gt;Dockerコンテナのビルド&lt;/li&gt;
+&lt;li&gt;Dockerコンテナ内でrpmビルド&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;1-ゲストosの起動:fbab2b1e29ed5eba7b45d118a6879eff&#34;&gt;1. ゲストOSの起動&lt;/h2&gt;
+
+&lt;p&gt;Vagrantfile&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-ruby&#34;&gt;# -*- mode: ruby -*-
+# vi: set ft=ruby :
+VAGRANTFILE_API_VERSION = &amp;quot;2&amp;quot;
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.vm.box = &amp;quot;ubuntu/trusty64&amp;quot;
+
+  config.vm.synced_folder &amp;quot;.&amp;quot;, &amp;quot;/vagrant&amp;quot;
+
+  config.vm.provision &amp;quot;shell&amp;quot;, path: &#39;provision.sh&#39;
+
+  # お好みで
+  config.vm.provider :virtualbox do |vb|
+    vb.customize [&amp;quot;modifyvm&amp;quot;, :id, &amp;quot;--memory&amp;quot;, &amp;quot;2048&amp;quot;, &amp;quot;--cpus&amp;quot;, &amp;quot;2&amp;quot;, &amp;quot;--ioapic&amp;quot;, &amp;quot;on&amp;quot;]
+  end
+end
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;provision.sh&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;sudo apt-get update
+sudo apt-get install -y language-pack-ja
+
+# Docker
+sudo apt-get install -y docker.io
+sudo ln -sf /usr/bin/docker.io /usr/local/bin/docker
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;2-ゲストosにsshログイン:fbab2b1e29ed5eba7b45d118a6879eff&#34;&gt;2. ゲストOSにsshログイン&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ vagrant up
+$ vagrant ssh
+$ cd /vagrant
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;3-dockerコンテナのビルド:fbab2b1e29ed5eba7b45d118a6879eff&#34;&gt;3. Dockerコンテナのビルド&lt;/h2&gt;
+
+&lt;p&gt;ビルド用specファイルを用意して、シェルスクリプトでビルドします。&lt;/p&gt;
+
+&lt;p&gt;すると、コンテナにマウントしたボリュームにビルド済みのrpmファイルがコピーされます。&lt;/p&gt;
+
+&lt;h3 id=&#34;ビルド用specシェルスクリプト:fbab2b1e29ed5eba7b45d118a6879eff&#34;&gt;ビルド用specシェルスクリプト&lt;/h3&gt;
+
+&lt;p&gt;環境変数RUBY_VERSIONに&amp;rdquo;2.0.0-p481&amp;rdquo;や&amp;rdquo;2.0.0-p451&amp;rdquo;を設定すれば任意のバージョンをビルドします。&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;※デフォルトの2.0.0-p481以外はそれ用のspecファイルが必要になります。&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;rubybuild.sh&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;#!/bin/env bash
+WORKDIR=/opt/rpmbuild
+
+RUBY_VER=${RUBY_VER:-&amp;quot;2.0.0-p481&amp;quot;}
+RUBY_MAJOUR_VER=$(echo $RUBY_VER|cut -d&amp;quot;-&amp;quot; -f1)
+RUBY_MINOR_VER=$(echo $RUBY_VER|cut -d&amp;quot;-&amp;quot; -f2)
+if [ -z &amp;quot;$RUBY_MINOR_VER&amp;quot; ]; then
+  RUBY_TARBALL=&amp;quot;ruby-$RUBY_MAJOUR_VER.tar.gz&amp;quot;
+else
+  RUBY_TARBALL=&amp;quot;ruby-$RUBY_MAJOUR_VER-$RUBY_MINOR_VER.tar.gz&amp;quot;
+fi
+RUBY_REMOTE_FILE=&amp;quot;http://cache.ruby-lang.org/pub/ruby/${RUBY_MAJOUR_VER:0:3}/$RUBY_TARBALL&amp;quot;
+
+mkdir -p $WORKDIR/rpm/{BUILD,SRPMS,SPECS,SOURCES,RPMS}
+echo &amp;quot;%_topdir $WORKDIR/rpm&amp;quot; &amp;gt; $WORKDIR/.rpmmacros
+if [ ! -f $WORKDIR/rpm/SOURCES/$RUBY_TARBALL ]; then
+  wget $RUBY_REMOTE_FILE -O $WORKDIR/rpm/SOURCES/$RUBY_TARBALL
+fi
+cp $WORKDIR/ruby-${RUBY_VER}.spec $WORKDIR/rpm/SPECS/ruby.spec
+rpmbuild -bb $WORKDIR/rpm/SPECS/ruby.spec
+
+cp $WORKDIR/rpm/RPMS/x86_64/* /shared/
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;4-dockerコンテナ内でrpmビルド:fbab2b1e29ed5eba7b45d118a6879eff&#34;&gt;4. Dockerコンテナ内でrpmビルド&lt;/h2&gt;
+
+&lt;p&gt;Dockerfile&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;FROM centos:6.4
+
+# setup
+RUN yum update -y
+RUN yum install -y rpm-build gcc
+
+# epel
+RUN rpm --import http://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-6
+RUN rpm -ihv http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+
+# ruby-depends
+RUN yum install —enablerepo=epel -y libyaml-devel
+RUN yum install -y byacc readline-devel ncourses-devel tcl-devel openssl-devel gdbm-devel db4-devel
+
+# build rpm
+WORKDIR /opt/rpmbuild
+ADD rubybuild.sh /opt/rpmbuild/rubybuild.sh
+ADD ruby-2.0.0-p481.spec /opt/rpmbuild/ruby-2.0.0-p481.spec
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;コンテナ起動してrpmをビルド:fbab2b1e29ed5eba7b45d118a6879eff&#34;&gt;コンテナ起動してrpmをビルド&lt;/h2&gt;
+
+&lt;p&gt;コンテナを起動する際に、カレントディレクトリをマウントしておきます。&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;※&lt;code&gt;--rm&lt;/code&gt;オプションでrpm作成完了したらコンテナは破棄します&lt;/em&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ sudo docker build -t &amp;lt;USERNAME&amp;gt;/rpmbuild .
+$ sudo docker run --rm -v $PWD:/shared:rw -it &amp;lt;CONTAINER_ID&amp;gt; /bin/sh ./rubybuild.sh
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;成功すれば、ゲストOSのカレントディレクトリにrpmができてます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ ls *.rpm
+ruby-2.0.0p481-2.el6.x86_64.rpm
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これで、rpmコマンド一発で最新のrubyをインストールできます。&lt;/p&gt;
+
+&lt;p&gt;rubyインストール済みコンテナを作るなら、Dockerfileに以下のように書けばruby実行環境のできあがりです。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;FROM centos:6.4
+
+# EPEL
+RUN rpm --import http://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-6
+RUN rpm -ihv http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+
+# Install ruby rpm
+ADD ruby-2.0.0p481-2.el6.x86_64.rpm ruby-2.0.0p481-2.el6.x86_64.rpm
+RUN yum install -y --enablerepo=epel libyaml-devel
+RUN rpm -ihv ruby-2.0.0p481-2.el6.x86_64.rpm
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>技術系podcastまとめ</title>
+      <link>http://blog.restartr.com/2014/04/22/tech-podcast-list</link>
+      <pubDate>Tue, 22 Apr 2014 23:58:29 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2014/04/22/tech-podcast-list</guid>
+      <description>
+
+&lt;h3 id=&#34;rebuild-podcast:a59fe0993400f9c3be8a8871a1f2bfa9&#34;&gt;Rebuild Podcast&lt;/h3&gt;
+
+&lt;blockquote&gt;
+Rebuild はソフトウェア開発、テクノロジー、ガジェットなどの話題を中心に、ゲストと話すギーク、デベロッパー向けのポッドキャスト番組です。
+&lt;/blockquote&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Hosted by &lt;a href=&#34;http://twitter.com/miyagawa&#34;&gt;@miyagawa&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://rebuild.fm/&#34;&gt;http://rebuild.fm/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://feeds.rebuild.fm/rebuildfm&#34;&gt;RSS&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://itunes.apple.com/jp/podcast/rebuild/id603013428?mt=2&#34;&gt;iTunes&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;mosaic-fm:a59fe0993400f9c3be8a8871a1f2bfa9&#34;&gt;mosaic.fm&lt;/h3&gt;
+
+&lt;blockquote&gt;
+次世代 Web Podcast Mozaic
+&lt;/blockquote&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Hosted by &lt;a href=&#34;https://twitter.com/jxck_&#34;&gt;@Jxck_&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://mozaic.fm/&#34;&gt;http://mozaic.fm/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://feeds.feedburner.com/mozaicfm&#34;&gt;RSS&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;だんごゆっけの平和な話:a59fe0993400f9c3be8a8871a1f2bfa9&#34;&gt;だんごゆっけの平和な話&lt;/h3&gt;
+
+&lt;blockquote&gt;
+仲良し三十路男二人。Web業界にいるプランナーとエンジニア。それぞれの日常を平和にまとめあげていきます
+&lt;/blockquote&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Hosted by &lt;a href=&#34;https://twitter.com/kamadango&#34;&gt;@kamadango&lt;/a&gt;, &lt;a href=&#34;https://twitter.com/yusukebe&#34;&gt;@yusukebe&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://dandy.fm/&#34;&gt;http://dandy.fm/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://feed.dandy.fm/dandyfm&#34;&gt;RSS&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://itunes.apple.com/jp/podcast/id806076544?mt=2&#34;&gt;iTunes&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;職質テックトーク:a59fe0993400f9c3be8a8871a1f2bfa9&#34;&gt;職質テックトーク&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Hosted by &lt;a href=&#34;https://twitter.com/moznion/&#34;&gt;@moznion&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://shock-sheets-tech.tumblr.com/&#34;&gt;http://shock-sheets-tech.tumblr.com/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://shock-sheets-tech.tumblr.com/rss&#34;&gt;RSS&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;backspace-fm:a59fe0993400f9c3be8a8871a1f2bfa9&#34;&gt;backspace.fm&lt;/h3&gt;
+
+&lt;blockquote&gt;
+一週間分のテック・ガジェットニュースを配信するポッドキャスト
+&lt;/blockquote&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://backspace.fm/&#34;&gt;http://backspace.fm/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://feeds.backspace.fm/backspacefm&#34;&gt;RSS&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://itunes.apple.com/jp/podcast/backspace.fm/id830709730&#34;&gt;iTunes&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Hosted by &lt;a href=&#34;https://twitter.com/drikin&#34;&gt;@drikin&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;code-lunch:a59fe0993400f9c3be8a8871a1f2bfa9&#34;&gt;CODE LUNCH&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://codelunch.fm/&#34;&gt;http://codelunch.fm/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://codelunch.fm/rss.xml&#34;&gt;RSS&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Hosted by &lt;a href=&#34;https://twitter.com/h13i32maru&#34;&gt;@h13i32maru&lt;/a&gt;, &lt;a href=&#34;https://twitter.com/iizukak&#34;&gt;@iizukak&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;ジュンク堂書店podcast:a59fe0993400f9c3be8a8871a1f2bfa9&#34;&gt;ジュンク堂書店Podcast&lt;/h3&gt;
+
+&lt;blockquote&gt;
+ジュンク堂書店の店頭で行われているトークセッションやイベントなどを配信するポッドキャスト（ベータ版）です。
+&lt;/blockquote&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://junkudo.seesaa.net/index20.rdf&#34;&gt;RSS&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://itunes.apple.com/jp/podcast/junku-tang-shu-dianpodcast/id398125301&#34;&gt;iTunes&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;海外:a59fe0993400f9c3be8a8871a1f2bfa9&#34;&gt;海外&lt;/h2&gt;
+
+&lt;p&gt;海外では&lt;a href=&#34;http://5by5.tv/&#34;&gt;5by5&lt;/a&gt;がポータルっぽい。&lt;/p&gt;
+
+&lt;h3 id=&#34;ruby-on-rails-podcast:a59fe0993400f9c3be8a8871a1f2bfa9&#34;&gt;Ruby on Rails Podcast&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://5by5.tv/rubyonrails/147&#34;&gt;http://5by5.tv/rubyonrails/147&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://feeds.5by5.tv/rubyonrails&#34;&gt;RSS&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://itunes.apple.com/us/podcast/ruby-on-rails-podcast/id840890158?mt=2&amp;amp;uo=8&amp;amp;at=11laDR&#34;&gt;iTunes&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Hosted by &lt;a href=&#34;http://twitter.com/barelyknown&#34;&gt;@barelyknown&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;the-changelog:a59fe0993400f9c3be8a8871a1f2bfa9&#34;&gt;The Changelog&lt;/h3&gt;
+
+&lt;blockquote&gt;
+The Changelog covers the intersection of software development and open source. Open source moves fast. Keep up!
+&lt;/blockquote&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://5by5.tv/changelog/&#34;&gt;http://5by5.tv/changelog/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://feeds.5by5.tv/changelog&#34;&gt;RSS&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://itunes.apple.com/us/podcast/the-changelog/id341623264?uo=8&amp;amp;at=11laDR&#34;&gt;iTunes&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;aws-podcast-listen-and-lean-about-aws:a59fe0993400f9c3be8a8871a1f2bfa9&#34;&gt;AWS Podcast - Listen and Lean About AWS&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://aws.amazon.com/jp/apac/awspodcast/&#34;&gt;http://aws.amazon.com/jp/apac/awspodcast/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://d1i0y6b5oi739x.cloudfront.net/feed.xml&#34;&gt;RSS&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://itunes.apple.com/sg/podcast/aws-podcast/id526624928&#34;&gt;iTunes&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;in-beta:a59fe0993400f9c3be8a8871a1f2bfa9&#34;&gt;In Beta&lt;/h3&gt;
+
+&lt;blockquote&gt;
+In Beta is a talk show about tech culture, making open source software, and how mobile, social, and web apps are changing the world.
+&lt;/blockquote&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://feeds.5by5.tv/inbeta&#34;&gt;http://feeds.5by5.tv/inbeta&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://feeds.5by5.tv/inbeta&#34;&gt;RSS&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;floss:a59fe0993400f9c3be8a8871a1f2bfa9&#34;&gt;FLOSS&lt;/h3&gt;
+
+&lt;blockquote&gt;
+We&#39;re not talking dentistry here; FLOSS all about Free Libre Open Source Software.
+&lt;/blockquote&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://twit.tv/floss&#34;&gt;http://twit.tv/floss&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://feeds.twit.tv/floss.xml&#34;&gt;RSS&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;tuxradar:a59fe0993400f9c3be8a8871a1f2bfa9&#34;&gt;TuxRadar&lt;/h3&gt;
+
+&lt;blockquote&gt;
+a new TuxRadar podcast all about Linux and free software will be posted here every three weeks for free download
+&lt;/blockquote&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.tuxradar.com/podcast&#34;&gt;http://www.tuxradar.com/podcast&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.tuxradar.com/rss&#34;&gt;RSS&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;the-news:a59fe0993400f9c3be8a8871a1f2bfa9&#34;&gt;The News&lt;/h3&gt;
+
+&lt;blockquote&gt;
+A daily update on the latest in tech, Apple, gaming, web, and geek culture. It&#39;s the only news that matters.
+&lt;/blockquote&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://5by5.tv/news&#34;&gt;http://5by5.tv/news&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://feeds.5by5.tv/news&#34;&gt;RSS&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://itunes.apple.com/us/podcast/the-news/id602266713?mt=2&amp;amp;uo=8&amp;amp;at=11laDR&#34;&gt;iTunes&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Hosted by &lt;a href=&#34;http://twitter.com/imyke&#34;&gt;@imyke&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;sourcetrunk:a59fe0993400f9c3be8a8871a1f2bfa9&#34;&gt;Sourcetrunk&lt;/h3&gt;
+
+&lt;p&gt;デスクトップアプリ紹介中心&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.sourcetrunk.com/&#34;&gt;http://www.sourcetrunk.com/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://feeds.feedburner.com/sourcetrunk&#34;&gt;RSS&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://phobos.apple.com/WebObjects/MZStore.woa/wa/viewPodcast?id=193827468&#34;&gt;iTunes&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;sofrware-engineering-radio:a59fe0993400f9c3be8a8871a1f2bfa9&#34;&gt;Sofrware Engineering Radio&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.se-radio.net/&#34;&gt;http://www.se-radio.net/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.se-radio.net/&#34;&gt;RSS&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;the-engineering-commons-podcast:a59fe0993400f9c3be8a8871a1f2bfa9&#34;&gt;The Engineering Commons Podcast&lt;/h3&gt;
+
+&lt;blockquote&gt;
+Practical insights for the engineering crowd
+&lt;/blockquote&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://theengineeringcommons.com/&#34;&gt;http://theengineeringcommons.com/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://feeds.feedburner.com/TheEngineeringCommonsPodcast&#34;&gt;RSS&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;参考リンク:a59fe0993400f9c3be8a8871a1f2bfa9&#34;&gt;参考リンク&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://weblog.bulknews.net/post/58665793844/tech-podcast-5&#34;&gt;オススメ Tech Podcast 5選 - Tatsuhiko Miyagawa&amp;rsquo;s blog&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.infoq.com/jp/news/2011/09/archcasts&#34;&gt;ソフトウェアアーキテクチャ関連ポッドキャストの薦め&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://overflow-memo.blogspot.jp/2014/01/podcast.html&#34;&gt;_overflow: 技術系Podcast&amp;#12539;動画ニュースメモ&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://tunein.com/radio/Technology-g2738/&#34;&gt;テクノロジーラジオ - Listen Online&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://blackshadow.seesaa.net/article/144207109.html&#34;&gt;幻影随想: 科学なポッドキャストをまとめて紹介してみる&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://player.fm/featured/open-source&#34;&gt;Best Open Source Podcasts (April, 2014)&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Goでmemcachedのstatsを取得する</title>
+      <link>http://blog.restartr.com/2014/04/21/golang-memcache-stats-client</link>
+      <pubDate>Mon, 21 Apr 2014 00:17:33 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2014/04/21/golang-memcache-stats-client</guid>
+      <description>
+
+&lt;p&gt;YouTubeで使われている&lt;a href=&#34;https://github.com/youtube/vitess&#34;&gt;vitess&lt;/a&gt;の実装をざっと見てたところ、memcachedクライアント実装が簡潔でわかりやすかったので出来る限りラフに実装を写経してみました。&lt;/p&gt;
+
+&lt;p&gt;やってることはコマンドラインからアドレスを受け取って、memcachedのstatsを表示するだけです。&lt;/p&gt;
+
+&lt;h3 id=&#34;この写経で学べること:73a14f702b9f2e9f68d8015c0962278f&#34;&gt;この写経で学べること&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;flagパッケージを使ったコマンドライン引数の取得&lt;/li&gt;
+&lt;li&gt;netパッケージを使ったネットワーク接続&lt;/li&gt;
+&lt;li&gt;bufioパッケージを使ったストリームの読み出し&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;main:73a14f702b9f2e9f68d8015c0962278f&#34;&gt;main()&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;func main() {
+	// 引数読み出し
+	address := flag.String(&amp;quot;address&amp;quot;, &amp;quot;localhost:11211&amp;quot;, &amp;quot;server address&amp;quot;)
+	flag.Parse()
+	fmt.Printf(&amp;quot;server: %s\n&amp;quot;, *address)
+
+	// サーバーに接続
+	conn, err := GetConn(*address)
+	if err != nil {
+		fmt.Printf(&amp;quot;%#v&amp;quot;, err)
+		os.Exit(1)
+	}
+	defer conn.conn.Close()
+
+	// stats読み出し
+	result, _ := conn.Stats()
+	fmt.Printf(&amp;quot;%s&amp;quot;, result)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;実行結果:73a14f702b9f2e9f68d8015c0962278f&#34;&gt;実行結果&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ go run ./memcache_stats.go --address=localhost:11211
+server: localhost:11211
+STAT pid 23282
+STAT uptime 12425
+STAT time 1398007875
+STAT version 1.4.4
+STAT pointer_size 64
+STAT rusage_user 0.335948
+STAT rusage_system 0.344947
+  :
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;実装全体:73a14f702b9f2e9f68d8015c0962278f&#34;&gt;実装全体&lt;/h3&gt;
+
+&lt;p&gt;{% gist 11116595 memcache_stats.go %}&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

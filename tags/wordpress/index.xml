@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Wordpress on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/wordpress/</link>
+    <description>Recent content in Wordpress on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 06 Apr 2014 13:00:00 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/wordpress/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>WordpressからOctopressに移行</title>
+      <link>http://blog.restartr.com/2014/04/06/move-from-wordpress-to-octopress</link>
+      <pubDate>Sun, 06 Apr 2014 13:00:00 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2014/04/06/move-from-wordpress-to-octopress</guid>
+      <description>
+
+&lt;p&gt;もともとさくらのレンサバ上でWordpressで構築していたブログを&lt;a href=&#34;http://octopress.org/&#34;&gt;Octopress&lt;/a&gt;に移行してGithub Pagesでホスティングするように切り替え。
+最初は&lt;a href=&#34;http://jekyllrb.com/&#34;&gt;Jekyll&lt;/a&gt;だけでやろうとしてたけど、ブロクとしての機能を見るとOctopressのほうが良さそうだったので途中で方針転換。&lt;/p&gt;
+
+&lt;h4 id=&#34;手順:c1ded8692eaaa4039286a0220a7e94c6&#34;&gt;手順&lt;/h4&gt;
+
+&lt;p&gt;詳細な手順は面倒なので割愛するとして、だいたいこんな感じの流れで移行。&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;作業用環境にjekyll, jekyll-import, mysql2, sequelをgem install&lt;/li&gt;
+&lt;li&gt;さくらのレンサバ上のMySQLのデータをmysqldumpしてscp&lt;/li&gt;
+&lt;li&gt;dumpデータを作業用環境のMySQLにリストア&lt;/li&gt;
+&lt;li&gt;リストアしたデータから&lt;a href=&#34;http://import.jekyllrb.com/docs/wordpress/&#34;&gt;jekyll-import&lt;/a&gt;を使って記事のmarkdownファイルを吐き出す&lt;/li&gt;
+&lt;li&gt;octopressをcloneして、&lt;code&gt;rake install&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;jekyll-importで吐き出されたファイルをoctopressのsource/_posts以下に移動&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;rake preview&lt;/code&gt;で表示を確認しながら、source/_posts以下のmarkdownファイルをひたすら修正&lt;/li&gt;
+&lt;li&gt;テーマを調整&amp;amp;元記事のURLパスと同一になるように&lt;code&gt;_config.yml&lt;/code&gt;に設定&lt;/li&gt;
+&lt;li&gt;githubにpushしてgithub pagesとして公開&lt;/li&gt;
+&lt;li&gt;CNAMEを設定してgithub.ioから元のドメイン(blog.restartr.com)に移行&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;さくらのレンサバ内からしかWordpressのDBに接続できないのと、レンサバ内でrubyを使うのはなんか面倒事が多そうだったので、環境整備済みなvpsで移行作業。&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;※wordpressのエクスポート機能で吐き出したxmlからmigrateする方法もあるけど今回は不採用&lt;/em&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;wordpressの時のドメイン-パスを同一にするための設定:c1ded8692eaaa4039286a0220a7e94c6&#34;&gt;Wordpressの時のドメイン、パスを同一にするための設定&lt;/h4&gt;
+
+&lt;p&gt;wordpressでは&lt;code&gt;/year/month/day/title&lt;/code&gt;というpermalinkを設定していたのでそれと同一にするための作業。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;ドメインはgithub pagesのカスタムドメインとCNAME設定で解決&lt;/li&gt;
+&lt;li&gt;パスは&lt;code&gt;_config.yml&lt;/code&gt;のpermalinkを&lt;code&gt;/:year/:month/:day/:title&lt;/code&gt;にして解決&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&#34;さくらのレンサバ側の独自ドメイン設定:c1ded8692eaaa4039286a0220a7e94c6&#34;&gt;さくらのレンサバ側の独自ドメイン設定&lt;/h4&gt;
+
+&lt;p&gt;これでハマりました。さくらのドメインの設定で&amp;rdquo;blog.restartr.com&amp;rdquo;のCNAMEを設定したのに、DNSへの問い合わせ結果が常にAレコードしか帰ってこなくてかなり悩んでた。
+結論は、さくらのレンサバの設定画面で独自ドメインとして&amp;rdquo;blog.restartr.com&amp;rdquo;を登録していて、そっちの設定が邪魔をしていた。&lt;/p&gt;
+
+&lt;p&gt;さくらのレンサバの独自ドメイン設定をはずして、さくらのドメインのCNAME設定を追加したら無事に解決。&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;さくらのレンサバの独自ドメインの解除から、2時間以上反映に時間かかるらしい&lt;/em&gt;&lt;/p&gt;
+
+&lt;h4 id=&#34;postデータの修正:c1ded8692eaaa4039286a0220a7e94c6&#34;&gt;postデータの修正&lt;/h4&gt;
+
+&lt;p&gt;jekyll-importを使ってmarkdownを吐き出すところまではすんなりいけたけど、なにより面倒だったのが吐き出したmarkdownを修正する作業。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;シンタックスハイライトするために&lt;code&gt;[ccW_python]...[/ccW_python]&lt;/code&gt;とか&lt;code&gt;&amp;lt;pre class=&amp;quot;brush:pyton&amp;quot;&amp;gt;...&amp;lt;/pre&amp;gt;&lt;/code&gt;とか独自タグがある&lt;/li&gt;
+&lt;li&gt;amazonのリンク生成用タグ&lt;code&gt;[tmkm-amazon]123456[/tmkm-amazon]&lt;/code&gt;というタグがある&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;&amp;lt;p&amp;gt;&lt;/code&gt;タグと&lt;code&gt;&amp;lt;br /&amp;gt;&lt;/code&gt;タグの嵐&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;これらの対応のためにいちいち置換するのが非常に大変。&lt;code&gt;[ccW]&lt;/code&gt;と&lt;code&gt;[tmkm-amazon]&lt;/code&gt;タグは置換できたけど、&lt;code&gt;&amp;lt;pre class=&amp;quot;brush:...&amp;quot;&amp;gt;&lt;/code&gt;についてはハイライトされないだけで表示上問題なさそうなので無視。
+あとはmarkdownにhtmlが混じってるのが気持ち悪いので&lt;code&gt;&amp;lt;p&amp;gt;&lt;/code&gt;と&lt;code&gt;&amp;lt;br /&amp;gt;&lt;/code&gt;を置換して行間を調整。&lt;/p&gt;
+
+&lt;p&gt;ドラフト記事をリモートにpushしてなくて別のPCから記事の途中からかけなくて困った…とならないように基本的にVPS上にcloneすることにした。
+これで記事編集のための苦痛を感じる事無く純粋なmarkdownで記事がかけるようになる。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;参考にした記事
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://hadihariri.com/2013/12/24/migrating-from-wordpress-to-jekyll/&#34;&gt;Migrating from WordPress.com to Jekyll &amp;#8211; Hadi Hariri&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.glidenote.com/blog/2011/12/20/how-to-use-custom-domain-on-github-pages/&#34;&gt;GitHub PagesでCustom Domainを利用する - Glide Note - グライドノート&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;ベースにしたテーマ
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/bijumon/oct2&#34;&gt;bijumon/oct2&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

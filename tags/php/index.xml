@@ -1,0 +1,437 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Php on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/php/</link>
+    <description>Recent content in Php on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Tue, 23 Nov 2010 18:57:35 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/php/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>ScalaとErlangとPHPと私</title>
+      <link>http://blog.restartr.com/2010/11/23/scala-erlang-php-and-me</link>
+      <pubDate>Tue, 23 Nov 2010 18:57:35 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2010/11/23/scala-erlang-php-and-me</guid>
+      <description>&lt;p&gt;PHPよりScalaが簡単である、という議論に対するふたつのポストがあったので、自分向けにまとめました。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;元記事：&lt;a href=&#34;http://wadearnold.com/blog/scala/scala-is-easier-than-php&#34;&gt;Wade Arnold ? Scala is easier than PHP&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;返信：&lt;a href=&#34;http://videlalvaro.github.com/2010/11/reply-to-scala-is-easier-than-php.html&#34;&gt;Reply to &#34;Scala is Easier than PHP&#34;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;概要&lt;/h3&gt;
+&lt;p&gt;ざっとこんな感じにまとめてしまいました。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;議論の中心はWebページ生成言語としての言語の比較ではない&lt;/li&gt;
+&lt;li&gt;ふたりともWebページ生成ならPHPが優れているという立場にかわりはない&lt;/li&gt;
+&lt;li&gt;議論の中心は主にスケーラビリティの確保とプロセス間通信&lt;/li&gt;
+&lt;li&gt;元記事のWade ArnoldさんはScala推進派&lt;/li&gt;
+&lt;li&gt;返信者のvidelalvaroさんはErlang推進派&lt;/li&gt;
+&lt;li&gt;スケーラビリティ確保のためには関数型言語という結論&lt;/li&gt;
+&lt;li&gt;ScalaかErlangどちらが簡単か、という議論はない&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;a id=&#34;more&#34;&gt;&lt;/a&gt;&lt;a id=&#34;more-410&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;h3&gt;ScalaがPHPより簡単な理由&lt;/h3&gt;
+&lt;p&gt;Wade Arnoldさんが元記事「Scala is easier than PHP」において、マルチコア時代にはScalaが必要だ、みたいなことを書きました。彼はPHP３のころからPHPの開発に関わっていて、最近はZendFrameworkのコミッタをやっていたそうです。&lt;br /&gt;
+PHPはいまだに最高の言語であると最初に断っておきつつ、Scalaの技術的な点を整理しておこう、という内容。&lt;/p&gt;
+&lt;p&gt;スケーラビリティの確保のためには、PHPのようにたくさんのツールを必要とせずとも、言語仕様的に多くをサポートするScalaが簡単な理由である、と。Scalaへの移行は時間を必要とするが、スケーラビリティには必要な選択であるといっています。&lt;/p&gt;
+&lt;blockquote&gt;&lt;p&gt;No need for amqp with actors, no beanstalkd with mutable queues, and it’s fast as hell!&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;&lt;em&gt;ActorによってAMQPはいらなくなる。ミュータブルなキューもbeanstalkdなしに。そしてそれはものすごく速い。&lt;br /&gt;
+&lt;/em&gt;&lt;/p&gt;
+&lt;h3&gt;PHPの代わりにErlangを使う理由&lt;/h3&gt;
+&lt;p&gt;それに対してvidelalvaroさんが「Reply to &#34;Scala is easier than PHP&#34;」でコメントをしています。&lt;br /&gt;
+おおむねWadeさんの意見に同意で、彼はScalaではなくErlangを推しているようです。&lt;/p&gt;
+&lt;p&gt;意見としてはこんな感じでしょうか。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;サーバーのような長時間実行するプログラムにはErlangつかうといい&lt;/li&gt;
+&lt;li&gt;スレッド間通信にはErlangをつかうといい&lt;/li&gt;
+&lt;li&gt;Webページを生成するだけならPHPをつかうといい&lt;/li&gt;
+&lt;li&gt;CPUの全コアを利用したいだけならPHP-FPMをつかうといい&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;スケーラビリティ確保のために必要なもの&lt;/h3&gt;
+&lt;p&gt;元記事ではPHPのスケーラビリティ確保のために必要なものをあげ、これらを使うのは大変骨が折れると言っています。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;Fantastic at PHP internals&lt;/li&gt;
+&lt;li&gt;Amazing at Apache HTTPD and compiling appropriate PHP extensions.&lt;/li&gt;
+&lt;li&gt;Nginx&lt;/li&gt;
+&lt;li&gt;BigIP ? More than round robin load balancing&lt;/li&gt;
+&lt;li&gt;Intimately know how sessions work and probably write your own handlers&lt;/li&gt;
+&lt;li&gt;Memcached&lt;/li&gt;
+&lt;li&gt;APC&lt;/li&gt;
+&lt;li&gt;AMQP&lt;/li&gt;
+&lt;li&gt;BeanStalkd&lt;/li&gt;
+&lt;li&gt;Code based sharding or at least master/slave logic&lt;/li&gt;
+&lt;li&gt;C/C++&lt;/li&gt;
+&lt;li&gt;Lots of security! It’s a problem with all dynamic languages.&lt;/li&gt;
+&lt;li&gt;Zend Framework.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;それに対してScalaはたった５つ。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;6 months of scala&lt;/li&gt;
+&lt;li&gt;Functional programming&lt;/li&gt;
+&lt;li&gt;&lt;a onclick=&#34;javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-article&#39;,&#39;akkasource.org&#39;]);&#34; href=&#34;http://akkasource.org/&#34;&gt;Akka Framework&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a onclick=&#34;javascript:_gaq.push([&#39;_trackEvent&#39;,&#39;outbound-article&#39;,&#39;liftweb.net&#39;]);&#34; href=&#34;http://liftweb.net/&#34;&gt;Lift Framework&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Nginx / Jetty&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;ツールに頼らずとも言語が機能を備えているから気にすべきところが非常にシンプルになるようです。&lt;/p&gt;
+&lt;h3&gt;個人的感想&lt;/h3&gt;
+&lt;p&gt;PHPをWebページ生成以外で対決させるのはどうなんだろうと思いつつも、Scalaをどのような場面で使っていけばよいか考える良い機会になりました。&lt;br /&gt;
+個人的な話をすると、Scalaは言語仕様を学ぶばかりで実際のプログラムを書くまでには至っていませんし、性能評価もまだやってないので「PHPからScalaに移行すべきだ」、と言い切るには至っていないのが現状です。&lt;br /&gt;
+が、Wadeさんは後ほどもっと突っ込んだ記事を書くと冒頭に言っていますし、videlalvaroさんも最後に&lt;/p&gt;
+&lt;blockquote&gt;&lt;p&gt;if we want to sell functional languages like Erlang or Scala to the PHP programmer then we have to look for more compelling features that may attract them to look into these languages. What I think are those features ?I guess?, should be part of another blog post.&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;と、ScalaやErlangをPHPerに売り込むための魅力的な点をPOSTしてくれるかも。&lt;br /&gt;
+それも楽しみにしておこうと思います。&lt;/p&gt;
+&lt;h3&gt;余談&lt;/h3&gt;
+&lt;p&gt;最近思うのが、Scalaって言語仕様があまりに多くて、それを学ぶことが楽しいです。&lt;br /&gt;
+が、学ぶべき仕様がどこまでなのか見えてこず、さらに、仕様を学ぶこと自体が目的になってきているような気がします。&lt;br /&gt;
+ということで(?)そろそろ、実際につくりたいプログラムを書きながら仕様を学ぶ方向にシフトしようと思います。&lt;/p&gt;
+&lt;p&gt;※あとPHP-FPMもちゃんと調査・検証したいし、Kestrelのソースも読みたい。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>CakePHPのDebugKitにプロファイル情報が見れるXHProfPanelを追加</title>
+      <link>http://blog.restartr.com/2010/10/10/the-xhprofpanel-debugkit-custom-panel-cakephp</link>
+      <pubDate>Sun, 10 Oct 2010 00:59:04 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2010/10/10/the-xhprofpanel-debugkit-custom-panel-cakephp</guid>
+      <description>&lt;p&gt;先日のPHPMatsuriのハッカソンにて作成したXHProfの結果がみれるCustomPanelですが、そのまま公開するにはお恥ずかしい感じだったので、多少マシに改修したものを公開してみます。&lt;/p&gt;
+&lt;h3&gt;DebugKit, XHProfPanelとは&lt;/h3&gt;
+&lt;p&gt;CakePHPのDebugKitというプラグインがあり、それを使えばいろんなデバッグ情報がWeb画面上で確認できます。で、これにXHProfというphp拡張を使ってプロファイラ情報を見れるようにしてみました。&lt;/p&gt;
+&lt;p&gt;こんな感じです。&lt;br /&gt;
+&lt;a href=&#34;http://blog.restartr.com/wp-content/uploads/2010/10/256d829a326e5fc745e5659600527bde.png&#34;&gt;&lt;img class=&#34;alignnone size-full wp-image-390&#34; title=&#34;XHProfPanel-screenshot&#34; src=&#34;http://blog.restartr.com/wp-content/uploads/2010/10/256d829a326e5fc745e5659600527bde.png&#34; alt=&#34;&#34; width=&#34;464&#34; height=&#34;42&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;more&#34;&gt;&lt;/a&gt;&lt;a id=&#34;more-367&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;で、パネルを開くとこんな感じに各関数呼び出しごとの負荷情報などを閲覧できます。&lt;br /&gt;
+&lt;a href=&#34;http://blog.restartr.com/wp-content/uploads/2010/10/f0c2dac263680a94429c57bd5c1e81ff.png&#34;&gt;&lt;img class=&#34;alignnone size-medium wp-image-399&#34; title=&#34;xhprofpanel-opned-screenshot&#34; src=&#34;http://blog.restartr.com/wp-content/uploads/2010/10/f0c2dac263680a94429c57bd5c1e81ff-300x170.png&#34; alt=&#34;&#34; width=&#34;300&#34; height=&#34;170&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;さらに、&lt;strong&gt;&#34;xhprof Result&#34;&lt;/strong&gt;というリンクをクリックすれば、XHProfが用意してくれているビューアを開くこともできます。ビューアではコールグラフも閲覧できます。&lt;/p&gt;
+&lt;h3&gt;カスタムパネルの追加方法&lt;/h3&gt;
+&lt;blockquote&gt;&lt;p&gt;helloworld_controllerにプロファイル実行する、という例で説明します。&lt;/p&gt;&lt;/blockquote&gt;
+&lt;h4&gt;事前準備&lt;/h4&gt;
+&lt;p&gt;debugkitはインストール済みとします。入れ方は&lt;br /&gt;
+&lt;a href=&#34;http://d.hatena.ne.jp/cakephper/20090604/1244112188&#34;&gt;超便利なDebugkitを画面キャプチャ付きで解説 - cakephperの日記(CakePHP, MongoDB, Lithium)&lt;/a&gt;&lt;br /&gt;
+を参照してください。&lt;/p&gt;
+&lt;p&gt;XHProfのインストールも済ませておきます。&lt;/p&gt;
+&lt;pre class=&#34;brush&#34;&gt;wget http://pecl.php.net/get/xhprof-0.9.2.tgz
+pecl install xhprof-0.9.2.tgz&lt;/pre&gt;
+&lt;p&gt;php.iniにも設定追加しておきます。&lt;/p&gt;
+&lt;pre class=&#34;brush&#34;&gt;extension=xhprof.so&lt;/pre&gt;
+&lt;p&gt;tgzファイルをtarで解凍した中身のうち、xhprof_html,xhprof_libをビューア用に用意したバーチャルホスト下において、&lt;br /&gt;
+別ドメインでアクセスできるようにします。&lt;br /&gt;
+cakeのアプリは&lt;strong&gt;cake.localhost&lt;/strong&gt;、xhprofビューアは&lt;strong&gt;xhprof.localhost&lt;/strong&gt;のような感じです。&lt;br /&gt;
+ディレクトリはこんな感じできっています。&lt;/p&gt;
+&lt;pre class=&#34;brush:c&#34;&gt;/var/
+  vhosts/
+    cake/ // cake.localhostのdocument_root
+      app/
+    xhprof/
+      xhprof_html/ // xhprof.localhostのdocument_root
+      xhprof_lib/&lt;/pre&gt;
+&lt;h4&gt;ファイル構成&lt;/h4&gt;
+&lt;p&gt;下記ファイルを修正もしくは新規作成します。&lt;/p&gt;
+&lt;pre class=&#34;brush:c&#34;&gt;app/
+  controllers/
+    helloworld_controller.php //新規追加
+  plugins/
+    debug_kit/
+      controllers/
+        conmponents/
+          toolbar.php //修正
+      views/
+        elements/
+          xhprof_panel.ctp //新規追加&lt;/pre&gt;
+&lt;h4&gt;1.XHProfPanelの追加&lt;/h4&gt;
+&lt;blockquote&gt;&lt;p&gt;app/plugins/debug_kit/controllers/components/toolbar.php&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;に下記クラスをコピペで追加。&lt;br /&gt;
+&lt;script src=&#34;http://gist.github.com/618254.js?file=toolbar.php&#34;&gt;&lt;/script&gt;&lt;/p&gt;
+&lt;h4&gt;2.デフォルトパネルにXHProfPanelを追加&lt;/h4&gt;
+&lt;blockquote&gt;&lt;p&gt;app/plugins/debug_kit/controllers/components/toolbar.php&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;の既存行（52行目あたり)に下記のように$_defaultPanelsに&#39;xhprof&#39;を追加。&lt;br /&gt;
+&lt;script src=&#34;http://gist.github.com/618254.js?file=toolbar_.php&#34;&gt;&lt;/script&gt;&lt;/p&gt;
+&lt;h4&gt;3.controllerの設定にもXHProfPanelを追加&lt;/h4&gt;
+&lt;p&gt;下記のようにXhprofPanelへの設定情報も渡します。&lt;br /&gt;
+&lt;script src=&#34;http://gist.github.com/618254.js?file=helloworld_controller.php&#34;&gt;&lt;/script&gt;&lt;/p&gt;
+&lt;h4&gt;4.テンプレートの追加&lt;/h4&gt;
+&lt;blockquote&gt;&lt;p&gt;app/plugins/debug_kit/views/elements/xhprof_panel.ctp&lt;/p&gt;&lt;/blockquote&gt;
+&lt;p&gt;を下記内容で新規作成します。&lt;br /&gt;
+&lt;script src=&#34;http://gist.github.com/618254.js?file=xhprof_panel.ctp&#34;&gt;&lt;/script&gt;&lt;/p&gt;
+&lt;h4&gt;ソート順の変更&lt;/h4&gt;
+&lt;p&gt;デフォルトではwall timeの降順でソートしてあります。&lt;br /&gt;
+コントローラでの設定で&#39;sortBy&#39;の値を変えれば変更できます。&lt;br /&gt;
+(指定しなければ&#39;wt&#39;指定となります。)&lt;br /&gt;
+設定できるのは&lt;strong&gt;ct, wt, cpu, mu, pmu&lt;/strong&gt;の５つ。&lt;/p&gt;
+&lt;h4&gt;プロファイル範囲&lt;/h4&gt;
+&lt;p&gt;XhprofPanel::__constructからXhprofPanel::beforeRenderまでです。&lt;br /&gt;
+結果をみるとLogPanelクラス（DebugKitプラグイン内のクラス）のメソッド呼び出しも含まれていたりするので、&lt;br /&gt;
+もう少し適当な範囲にできないか検討したいと思います。&lt;/p&gt;
+&lt;h3&gt;余談&lt;/h3&gt;
+&lt;p&gt;Githubを有料アカウントにすべきか迷い中です。今回とりあえずgistで公開してみましたが、リポジトリは欲しいような、でも今のところ必要ないような…&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>PHPMATSURI - PHPハッカー達による一泊二日のハックデイ</title>
+      <link>http://blog.restartr.com/2010/10/03/phpmatsuri-hack-days-by-php-hackers</link>
+      <pubDate>Sun, 03 Oct 2010 20:26:48 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2010/10/03/phpmatsuri-hack-days-by-php-hackers</guid>
+      <description>&lt;p&gt;&lt;a title=&#34;IMG_2470 by ReSTARTR_y, on Flickr&#34; href=&#34;http://www.flickr.com/photos/53244662@N04/5046336051/&#34;&gt;&lt;img src=&#34;http://farm5.static.flickr.com/4154/5046336051_aabef10eb4.jpg&#34; alt=&#34;IMG_2470&#34; width=&#34;500&#34; height=&#34;333&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;http://2010.phpmatsuri.net/&#34;&gt;&lt;img class=&#34;alignnone size-medium wp-image-341&#34; title=&#34;PHPMATSURI&#34; src=&#34;http://blog.restartr.com/wp-content/uploads/2010/10/bunner-300x132.jpg&#34; alt=&#34;&#34; width=&#34;300&#34; height=&#34;132&#34; /&gt;&lt;/a&gt;&lt;br /&gt;
+10月02日と03日の、一泊二日の&lt;a href=&#34;http://2010.phpmatsuri.net/&#34;&gt;PHPMASTURI&lt;/a&gt;に参加してきました。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;ハッシュタグ: &lt;a href=&#34;http://search.twitter.com/search?q=%23phpmatsuri&#34;&gt;#phpmatsuri&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;LTのustream: &lt;a href=&#34;http://www.ustream.tv/channel/phpmatsuri&#34;&gt;phpmatsuri on USTREAM&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;とにかく内容が濃い&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;楽天の吉岡さんによる大人のプログラミングキャンプ&lt;/li&gt;
+&lt;li&gt;CakePHP,Symfony,Lithiumのデベロッパーによるセッション&lt;/li&gt;
+&lt;li&gt;彼らのライブコーディングを間近に見られる各フレームワークのワークショップ&lt;/li&gt;
+&lt;li&gt;スポンサー各社のセッション&lt;/li&gt;
+&lt;li&gt;PHPによる開発事例プレゼン大会のJIREI NIGHT&lt;/li&gt;
+&lt;li&gt;ZyngaJapanのお二人によるTDDを実体験できるワークショップ&lt;/li&gt;
+&lt;li&gt;深夜まで続くハッカソンと、総勢33名による大LT大会&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;ざっと並べただけでもこんな感じに、とにかく内容てんこ盛りな二日間でした。&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;more&#34;&gt;&lt;/a&gt;&lt;a id=&#34;more-335&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a title=&#34;IMG_2512 by ReSTARTR_y, on Flickr&#34; href=&#34;http://www.flickr.com/photos/53244662@N04/5046956568/&#34;&gt;&lt;img src=&#34;http://farm5.static.flickr.com/4133/5046956568_dd9b08f6eb.jpg&#34; alt=&#34;IMG_2512&#34; width=&#34;500&#34; height=&#34;333&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;まとめるのは得意ではないので、参加した感想を少しばかり。&lt;/p&gt;
+&lt;h3&gt;イベントに参加するということがいかに重要であるか&lt;/h3&gt;
+&lt;p&gt;最初の吉岡さんのセッションは「この祭りをいかに楽しく有意義に過ごすか」ということを教えていただきました。また、各セッションを聞いたり、たくさんのデベロッパーの方々とコミュニケーションをとるのも非常に有意義でした。&lt;br /&gt;
+最後のLT大会では、参加したみなさんの変態ぶりに圧倒されっぱなし。これだけ多くの発表があるとそれぞれに目の付け所が違っているが故にアイデアももらえるし、そこで発表すれば多くの反応をいただくこともできます。参加することで得られるメリットは、参加費用にはかえがたいものがあったと思います。&lt;br /&gt;
+最後の締めで@yandoさんが「個人によるイベント」と仰っていて、このイベントは有志のスタッフの方々に支えられている、ことを実感しました。企画・運営をしてくださったスタッフのみなさんには本当に感謝します。&lt;br /&gt;
+そして、PHPMATSURIに関わったすべての方に感謝したいと思います。ありがとうございました。&lt;/p&gt;
+&lt;p&gt;&lt;a title=&#34;IMG_2491 by ReSTARTR_y, on Flickr&#34; href=&#34;http://www.flickr.com/photos/53244662@N04/5046334983/&#34;&gt;&lt;img src=&#34;http://farm5.static.flickr.com/4086/5046334983_8bd1c1329a.jpg&#34; alt=&#34;IMG_2491&#34; width=&#34;500&#34; height=&#34;333&#34; /&gt;&lt;/a&gt;&lt;br /&gt;
+今回のチャレンジをまとめてみます。&lt;/p&gt;
+&lt;h3&gt;チャレンジできたこと&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;CakePHP,Symfony2,Lithium各フレームワークの特徴を知る&lt;/li&gt;
+&lt;li&gt;プレゼン資料を拙いながらも英語で作成する&lt;/li&gt;
+&lt;li&gt;内容に関係なく発表者になる&lt;/li&gt;
+&lt;li&gt;動かなかったで終わらせず、動くまでハックする&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;チャレンジできなかったこと&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;各FWデベロッパーの方々とのコミュニケーション&lt;/li&gt;
+&lt;li&gt;セッションで質問する(TDDのワークでは質問しましたが)&lt;/li&gt;
+&lt;li&gt;ソースコード公開&lt;/li&gt;
+&lt;li&gt;Beer Driven Development&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;今後チャレンジしたいこと&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;今回の成果物のソースコード公開する&lt;/li&gt;
+&lt;li&gt;英語を聞く力、話す力をつける&lt;/li&gt;
+&lt;li&gt;発表の機会を自分でつくる&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;成果：XHProf CustomPanel&lt;/h3&gt;
+&lt;p&gt;※詳しい話は別記事にてやります。&lt;/p&gt;
+&lt;div id=&#34;__ss_5344576&#34; style=&#34;width: 425px;&#34;&gt;&lt;strong&gt;&lt;a title=&#34;Php matusri xhprof custompanel&#34; href=&#34;http://www.slideshare.net/restartr/php-matusri-xhprofcustompanelpublish&#34;&gt;Php matusri xhprof custompanel&lt;/a&gt;&lt;/strong&gt;&lt;object id=&#34;__sse5344576&#34; classid=&#34;clsid:d27cdb6e-ae6d-11cf-96b8-444553540000&#34; width=&#34;425&#34; height=&#34;355&#34; codebase=&#34;http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,40,0&#34;&gt;&lt;param name=&#34;allowFullScreen&#34; value=&#34;true&#34; /&gt;&lt;param name=&#34;allowScriptAccess&#34; value=&#34;always&#34; /&gt;&lt;param name=&#34;src&#34; value=&#34;http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=phpmatusri-xhprofcustompanel-publish-101003011838-phpapp02&amp;amp;stripped_title=php-matusri-xhprofcustompanelpublish&amp;amp;userName=restartr&#34; /&gt;&lt;param name=&#34;name&#34; value=&#34;__sse5344576&#34; /&gt;&lt;param name=&#34;allowfullscreen&#34; value=&#34;true&#34; /&gt;&lt;embed id=&#34;__sse5344576&#34; type=&#34;application/x-shockwave-flash&#34; width=&#34;425&#34; height=&#34;355&#34; src=&#34;http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=phpmatusri-xhprofcustompanel-publish-101003011838-phpapp02&amp;amp;stripped_title=php-matusri-xhprofcustompanelpublish&amp;amp;userName=restartr&#34; name=&#34;__sse5344576&#34; allowscriptaccess=&#34;always&#34; allowfullscreen=&#34;true&#34;&gt;&lt;/embed&gt;&lt;/object&gt;&lt;/p&gt;
+&lt;div style=&#34;padding: 5px 0 12px;&#34;&gt;View more &lt;a href=&#34;http://www.slideshare.net/&#34;&gt;presentations&lt;/a&gt; from &lt;a href=&#34;http://www.slideshare.net/restartr&#34;&gt;Re STARTR&lt;/a&gt;.&lt;/div&gt;
+&lt;/div&gt;
+&lt;h3&gt;おまけ&lt;/h3&gt;
+&lt;p&gt;途中でレッドブルがふるまわれるというサービスまでありました。当日6時起きだったのに4時まで頑張れたのはレッドブルのおかげかもしれません。&lt;br /&gt;
+&lt;a title=&#34;IMG_2488 by ReSTARTR_y, on Flickr&#34; href=&#34;http://www.flickr.com/photos/53244662@N04/5046334797/&#34;&gt;&lt;img src=&#34;http://farm5.static.flickr.com/4108/5046334797_b3ed8b2f3e.jpg&#34; alt=&#34;IMG_2488&#34; width=&#34;500&#34; height=&#34;333&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;そして、最後にCakePHP開発者のGraham Weldonさんと記念撮影させてもらいました。&lt;br /&gt;
+Thanks, Graham!&lt;br /&gt;
+&lt;a title=&#34;IMG_2514 by ReSTARTR_y, on Flickr&#34; href=&#34;http://www.flickr.com/photos/53244662@N04/5046335737/&#34;&gt;&lt;img src=&#34;http://farm5.static.flickr.com/4113/5046335737_4651050be6.jpg&#34; alt=&#34;IMG_2514&#34; width=&#34;500&#34; height=&#34;333&#34; /&gt;&lt;/a&gt;&lt;br /&gt;
+#ほとんど会話できなかったのが悔やまれます。会話することを怖がらないことが大事ですね。反省。&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>phpのテンプレートエンジンtwigとは</title>
+      <link>http://blog.restartr.com/2009/12/31/twig-is-the-template-engine-written-in-php</link>
+      <pubDate>Thu, 31 Dec 2009 02:10:55 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2009/12/31/twig-is-the-template-engine-written-in-php</guid>
+      <description>&lt;p&gt;&lt;div&gt;最近、PHPのテンプレートエンジン&lt;a href=&#34;http://www.twig-project.org/&#34; target=&#34;_blank&#34;&gt;Twig&lt;/a&gt;の紹介記事をちらほら見かけるようになってきました。&lt;/div&gt;
+&lt;div&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;span style=&#34;font-family: Consolas, Monaco, &#39;Courier New&#39;, Courier, monospace; line-height: 18px; font-size: 12px; white-space: pre;&#34;&gt;&lt;a href=&#34;http://labs.unoh.net/2009/12/phptwig.html&#34; target=&#34;_blank&#34;&gt;ウノウラボ Unoh Labs: PHPテンプレートエンジンTwigをいじってみました&lt;/a&gt;&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;&lt;span style=&#34;font-family: Consolas, Monaco, &#39;Courier New&#39;, Courier, monospace; line-height: 18px; font-size: 12px; white-space: pre;&#34;&gt;&lt;a href=&#34;http://d.hatena.ne.jp/anatoo/20091225/1261749843&#34; target=&#34;_blank&#34;&gt;テンプレートエンジンを素のPHPからTwigに乗り換えた理由 - id:anatooのブログ&lt;/a&gt;&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.nully.org/archives/154&#34;&gt;[Twig]なにやら話題のテンプレートエンジンTwigを使ってみた | Nullyのぶろぐ&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div&gt;自分自身も気になってはいたのですが、試してみるきっかけがなく今に至ってしまいました。現在のプロジェクトではviewは関わらないのですが、それまではSmarty2を使っていました。Smarty3や他テンプレートエンジンも気になるところですが、次はTwigがくるだろうと勝手に予測しています。&lt;/div&gt;
+&lt;div&gt;とりあえず今回はTwigの特徴と他テンプレートエンジンとの比較をまとめてみます。&lt;/div&gt;
+&lt;div&gt;&lt;a id=&#34;more&#34;&gt;&lt;/a&gt;&lt;a id=&#34;more-3&#34;&gt;&lt;/a&gt;&lt;/div&gt;
+&lt;h2&gt;Twigの特徴&lt;/h2&gt;
+&lt;p&gt;公式サイトから英訳（適当に）してみました。&lt;/p&gt;
+&lt;div&gt;
+&lt;ul&gt;
+&lt;li&gt;簡潔に書ける&lt;/li&gt;
+&lt;li&gt;テンプレート指向文法である&lt;/li&gt;
+&lt;li&gt;自動エスケープなど必要なものをすべてサポートしている&lt;/li&gt;
+&lt;li&gt;文法を簡単に学習できる（※他テンプレートエンジンはPHP4ベースで作られていたりして、web開発においてベストプラクティスとして採用できない。）&lt;/li&gt;
+&lt;li&gt;高い拡張性で独自DSLも作れる&lt;/li&gt;
+&lt;li&gt;ユニットテストされているのでライブラリは堅牢で、大きなプロジェクトにもすぐに使える。&lt;/li&gt;
+&lt;li&gt;ちゃんとドキュメント化されている：&lt;/li&gt;
+&lt;li&gt;セキュリティでは自動出力エスケープやsandboxモードによって安全性を確保&lt;/li&gt;
+&lt;li&gt;詳細なエラーメッセージでデバッグもカンタン&lt;/li&gt;
+&lt;li&gt;テンプレートを素のPHPコードにコンパイルするので、普通のPHPコードに比べてオーバーヘッドを最小限に抑えることができる。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;h2&gt;開発者について&lt;/h2&gt;
+&lt;div&gt;Symfony開発者でもある&lt;a href=&#34;http://fabien.potencier.org/article/34/templating-engines-in-php&#34; target=&#34;_blank&#34;&gt;Fabienのブログ記事&lt;/a&gt;（と&lt;a href=&#34;http://fabien.potencier.org/article/35/templating-engines-in-php-follow-up&#34; target=&#34;_blank&#34;&gt;そのフォロー記事&lt;/a&gt;）を見れば、開発の経緯や他テンプレートエンジンとの比較、それからPHP自体テンプレートエンジンじゃないかという点について言及しています。&lt;/div&gt;
+&lt;div&gt;素のPHPをViewとして使いたい人はSymfonyTemplateComponentがスタンドアロンで動作するのでそれを使うと良いと。ViewでPHP的な文法を用いることに疑問を持っていたようです。&lt;/div&gt;
+&lt;div&gt;
+&lt;h2&gt;既存テンプレートエンジンとの比較&lt;/h2&gt;
+&lt;/div&gt;
+&lt;div&gt;
+&lt;div&gt;もともと彼は以下機能を求めてテンプレートエンジンを探していたので、この観点でそれぞれのテンプレートエンジンを評価しています。(なのでこれがそのままTwigの特徴になっています。）&lt;/div&gt;
+&lt;div&gt;
+&lt;div&gt;
+&lt;ul&gt;
+&lt;li&gt;Concision (記述が簡潔)&lt;/li&gt;
+&lt;li&gt;Template oriented syntax (テンプレート指向な文法)&lt;/li&gt;
+&lt;li&gt;Reusability (再利用性)&lt;/li&gt;
+&lt;li&gt;Security (安全性)&lt;/li&gt;
+&lt;li&gt;Sandbox mode (砂場モード)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div&gt;
+&lt;div&gt;&lt;strong&gt;&lt;a href=&#34;http://www.smarty.net/&#34; target=&#34;_blank&#34;&gt;Smarty&lt;/a&gt;&lt;/strong&gt;&lt;strong&gt;:&lt;span style=&#34;font-weight: normal;&#34;&gt;Smarty3で機能要求を満たしているものの、パフォーマンスが悪い。&lt;br /&gt;
+&lt;strong&gt;&lt;a href=&#34;http://phptal.org/&#34; target=&#34;_blank&#34;&gt;PHPTAL&lt;/a&gt;&lt;/strong&gt;&lt;strong&gt;:&lt;span style=&#34;font-weight: normal;&#34;&gt;よく設計されていて、機能もあるが、webデザイナにはとっつきにくく、テンプレートの継承的なことは特にそう。&lt;/span&gt;&lt;/strong&gt;&lt;/span&gt;&lt;/strong&gt;&lt;/div&gt;
+&lt;div&gt;&lt;strong&gt;&lt;span style=&#34;font-weight: normal;&#34;&gt;&lt;strong&gt;&lt;a href=&#34;http://www.ezcomponents.org/docs/tutorials/Template&#34; target=&#34;_blank&#34;&gt;ezComponents Template&lt;/a&gt;&lt;/strong&gt;&lt;strong&gt;:&lt;span style=&#34;font-weight: normal;&#34;&gt;よく設計されていて、多くの機能を持つが、継承をサポートしていないのと、パフォーマンスが他よりかなり劣る。&lt;br /&gt;
+&lt;strong&gt;&lt;a href=&#34;http://dwoo.org/&#34; target=&#34;_blank&#34;&gt;Dowoo&lt;/a&gt;&lt;/strong&gt;&lt;strong&gt;:&lt;span style=&#34;font-weight: normal;&#34;&gt;Smartyの代替プロジェクトとしてSmartyを真似てつくられていて、継承などの新機能も追加されている。パフォーマンスもSmartyより良いけど、sandboxがないのと、コアシステムの拡張性が十分でない。&lt;br /&gt;
+&lt;strong&gt;&lt;a href=&#34;http://www.beberlei.de/calypso/&#34; target=&#34;_blank&#34;&gt;Calyps&lt;/a&gt;&lt;/strong&gt;&lt;strong&gt;&lt;a href=&#34;http://www.beberlei.de/calypso/&#34; target=&#34;_blank&#34;&gt;o&lt;/a&gt;&lt;/strong&gt;&lt;strong&gt;:&lt;/strong&gt;DjangoのPHPクローンだけど諸問題により開発停止している。&lt;/span&gt;&lt;/strong&gt;&lt;/span&gt;&lt;/strong&gt;&lt;/span&gt;&lt;/strong&gt;&lt;/div&gt;
+&lt;/div&gt;
+&lt;h3&gt;ベンチマーク&lt;/h3&gt;
+&lt;p&gt;既存のテンプレートエンジンに関するベンチマーク結果です。&lt;/p&gt;
+&lt;h4&gt;ベンチマーク方法&lt;/h4&gt;
+&lt;div&gt;
+&lt;div id=&#34;_mcePaste&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;３つのアイテムをループさせ、シンプルな装飾のレイアウト出力の比較。&lt;/li&gt;
+&lt;li&gt;10000回表示するテストを１０回実行した平均値。&lt;/li&gt;
+&lt;li&gt;継承はヘッダとフィッタを代わりに使用。&lt;/li&gt;
+&lt;li&gt;自動出力エスケープができないものは手動でエスケープ処理。&lt;/li&gt;
+&lt;li&gt;コマンドラインでPHPAcceleratorなどを使用しない環境で実行&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;h4&gt;処理時間とメモリ消費&lt;/h4&gt;
+&lt;/div&gt;
+&lt;div&gt;
+&lt;table border=&#34;1&#34;&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;th&gt;Library&lt;/th&gt;
+&lt;th&gt;Time (sec)&lt;/th&gt;
+&lt;th&gt;Memory (Ko)&lt;/th&gt;
+&lt;th&gt;Templates rendered per second&lt;/th&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;th&gt;Twig&lt;/th&gt;
+&lt;td&gt;3&lt;/td&gt;
+&lt;td&gt;1,190&lt;/td&gt;
+&lt;td&gt;3,333&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;th&gt;PHPTAL&lt;/th&gt;
+&lt;td&gt;3.8&lt;/td&gt;
+&lt;td&gt;2,100&lt;/td&gt;
+&lt;td&gt;2,632&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;th&gt;Dwoo&lt;/th&gt;
+&lt;td&gt;6.9&lt;/td&gt;
+&lt;td&gt;1,870&lt;/td&gt;
+&lt;td&gt;1,449&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;th&gt;Smarty 2&lt;/th&gt;
+&lt;td&gt;12.9&lt;/td&gt;
+&lt;td&gt;2,350&lt;/td&gt;
+&lt;td&gt;775&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;th&gt;Smarty 3&lt;/th&gt;
+&lt;td&gt;14.9&lt;/td&gt;
+&lt;td&gt;3,230&lt;/td&gt;
+&lt;td&gt;671&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;th&gt;Calypso&lt;/th&gt;
+&lt;td&gt;34.3&lt;/td&gt;
+&lt;td&gt;620&lt;/td&gt;
+&lt;td&gt;292&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;th&gt;eZ Templates&lt;/th&gt;
+&lt;td&gt;53&lt;/td&gt;
+&lt;td&gt;5,850&lt;/td&gt;
+&lt;td&gt;189&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+&lt;h4&gt;コンパイル後のメモリ消費&lt;/h4&gt;
+&lt;p&gt;※フォロー記事の方がSmartyの数値が妥当らしいのでそっちを引用しています。&lt;/p&gt;
+&lt;table border=&#34;1&#34;&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;th&gt;Library&lt;/th&gt;
+&lt;td&gt;Time(sec)&lt;/td&gt;
+&lt;td&gt;Memory without compilation (Ko)&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;th&gt;Plain PHP&lt;/th&gt;
+&lt;td&gt;2.4&lt;/td&gt;
+&lt;td&gt;114&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;th&gt;Twig&lt;/th&gt;
+&lt;td&gt;3&lt;/td&gt;
+&lt;td&gt;383&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;th&gt;PHPTAL&lt;/th&gt;
+&lt;td&gt;3.8&lt;/td&gt;
+&lt;td&gt;598&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;th&gt;Dwoo&lt;/th&gt;
+&lt;td&gt;6.9&lt;/td&gt;
+&lt;td&gt;1,645&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;th&gt;Smarty 2&lt;/th&gt;
+&lt;td&gt;12.9&lt;/td&gt;
+&lt;td&gt;610&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;th&gt;Smarty 3&lt;/th&gt;
+&lt;td&gt;14.9&lt;/td&gt;
+&lt;td&gt;799&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;th&gt;Calypso&lt;/th&gt;
+&lt;td&gt;34.3&lt;/td&gt;
+&lt;td&gt;614&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;th&gt;eZ Templates&lt;/th&gt;
+&lt;td&gt;53&lt;/td&gt;
+&lt;td&gt;2,783&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2&gt;まとめ&lt;/h2&gt;
+&lt;div&gt;機能性だけでなく速さも兼ね備えたテンプレートエンジンTwig。&lt;/div&gt;
+&lt;div&gt;便利なテンプレートエンジンはSmartyがデファクトでしたが、Twigはそれを追い抜くかもしれませんね。&lt;/div&gt;
+&lt;div&gt;Symfony2.0でオプションのViewとして用意するかも、とFabienは個人的見解として言っているので、そうなると日本語圏でも利用が加速するかもしれません。ただ、Symfony2.0はPHP5.3以上必須なのでPHP5.3への移行に依存しますかね。Smarty3が正式リリースまでにどこまでパフォーマンス改善してくるかも楽しみなところです。&lt;/div&gt;
+&lt;div&gt;
+&lt;p&gt;Smartyから乗り換える場合はプログラマよりデザイナの移行コストが高いと思われるのですが、それがクリアできるならぜひ移行してみたいですね。素のPHPよりは断然読みやすく理解しやすですし。&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;次は機能的なところをまとめたいと思います。&lt;/p&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

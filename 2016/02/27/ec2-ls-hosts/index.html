@@ -1,321 +1,193 @@
-
-<!DOCTYPE html>
-<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
-<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
-<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+	<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <meta charset="utf-8">
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.15" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
   <title>ec2-ls-hosts: EC2インスタンスを一覧するだけのシンプルツール - I Will Survive</title>
-  <meta name="author" content="ReSTARTR">
-  <link rel="author" href="https://plus.google.com/103216164658230535238" />
-  <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
 
   
-  <meta name="description" content="EC2インスタンスの一覧を表示するツールをgolangでつくりました。">
-  
-
-  <!-- http://t.co/dKP3o1e -->
-  <meta name="HandheldFriendly" content="True">
-  <meta name="MobileOptimized" content="320">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/poole.css">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/syntax.css">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/hyde.css">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/custom.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
 
   
-  <link rel="canonical" href="http://blog.restartr.com/2016/02/27/ec2-ls-hosts/">
-  <link href="/favicon.png" rel="icon">
-  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
-   <link href="/stylesheets/data-table.css" media="screen, projection" rel="stylesheet" type="text/css" />
-  <script src="/javascripts/modernizr-2.0.js"></script>
-  <script src="/javascripts/ender.js"></script>
-  <script src="/javascripts/octopress.js" type="text/javascript"></script>
-  <link href="/atom.xml" rel="alternate" title="I Will Survive" type="application/atom+xml">
-  <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
-
-<!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
-<link href='http://fonts.googleapis.com/css?family=Lato:400,100,100italic,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
-<link href='http://fonts.googleapis.com/css?family=Lora:400,400italic,700,700italic' rel='stylesheet' type='text/css'>
-<link href='http://fonts.googleapis.com/css?family=Source+Code+Pro:200,300,400,500,600,700,900' rel='stylesheet' type='text/css'>
-
-
-	<!-- mathjax config similar to math.stackexchange -->
-
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    tex2jax: {
-      inlineMath: [ ['$$','$$'], ["\\(","\\)"] ],
-      processEscapes: true
-    }
-  });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Config({
-      tex2jax: {
-        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
-      }
-    });
-</script>
-
-<script type="text/x-mathjax-config">
-    MathJax.Hub.Queue(function() {
-        var all = MathJax.Hub.getAllJax(), i;
-        for(i=0; i < all.length; i += 1) {
-            all[i].SourceElement().parentNode.className += ' has-jax';
-        }
-    });
-</script>
-
-<script type="text/javascript"
-   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
-</script>
-
-
-
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://blog.restartr.com/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="http://blog.restartr.com/favicon.png">
 
   
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-894530-10']);
-    _gaq.push(['_trackPageview']);
-
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
-
-
-  <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
-  <style>html{background: url("/images/background.png") no-repeat center center fixed;-webkit-background-size: cover;-moz-background-size: cover;-o-background-size: cover;background-size: cover;}</style>
+  <link href="" rel="alternate" type="application/rss+xml" title="I Will Survive" />
 </head>
 
-<body   >
-  <header role="banner"><hgroup>
-</hgroup>
+	<body class="theme-base-0d">
+		<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="http://blog.restartr.com"><h1>I Will Survive</h1></a>
+      <p class="lead">
+       An application depelopper&#39;s blog. 
+      </p>
+    </div>
 
-</header>
-  <!-- <nav role="navigation"><ul class="subscription" data-subscription="rss">
-  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
-  
-</ul>
-  
-<form action="https://www.google.com/search" method="get">
-  <fieldset role="search">
-    <input type="hidden" name="q" value="site:blog.restartr.com" />
-    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
-  </fieldset>
-</form>
-  
-<ul class="main-navigation">
-  <li><a href="/">Blog</a></li>
-  <li><a href="/blog/archives">Archives</a></li>
-</ul>
-
-</nav> -->
-  <div id="main">
-    <div id="content">
-      <div>
-<article class="hentry" role="article">
-  
-  <header>
-    
-      <h1 class="entry-title">Ec2-ls-hosts: EC2インスタンスを一覧するだけのシンプルツール</h1>
+    <ul class="sidebar-nav">
+      <li><a href="http://blog.restartr.com/">Home</a> </li>
       
-      <style type="text/css">
-  .sharing {
-     clear: both;
-  }
-  .sharing li{
-    display: inline;
-    list-style-type: none;
-    float: left;
-    height: 1em;
-    line-height: 1em;
-    padding: 0 10px 0 0 ;
-    margin: 10px 0;
-  }
-  .sharing ul {
-    margin: 1em 0;
-    padding: 1em 0;
-  }
-</style>
-<div class="sharing">
+        <li><a href="http://blog.restartr.com/about/"> About </a></li>
+      
+        <li><a href="http://blog.restartr.com/index.xml"> Feed </a></li>
+      
+        <li><a href="https://github.com/ReSTARTR"> GitHub </a></li>
+      
+        <li><a href="https://twitter.com/ReSTARTR"> Twitter </a></li>
+      
+    </ul>
+
+    <p>Copyright ©2016 - ReSTARTR. All rights reserved.</p>
+  </div>
+</div>
+
+
+		<div class="content container">
+			<div class="post">
+			 	<h1>ec2-ls-hosts: EC2インスタンスを一覧するだけのシンプルツール</h1>
+        <span class="post-date">2016-02-27(Sat) - [golang]</span>
+			  <div class="sharing">
   <ul>
-  <li><a href="http://blog.restartr.com/2016/02/27/ec2-ls-hosts/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
-  
-  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2016/02/27/ec2-ls-hosts/" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2016/02/27/ec2-ls-hosts/" >Tweet</a></li>
-  
+  <li><a href="http://blog.restartr.com/2016/02/27/ec2-ls-hosts" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2016/02/27/ec2-ls-hosts" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2016/02/27/ec2-ls-hosts" >Tweet</a></li>
   <li><a data-pocket-label="pocket" data-pocket-count="horizontal" class="pocket-btn" data-lang="en"></a><script type="text/javascript">!function(d,i){if(!d.getElementById(i)){var j=d.createElement("script");j.id=i;j.src="https://widgets.getpocket.com/v1/j/btn.js?v=1";var w=d.getElementById(i);d.body.appendChild(j);}}(document,"pocket-btn-js");</script></li>
-  
-  
   </ul>
 </div>
-<p />
+<script type="text/javascript">
+  (function(){
+    var twitterWidgets = document.createElement('script');
+    twitterWidgets.type = 'text/javascript';
+    twitterWidgets.async = true;
+    twitterWidgets.src = '//platform.twitter.com/widgets.js';
+    document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+  })();
+</script>
+<hr />
 
-      
-    
-    
-      <p class="meta">
-        
+			      
 
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2016-02-27T17:28:53+09:00" pubdate data-updated="true">2016-02-27 (Sat)</time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>EC2インスタンスの一覧を表示するツールをgolangでつくりました。</p>
+<p>EC2インスタンスの一覧を表示するツールをgolangでつくりました。</p>
 
 <ul>
-  <li><a href="https://github.com/ReSTARTR/ec2-ls-hosts">ReSTARTR/ec2-ls-hosts</a></li>
+<li><a href="https://github.com/ReSTARTR/ec2-ls-hosts">ReSTARTR/ec2-ls-hosts</a></li>
 </ul>
 
 <p>以下のように、ただインスタンスの情報を列挙するだけのシンプルなツールです。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>ls-hosts
-</span><span class="line">i-00001 10.0.0.1 app01
-</span><span class="line">i-00002 10.0.0.2 app02
-</span><span class="line">i-00003 10.0.0.3 app03
-</span><span class="line">i-00004 10.0.0.4 app04
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<pre><code class="language-bash">$ ls-hosts
+i-00001 10.0.0.1 app01
+i-00002 10.0.0.2 app02
+i-00003 10.0.0.3 app03
+i-00004 10.0.0.4 app04
+</code></pre>
 
-<h3 id="section">何がうれしいか</h3>
+<h3 id="何がうれしいか:b29e9fe288f2c1afa8d247d1c61296b1">何がうれしいか</h3>
 
 <p>以下のような状況において、多少便利になるツールです。</p>
 
 <ul>
-  <li>EC2インスタンスを複数台運用している</li>
-  <li>台数が数十台規模である</li>
-  <li>AutoScalingを利用していて、IPやドメインが頻繁に変わる</li>
-  <li><code>aws ec2 describe-instances</code>のレスポンスが遅い</li>
-  <li><code>aws ec2 describe-instances</code>のオプション指定が複雑かつ指定が面倒</li>
+<li>EC2インスタンスを複数台運用している</li>
+<li>台数が数十台規模である</li>
+<li>AutoScalingを利用していて、IPやドメインが頻繁に変わる</li>
+<li><code>aws ec2 describe-instances</code>のレスポンスが遅い</li>
+<li><code>aws ec2 describe-instances</code>のオプション指定が複雑かつ指定が面倒</li>
 </ul>
 
 <p>このような状況を改善するため、ec2-ls-hostsをつくりました。
 このツールは、<code>aws ec2 describe-instances</code>に変わる、シンプルなオプションを備えたCLIツールになります。</p>
 
-<h3 id="ec2-ls-hosts">ec2-ls-hostsで出来ること</h3>
+<h3 id="ec2-ls-hostsで出来ること:b29e9fe288f2c1afa8d247d1c61296b1">ec2-ls-hostsで出来ること</h3>
 
 <p>主に以下のオプションを備えています</p>
 
 <ul>
-  <li><code>-filters</code>: 絞込み条件</li>
-  <li><code>-tags</code>   : タグによる絞込み</li>
-  <li><code>-fileds</code> : 表示項目の設定</li>
+<li><code>-filters</code>: 絞込み条件</li>
+<li><code>-tags</code>   : タグによる絞込み</li>
+<li><code>-fileds</code> : 表示項目の設定</li>
 </ul>
 
 <p>実行時のオプションでも指定できるのですが、いちいち指定するのは面倒なので、<code>~/.ls-hosts</code> か <code>/etc/ls-hosts</code> に設定を保存できます。
 このファイルが存在していたらそれを読み込みます。(両方ある場合は<code>~/.ls-hosts</code>のほうが優先されます)
 設定はこんなかんじで。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="o">[</span>options<span class="o">]</span>
-</span><span class="line"><span class="nv">tags</span>   <span class="o">=</span> Env:production,Role:app
-</span><span class="line"><span class="nv">fields</span> <span class="o">=</span> instance-id,tag:Name,public-ip,instance-state
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<pre><code>[options]
+tags   = Env:production,Role:app
+fields = instance-id,tag:Name,public-ip,instance-state
+</code></pre>
 
 <p>認証は以下の優先順位で可能なものを利用します。</p>
 
 <ul>
-  <li>環境変数 <code>AWS_ACCESS_KEY_ID</code>, <code>AWS_SECRET_ACCESS_KEY</code></li>
-  <li>SharedCredentials (<code>~/.aws/credentials</code>のdefaultプロファイルを利用)</li>
-  <li>EC2 Instance Profile</li>
+<li>環境変数 <code>AWS_ACCESS_KEY_ID</code>, <code>AWS_SECRET_ACCESS_KEY</code></li>
+<li>SharedCredentials (<code>~/.aws/credentials</code>のdefaultプロファイルを利用)</li>
+<li>EC2 Instance Profile</li>
 </ul>
 
 <p>インスタンスプロファイルに対応しているので、たとえばEC2のReadOnly権限をを付与してあるゲートウェイインスタンスに配置することで、認証情報を直接管理せずに利用することもできます。</p>
 
-<h3 id="section-1">インストール方法</h3>
+<h3 id="インストール方法:b29e9fe288f2c1afa8d247d1c61296b1">インストール方法</h3>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line">git clone https://github.com/ReSTARTR/ec2-ls-hosts.git
-</span><span class="line"><span class="nb">cd</span> ./ec2-ls-hosts
-</span><span class="line">make build -B
-</span><span class="line">cp ./build/ls-hosts /path/to/bin/ls-hosts
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<pre><code>git clone https://github.com/ReSTARTR/ec2-ls-hosts.git
+cd ./ec2-ls-hosts
+make build -B
+cp ./build/ls-hosts /path/to/bin/ls-hosts
+</code></pre>
 
 <ul>
-  <li>コマンド名は<code>ls-hosts</code>にしています。</li>
-  <li><code>$PATH</code>の通っているところに配置してください:bow:</li>
+<li>コマンド名は<code>ls-hosts</code>にしています。</li>
+<li><code>$PATH</code>の通っているところに配置してください:bow:</li>
 </ul>
 
-<h3 id="zsh--pecossh">zsh + pecoでインタラクティブにSSHする</h3>
+<h3 id="zsh-pecoでインタラクティブにsshする:b29e9fe288f2c1afa8d247d1c61296b1">zsh + pecoでインタラクティブにSSHする</h3>
 
 <p>ec2-ls-hosts単体でも多少便利にはなるのですが、ツールを組み合わせた応用例も書いておきます。</p>
 
 <p>たとえば以下のような結果が得られるEC2環境があったとします。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="nv">$ </span>ls-hosts -filters instance-state-name:running -tags Env:production,Role:app -fields private-ip,tag:Name,tag:Role
-</span><span class="line">10.0.0.1 app app01
-</span><span class="line">10.0.0.2 app app02
-</span><span class="line">10.0.0.3 app app03
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<pre><code>$ ls-hosts -filters instance-state-name:running -tags Env:production,Role:app -fields private-ip,tag:Name,tag:Role
+10.0.0.1 app app01
+10.0.0.2 app app02
+10.0.0.3 app app03
+</code></pre>
 
 <p>これをpecoでインタラクティブに選択してそのままSSHするには、以下のようにzshrcを設定しておきます。</p>
 
-<div class="bogus-wrapper"><notextile><figure class="code"><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
-<span class="line-number">2</span>
-<span class="line-number">3</span>
-<span class="line-number">4</span>
-<span class="line-number">5</span>
-<span class="line-number">6</span>
-<span class="line-number">7</span>
-<span class="line-number">8</span>
-<span class="line-number">9</span>
-<span class="line-number">10</span>
-<span class="line-number">11</span>
-<span class="line-number">12</span>
-<span class="line-number">13</span>
-<span class="line-number">14</span>
-</pre></td><td class="code"><pre><code class="bash"><span class="line"><span class="k">function </span>peco-ec2-ls-hosts <span class="o">()</span> <span class="o">{</span>
-</span><span class="line">  <span class="c"># NOTE: ~/.ls-hostsに設定したほうがより良いです</span>
-</span><span class="line">  <span class="nv">BUFFER</span><span class="o">=</span><span class="k">$(</span>
-</span><span class="line">    ls-hosts -filters instance-state-name:running -tags Env:production,Role:app -fields private-ip,tag:Name,tag:Role | <span class="se">\</span>
-</span><span class="line">    peco --prompt <span class="s2">&quot;EC2 &gt;&quot;</span> --query <span class="s2">&quot;$LBUFFER&quot;</span> | <span class="se">\</span>
-</span><span class="line">    awk <span class="s1">&#39;{echo &quot;Login to %s; printf &quot;ssh %s\n&quot;, $3,$1}&#39;</span>
-</span><span class="line">  <span class="k">)</span>
-</span><span class="line">  <span class="nv">CURSOR</span><span class="o">=</span><span class="nv">$#BUFFER</span>
-</span><span class="line">  zle accept-line
-</span><span class="line">  zle clear-screen
-</span><span class="line"><span class="o">}</span>
-</span><span class="line">zle -N peco-ec2-ls-hosts
-</span><span class="line"><span class="c"># キーバインドはおこのみで</span>
-</span><span class="line">bindkey <span class="s1">&#39;^oo&#39;</span> peco-ec2-ls-hosts
-</span></code></pre></td></tr></table></div></figure></notextile></div>
+<pre><code>function peco-ec2-ls-hosts () {
+  # NOTE: ~/.ls-hostsに設定したほうがより良いです
+  BUFFER=$(
+    ls-hosts -filters instance-state-name:running -tags Env:production,Role:app -fields private-ip,tag:Name,tag:Role | \
+    peco --prompt &quot;EC2 &gt;&quot; --query &quot;$LBUFFER&quot; | \
+    awk '{echo &quot;Login to %s; printf &quot;ssh %s\n&quot;, $3,$1}'
+  )
+  CURSOR=$#BUFFER
+  zle accept-line
+  zle clear-screen
+}
+zle -N peco-ec2-ls-hosts
+# キーバインドはおこのみで
+bindkey '^oo' peco-ec2-ls-hosts
+</code></pre>
 
 <p>とすることで、インタラクティブにSSHできてヒストリーにも残ります。
 以下キャプチャでは対象インスタンスがダミーなのでSSできてませんがちゃんと使えます。
-(実環境の実行結果は載せられないので泣く泣くダミーです…)</p>
+(実環境の実行結果は載せられないので泣く泣くダミーです&hellip;)</p>
 
 <p><a href="https://gyazo.com/ae45206ad8215934f5e0a897b91b3d2a"><img src="https://i.gyazo.com/ae45206ad8215934f5e0a897b91b3d2a.gif" alt="https://gyazo.com/ae45206ad8215934f5e0a897b91b3d2a" /></a></p>
 
 <p>※クライアントPCからパブリックIPとかで直接SSHできない場合はプロキシコマンドを利用して踏み台経由とかでプライベートIPできるssh-configを設定しておくと、この応用例を使って透過的にSSHできます（これは別記事としたほうがよいかも？)</p>
 
-<h3 id="section-2">余談</h3>
+<h3 id="余談:b29e9fe288f2c1afa8d247d1c61296b1">余談</h3>
 
 <p>さいごの応用例はもともとaws-cli + jq + pecoで実現していたのですが、管理台数が増えるに連れてレスポンスが極端に劣化。
 キャッシュ機構を入れてみたりしたものの、快適とはいえない状況になったので、「aws-sdk-goで書くだけで軽くなるのでは？」という発想から開発に至りました。</p>
@@ -325,234 +197,39 @@
 <p>社内利用に特化したかたちでつくったものの、ちょっとだけ汎用化すればべつに誰でも使えるようなきがしたので、手を加えたうえでgithubにて公開となりました。
 まだまだ貧弱ですが、最低限役目は果たしています。</p>
 
-</div>
-
-
-
-
-<style type="text/css">
-  .sharing {
-     clear: both;
-  }
-  .sharing li{
-    display: inline;
-    list-style-type: none;
-    float: left;
-    height: 1em;
-    line-height: 1em;
-    padding: 0 10px 0 0 ;
-    margin: 10px 0;
-  }
-  .sharing ul {
-    margin: 1em 0;
-    padding: 1em 0;
-  }
-</style>
-<div class="sharing">
+			  <div class="sharing">
   <ul>
-  <li><a href="http://blog.restartr.com/2016/02/27/ec2-ls-hosts/" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
-  
-  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2016/02/27/ec2-ls-hosts/" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2016/02/27/ec2-ls-hosts/" >Tweet</a></li>
-  
+  <li><a href="http://blog.restartr.com/2016/02/27/ec2-ls-hosts" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2016/02/27/ec2-ls-hosts" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2016/02/27/ec2-ls-hosts" >Tweet</a></li>
   <li><a data-pocket-label="pocket" data-pocket-count="horizontal" class="pocket-btn" data-lang="en"></a><script type="text/javascript">!function(d,i){if(!d.getElementById(i)){var j=d.createElement("script");j.id=i;j.src="https://widgets.getpocket.com/v1/j/btn.js?v=1";var w=d.getElementById(i);d.body.appendChild(j);}}(document,"pocket-btn-js");</script></li>
-  
-  
   </ul>
 </div>
-<p />
+<script type="text/javascript">
+  (function(){
+    var twitterWidgets = document.createElement('script');
+    twitterWidgets.type = 'text/javascript';
+    twitterWidgets.async = true;
+    twitterWidgets.src = '//platform.twitter.com/widgets.js';
+    document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+  })();
+</script>
+<hr />
 
-
-
-
-  <footer>
-    <p class="meta">
-      
-  
-
-<span class="byline author vcard">Posted by <span class="fn">ReSTARTR</span></span>
-
-      
-
-
-
-
-
-
-
-
-  
-
-
-<time datetime="2016-02-27T17:28:53+09:00" pubdate data-updated="true">2016-02-27 (Sat)</time>
-      
-
-<span class="categories">
-  
-    <a class='category' href='/category/go/'>go</a>, <a class='category' href='/category/golang/'>golang</a>
-  
-</span>
-
-
-    </p>
-    <hr />
-    <p class="meta">
-      
-        <a class="basic-alignment left" href="/2016/02/17/ergodox-ez/" title="Previous Post: ErgoDox EZを注文した(けどまだ届いてない)">&laquo; ErgoDox EZを注文した(けどまだ届いてない)</a>
-      
-      
-    </p>
-  </footer>
-</article>
-
-</div>
-
-<aside class="sidebar">
-  
-    <section id="titles">
-  <a href="http://blog.restartr.com" title="I Will Survive"><img id="logo" src="http://blog.restartr.com/images/portrait.jpg" /></a>
-  <h1 id="site_title"><a href="http://blog.restartr.com" title="I Will Survive">I Will Survive</a></h1>
-  <h3 id="site_subtitle">An application depelopper's blog.</h3>
-</section>
-
-<section id="menu">
-  <ul>
-    <li><i class="fa fa-home fa-lg"></i><a href="http://blog.restartr.com"> Home </a></li>
-    <li><i class="fa fa-calendar fa-lg"></i><a href="http://blog.restartr.com/blog/archives/"> Archives </a></li>
-    <li><i class="fa fa-user fa-lg"></i><a href="http://blog.restartr.com/about/"> About </a></li>
-    <li><i class="fa fa-rss fa-lg"></i><a href="http://blog.restartr.com/atom.xml"> Feed </a></li>
-  </ul>
-</section>
-
-<section id="social">
-  
-
-  
-
-  
-    <a href="" title="g+#103216164658230535238"><i class="fa fa-google-plus fa-2x"></i></a>
-  
-
-  
-    <a href="https://github.com/ReSTARTR" title="ReSTARTR"><i class="fa fa-github fa-2x"></i></a>
-  
-
-  
-
-  
-    <a href="https://twitter.com/ReSTARTR" title="ReSTARTR"><i class="fa fa-twitter fa-2x"></i></a>
-  
-
-  
-</section>
-
-
-<section>
-  <h1>Recent Posts</h1>
-  <ul id="recent_posts">
-    
-      <li class="post">
-        <a href="/2016/02/27/ec2-ls-hosts/">ec2-ls-hosts: EC2インスタンスを一覧するだけのシンプルツール</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2016/02/17/ergodox-ez/">ErgoDox EZを注文した(けどまだ届いてない)</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/12/31/things-of-2015/">2015年ふりかえり</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix/">Elixir/PhoenixでISUCON5予選の参考実装を書いた</a>
-      </li>
-    
-      <li class="post">
-        <a href="/2015/10/15/go-programming-blueprints/">"Go Programming Blueprints"を読んだ</a>
-      </li>
-    
-  </ul>
-</section>
-<section>
-  <h1>Categories</h1>
-  <ul id="categories">
-    <li><a href='/category/architecture/'>architecture</a></li><li><a href='/category/docker/'>docker</a></li><li><a href='/category/elixir/'>Elixir</a></li><li><a href='/category/gadget/'>gadget</a></li><li><a href='/category/go/'>go</a></li><li><a href='/category/golang/'>golang</a></li><li><a href='/category/hadoop/'>hadoop</a></li><li><a href='/category/php/'>PHP</a></li><li><a href='/category/python/'>python</a></li><li><a href='/category/ruby/'>ruby</a></li><li><a href='/category/scala/'>Scala</a></li><li><a href='/category/varnish/'>varnish</a></li><li><a href='/category/vim/'>vim</a></li><li><a href='/category/websabisu/'>Webサービス</a></li><li><a href='/category/detamainingu/'>データマイニング</a></li><li><a href='/category/puroguramingu/'>プログラミング</a></li><li><a href='/category/ru-men-zi-ran-yan-yu-chu-li/'>入門 自然言語処理</a></li><li><a href='/category/shu-ji/'>書籍</a></li><li><a href='/category/za-ji/'>雑記</a></li>
-  </ul>
-</section>
-<section>
-  <h1>GitHub Repos</h1>
-  <ul id="gh_repos">
-    <li class="loading">Status updating...</li>
-  </ul>
-  
-  <a href="https://github.com/ReSTARTR">@ReSTARTR</a> on GitHub
-  
-  <script type="text/javascript">
-    $.domReady(function(){
-        if (!window.jXHR){
-            var jxhr = document.createElement('script');
-            jxhr.type = 'text/javascript';
-            jxhr.src = '/javascripts/libs/jXHR.js';
-            var s = document.getElementsByTagName('script')[0];
-            s.parentNode.insertBefore(jxhr, s);
-        }
-
-        github.showRepos({
-            user: 'ReSTARTR',
-            count: 4,
-            skip_forks: true,
-            target: '#gh_repos'
-        });
-    });
-  </script>
-  <script src="/javascripts/github.js" type="text/javascript"> </script>
-</section>
-
-
-
-<section class="googleplus">
-  <h1>
-    <a href="https://plus.google.com/103216164658230535238?rel=author">
-      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
-      Google+
-    </a>
-  </h1>
-</section>
-
-
-
-  
-</aside>
-
-
-    </div>
-  </div>
-  <footer role="contentinfo"><p>
-  Copyright &copy; 2016 - ReSTARTR -
-  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
-</p>
-
+			   <footer>
+  <p class="meta">
+    <ul class="params">
+    <li>Category: [golang]</li>
+    <li class="">Tags: golang go aws ec2 cli</li>
+    <li><span class="byline author vcard">Posted by <span class="fn">ReSTARTR</span></span></li>
+    <li><time datetime="2016-02-27 17:28:53 &#43;0900 JST" pubdate data-updated="true">2016-02-27(Sat)</time></li>
+    </ul>
+  </p>
 </footer>
-  
 
+			</div>
 
+			
+		</div>
 
-
-
-
-
-  <script type="text/javascript">
-    (function(){
-      var twitterWidgets = document.createElement('script');
-      twitterWidgets.type = 'text/javascript';
-      twitterWidgets.async = true;
-      twitterWidgets.src = '//platform.twitter.com/widgets.js';
-      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
-    })();
-  </script>
-
-
-
-
-
-</body>
+  </body>
 </html>

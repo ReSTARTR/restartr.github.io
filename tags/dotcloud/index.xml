@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Dotcloud on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/dotcloud/</link>
+    <description>Recent content in Dotcloud on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sat, 28 May 2011 20:00:57 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/dotcloud/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>DotCloudのMongoDBをScalaから使ってみる</title>
+      <link>http://blog.restartr.com/2011/05/28/access-from-scala-to-mongodb-on-dotcloud</link>
+      <pubDate>Sat, 28 May 2011 20:00:57 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2011/05/28/access-from-scala-to-mongodb-on-dotcloud</guid>
+      <description>
+
+&lt;p&gt;DotCloudにDuoStackが&lt;a href=&#34;http://gigaom.com/cloud/exclusive-paas-startups-unite-dotcloud-buys-duostack/&#34;&gt;買収され&lt;/a&gt;て、DotCloudでもMongoDBが使えるようになりましたし、node.jsも使えるしで、ますますDotCloudが魅力的なものになってきました。&lt;/p&gt;
+
+&lt;p&gt;ただし、node.jsはサポートされても、WebSocketは正式サポートされていないと&lt;a href=&#34;http://docs.dotcloud.com/components/nodejs/&#34;&gt;公式マニュアル&lt;/a&gt;にも書いてありますがWebSocketサポート済みのDuoStack買収によってどう流れるか気になるところです。&lt;/p&gt;
+
+&lt;p&gt;さて今回は、前回作ったものをベースにScalaからMongoDBへアクセスするサンプルをDotCloudで動かすまでを書いておきます。（まぁ、Scalaのコードはオマケみたいなものですけど…）&lt;/p&gt;
+
+&lt;p&gt;前回の記事はこちらです。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.restartr.com/2011/05/09/sample-sbt-project-for-dotcloud/&#34;&gt;ScalaをDotCloudにアップロードするためのsbtサンプル&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;ちなみにDotCloudは下記バージョンにて動作しているみたいです（2011.05.28現在)&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;nginx 0.7.65&lt;/li&gt;
+&lt;li&gt;jetty 6.1&lt;/li&gt;
+&lt;li&gt;mongodb 1.8.1&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;作成したサンプルアプリ:573d61040063d81a26c10db348448b94&#34;&gt;作成したサンプルアプリ&lt;/h3&gt;
+
+&lt;p&gt;事情により停止する場合があるかもしれませんがご了承を。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://samplemongo.ramee.dotcloud.com/&#34;&gt;http://samplemongo.ramee.dotcloud.com/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;dotcloudにmongodbサーバーを準備する:573d61040063d81a26c10db348448b94&#34;&gt;DotCloudにMongoDBサーバーを準備する&lt;/h3&gt;
+
+&lt;p&gt;DotCloudのMongoDBマニュアルはこちら&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://docs.dotcloud.com/components/mongodb/&#34;&gt;MongoDB ? DotCloud documentation&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;上記マニュアルにしたがって作成すればMongoDBサーバーを準備できます。
+基本的には、追加したいサーバーを登録して、ユーザーを作成するだけです。&lt;/p&gt;
+
+&lt;p&gt;簡単。&lt;/p&gt;
+
+&lt;p&gt;今回は&amp;rdquo;example.mongo&amp;rdquo;という名前で作成する例を記してありますので、
+それぞれ自分の作成したいアプリ名に読み替えて下さい。&lt;/p&gt;
+
+&lt;h4 id=&#34;サーバーを作成:573d61040063d81a26c10db348448b94&#34;&gt;サーバーを作成&lt;/h4&gt;
+
+&lt;p&gt;事前に&amp;rdquo;dotcloud create example&amp;rdquo;は実行してあるものとします。
+詳しくはこちらの&lt;a href=&#34;http://docs.dotcloud.com/tutorials/firststeps/#id2&#34;&gt;マニュアル&lt;/a&gt;を見てください。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ dotcloud deploy -t mongo example.mongo
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;&amp;gt; Created &amp;quot;example.mongo&amp;quot;.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;db情報を確認-id-pass:573d61040063d81a26c10db348448b94&#34;&gt;DB情報を確認（ID/PASS）&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ dotcloud info example.mongo
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;deployコマンド実行してから実際に作成されるまで少し時間がかかります。
+すぐにinfoコマンドを実行すると下記エラーがでます。
+※正確に測ってませんが数十秒くらい？&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;&amp;gt; Sat May 28 08:14:43 Error: couldn&#39;t connect to server 127.0.0.1 shell/mongo.js:79
+&amp;gt; exception: connect failed
+&amp;gt; Connection to mongo.example.dotcloud.com closed.
+&amp;gt; Abort.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;作成完了していれば、下記情報が表示されますので、&amp;rdquo;mongodb_password: ******&amp;ldquo;に記載されたパスワードをメモしておきます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;cluster: wolverine
+config:
+    mongodb_password: ******
+created_at: 1306570413.6722209
+name: example.mongo
+namespace: example
+ports:
+-   name: ssh
+    url: ssh://mongodb@mongo.example.dotcloud.com:5906
+-   name: mongodb
+    url: mongodb://root:******@mongo.example.dotcloud.com:5907
+state: running
+type: mongodb
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&#34;mongodbサーバーへログイン:573d61040063d81a26c10db348448b94&#34;&gt;MongoDBサーバーへログイン&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ dotcloud run example.mongo mongo
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;infoコマンドで表示されたパスワードを使って、&amp;rdquo;sampledb&amp;rdquo;というdbにアプリユーザーを追加します。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;&amp;gt; use sampledb
+switched to db sampledb
+&amp;gt; db.getSisterDB(&amp;quot;admin&amp;quot;).auth(&amp;quot;root&amp;quot;, &amp;quot;&amp;lt;infoコマンドで表示されるパスワード&amp;gt;&amp;quot;);
+1
+&amp;gt; db.addUser(&amp;quot;APPUSER_NAME&amp;quot;, &amp;quot;APPPUSER_PASS&amp;quot;);
+{
+     &amp;quot;user&amp;quot; : &amp;quot;APPUSER_NAME&amp;quot;,
+     &amp;quot;readOnly&amp;quot; : false,
+     &amp;quot;pwd&amp;quot; : &amp;quot;xxxxxxxxxxxxxxxxxxxxxxxxxxxxx&amp;quot;
+}
+&amp;gt; exit
+bye
+Connection to mongo.example.dotcloud.com closed.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;※とりあえず一旦ログアウトしてますが、別に必須じゃないです。&lt;/p&gt;
+
+&lt;h4 id=&#34;再度ログインしてテスト操作してみる:573d61040063d81a26c10db348448b94&#34;&gt;再度ログインしてテスト操作してみる&lt;/h4&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ dotcloud run example.mongo mongo
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;新規作成したユーザーでDB操作が可能か確認してみます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# mongo
+Warning: Permanently added &#39;[mongo.example.dotcloud.com]:5906,[174.129.17.131]:5906&#39; (RSA) &amp;gt; to the list of known hosts.
+MongoDB shell version: 1.8.1
+connecting to: test
+&amp;gt; use sampledb;
+switched to db sampledb
+&amp;gt; db.auth(&amp;quot;sampleuser&amp;quot;, &amp;quot;samplepass&amp;quot;);
+1
+&amp;gt; db.sampledb.save({id:1,name:&amp;quot;foo&amp;quot;});
+&amp;gt; db.sampledb.find();
+{ &amp;quot;_id&amp;quot; : ObjectId(&amp;quot;4de0b033a1fd29eb0e1522fd&amp;quot;), &amp;quot;id&amp;quot; : 1, &amp;quot;name&amp;quot; : &amp;quot;foo&amp;quot; }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;問題なさそうなので、あとはアプリを&amp;rdquo;dotcloud push&amp;rdquo;して動かすだけです。&lt;/p&gt;
+
+&lt;h3 id=&#34;scalaからアクセスするサンプル:573d61040063d81a26c10db348448b94&#34;&gt;scalaからアクセスするサンプル&lt;/h3&gt;
+
+&lt;p&gt;サービス名を「example.samplemongo&amp;rdquo;として作成する例です。&lt;/p&gt;
+
+&lt;p&gt;requirementsはイカのとおり。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;scala 2.9.0&lt;/li&gt;
+&lt;li&gt;sbt 0.7.7&lt;/li&gt;
+&lt;li&gt;jetty 7.3.1.v20110307&lt;/li&gt;
+&lt;li&gt;casbah 2.1.5.0&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;code&gt;sbt&lt;/code&gt;
+で基本ディレクトリを作成したら、下記プロジェクト設定を{root}/project/build/MongoSampleProject.scala&amp;rdquo;として保存します。&lt;/p&gt;
+
+&lt;p&gt;前回の設定クラスをコピーしてきたので、&amp;rdquo;sbt dot_create&amp;rdquo;と&amp;rdquo;sbt dot_push&amp;rdquo;も一応使えます。&lt;/p&gt;
+
+&lt;p&gt;※&amp;rdquo;example.mongo&amp;rdquo;の名称は適宜読み替えでお願いします。&lt;/p&gt;
+
+&lt;h5 id=&#34;mongodbsampleproject-scala:573d61040063d81a26c10db348448b94&#34;&gt;MongodbSampleProject.scala&lt;/h5&gt;
+
+&lt;script src=&#34;https://gist.github.com/996769.js?file=MongodbSampleProject.scala&#34;&gt;&lt;/script&gt;
+
+&lt;p&gt;配置できたら、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;sbt reload update
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;でライブラリを読み込みます。&lt;/p&gt;
+
+&lt;p&gt;あとは下記Servletの実装とweb.xmlを用意したらOK．&lt;/p&gt;
+
+&lt;h5 id=&#34;mongodbservlet-scala:573d61040063d81a26c10db348448b94&#34;&gt;MongodbServlet.scala&lt;/h5&gt;
+
+&lt;script src=&#34;https://gist.github.com/996769.js?file=MonbodbServlet.scala&#34;&gt;&lt;/script&gt;
+
+&lt;h5 id=&#34;web-xml:573d61040063d81a26c10db348448b94&#34;&gt;web.xml&lt;/h5&gt;
+
+&lt;script src=&#34;https://gist.github.com/996769.js?file=web.xml&#34;&gt;&lt;/script&gt;
+
+&lt;p&gt;できたら、&amp;rdquo;sbt dot_push&amp;rdquo;でdotcloudへアップロードされるはずです。&lt;/p&gt;
+
+&lt;p&gt;最後に、&amp;rdquo;http:／／samplemongo.exapmle.dotcloud.com&amp;rdquo;にアクセスして、フォームからデータ登録ができれば成功です。&lt;/p&gt;
+
+&lt;p&gt;RDBMSにくらべてデータ保存・取得までが圧倒的に簡単で、PaaSでもMongoDBはいい感じですね！&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>ScalaをDotCloudにアップロードするためのsbtサンプル</title>
+      <link>http://blog.restartr.com/2011/05/09/sample-sbt-project-for-dotcloud</link>
+      <pubDate>Mon, 09 May 2011 23:35:43 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2011/05/09/sample-sbt-project-for-dotcloud</guid>
+      <description>
+
+&lt;p&gt;&lt;a href=&#34;http://dotcloud.com/&#34;&gt;dotcloud&lt;/a&gt;を必要最低限操作するためのactionをsbtに追加してみました。&lt;/p&gt;
+
+&lt;p&gt;sbtのアクション自体はじめてなので作法がよくわかってないので、間違っているかも知れませんが。&lt;/p&gt;
+
+&lt;h3 id=&#34;使い方:0bbc900d9426631008618c5d05350acf&#34;&gt;使い方&lt;/h3&gt;
+
+&lt;p&gt;※scalaファイルは最後に掲載しています。
+とりあえず下記を作成するサービス名に置き換えればOKです。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;  val dotApplicationName = &amp;quot;APPNAME&amp;quot;
+  val dotServiceName = dotApplicationName + &amp;quot;.SERVNAME&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;あとは、下記を順に実行すればOK(dot_prepareはdot_pushの前に必ず実行されるので省略可能)&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&amp;ldquo;sbt dot_create&amp;rdquo; : サービスの作成&lt;/li&gt;
+&lt;li&gt;&amp;ldquo;sbt dot_prepare&amp;rdquo; : リリース用ディレクトリ作成とwarファイルのコピー&lt;/li&gt;
+&lt;li&gt;&amp;ldquo;sbt dot_push&amp;rdquo; : dotcloudへのwarファイルpush&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;dotcloud用に注意すべきこと:0bbc900d9426631008618c5d05350acf&#34;&gt;dotcloud用に注意すべきこと&lt;/h3&gt;
+
+&lt;p&gt;&amp;ldquo;sbt package&amp;rdquo;を使用すると、&amp;rdquo;＜projectName＞-＜scala_ver＞-＜app_ver＞.war&amp;rdquo;の形式でwarファイルが作成されます。
+が、dotcloudのドキュメントにはこう書いてあるので、&amp;rdquo;root.war&amp;rdquo;で作成するのが望ましいです。&lt;/p&gt;
+
+&lt;p&gt;&lt;blockquote&gt;
+The java service will make your application available at &lt;a href=&#34;http://frontend.myapp.dotcloud.com/&#34;&gt;http://frontend.myapp.dotcloud.com/&lt;/a&gt; if your archive is named root.war or &lt;a href=&#34;http://frontend.myapp.dotcloud.com/webapp/&#34;&gt;http://frontend.myapp.dotcloud.com/webapp/&lt;/a&gt; if your archive is named webapp.war (../foobar/ if the archive was named foobar.war and so on). So, you can effectively serve multiple web applications with the same java service.&lt;/p&gt;
+
+&lt;p&gt;&lt;/blockquote&gt;
+&lt;a href=&#34;http://docs.dotcloud.com/components/java/&#34;&gt;Java &amp;mdash; DotCloud documentation&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;さらに、&amp;rdquo;dotcloud push&amp;rdquo;はwarファイルを含むディレクトリを指定することになり、それ以下がすべて同期されてしまいます。デフォルトだと、&amp;rdquo;./target/scala_2.8.1/&amp;ldquo;以下のすべてが。&lt;/p&gt;
+
+&lt;p&gt;なので、warのみ格納する&amp;rdquo;release&amp;rdquo;ディレクトリを作り、 そこに&amp;rdquo;root.war&amp;rdquo;としてひとつだけ存在させておきました。
+順番に書くと、&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;sbt packageでtarget/scala_2.8.1/＜projectName＞-＜scala_ver＞-＜app_ver＞.warを生成&lt;/li&gt;
+&lt;li&gt;そのwarファイルをtarget/release/root.warにコピー&lt;/li&gt;
+&lt;li&gt;&amp;ldquo;dotcloud push ＜dotcloud_appname＞ target/release/&amp;rdquo; でwarのみアップロード&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;という方法で対応しました。&lt;/p&gt;
+
+&lt;p&gt;以下、サンプルのプロジェクト設定です。&lt;/p&gt;
+
+&lt;script src=&#34;https://gist.github.com/962534.js?file=RameeProject.scala&#34;&gt;&lt;/script&gt;
+
+&lt;h3 id=&#34;参考リンク:0bbc900d9426631008618c5d05350acf&#34;&gt;参考リンク&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://docs.dotcloud.com/cli/&#34;&gt;DotCloud command line &amp;mdash; DotCloud documentation&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://code.google.com/p/simple-build-tool/wiki/Process&#34;&gt;Process - simple-build-tool - A build tool for Scala - Google Project Hosting&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

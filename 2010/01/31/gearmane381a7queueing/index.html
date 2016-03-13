@@ -1,0 +1,309 @@
+	<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="generator" content="Hugo 0.15" />
+
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+  <title>Gearmanでqueueing - I Will Survive</title>
+
+  
+  <link rel="stylesheet" href="http://blog.restartr.comcss/poole.css">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/syntax.css">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/hyde.css">
+  <link rel="stylesheet" href="http://blog.restartr.comcss/custom.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="http://blog.restartr.com/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="http://blog.restartr.com/favicon.png">
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="I Will Survive" />
+</head>
+
+	<body class="theme-base-0d">
+		<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <a href="http://blog.restartr.com"><h1>I Will Survive</h1></a>
+      <p class="lead">
+       An application depelopper&#39;s blog. 
+      </p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="http://blog.restartr.com/">Home</a> </li>
+      
+        <li><a href="http://blog.restartr.com/about/"> About </a></li>
+      
+        <li><a href="http://blog.restartr.com/index.xml"> Feed </a></li>
+      
+        <li><a href="https://github.com/ReSTARTR"> GitHub </a></li>
+      
+        <li><a href="https://twitter.com/ReSTARTR"> Twitter </a></li>
+      
+    </ul>
+
+    <p>Copyright ©2016 - ReSTARTR. All rights reserved.</p>
+  </div>
+</div>
+
+
+		<div class="content container">
+			<div class="post">
+			 	<h1>Gearmanでqueueing</h1>
+        <span class="post-date">2010-01-31(Sun) - [PHP]</span>
+			  <div class="sharing">
+  <ul>
+  <li><a href="http://blog.restartr.com/2010/01/31/gearmane381a7queueing" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2010/01/31/gearmane381a7queueing" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2010/01/31/gearmane381a7queueing" >Tweet</a></li>
+  <li><a data-pocket-label="pocket" data-pocket-count="horizontal" class="pocket-btn" data-lang="en"></a><script type="text/javascript">!function(d,i){if(!d.getElementById(i)){var j=d.createElement("script");j.id=i;j.src="https://widgets.getpocket.com/v1/j/btn.js?v=1";var w=d.getElementById(i);d.body.appendChild(j);}}(document,"pocket-btn-js");</script></li>
+  </ul>
+</div>
+<script type="text/javascript">
+  (function(){
+    var twitterWidgets = document.createElement('script');
+    twitterWidgets.type = 'text/javascript';
+    twitterWidgets.async = true;
+    twitterWidgets.src = '//platform.twitter.com/widgets.js';
+    document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+  })();
+</script>
+<hr />
+
+			      <p><h3>queueing</h3>
+<p>webページを生成する際には、今すぐやらなきゃいけないことと、今すぐでなくても良いものがあります。<br />
+今すぐやらなきゃいけないこととは、ユーザーリクエストに対するDB参照結果等のことで、今すぐでなくても良いものとはアクセスログなどの処理をDBに書き込んだりメール送信したりなど。それ以外にもあるかもですが大体そんな感じです。</p>
+<p>通常であればすべて一回のHTTPリクエストの中でやるわけですが、queueingをすれば今やるべきでないことを後回しにできます。他にもメリットはありますが割愛で。</p>
+<p>で、phpでqueuingをやるとしたら、こんなのがあるそうです。</p>
+<ul>
+<li><a href="http://q4m.31tools.com/">Q4M<br />
+</a>
+</li>
+<li><a href="http://gearman.org">Gearman</a></li>
+<li><a href="http://activemq.apache.org/">ActiveMQ</a></li>
+<li><a href="http://kr.github.com/beanstalkd/">beanstalkd</a></li>
+</ul>
+<p>で、Q4Mを試そうとしたらMySQL5.1以降でないとダメとか。<br />
+ちょっとした事情で「5.1以降」という制約は避けたいので、Gearmanを試してみる事に。<br />
+※最後のbeanstalkdは<a href="http://rad-dev.org/">lithium</a>から使えるみたいです(<a href="http://rad-dev.org/li3_queue">li3_queue</a>)。<br />
+<a id="more"></a><a id="more-190"></a></p>
+<h3>仕組み</h3>
+<p>図解は<a href="http://gearman.org/images/gearman_stack.png">公式サイトの図</a>を見て下さい。</p>
+<p>登場人物は大きく３つ。</p>
+<ul>
+<li> ・Client：処理を依頼する人</li>
+<li> ・Worker：依頼された処理を実行する人</li>
+<li> ・JobServer：ClientとWorkerの橋渡しをする人</li>
+</ul>
+<p>JobServerはdaemonで常駐していて、<br />
+Clientからの要求がある度に、別途常駐しているWorkerに対して処理を投げます。<br />
+かなりシンプルです。</p>
+<h3>使い道</h3>
+<p>Client側から処理を依頼するパターンはだいたい４つ。</p>
+<ul>
+<li>今すぐ依頼して、その結果を受け取る</li>
+<li>今すぐ依頼して、結果を待たずに終了する</li>
+<li>タスクを追加して、最後にまとめて実行して、その結果を受け取る</li>
+<li>タスクを追加して、最後にまとめて実行して、結果を待たずに終了する</li>
+</ul>
+<h3>インストール</h3>
+<p>Gearmanサーバーのインストール</p>
+<blockquote><p>wget <a href="http://launchpad.net/gearmand/trunk/0.11/+download/gearmand-0.11.tar.gz">http://launchpad.net/gearmand/trunk/0.11/+download/gearmand-0.11.tar.gz</a><br />
+tar zxf gearmand-0.11.tar.gz<br />
+cd gearmand-0.11<br />
+./configure<br />
+make; make install</p></blockquote>
+<p>起動</p>
+<blockquote><p>/usr/local/sbin/gearmand  -u root &ndash;daemon</p></blockquote>
+<p>php extensionのインストール</p>
+<blockquote><p>wget <a href="http://pecl.php.net/get/gearman-0.6.0.tgz">http://pecl.php.net/get/gearman-0.6.0.tgz</a><br />
+tar zxf gearman-0.6.0.tgz<br />
+cd gearman-0.6.0<br />
+phpize<br />
+./configure<br />
+make; make install</p></blockquote>
+<h3>サンプル</h3>
+<h4>今すぐ依頼して、結果を受け取るパターン</h4>
+<p>worker.php</p></p>
+
+<pre><code class="language-php">&lt;? php
+$worker = new GearmanWorker();
+$worker-&gt;addServer();
+$worker-&amp;gt;addFunction('hoge','hoge_func');
+// 常駐
+while($worker-&amp;gt;work());
+
+function hoge_func(GearmanJob $job)
+{
+    return 'hoge'.$job-&amp;gt;workload();
+}
+</code></pre>
+
+<p>&lt;? php</p>
+
+<p>client.php</p>
+
+<pre><code class="language-php">&lt;? php
+$worker = new GearmanWorker();
+$worker-&gt;addServer();
+echo  $client-&amp;gt;do('hoge', 'hello');
+echo &quot;\n&quot;;
+</code></pre>
+
+<p>実行してみる</p>
+<blockquote><p>$ php woker.php &amp;<br />
+$ php client.php<br />
+hello, hoge</p></blockquote>
+<p>これだけだとほぼ意味ないので、重い処理を遅延実行させてみます。</p>
+<h4>今すぐ依頼して、結果を待たずに終了するパターン</h4>
+<p>worker.php</p>
+
+<pre><code class="language-php">&lt;? php
+$worker = new GearmanWorker();
+$worker-&amp;gt;addServer();
+$worker-&amp;gt;addFunction('hoge','hoge_func');
+$worker-&amp;gt;addFunction('heavy','heavy_func');
+// 常駐
+while($worker-&amp;gt;work());
+
+function hoge_func(GearmanJob $job)
+{
+    return 'hoge, '.$job-&amp;gt;workload();
+}
+function heavy_func(GearmanJob $job)
+{
+        echo &quot;wait...&quot;;
+        sleep(10);
+    return 'hoge, '.$job-&amp;gt;workload();
+}
+</code></pre>
+
+<p>client.php</p>
+
+<pre><code class="language-php">&lt;? php
+$client = new GearmanClient();
+$client-&gt;addServer();
+echo  $client-&amp;gt;do('hoge', 'hello');
+echo &quot;\n&quot;;
+echo $client-&amp;gt;do('heavy', 'hello (sync)');
+echo &quot;\n&quot;;
+$client-&amp;gt;doBackground('heavy', 'hello (async)');
+echo &quot;\n&quot;;
+</code></pre>
+
+<p>実行してみる</p>
+<blockquote><p>$ php worker.php &amp;<br />
+$ php client.php<br />
+hoge, hello<br />
+hoge, hello (sync)</p></blockquote>
+<p>とまぁ、doBackgroundで依頼したキューの場合、clientでは結果を受け取ってません。<br />
+これが基本的な使い方。</p>
+<h4>タスクを追加して、最後にまとめて実行して、その結果を受け取る</h4>
+<p>task_client.php</p>
+
+<pre><code class="language-php">&lt;? php
+$client = new GearmanClient();
+$client-&gt;addServer();
+$client-&gt;setCompleteCallback('task_cb');
+$client-&gt;addTask('hoge', 'arg1');
+$client-&gt;addTask('heavy', 'arg2');
+$client-&gt;runTasks();
+function task_cb(GearmanTask $task)
+{
+    echo '[result]'.$task-&gt;data();
+    echo &quot;\n&quot;;
+}
+</code></pre>
+
+<blockquote><p>
+$ worker.php &<br />
+$ task_client.php<br />
+[result]hoge, arg1<br />
+[result]hoge, arg2
+</p></blockquote>
+
+<p>と、ひとつめの結果表示のあとには重い処理待ちが発生します。</p>
+<h4>タスクを追加して、最後にまとめて実行して、結果を待たずに終了する</h4>
+<p>重い処理をバックグラウンドのタスクとして登録します。<br />
+task_client.php</p>
+
+<pre><code class="language-php">&lt;? php
+
+$client = new GearmanClient();
+$client-&gt;addServer();
+$client-&gt;setCompleteCallback('task_cb');
+$client-&gt;addTask('hoge', 'arg1');
+$client-&gt;addTaskBackground('heavy', 'arg2');
+$client-&gt;runTasks();
+
+function task_cb(GearmanTask $task)
+{
+        echo '[result]'.$task-&gt;data();
+        echo &quot;\n&quot;;
+}
+</code></pre>
+
+<p>実行</p>
+
+<p><blockquote><p>
+[result]hoge, arg1
+</p></blockquote>
+<p>addTaskBackgroundで追加したタスクの結果のみ待たずに処理が終了します。<br />
+この例だと意味ないですが、今すぐ結果を必要としない処理を後回しにすることでユーザーへのレスポンスを高速化することができます。</p>
+<h3>注意点</h3>
+<h4>引数は数字と文字列のみ</h4>
+<p>配列やオブジェクトではやりとりできないので、<br />
+そういったものはシリアライズするとかjsonにするとかして渡さないとだめです。</h4>
+<h4>workerが見つかるまで待つ</h4>
+<p>clientからリクエストするworker名が存在しない（常駐していない場合）は、<br />
+JobServerはworkerが見つかるまで待ちます。clientがバックグラウンドで依頼しなければそちらでも待ちが発生します。で、対象workerを起動すると即座にJobServerはキュー処理をworkerに渡します。当然ですが。</p>
+<p>もう少し現実的な処理の中でqueueingして試したかったのですが、<br />
+まずは入り口ということで。次回はもうちょっと突っ込んだ処理をやってみたいと。</p>
+<h3>参考資料</h3>
+<ul>
+<li><a href="http://gearman.org">Gearman(公式サイト)</a></li>
+<li><a href="http://www.php.net/manual/en/book.gearman.php">PHP: Gearman - Manual</a></li>
+<li><a href="http://www.ibm.com/developerworks/jp/opensource/library/os-php-gearman/">Gearman を使って PHP アプリケーションのワークロードを分散する</a></li>
+</ul></p>
+
+			  <div class="sharing">
+  <ul>
+  <li><a href="http://blog.restartr.com/2010/01/31/gearmane381a7queueing" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+  <li><a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2010/01/31/gearmane381a7queueing" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2010/01/31/gearmane381a7queueing" >Tweet</a></li>
+  <li><a data-pocket-label="pocket" data-pocket-count="horizontal" class="pocket-btn" data-lang="en"></a><script type="text/javascript">!function(d,i){if(!d.getElementById(i)){var j=d.createElement("script");j.id=i;j.src="https://widgets.getpocket.com/v1/j/btn.js?v=1";var w=d.getElementById(i);d.body.appendChild(j);}}(document,"pocket-btn-js");</script></li>
+  </ul>
+</div>
+<script type="text/javascript">
+  (function(){
+    var twitterWidgets = document.createElement('script');
+    twitterWidgets.type = 'text/javascript';
+    twitterWidgets.async = true;
+    twitterWidgets.src = '//platform.twitter.com/widgets.js';
+    document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+  })();
+</script>
+<hr />
+
+			   <footer>
+  <p class="meta">
+    <ul class="params">
+    <li>Category: [PHP]</li>
+    <li class="">Tags: [jobqueue gearman]</li>
+    <li><span class="byline author vcard">Posted by <span class="fn">ReSTARTR</span></span></li>
+    <li><time datetime="2010-01-31 00:16:51 &#43;0900 JST" pubdate data-updated="true">2010-01-31(Sun)</time></li>
+    </ul>
+  </p>
+</footer>
+
+			</div>
+
+			
+		</div>
+
+  </body>
+</html>

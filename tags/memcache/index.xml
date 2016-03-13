@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Memcache on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/memcache/</link>
+    <description>Recent content in Memcache on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Mon, 21 Apr 2014 00:17:33 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/memcache/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Goでmemcachedのstatsを取得する</title>
+      <link>http://blog.restartr.com/2014/04/21/golang-memcache-stats-client</link>
+      <pubDate>Mon, 21 Apr 2014 00:17:33 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2014/04/21/golang-memcache-stats-client</guid>
+      <description>
+
+&lt;p&gt;YouTubeで使われている&lt;a href=&#34;https://github.com/youtube/vitess&#34;&gt;vitess&lt;/a&gt;の実装をざっと見てたところ、memcachedクライアント実装が簡潔でわかりやすかったので出来る限りラフに実装を写経してみました。&lt;/p&gt;
+
+&lt;p&gt;やってることはコマンドラインからアドレスを受け取って、memcachedのstatsを表示するだけです。&lt;/p&gt;
+
+&lt;h3 id=&#34;この写経で学べること:73a14f702b9f2e9f68d8015c0962278f&#34;&gt;この写経で学べること&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;flagパッケージを使ったコマンドライン引数の取得&lt;/li&gt;
+&lt;li&gt;netパッケージを使ったネットワーク接続&lt;/li&gt;
+&lt;li&gt;bufioパッケージを使ったストリームの読み出し&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;main:73a14f702b9f2e9f68d8015c0962278f&#34;&gt;main()&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;func main() {
+	// 引数読み出し
+	address := flag.String(&amp;quot;address&amp;quot;, &amp;quot;localhost:11211&amp;quot;, &amp;quot;server address&amp;quot;)
+	flag.Parse()
+	fmt.Printf(&amp;quot;server: %s\n&amp;quot;, *address)
+
+	// サーバーに接続
+	conn, err := GetConn(*address)
+	if err != nil {
+		fmt.Printf(&amp;quot;%#v&amp;quot;, err)
+		os.Exit(1)
+	}
+	defer conn.conn.Close()
+
+	// stats読み出し
+	result, _ := conn.Stats()
+	fmt.Printf(&amp;quot;%s&amp;quot;, result)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;実行結果:73a14f702b9f2e9f68d8015c0962278f&#34;&gt;実行結果&lt;/h3&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ go run ./memcache_stats.go --address=localhost:11211
+server: localhost:11211
+STAT pid 23282
+STAT uptime 12425
+STAT time 1398007875
+STAT version 1.4.4
+STAT pointer_size 64
+STAT rusage_user 0.335948
+STAT rusage_system 0.344947
+  :
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;実装全体:73a14f702b9f2e9f68d8015c0962278f&#34;&gt;実装全体&lt;/h3&gt;
+
+&lt;p&gt;{% gist 11116595 memcache_stats.go %}&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

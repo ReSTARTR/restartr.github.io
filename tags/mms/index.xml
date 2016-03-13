@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Mms on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/mms/</link>
+    <description>Recent content in Mms on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 01 May 2011 22:18:15 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/mms/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>SIMフリーのandroid端末でSoftBankのMMSを受信する方法</title>
+      <link>http://blog.restartr.com/2011/05/01/how-to-send-and-receive-softbank-mms-on-sim-free-android</link>
+      <pubDate>Sun, 01 May 2011 22:18:15 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2011/05/01/how-to-send-and-receive-softbank-mms-on-sim-free-android</guid>
+      <description>
+
+&lt;p&gt;Desire SでS!メールを受信しようと、apnの設定をしてみたのですが、全く送受信が成功しませんでした。
+いろいろ調査していたところ、SoftBankメールのアプリのバージョンが原因だと判明しました。
+古いバージョンをインストールすれば問題ないようです。&lt;/p&gt;
+
+&lt;p&gt;SoftBankメールを送受信するための手順を下記に記しておきます。&lt;/p&gt;
+
+&lt;h3 id=&#34;1-apn設定:f19db98a2463d62c89b1e15e991dd2b1&#34;&gt;1.apn設定&lt;/h3&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align=&#34;left&#34;&gt;項目名&lt;/th&gt;
+&lt;th align=&#34;left&#34;&gt;設定値&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;名前&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;＜任意＞&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;APN&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;smile.world&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;プロキシ&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;＜未設定＞&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;ポート&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;＜未設定＞&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;ユーザー名&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;dna1trop&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;パスワード&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;so2t3k3m2a&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;MMSC&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;&lt;a href=&#34;http://mms/&#34;&gt;http://mms/&lt;/a&gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;MMSプロキシ&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;smilemms.softbank.ne.jp&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;MMSポート&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;8080&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;MCC&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;440&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;MNC&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;20&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;認証タイプ&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;＜未設定&amp;gt;&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;left&#34;&gt;APNタイプ&lt;/td&gt;
+&lt;td align=&#34;left&#34;&gt;＜未設定＞&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;※こちらを参考にしました。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.yukinishijima.net/android/android-dev-phone-1-%E3%81%A7mms%E3%82%92%E4%BD%BF%E3%81%88%E3%82%8B%E3%82%88%E3%81%86%E3%81%AB%E3%81%99%E3%82%8B%E3%81%BE%E3%81%A7%E3%81%AE%E9%81%93%E3%81%AE%E3%82%8A&#34;&gt;Android Dev Phone 1 でMMSを使えるようにするまでの道のり&amp;nbsp;|&amp;nbsp;Yuki Nishijima Blog&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;2-softbankメールをインストール:f19db98a2463d62c89b1e15e991dd2b1&#34;&gt;2.SoftBankメールをインストール&lt;/h3&gt;
+
+&lt;p&gt;最新版(2011.05.01時点でv2.1)の&lt;a href=&#34;https://market.android.com/details?id=jp.softbank.mb.mail&#34;&gt;SoftBankメール&lt;/a&gt;では送受信に失敗します。&lt;/p&gt;
+
+&lt;p&gt;なので、下記ブログ記事よりv1.6の古いバージョンをダウンロード＆インストールします。
+※既にAndroidマーケットから最新版をダウンロードしている場合は、そちらを先にアンインストールしておく必要があります。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://gadgetordiary.wordpress.com/2011/04/13/softbank%E3%83%A1%E3%83%BC%E3%83%AB%E3%82%A2%E3%83%97%E3%83%AA1-6%E3%82%92%E5%86%8D%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB/&#34;&gt;Softbankメールアプリ1.6を再インストール &amp;laquo; デジタルガジェッター日記&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;端末のブラウザからダウンロードしてインストールするか、android-sdkの入っているPCから&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;adb install jp.softbank.mb.mail-1.6.apk
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;でインストールできます。&lt;/p&gt;
+
+&lt;p&gt;あとは、アプリを起動すればメールの閲覧や送信が自由にできます。&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

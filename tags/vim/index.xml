@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Vim on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/vim/</link>
+    <description>Recent content in Vim on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 20 Apr 2014 16:15:21 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/vim/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>vimで特定のファイルタイプだけタブインデントにする方法</title>
+      <link>http://blog.restartr.com/2014/04/20/vimrc-noexpandtab-in-golang</link>
+      <pubDate>Sun, 20 Apr 2014 16:15:21 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2014/04/20/vimrc-noexpandtab-in-golang</guid>
+      <description>&lt;p&gt;rubyやpythonなど通常のプログラムを書く場合は、基本的にソフトタブ(2spaces)でインデントされるようにvimを設定しています。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-vim&#34;&gt;set noexpandtab
+set tabstop=2
+set shiftwidth=2
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;けれど、Goの場合はインデントはハードタブが通例。&lt;/p&gt;
+
+&lt;p&gt;なので拡張子が&amp;rdquo;.go&amp;rdquo;の場合だけハードタブでインデントするための設定を.vimrcに書いておきます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-vim&#34;&gt;if expand(&amp;quot;%:t&amp;quot;) =~ &amp;quot;.*\.go&amp;quot;
+  set noexpandtab
+  set tabstop=4
+  set shiftwidth=4
+endif
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code&gt;%:t&lt;/code&gt;はディレクトリ含まないファイル名。&lt;/p&gt;
+
+&lt;p&gt;autocmd使うほうが良いかも。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-vim&#34;&gt;au BufNewFile,BufRead *.go set noexpandtab tabstop=4 shiftwidth=4
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ちなみに、&lt;code&gt;set expandtab&lt;/code&gt;してる状態でタブを入力する場合は&lt;code&gt;Ctrl-v + &amp;lt;tab&amp;gt;&lt;/code&gt;でハードタブが入力できます。&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

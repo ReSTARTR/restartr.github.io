@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Lithium on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/lithium/</link>
+    <description>Recent content in Lithium on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 03 Oct 2010 20:26:48 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/lithium/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>PHPMATSURI - PHPハッカー達による一泊二日のハックデイ</title>
+      <link>http://blog.restartr.com/2010/10/03/phpmatsuri-hack-days-by-php-hackers</link>
+      <pubDate>Sun, 03 Oct 2010 20:26:48 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2010/10/03/phpmatsuri-hack-days-by-php-hackers</guid>
+      <description>&lt;p&gt;&lt;a title=&#34;IMG_2470 by ReSTARTR_y, on Flickr&#34; href=&#34;http://www.flickr.com/photos/53244662@N04/5046336051/&#34;&gt;&lt;img src=&#34;http://farm5.static.flickr.com/4154/5046336051_aabef10eb4.jpg&#34; alt=&#34;IMG_2470&#34; width=&#34;500&#34; height=&#34;333&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;http://2010.phpmatsuri.net/&#34;&gt;&lt;img class=&#34;alignnone size-medium wp-image-341&#34; title=&#34;PHPMATSURI&#34; src=&#34;http://blog.restartr.com/wp-content/uploads/2010/10/bunner-300x132.jpg&#34; alt=&#34;&#34; width=&#34;300&#34; height=&#34;132&#34; /&gt;&lt;/a&gt;&lt;br /&gt;
+10月02日と03日の、一泊二日の&lt;a href=&#34;http://2010.phpmatsuri.net/&#34;&gt;PHPMASTURI&lt;/a&gt;に参加してきました。&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;ハッシュタグ: &lt;a href=&#34;http://search.twitter.com/search?q=%23phpmatsuri&#34;&gt;#phpmatsuri&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;LTのustream: &lt;a href=&#34;http://www.ustream.tv/channel/phpmatsuri&#34;&gt;phpmatsuri on USTREAM&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;とにかく内容が濃い&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;楽天の吉岡さんによる大人のプログラミングキャンプ&lt;/li&gt;
+&lt;li&gt;CakePHP,Symfony,Lithiumのデベロッパーによるセッション&lt;/li&gt;
+&lt;li&gt;彼らのライブコーディングを間近に見られる各フレームワークのワークショップ&lt;/li&gt;
+&lt;li&gt;スポンサー各社のセッション&lt;/li&gt;
+&lt;li&gt;PHPによる開発事例プレゼン大会のJIREI NIGHT&lt;/li&gt;
+&lt;li&gt;ZyngaJapanのお二人によるTDDを実体験できるワークショップ&lt;/li&gt;
+&lt;li&gt;深夜まで続くハッカソンと、総勢33名による大LT大会&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;ざっと並べただけでもこんな感じに、とにかく内容てんこ盛りな二日間でした。&lt;/p&gt;
+&lt;p&gt;&lt;a id=&#34;more&#34;&gt;&lt;/a&gt;&lt;a id=&#34;more-335&#34;&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a title=&#34;IMG_2512 by ReSTARTR_y, on Flickr&#34; href=&#34;http://www.flickr.com/photos/53244662@N04/5046956568/&#34;&gt;&lt;img src=&#34;http://farm5.static.flickr.com/4133/5046956568_dd9b08f6eb.jpg&#34; alt=&#34;IMG_2512&#34; width=&#34;500&#34; height=&#34;333&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;まとめるのは得意ではないので、参加した感想を少しばかり。&lt;/p&gt;
+&lt;h3&gt;イベントに参加するということがいかに重要であるか&lt;/h3&gt;
+&lt;p&gt;最初の吉岡さんのセッションは「この祭りをいかに楽しく有意義に過ごすか」ということを教えていただきました。また、各セッションを聞いたり、たくさんのデベロッパーの方々とコミュニケーションをとるのも非常に有意義でした。&lt;br /&gt;
+最後のLT大会では、参加したみなさんの変態ぶりに圧倒されっぱなし。これだけ多くの発表があるとそれぞれに目の付け所が違っているが故にアイデアももらえるし、そこで発表すれば多くの反応をいただくこともできます。参加することで得られるメリットは、参加費用にはかえがたいものがあったと思います。&lt;br /&gt;
+最後の締めで@yandoさんが「個人によるイベント」と仰っていて、このイベントは有志のスタッフの方々に支えられている、ことを実感しました。企画・運営をしてくださったスタッフのみなさんには本当に感謝します。&lt;br /&gt;
+そして、PHPMATSURIに関わったすべての方に感謝したいと思います。ありがとうございました。&lt;/p&gt;
+&lt;p&gt;&lt;a title=&#34;IMG_2491 by ReSTARTR_y, on Flickr&#34; href=&#34;http://www.flickr.com/photos/53244662@N04/5046334983/&#34;&gt;&lt;img src=&#34;http://farm5.static.flickr.com/4086/5046334983_8bd1c1329a.jpg&#34; alt=&#34;IMG_2491&#34; width=&#34;500&#34; height=&#34;333&#34; /&gt;&lt;/a&gt;&lt;br /&gt;
+今回のチャレンジをまとめてみます。&lt;/p&gt;
+&lt;h3&gt;チャレンジできたこと&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;CakePHP,Symfony2,Lithium各フレームワークの特徴を知る&lt;/li&gt;
+&lt;li&gt;プレゼン資料を拙いながらも英語で作成する&lt;/li&gt;
+&lt;li&gt;内容に関係なく発表者になる&lt;/li&gt;
+&lt;li&gt;動かなかったで終わらせず、動くまでハックする&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;チャレンジできなかったこと&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;各FWデベロッパーの方々とのコミュニケーション&lt;/li&gt;
+&lt;li&gt;セッションで質問する(TDDのワークでは質問しましたが)&lt;/li&gt;
+&lt;li&gt;ソースコード公開&lt;/li&gt;
+&lt;li&gt;Beer Driven Development&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;今後チャレンジしたいこと&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;今回の成果物のソースコード公開する&lt;/li&gt;
+&lt;li&gt;英語を聞く力、話す力をつける&lt;/li&gt;
+&lt;li&gt;発表の機会を自分でつくる&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;成果：XHProf CustomPanel&lt;/h3&gt;
+&lt;p&gt;※詳しい話は別記事にてやります。&lt;/p&gt;
+&lt;div id=&#34;__ss_5344576&#34; style=&#34;width: 425px;&#34;&gt;&lt;strong&gt;&lt;a title=&#34;Php matusri xhprof custompanel&#34; href=&#34;http://www.slideshare.net/restartr/php-matusri-xhprofcustompanelpublish&#34;&gt;Php matusri xhprof custompanel&lt;/a&gt;&lt;/strong&gt;&lt;object id=&#34;__sse5344576&#34; classid=&#34;clsid:d27cdb6e-ae6d-11cf-96b8-444553540000&#34; width=&#34;425&#34; height=&#34;355&#34; codebase=&#34;http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,40,0&#34;&gt;&lt;param name=&#34;allowFullScreen&#34; value=&#34;true&#34; /&gt;&lt;param name=&#34;allowScriptAccess&#34; value=&#34;always&#34; /&gt;&lt;param name=&#34;src&#34; value=&#34;http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=phpmatusri-xhprofcustompanel-publish-101003011838-phpapp02&amp;amp;stripped_title=php-matusri-xhprofcustompanelpublish&amp;amp;userName=restartr&#34; /&gt;&lt;param name=&#34;name&#34; value=&#34;__sse5344576&#34; /&gt;&lt;param name=&#34;allowfullscreen&#34; value=&#34;true&#34; /&gt;&lt;embed id=&#34;__sse5344576&#34; type=&#34;application/x-shockwave-flash&#34; width=&#34;425&#34; height=&#34;355&#34; src=&#34;http://static.slidesharecdn.com/swf/ssplayer2.swf?doc=phpmatusri-xhprofcustompanel-publish-101003011838-phpapp02&amp;amp;stripped_title=php-matusri-xhprofcustompanelpublish&amp;amp;userName=restartr&#34; name=&#34;__sse5344576&#34; allowscriptaccess=&#34;always&#34; allowfullscreen=&#34;true&#34;&gt;&lt;/embed&gt;&lt;/object&gt;&lt;/p&gt;
+&lt;div style=&#34;padding: 5px 0 12px;&#34;&gt;View more &lt;a href=&#34;http://www.slideshare.net/&#34;&gt;presentations&lt;/a&gt; from &lt;a href=&#34;http://www.slideshare.net/restartr&#34;&gt;Re STARTR&lt;/a&gt;.&lt;/div&gt;
+&lt;/div&gt;
+&lt;h3&gt;おまけ&lt;/h3&gt;
+&lt;p&gt;途中でレッドブルがふるまわれるというサービスまでありました。当日6時起きだったのに4時まで頑張れたのはレッドブルのおかげかもしれません。&lt;br /&gt;
+&lt;a title=&#34;IMG_2488 by ReSTARTR_y, on Flickr&#34; href=&#34;http://www.flickr.com/photos/53244662@N04/5046334797/&#34;&gt;&lt;img src=&#34;http://farm5.static.flickr.com/4108/5046334797_b3ed8b2f3e.jpg&#34; alt=&#34;IMG_2488&#34; width=&#34;500&#34; height=&#34;333&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;そして、最後にCakePHP開発者のGraham Weldonさんと記念撮影させてもらいました。&lt;br /&gt;
+Thanks, Graham!&lt;br /&gt;
+&lt;a title=&#34;IMG_2514 by ReSTARTR_y, on Flickr&#34; href=&#34;http://www.flickr.com/photos/53244662@N04/5046335737/&#34;&gt;&lt;img src=&#34;http://farm5.static.flickr.com/4113/5046335737_4651050be6.jpg&#34; alt=&#34;IMG_2514&#34; width=&#34;500&#34; height=&#34;333&#34; /&gt;&lt;/a&gt;&lt;br /&gt;
+#ほとんど会話できなかったのが悔やまれます。会話することを怖がらないことが大事ですね。反省。&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

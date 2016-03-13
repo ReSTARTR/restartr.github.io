@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Squeryl on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/squeryl/</link>
+    <description>Recent content in Squeryl on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Tue, 16 Aug 2011 08:00:15 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/squeryl/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>ScalaのORMapperのSquerylを試してみてハマった３つのこと</title>
+      <link>http://blog.restartr.com/2011/08/16/3-things-that-i-was-in-trouble-using-squeryl</link>
+      <pubDate>Tue, 16 Aug 2011 08:00:15 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2011/08/16/3-things-that-i-was-in-trouble-using-squeryl</guid>
+      <description>&lt;p&gt;ScalaのORMとしてSquerylってのがあります。&lt;/p&gt;
+
+&lt;p&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://squeryl.org/index.html&#34;&gt;Squeryl - A Scala ORM for SQL Databases&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+使い方は上記リンク先を見ればだいたいわかります。&lt;/p&gt;
+
+&lt;p&gt;あと、&lt;a href=&#34;http://twitter.com/jugyo&#34;&gt;@jugyo&lt;/a&gt;さんのブログに導入あたりはまとまっていますし、つまづいたらGoogleGroupで検索すれば何か見つかるかもしれません。&lt;/p&gt;
+
+&lt;p&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.twiwt.org/e/f34763&#34;&gt; Twiwt:Blog / jugyo : squeryl を試す &lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;http://blog.twiwt.org/e/7e40ce&#34;&gt;Twiwt:Blog / jugyo : Squeryl の使い方 - セットアップ, モデルの定義, テーブル作成&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://groups.google.com/group/squeryl/about&#34;&gt; Squeryl | Google Groups &lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+さて、今回はTwitterっぽいものを想定して機能を試してみたのですが、３つほどハマったところを記しておきます。&lt;/p&gt;
+
+&lt;p&gt;環境はScala2.9.0.1、Sbt0.7.7、MySQL5.5、Squeryl0.9.4です。&lt;/p&gt;
+
+&lt;p&gt;ソースはgistに登録。それを本文末尾にも掲載しておきました。&lt;/p&gt;
+
+&lt;p&gt;&lt;h3&gt;１．プライマリーキーの指定での嵌りどころ&lt;/h3&gt;
+1つのカラムがPKとなるテーブルスキーマの場合、org.squeryl.KeyedEntity[T]を継承して使います。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;
+class Users(id: Long, text: String) extends KeyedEntity[Long]
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;KeyedEntityにはidというフィールドが用意されていて、継承時に型を指定することで、PKの型に適用させることができます。今回の場合であればLong型のPK「id」ということになります。&lt;/p&gt;
+
+&lt;p&gt;ただし、この場合、PKはautoincrementedになってしまいます。&lt;/p&gt;
+
+&lt;p&gt;コード的には下記のようにKeyedEntity[T]を使わずSchema継承時に定義するのと同等になるわけです。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;
+class Users(id: Long, text: String)
+
+class Db extends Schema {
+
+  val users = table[User](&amp;quot;users&amp;quot;)
+
+  on(users)(u =&amp;gt; declare(
+
+    u.id is (primaryKey, autoincremented))
+
+}
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これは結構困ります。そんな場合はSchemaを継承するときに定義を上書きすればOK。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;
+class Users(id: Long, text: String) extends KeyedEntity[Long]
+
+class Db extends Schema {
+
+  val users = table[User](&amp;quot;users&amp;quot;)
+
+  on(users)(u =&amp;gt; declare(
+
+    u.id is (primaryKey))
+
+}
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これはSquerylのGoogleGroupに書いてました。&lt;/p&gt;
+
+&lt;p&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://groups.google.com/forum/#!topic/squeryl/BTrKBwikMqs&#34;&gt;how to cancel &amp;ldquo;autoincremented&amp;rdquo; from KeyedEntity[T]&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;２．DDLのカラムの順番の嵌りどころ&lt;/h3&gt;
+Db.printDdlを実行した時にカラムの順番が予測できません。&lt;/p&gt;
+
+&lt;p&gt;PKが最初にくるのかと思えばそうでもないみたい。ここは細かく追ってないですが、これもGoogleGroupに答えがありました。&lt;/p&gt;
+
+&lt;p&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://groups.google.com/forum/#!topic/squeryl/ZwiDf5Q-IUI&#34;&gt;CREATE TABLE columns in order of constructor arguments&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+答えとしては、org.squeryl.internals.DatabaseAdapter:: writeCreateTableあたりをorverrideしてなんとかしてくれとのこと。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/max-l/Squeryl/blob/master/src/main/scala/org/squeryl/internals/DatabaseAdapter.scala#L255&#34;&gt;https://github.com/max-l/Squeryl/blob/master/src/main/scala/org/squeryl/internals/DatabaseAdapter.scala#L255&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;なんか良い方法はないの…&lt;/p&gt;
+
+&lt;p&gt;とりあえず、printDdlした結果をコピーして、順番だけ書き換えて、手動で直接DBにクエリ発行すればなんとかなるでしょう。&lt;/p&gt;
+
+&lt;p&gt;&lt;h3&gt;３．外部キーの利用でのはまりどころ&lt;/h3&gt;
+２つのテーブルにRelationを設定してからDb.createした際、外部キーが設定されない問題がありました。&lt;/p&gt;
+
+&lt;p&gt;MySQLは5.5を使っているので外部キーに対応していない訳でもないです。&lt;/p&gt;
+
+&lt;p&gt;問題はAdapterの選定にありました。&lt;/p&gt;
+
+&lt;p&gt;org.squeryl.adapter.MySQLAdapter&lt;/p&gt;
+
+&lt;p&gt;をつかっていたのですが、&lt;/p&gt;
+
+&lt;p&gt;org.squeryl.adapter.MySQLInnoDBAdapter&lt;/p&gt;
+
+&lt;p&gt;を使えばOKでした。&lt;/p&gt;
+
+&lt;p&gt;根本の原因は、org.squeryl.adapter.MySQLAdapterに&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;
+override def supportsForeignKeyConstraints = false
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;と定義してあり、一方のorg.squeryl.adapter.MySQLInnoDBAdapterには&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;
+override def supportsForeignKeyConstraints = true
+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;と定義してあります。&lt;/p&gt;
+
+&lt;p&gt;この値がtrueになっていないとForeignKeyの制約がDDLに含まれなくなってしまうので注意です。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/max-l/Squeryl/blob/master/src/main/scala/org/squeryl/adapters/MySQLAdapter.scala#L75&#34;&gt;Docコメントにも書いてある&lt;/a&gt;ので注意です。&lt;/p&gt;
+
+&lt;p&gt;以上、Squerylを弄ってみて嵌ったことをまとめてみました。&lt;/p&gt;
+
+&lt;p&gt;&lt;h3&gt;Squerylの使用感&lt;/h3&gt;
+ちょっと前にTwitterのStreamAPIのデータをMySQLに格納するためにSquerylを使ったのと今回少し弄ってみただけなのでまだまだ知らないことだらけです。他にも機能的はたくさん用意されていると思いますし、APIも割となじみやすいので複雑すぎないテーブル定義の場合には積極的にSquerylを使っていこうと思います。&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;※ドキュメントや本体のソースを追いかけたりしながら使い方を学ぶのは非常に楽しいです:)&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;で、ソースは以下です。&lt;/p&gt;
+
+&lt;script src=&#34;https://gist.github.com/1146854.js&#34;&gt; &lt;/script&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

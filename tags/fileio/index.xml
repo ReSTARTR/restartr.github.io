@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Fileio on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/fileio/</link>
+    <description>Recent content in Fileio on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 05 Sep 2010 18:22:53 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/fileio/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>TSVファイルを処理する</title>
+      <link>http://blog.restartr.com/2010/09/05/processing-the-file-formatted-tsv</link>
+      <pubDate>Sun, 05 Sep 2010 18:22:53 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2010/09/05/processing-the-file-formatted-tsv</guid>
+      <description>&lt;p&gt;Scalaプログラミング入門をざっと読んでから少し間が空いてしまいました。&lt;br /&gt;
+第１回Scala座を見たりして刺激もらったのでちょっとScala弄りなど。&lt;br /&gt;
+※Scala座については非公式にトゥギャらせてもらっています。：&lt;a href=&#34;http://togetter.com/li/47287&#34;&gt;第１回Scala座非公式勝手まとめ&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;ちょっと雰囲気を振り返るため、普段PHPでよくやるTSVファイルの読み込みでテスト。&lt;/p&gt;
+&lt;p&gt;foo.tsvの中身はこんな感じ。&lt;/p&gt;
+&lt;pre class=&#34;brush:c&#34;&gt;
+u01,Tokyo
+u02,Osaka
+u03,Nagoya
+u04,Tokyo
+u05,Fukuoka
+u06,Nagoya
+u07,Nagoya
+u08,Shiga
+u09,Hokkaido
+u10,Osaka
+&lt;/pre&gt;
+&lt;p&gt;これの転置インデックスを作成したい。&lt;/p&gt;
+&lt;p&gt;で、&lt;a href=&#34;http://rainyday.blog.so-net.ne.jp/2007-12-01&#34;&gt;こちらのブログ記事&lt;/a&gt;とかを参考にしたりして、何回か試行錯誤してできたのがこちらのソース。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-scala&#34;&gt;import scala.collection.mutable.HashMap
+import scala.io.Source
+import scala.io.BufferedSource
+object ReadTsv
+{
+  def main( args: Array[String] )
+  {
+    val source = Source.fromFile( &amp;quot;foo.txt&amp;quot; )
+    try {
+      var m = new HashMap[String,List[String]]
+      for( line &amp;lt;- source.getLines ) {
+        val x:Array[String] = line.stripLineEnd.split(&amp;quot;,&amp;quot;)
+        m.update(x(1) , m.get(x(1)) match {
+          case Some(s) =&amp;gt; x(0) :: s
+          case None    =&amp;gt; List( x(0) )
+        })
+      }
+      println( m )
+    } finally {
+      source.asInstanceOf[BufferedSource].close
+    }
+  }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;実行&lt;/p&gt;
+```bash
+$ scalac ReadTsv.scala
+$ scala ReadTsv
+Map(Shiga -&gt; List(u08), Nagoya -&gt; List(u07, u06, u03), Tokyo -&gt; List(u04, u01), Osaka -&gt; List(u10, u02), Fukuoka -&gt; List(u05), Hokkaido -&gt; List(u09))
+```
+&lt;p&gt;手続き型な感じが色濃い気がするけど、もっと関数型的になるのでしょうか。。&lt;br /&gt;
+とりあえずコレクションとパターンマッチの練習にはなりました。&lt;/p&gt;
+&lt;p&gt;他人のプログラムを拝見するなどして、もっとScalaの理解を深める必要がありそうです。&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

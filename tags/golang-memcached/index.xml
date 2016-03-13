@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Golang Memcached on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/golang-memcached/</link>
+    <description>Recent content in Golang Memcached on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 20 Apr 2014 21:32:32 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/golang-memcached/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Goのメソッド設計</title>
+      <link>http://blog.restartr.com/2014/04/20/golang-method-design</link>
+      <pubDate>Sun, 20 Apr 2014 21:32:32 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2014/04/20/golang-method-design</guid>
+      <description>&lt;p&gt;&lt;a href=&#34;https://github.com/youtube/vitess/blob/master/go/memcache/memcache.go&#34;&gt;vitessのmemcacheクライアント実装&lt;/a&gt;を見てて思ったこと。&lt;/p&gt;
+
+&lt;p&gt;golangのメソッドは値とエラーを返す。
+つまり、呼び出す側としては、エラーを受け取るメソッドを呼び出すごとにエラー制御が必要になる。
+これを１つのメソッドの中で複数エラー制御してると可読性が下がる。
+なので、エラー制御が必要になるごとにメソッドに切り出す。&lt;/p&gt;
+
+&lt;p&gt;たぶんこんなふうに分割してくんだと思いました。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;func main() {
+	conn, err := net.Dial(&amp;quot;tcp&amp;quot;, &amp;quot;localhost:11211&amp;quot;)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;を使うなら&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;func NewConn() (conn net.Conn, err error) {
+	conn, err := net.Dial(&amp;quot;tcp&amp;quot;, &amp;quot;localhost:11211&amp;quot;)
+	if err != nil {
+		return nil, err
+	}
+	return conn, nil
+}
+
+func main() {
+	conn, err := NewConn()
+	if err != nil {
+		panic(err)
+	}
+	//
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;と言った感じ。&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

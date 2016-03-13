@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Rpmbuild on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/rpmbuild/</link>
+    <description>Recent content in Rpmbuild on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 11 May 2014 00:00:00 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/rpmbuild/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Dockerを使って任意のrubyバージョンのrpmを作成する</title>
+      <link>http://blog.restartr.com/2014/05/11/build-rpm-on-docker-container</link>
+      <pubDate>Sun, 11 May 2014 00:00:00 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2014/05/11/build-rpm-on-docker-container</guid>
+      <description>
+
+&lt;p&gt;CentOSを使ってて不便なのがruby2系のインストール。&lt;/p&gt;
+
+&lt;p&gt;rbenvやruby-buildを使うかソースからインストールするのですが、この場合、環境を構築するたびにビルドすることになり時間もかかるし大変面倒です。&lt;/p&gt;
+
+&lt;p&gt;なのでDockerを使ってクリーンな環境でRubyの最新rpmをビルドしてみました。&lt;/p&gt;
+
+&lt;p&gt;Dockerを使えばビルド環境がすぐに立ち上げられるので、rpmビルドに必要なパッケージを確認したりするのに最適です。&lt;/p&gt;
+
+&lt;p&gt;今回のソースはgithubにpushしてあります。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/ReSTARTR/ruby-rpmbuild-container&#34;&gt;ReSTARTR/ruby-rpmbuild-container&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;環境:fbab2b1e29ed5eba7b45d118a6879eff&#34;&gt;環境&lt;/h2&gt;
+
+&lt;ul&gt;
+&lt;li&gt;ゲストOS：Vagrantで起動したUbuntu-14.04&lt;/li&gt;
+&lt;li&gt;コンテナ：centos:6.4&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;ファイルの配置:fbab2b1e29ed5eba7b45d118a6879eff&#34;&gt;ファイルの配置&lt;/h2&gt;
+
+&lt;p&gt;以下ファイルを同一ディレクトリに入れておきます。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Vagrantfile&lt;/li&gt;
+&lt;li&gt;provision.sh&lt;/li&gt;
+&lt;li&gt;Dockerfile&lt;/li&gt;
+&lt;li&gt;rubybuild.sh&lt;/li&gt;
+&lt;li&gt;ruby-2.0.0-p481.spec&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&#34;手順:fbab2b1e29ed5eba7b45d118a6879eff&#34;&gt;手順&lt;/h2&gt;
+
+&lt;ol&gt;
+&lt;li&gt;ゲストOSの起動(Vagrant)&lt;/li&gt;
+&lt;li&gt;ゲストOSにsshログイン&lt;/li&gt;
+&lt;li&gt;Dockerコンテナのビルド&lt;/li&gt;
+&lt;li&gt;Dockerコンテナ内でrpmビルド&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&#34;1-ゲストosの起動:fbab2b1e29ed5eba7b45d118a6879eff&#34;&gt;1. ゲストOSの起動&lt;/h2&gt;
+
+&lt;p&gt;Vagrantfile&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-ruby&#34;&gt;# -*- mode: ruby -*-
+# vi: set ft=ruby :
+VAGRANTFILE_API_VERSION = &amp;quot;2&amp;quot;
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.vm.box = &amp;quot;ubuntu/trusty64&amp;quot;
+
+  config.vm.synced_folder &amp;quot;.&amp;quot;, &amp;quot;/vagrant&amp;quot;
+
+  config.vm.provision &amp;quot;shell&amp;quot;, path: &#39;provision.sh&#39;
+
+  # お好みで
+  config.vm.provider :virtualbox do |vb|
+    vb.customize [&amp;quot;modifyvm&amp;quot;, :id, &amp;quot;--memory&amp;quot;, &amp;quot;2048&amp;quot;, &amp;quot;--cpus&amp;quot;, &amp;quot;2&amp;quot;, &amp;quot;--ioapic&amp;quot;, &amp;quot;on&amp;quot;]
+  end
+end
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;provision.sh&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;sudo apt-get update
+sudo apt-get install -y language-pack-ja
+
+# Docker
+sudo apt-get install -y docker.io
+sudo ln -sf /usr/bin/docker.io /usr/local/bin/docker
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;2-ゲストosにsshログイン:fbab2b1e29ed5eba7b45d118a6879eff&#34;&gt;2. ゲストOSにsshログイン&lt;/h2&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ vagrant up
+$ vagrant ssh
+$ cd /vagrant
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;3-dockerコンテナのビルド:fbab2b1e29ed5eba7b45d118a6879eff&#34;&gt;3. Dockerコンテナのビルド&lt;/h2&gt;
+
+&lt;p&gt;ビルド用specファイルを用意して、シェルスクリプトでビルドします。&lt;/p&gt;
+
+&lt;p&gt;すると、コンテナにマウントしたボリュームにビルド済みのrpmファイルがコピーされます。&lt;/p&gt;
+
+&lt;h3 id=&#34;ビルド用specシェルスクリプト:fbab2b1e29ed5eba7b45d118a6879eff&#34;&gt;ビルド用specシェルスクリプト&lt;/h3&gt;
+
+&lt;p&gt;環境変数RUBY_VERSIONに&amp;rdquo;2.0.0-p481&amp;rdquo;や&amp;rdquo;2.0.0-p451&amp;rdquo;を設定すれば任意のバージョンをビルドします。&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;※デフォルトの2.0.0-p481以外はそれ用のspecファイルが必要になります。&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;rubybuild.sh&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;#!/bin/env bash
+WORKDIR=/opt/rpmbuild
+
+RUBY_VER=${RUBY_VER:-&amp;quot;2.0.0-p481&amp;quot;}
+RUBY_MAJOUR_VER=$(echo $RUBY_VER|cut -d&amp;quot;-&amp;quot; -f1)
+RUBY_MINOR_VER=$(echo $RUBY_VER|cut -d&amp;quot;-&amp;quot; -f2)
+if [ -z &amp;quot;$RUBY_MINOR_VER&amp;quot; ]; then
+  RUBY_TARBALL=&amp;quot;ruby-$RUBY_MAJOUR_VER.tar.gz&amp;quot;
+else
+  RUBY_TARBALL=&amp;quot;ruby-$RUBY_MAJOUR_VER-$RUBY_MINOR_VER.tar.gz&amp;quot;
+fi
+RUBY_REMOTE_FILE=&amp;quot;http://cache.ruby-lang.org/pub/ruby/${RUBY_MAJOUR_VER:0:3}/$RUBY_TARBALL&amp;quot;
+
+mkdir -p $WORKDIR/rpm/{BUILD,SRPMS,SPECS,SOURCES,RPMS}
+echo &amp;quot;%_topdir $WORKDIR/rpm&amp;quot; &amp;gt; $WORKDIR/.rpmmacros
+if [ ! -f $WORKDIR/rpm/SOURCES/$RUBY_TARBALL ]; then
+  wget $RUBY_REMOTE_FILE -O $WORKDIR/rpm/SOURCES/$RUBY_TARBALL
+fi
+cp $WORKDIR/ruby-${RUBY_VER}.spec $WORKDIR/rpm/SPECS/ruby.spec
+rpmbuild -bb $WORKDIR/rpm/SPECS/ruby.spec
+
+cp $WORKDIR/rpm/RPMS/x86_64/* /shared/
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;4-dockerコンテナ内でrpmビルド:fbab2b1e29ed5eba7b45d118a6879eff&#34;&gt;4. Dockerコンテナ内でrpmビルド&lt;/h2&gt;
+
+&lt;p&gt;Dockerfile&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;FROM centos:6.4
+
+# setup
+RUN yum update -y
+RUN yum install -y rpm-build gcc
+
+# epel
+RUN rpm --import http://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-6
+RUN rpm -ihv http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+
+# ruby-depends
+RUN yum install —enablerepo=epel -y libyaml-devel
+RUN yum install -y byacc readline-devel ncourses-devel tcl-devel openssl-devel gdbm-devel db4-devel
+
+# build rpm
+WORKDIR /opt/rpmbuild
+ADD rubybuild.sh /opt/rpmbuild/rubybuild.sh
+ADD ruby-2.0.0-p481.spec /opt/rpmbuild/ruby-2.0.0-p481.spec
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;コンテナ起動してrpmをビルド:fbab2b1e29ed5eba7b45d118a6879eff&#34;&gt;コンテナ起動してrpmをビルド&lt;/h2&gt;
+
+&lt;p&gt;コンテナを起動する際に、カレントディレクトリをマウントしておきます。&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;※&lt;code&gt;--rm&lt;/code&gt;オプションでrpm作成完了したらコンテナは破棄します&lt;/em&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ sudo docker build -t &amp;lt;USERNAME&amp;gt;/rpmbuild .
+$ sudo docker run --rm -v $PWD:/shared:rw -it &amp;lt;CONTAINER_ID&amp;gt; /bin/sh ./rubybuild.sh
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;成功すれば、ゲストOSのカレントディレクトリにrpmができてます。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ ls *.rpm
+ruby-2.0.0p481-2.el6.x86_64.rpm
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これで、rpmコマンド一発で最新のrubyをインストールできます。&lt;/p&gt;
+
+&lt;p&gt;rubyインストール済みコンテナを作るなら、Dockerfileに以下のように書けばruby実行環境のできあがりです。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;FROM centos:6.4
+
+# EPEL
+RUN rpm --import http://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-6
+RUN rpm -ihv http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+
+# Install ruby rpm
+ADD ruby-2.0.0p481-2.el6.x86_64.rpm ruby-2.0.0p481-2.el6.x86_64.rpm
+RUN yum install -y --enablerepo=epel libyaml-devel
+RUN rpm -ihv ruby-2.0.0p481-2.el6.x86_64.rpm
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
