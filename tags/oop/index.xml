@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Oop on I Will Survive</title>
-    <link>http://blog.restartr.com/tags/oop/</link>
+    <link>/tags/oop/</link>
     <description>Recent content in Oop on I Will Survive</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Mon, 01 Apr 2013 20:12:54 +0900</lastBuildDate>
-    <atom:link href="http://blog.restartr.com/tags/oop/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="/tags/oop/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>プログラマーにとっての『UMLっぽい何か』</title>
-      <link>http://blog.restartr.com/2013/04/01/uml-for-programmer</link>
+      <link>/2013/04/01/uml-for-programmer</link>
       <pubDate>Mon, 01 Apr 2013 20:12:54 +0900</pubDate>
       
-      <guid>http://blog.restartr.com/2013/04/01/uml-for-programmer</guid>
+      <guid>/2013/04/01/uml-for-programmer</guid>
       <description>
 
 &lt;p&gt;わりと普遍的な話題だったので便乗です。&lt;/p&gt;

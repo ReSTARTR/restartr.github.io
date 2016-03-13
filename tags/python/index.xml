@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Python on I Will Survive</title>
-    <link>http://blog.restartr.com/tags/python/</link>
+    <link>/tags/python/</link>
     <description>Recent content in Python on I Will Survive</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Fri, 26 Apr 2013 23:34:48 +0900</lastBuildDate>
-    <atom:link href="http://blog.restartr.com/tags/python/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="/tags/python/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>GoとPythonをZeroMQで繋ぐ</title>
-      <link>http://blog.restartr.com/2013/04/26/connect-go-and-python-with-zeromq</link>
+      <link>/2013/04/26/connect-go-and-python-with-zeromq</link>
       <pubDate>Fri, 26 Apr 2013 23:34:48 +0900</pubDate>
       
-      <guid>http://blog.restartr.com/2013/04/26/connect-go-and-python-with-zeromq</guid>
+      <guid>/2013/04/26/connect-go-and-python-with-zeromq</guid>
       <description>&lt;p&gt;最近Rubyでプロジェクトオイラーを解きながらRubyに慣れようとしてるのですが、ちょっと飽きてきたので息抜きにGoを書いたりしています。&lt;/p&gt;
 
 &lt;p&gt;ついでにZeroMQも試してみたかったので、GoとPythonをZeroMQで繋いでみました。&lt;/p&gt;
@@ -96,10 +96,10 @@ MONITOR: IN: 2083, OUT 2083
     
     <item>
       <title>pythonのクロージャに変数を束縛する方法</title>
-      <link>http://blog.restartr.com/2013/04/17/bind-a-variable-to-closure-in-python</link>
+      <link>/2013/04/17/bind-a-variable-to-closure-in-python</link>
       <pubDate>Wed, 17 Apr 2013 22:19:14 +0900</pubDate>
       
-      <guid>http://blog.restartr.com/2013/04/17/bind-a-variable-to-closure-in-python</guid>
+      <guid>/2013/04/17/bind-a-variable-to-closure-in-python</guid>
       <description>
 
 &lt;p&gt;ハマったので。&lt;/p&gt;
@@ -208,10 +208,10 @@ TypeError: readonly attribute
     
     <item>
       <title>はてなダイアリーからTumblrへデータ移行するpythonスクリプト</title>
-      <link>http://blog.restartr.com/2012/03/25/python-script-for-moving-from-movabletype-to-tumblr</link>
+      <link>/2012/03/25/python-script-for-moving-from-movabletype-to-tumblr</link>
       <pubDate>Sun, 25 Mar 2012 02:30:19 +0900</pubDate>
       
-      <guid>http://blog.restartr.com/2012/03/25/python-script-for-moving-from-movabletype-to-tumblr</guid>
+      <guid>/2012/03/25/python-script-for-moving-from-movabletype-to-tumblr</guid>
       <description>
 
 &lt;p&gt;どうも。もうすぐ入社３ヶ月が経って試用期間が終わろうとしている状況な僕です。&lt;/p&gt;
@@ -302,13 +302,13 @@ oauth_verifier:
     
     <item>
       <title>EventStatsはherokuとMongoLabとさくらVPSで動いている</title>
-      <link>http://blog.restartr.com/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps</link>
+      <link>/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps</link>
       <pubDate>Wed, 28 Dec 2011 21:27:52 +0900</pubDate>
       
-      <guid>http://blog.restartr.com/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps</guid>
+      <guid>/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps</guid>
       <description>
 
-&lt;p&gt;今月頭に&lt;a href=&#34;http://blog.restartr.com/2011/12/10/eventststs&#34;&gt;ブログ書きました&lt;/a&gt;が、EventStatsという勉強会の参加者の推移が見れるサービスを公開しました。&lt;/p&gt;
+&lt;p&gt;今月頭に&lt;a href=&#34;/2011/12/10/eventststs&#34;&gt;ブログ書きました&lt;/a&gt;が、EventStatsという勉強会の参加者の推移が見れるサービスを公開しました。&lt;/p&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;http://eventstats.restartr.com&#34;&gt;EventStats - イベントの統計情報が見れます&lt;/a&gt;&lt;/li&gt;
@@ -529,10 +529,10 @@ atndとの違い
     
     <item>
       <title>入門 自然言語処理 第一章</title>
-      <link>http://blog.restartr.com/2011/02/13/analysing-text-with-the-natual-language-toolkit-chap1</link>
+      <link>/2011/02/13/analysing-text-with-the-natual-language-toolkit-chap1</link>
       <pubDate>Sun, 13 Feb 2011 09:00:29 +0900</pubDate>
       
-      <guid>http://blog.restartr.com/2011/02/13/analysing-text-with-the-natual-language-toolkit-chap1</guid>
+      <guid>/2011/02/13/analysing-text-with-the-natual-language-toolkit-chap1</guid>
       <description>
 
 &lt;p&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/4873114705/&#34;&gt;入門 自然言語処理&lt;/a&gt;は11月に購入してから寝かせたままでしたが、本日より読み始めることにしました。&lt;/p&gt;
@@ -808,10 +808,10 @@ True&lt;/pre&gt;
     
     <item>
       <title>pythonとscalaのファイルの自動クローズ</title>
-      <link>http://blog.restartr.com/2011/02/07/automatically-close-the-file-in-python-and-scala</link>
+      <link>/2011/02/07/automatically-close-the-file-in-python-and-scala</link>
       <pubDate>Mon, 07 Feb 2011 00:10:22 +0900</pubDate>
       
-      <guid>http://blog.restartr.com/2011/02/07/automatically-close-the-file-in-python-and-scala</guid>
+      <guid>/2011/02/07/automatically-close-the-file-in-python-and-scala</guid>
       <description>&lt;p&gt;エキスパートPythonプログラミングを少しずつ読み進めています。といっても気になるタイトルを拾い読みですが。&lt;/p&gt;
 
 &lt;p&gt;そのなかの&amp;rdquo;2.4 withとcontextlib&amp;rdquo;の章のwith文の例としてファイル読み込みのコードが書いてました。
@@ -849,10 +849,10 @@ pythonのwith文と同様の記述方法をScalaでやるとしたら…こん�
     
     <item>
       <title>pythonをはじめるために</title>
-      <link>http://blog.restartr.com/2011/01/30/how-to-start-learning-python-programming</link>
+      <link>/2011/01/30/how-to-start-learning-python-programming</link>
       <pubDate>Sun, 30 Jan 2011 22:04:12 +0900</pubDate>
       
-      <guid>http://blog.restartr.com/2011/01/30/how-to-start-learning-python-programming</guid>
+      <guid>/2011/01/30/how-to-start-learning-python-programming</guid>
       <description>&lt;p&gt;&lt;a href=&#34;http://blog.restartr.com/2011/01/10/6-targets-i-want-to-achieve-in-2011/&#34;&gt;今年の目標&lt;/a&gt;として&lt;/p&gt;
 &lt;blockquote&gt;&lt;p&gt;3.pythonに手を出す&lt;/p&gt;&lt;/blockquote&gt;
 &lt;p&gt;というのを掲げていて、「エキスパートPythonプログラミング」を買ったので、pythonの学習をこんな感じではじめてみるつもり、というのを書いておきます。&lt;/p&gt;

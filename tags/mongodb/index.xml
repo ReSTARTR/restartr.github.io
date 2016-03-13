@@ -2,22 +2,22 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Mongodb on I Will Survive</title>
-    <link>http://blog.restartr.com/tags/mongodb/</link>
+    <link>/tags/mongodb/</link>
     <description>Recent content in Mongodb on I Will Survive</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Wed, 28 Dec 2011 21:27:52 +0900</lastBuildDate>
-    <atom:link href="http://blog.restartr.com/tags/mongodb/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="/tags/mongodb/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>EventStatsはherokuとMongoLabとさくらVPSで動いている</title>
-      <link>http://blog.restartr.com/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps</link>
+      <link>/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps</link>
       <pubDate>Wed, 28 Dec 2011 21:27:52 +0900</pubDate>
       
-      <guid>http://blog.restartr.com/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps</guid>
+      <guid>/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps</guid>
       <description>
 
-&lt;p&gt;今月頭に&lt;a href=&#34;http://blog.restartr.com/2011/12/10/eventststs&#34;&gt;ブログ書きました&lt;/a&gt;が、EventStatsという勉強会の参加者の推移が見れるサービスを公開しました。&lt;/p&gt;
+&lt;p&gt;今月頭に&lt;a href=&#34;/2011/12/10/eventststs&#34;&gt;ブログ書きました&lt;/a&gt;が、EventStatsという勉強会の参加者の推移が見れるサービスを公開しました。&lt;/p&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;http://eventstats.restartr.com&#34;&gt;EventStats - イベントの統計情報が見れます&lt;/a&gt;&lt;/li&gt;
@@ -238,10 +238,10 @@ atndとの違い
     
     <item>
       <title>DotCloudのMongoDBをScalaから使ってみる</title>
-      <link>http://blog.restartr.com/2011/05/28/access-from-scala-to-mongodb-on-dotcloud</link>
+      <link>/2011/05/28/access-from-scala-to-mongodb-on-dotcloud</link>
       <pubDate>Sat, 28 May 2011 20:00:57 +0900</pubDate>
       
-      <guid>http://blog.restartr.com/2011/05/28/access-from-scala-to-mongodb-on-dotcloud</guid>
+      <guid>/2011/05/28/access-from-scala-to-mongodb-on-dotcloud</guid>
       <description>
 
 &lt;p&gt;DotCloudにDuoStackが&lt;a href=&#34;http://gigaom.com/cloud/exclusive-paas-startups-unite-dotcloud-buys-duostack/&#34;&gt;買収され&lt;/a&gt;て、DotCloudでもMongoDBが使えるようになりましたし、node.jsも使えるしで、ますますDotCloudが魅力的なものになってきました。&lt;/p&gt;
@@ -428,10 +428,10 @@ switched to db sampledb
     
     <item>
       <title>ScalaからMongoDBへアクセスする - Salat編</title>
-      <link>http://blog.restartr.com/2011/03/09/access-to-mongodb-in-scala-with-salat</link>
+      <link>/2011/03/09/access-to-mongodb-in-scala-with-salat</link>
       <pubDate>Wed, 09 Mar 2011 09:00:38 +0900</pubDate>
       
-      <guid>http://blog.restartr.com/2011/03/09/access-to-mongodb-in-scala-with-salat</guid>
+      <guid>/2011/03/09/access-to-mongodb-in-scala-with-salat</guid>
       <description>&lt;p&gt;前回はCasbahというライブラリを使ってMongoDBへアクセスしてみました。&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&#34;http://blog.restartr.com/2011/03/07/access-to-mongodb-in-scala-with-casbah/&#34;&gt;ScalaからMongoDBへアクセスする ? Casbah編&lt;/a&gt;&lt;/p&gt;
@@ -570,10 +570,10 @@ println(grater[Group].asDBObject(group))
     
     <item>
       <title>ScalaからMongoDBへアクセスする - Casbah編</title>
-      <link>http://blog.restartr.com/2011/03/07/access-to-mongodb-in-scala-with-casbah</link>
+      <link>/2011/03/07/access-to-mongodb-in-scala-with-casbah</link>
       <pubDate>Mon, 07 Mar 2011 08:45:28 +0900</pubDate>
       
-      <guid>http://blog.restartr.com/2011/03/07/access-to-mongodb-in-scala-with-casbah</guid>
+      <guid>/2011/03/07/access-to-mongodb-in-scala-with-casbah</guid>
       <description>&lt;p&gt;ここ２，３日、ScalaからMongoDBへのアクセスのため、CasbahとSalatをお試し中です。&lt;/p&gt;
 
 &lt;p&gt;もともとはAkkaを弄ってたんですが、Akkaに含まれるPersistent(MongoDBなどNoSQLへの接続用)がなくなるらしいので、別のがないかなー、と寄り道したのがきっかけです。&lt;/p&gt;

@@ -2,387 +2,387 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://blog.restartr.com/</loc>
+    <loc>/</loc>
     <lastmod>2016-03-13T20:00:00+09:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2016/03/13/from-octopress-to-hugo</loc>
+    <loc>/2016/03/13/from-octopress-to-hugo</loc>
     <lastmod>2016-03-13T20:00:00+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2016/02/27/ec2-ls-hosts</loc>
+    <loc>/2016/02/27/ec2-ls-hosts</loc>
     <lastmod>2016-02-27T17:28:53+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2016/02/17/ergodox-ez</loc>
+    <loc>/2016/02/17/ergodox-ez</loc>
     <lastmod>2016-02-17T22:57:45+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2015/12/31/things-of-2015</loc>
+    <loc>/2015/12/31/things-of-2015</loc>
     <lastmod>2015-12-31T18:59:46+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix</loc>
+    <loc>/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix</loc>
     <lastmod>2015-10-21T19:32:17+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2015/10/15/go-programming-blueprints</loc>
+    <loc>/2015/10/15/go-programming-blueprints</loc>
     <lastmod>2015-10-15T19:54:29+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2015/03/09/consul-cluster-with-docker</loc>
+    <loc>/2015/03/09/consul-cluster-with-docker</loc>
     <lastmod>2015-03-09T00:22:13+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2015/01/18/peek-for-profiling-rails-app</loc>
+    <loc>/2015/01/18/peek-for-profiling-rails-app</loc>
     <lastmod>2015-01-18T13:26:53+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2014/12/31/books-2014</loc>
+    <loc>/2014/12/31/books-2014</loc>
     <lastmod>2014-12-31T20:22:02+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2014/08/20/microservices-architecture</loc>
+    <loc>/2014/08/20/microservices-architecture</loc>
     <lastmod>2014-08-20T00:14:35+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2014/08/13/golang-json-marshal-unmarshal</loc>
+    <loc>/2014/08/13/golang-json-marshal-unmarshal</loc>
     <lastmod>2014-08-13T00:02:42+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2014/06/28/about-docker-libchan</loc>
+    <loc>/2014/06/28/about-docker-libchan</loc>
     <lastmod>2014-06-28T14:44:23+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2014/05/11/build-rpm-on-docker-container</loc>
+    <loc>/2014/05/11/build-rpm-on-docker-container</loc>
     <lastmod>2014-05-11T00:00:00+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2014/04/22/tech-podcast-list</loc>
+    <loc>/2014/04/22/tech-podcast-list</loc>
     <lastmod>2014-04-22T23:58:29+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2014/04/21/golang-memcache-stats-client</loc>
+    <loc>/2014/04/21/golang-memcache-stats-client</loc>
     <lastmod>2014-04-21T00:17:33+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2014/04/20/golang-method-design</loc>
+    <loc>/2014/04/20/golang-method-design</loc>
     <lastmod>2014-04-20T21:32:32+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2014/04/20/vimrc-noexpandtab-in-golang</loc>
+    <loc>/2014/04/20/vimrc-noexpandtab-in-golang</loc>
     <lastmod>2014-04-20T16:15:21+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2014/04/07/mysql-character-set-utf8mb4</loc>
+    <loc>/2014/04/07/mysql-character-set-utf8mb4</loc>
     <lastmod>2014-04-07T08:12:32+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2014/04/06/reload-varnish-vcl</loc>
+    <loc>/2014/04/06/reload-varnish-vcl</loc>
     <lastmod>2014-04-06T15:38:08+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2014/04/06/move-from-wordpress-to-octopress</loc>
+    <loc>/2014/04/06/move-from-wordpress-to-octopress</loc>
     <lastmod>2014-04-06T13:00:00+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2013/04/26/connect-go-and-python-with-zeromq</loc>
+    <loc>/2013/04/26/connect-go-and-python-with-zeromq</loc>
     <lastmod>2013-04-26T23:34:48+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2013/04/17/bind-a-variable-to-closure-in-python</loc>
+    <loc>/2013/04/17/bind-a-variable-to-closure-in-python</loc>
     <lastmod>2013-04-17T22:19:14+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2013/04/05/my-first-pytest</loc>
+    <loc>/2013/04/05/my-first-pytest</loc>
     <lastmod>2013-04-05T21:00:24+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2013/04/02/retirement201303</loc>
+    <loc>/2013/04/02/retirement201303</loc>
     <lastmod>2013-04-02T22:45:29+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2013/04/01/uml-for-programmer</loc>
+    <loc>/2013/04/01/uml-for-programmer</loc>
     <lastmod>2013-04-01T20:12:54+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2012/12/22/eventstats-support-connpass</loc>
+    <loc>/2012/12/22/eventstats-support-connpass</loc>
     <lastmod>2012-12-22T22:54:54+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2012/03/25/python-script-for-moving-from-movabletype-to-tumblr</loc>
+    <loc>/2012/03/25/python-script-for-moving-from-movabletype-to-tumblr</loc>
     <lastmod>2012-03-25T02:30:19+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps</loc>
+    <loc>/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps</loc>
     <lastmod>2011-12-28T21:27:52+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2011/12/10/eventstats</loc>
+    <loc>/2011/12/10/eventstats</loc>
     <lastmod>2011-12-10T18:58:51+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2011/12/02/dropped-out</loc>
+    <loc>/2011/12/02/dropped-out</loc>
     <lastmod>2011-12-02T21:27:57+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2011/10/10/play-framework-study-in-tokyo</loc>
+    <loc>/2011/10/10/play-framework-study-in-tokyo</loc>
     <lastmod>2011-10-10T15:59:13+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2011/08/30/config-libraries-in-scala</loc>
+    <loc>/2011/08/30/config-libraries-in-scala</loc>
     <lastmod>2011-08-30T00:02:15+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2011/08/16/3-things-that-i-was-in-trouble-using-squeryl</loc>
+    <loc>/2011/08/16/3-things-that-i-was-in-trouble-using-squeryl</loc>
     <lastmod>2011-08-16T08:00:15+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2011/06/21/go-to-varnish-study-tokyovc</loc>
+    <loc>/2011/06/21/go-to-varnish-study-tokyovc</loc>
     <lastmod>2011-06-21T23:56:40+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2011/06/19/volunteer-at-shinchi-fukushima-pref</loc>
+    <loc>/2011/06/19/volunteer-at-shinchi-fukushima-pref</loc>
     <lastmod>2011-06-19T12:03:20+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2011/05/28/access-from-scala-to-mongodb-on-dotcloud</loc>
+    <loc>/2011/05/28/access-from-scala-to-mongodb-on-dotcloud</loc>
     <lastmod>2011-05-28T20:00:57+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2011/05/09/sample-sbt-project-for-dotcloud</loc>
+    <loc>/2011/05/09/sample-sbt-project-for-dotcloud</loc>
     <lastmod>2011-05-09T23:35:43+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2011/05/01/how-to-send-and-receive-softbank-mms-on-sim-free-android</loc>
+    <loc>/2011/05/01/how-to-send-and-receive-softbank-mms-on-sim-free-android</loc>
     <lastmod>2011-05-01T22:18:15+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2011/04/28/compare-iphone3gs-to-desire-s-e28093camera</loc>
+    <loc>/2011/04/28/compare-iphone3gs-to-desire-s-e28093camera</loc>
     <lastmod>2011-04-28T09:00:42+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2011/04/27/compare-desire-s-andiphone-3gs-f</loc>
+    <loc>/2011/04/27/compare-desire-s-andiphone-3gs-f</loc>
     <lastmod>2011-04-27T09:00:30+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2011/04/25/bought-htc-desire-s</loc>
+    <loc>/2011/04/25/bought-htc-desire-s</loc>
     <lastmod>2011-04-25T23:12:59+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2011/04/12/how-to-live-as-an-engineer</loc>
+    <loc>/2011/04/12/how-to-live-as-an-engineer</loc>
     <lastmod>2011-04-12T09:30:35+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2011/04/06/realtime-checkin-map-build-with-scala-and-jetty7-websocket</loc>
+    <loc>/2011/04/06/realtime-checkin-map-build-with-scala-and-jetty7-websocket</loc>
     <lastmod>2011-04-06T09:00:50+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2011/03/16/i-feel-a-wrongness-about-terrible-disaster</loc>
+    <loc>/2011/03/16/i-feel-a-wrongness-about-terrible-disaster</loc>
     <lastmod>2011-03-16T22:09:05+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2011/03/09/access-to-mongodb-in-scala-with-salat</loc>
+    <loc>/2011/03/09/access-to-mongodb-in-scala-with-salat</loc>
     <lastmod>2011-03-09T09:00:38+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2011/03/07/access-to-mongodb-in-scala-with-casbah</loc>
+    <loc>/2011/03/07/access-to-mongodb-in-scala-with-casbah</loc>
     <lastmod>2011-03-07T08:45:28+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2011/02/24/attended-hadoop-conference-japan-2011-hcj2011</loc>
+    <loc>/2011/02/24/attended-hadoop-conference-japan-2011-hcj2011</loc>
     <lastmod>2011-02-24T09:09:42+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2011/02/20/attended-nicotextmining-1st</loc>
+    <loc>/2011/02/20/attended-nicotextmining-1st</loc>
     <lastmod>2011-02-20T09:30:52+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2011/02/14/cookpad-the-business-that-supported-by-600-million-women</loc>
+    <loc>/2011/02/14/cookpad-the-business-that-supported-by-600-million-women</loc>
     <lastmod>2011-02-14T08:00:42+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2011/02/13/analysing-text-with-the-natual-language-toolkit-chap1</loc>
+    <loc>/2011/02/13/analysing-text-with-the-natual-language-toolkit-chap1</loc>
     <lastmod>2011-02-13T09:00:29+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2011/02/07/automatically-close-the-file-in-python-and-scala</loc>
+    <loc>/2011/02/07/automatically-close-the-file-in-python-and-scala</loc>
     <lastmod>2011-02-07T00:10:22+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2011/02/06/introduction-of-data-mining-without-formul</loc>
+    <loc>/2011/02/06/introduction-of-data-mining-without-formul</loc>
     <lastmod>2011-02-06T22:47:11+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2011/01/30/how-to-start-learning-python-programming</loc>
+    <loc>/2011/01/30/how-to-start-learning-python-programming</loc>
     <lastmod>2011-01-30T22:04:12+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2011/01/16/talk-session-what-is-programming-for-developing-a-good-software</loc>
+    <loc>/2011/01/16/talk-session-what-is-programming-for-developing-a-good-software</loc>
     <lastmod>2011-01-16T00:40:01+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2011/01/15/97things-every-programmers-should-know</loc>
+    <loc>/2011/01/15/97things-every-programmers-should-know</loc>
     <lastmod>2011-01-15T00:39:03+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2011/01/10/6-targets-i-want-to-achieve-in-2011</loc>
+    <loc>/2011/01/10/6-targets-i-want-to-achieve-in-2011</loc>
     <lastmod>2011-01-10T21:28:27+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2010/12/31/10-targets-that-i-wanted-to-achieve-in-2010</loc>
+    <loc>/2010/12/31/10-targets-that-i-wanted-to-achieve-in-2010</loc>
     <lastmod>2010-12-31T14:33:20+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2010/12/29/websocket-server-written-in-scala-with-netty</loc>
+    <loc>/2010/12/29/websocket-server-written-in-scala-with-netty</loc>
     <lastmod>2010-12-29T18:45:53+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2010/11/23/scala-erlang-php-and-me</loc>
+    <loc>/2010/11/23/scala-erlang-php-and-me</loc>
     <lastmod>2010-11-23T18:57:35+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2010/10/10/the-xhprofpanel-debugkit-custom-panel-cakephp</loc>
+    <loc>/2010/10/10/the-xhprofpanel-debugkit-custom-panel-cakephp</loc>
     <lastmod>2010-10-10T00:59:04+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2010/10/03/phpmatsuri-hack-days-by-php-hackers</loc>
+    <loc>/2010/10/03/phpmatsuri-hack-days-by-php-hackers</loc>
     <lastmod>2010-10-03T20:26:48+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2010/09/19/buy-an-amazon-kindle3</loc>
+    <loc>/2010/09/19/buy-an-amazon-kindle3</loc>
     <lastmod>2010-09-19T10:48:29+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2010/09/11/set-button-for-mixi-check-and-tweet-button-on-wordpress</loc>
+    <loc>/2010/09/11/set-button-for-mixi-check-and-tweet-button-on-wordpress</loc>
     <lastmod>2010-09-11T11:11:05+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2010/09/05/processing-the-file-formatted-tsv</loc>
+    <loc>/2010/09/05/processing-the-file-formatted-tsv</loc>
     <lastmod>2010-09-05T18:22:53+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2010/08/23/beginning-scala</loc>
+    <loc>/2010/08/23/beginning-scala</loc>
     <lastmod>2010-08-23T00:21:16+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2010/08/22/change-my-iphone3gs-display</loc>
+    <loc>/2010/08/22/change-my-iphone3gs-display</loc>
     <lastmod>2010-08-22T21:45:17+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2010/08/05/hadoop-hack-nignt-vol2</loc>
+    <loc>/2010/08/05/hadoop-hack-nignt-vol2</loc>
     <lastmod>2010-08-05T00:13:16+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2010/03/09/hadoop-hack-night</loc>
+    <loc>/2010/03/09/hadoop-hack-night</loc>
     <lastmod>2010-03-09T23:39:08+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2010/01/31/gearmane381a7queueing</loc>
+    <loc>/2010/01/31/gearmane381a7queueing</loc>
     <lastmod>2010-01-31T00:16:51+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2010/01/01/10-targets-that-i-want-to-achieve-in-2010</loc>
+    <loc>/2010/01/01/10-targets-that-i-want-to-achieve-in-2010</loc>
     <lastmod>2010-01-01T23:39:44+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2009/12/31/good-bye-2009</loc>
+    <loc>/2009/12/31/good-bye-2009</loc>
     <lastmod>2009-12-31T18:11:05+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2009/12/31/twig-is-the-template-engine-written-in-php</loc>
+    <loc>/2009/12/31/twig-is-the-template-engine-written-in-php</loc>
     <lastmod>2009-12-31T02:10:55+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2009/12/31/hello-word-press</loc>
+    <loc>/2009/12/31/hello-word-press</loc>
     <lastmod>2009-12-31T00:25:03+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/2009/12/30/about</loc>
+    <loc>/2009/12/30/about</loc>
     <lastmod>2009-12-30T13:51:29+09:00</lastmod>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/1/01/01/</loc>
+    <loc>/1/01/01/</loc>
   </url>
   
   <url>
-    <loc>http://blog.restartr.com/about/</loc>
+    <loc>/about/</loc>
   </url>
   
 </urlset>

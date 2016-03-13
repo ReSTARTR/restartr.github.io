@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Vim on I Will Survive</title>
-    <link>http://blog.restartr.com/tags/vim/</link>
+    <link>/tags/vim/</link>
     <description>Recent content in Vim on I Will Survive</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Sun, 20 Apr 2014 16:15:21 +0900</lastBuildDate>
-    <atom:link href="http://blog.restartr.com/tags/vim/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="/tags/vim/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>vimで特定のファイルタイプだけタブインデントにする方法</title>
-      <link>http://blog.restartr.com/2014/04/20/vimrc-noexpandtab-in-golang</link>
+      <link>/2014/04/20/vimrc-noexpandtab-in-golang</link>
       <pubDate>Sun, 20 Apr 2014 16:15:21 +0900</pubDate>
       
-      <guid>http://blog.restartr.com/2014/04/20/vimrc-noexpandtab-in-golang</guid>
+      <guid>/2014/04/20/vimrc-noexpandtab-in-golang</guid>
       <description>&lt;p&gt;rubyやpythonなど通常のプログラムを書く場合は、基本的にソフトタブ(2spaces)でインデントされるようにvimを設定しています。&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-vim&#34;&gt;set noexpandtab

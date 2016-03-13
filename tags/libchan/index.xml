@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Libchan on I Will Survive</title>
-    <link>http://blog.restartr.com/tags/libchan/</link>
+    <link>/tags/libchan/</link>
     <description>Recent content in Libchan on I Will Survive</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Sat, 28 Jun 2014 14:44:23 +0900</lastBuildDate>
-    <atom:link href="http://blog.restartr.com/tags/libchan/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="/tags/libchan/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Docker謹製ライブラリのlibchanについて調べてみた</title>
-      <link>http://blog.restartr.com/2014/06/28/about-docker-libchan</link>
+      <link>/2014/06/28/about-docker-libchan</link>
       <pubDate>Sat, 28 Jun 2014 14:44:23 +0900</pubDate>
       
-      <guid>http://blog.restartr.com/2014/06/28/about-docker-libchan</guid>
+      <guid>/2014/06/28/about-docker-libchan</guid>
       <description>
 
 &lt;p&gt;DockerCon2014で発表された&lt;a href=&#34;https://github.com/docker/libchan&#34;&gt;libchan&lt;/a&gt;について調べたことをまとめてみます。&lt;/p&gt;

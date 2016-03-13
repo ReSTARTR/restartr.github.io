@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Netty on I Will Survive</title>
-    <link>http://blog.restartr.com/tags/netty/</link>
+    <link>/tags/netty/</link>
     <description>Recent content in Netty on I Will Survive</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Wed, 29 Dec 2010 18:45:53 +0900</lastBuildDate>
-    <atom:link href="http://blog.restartr.com/tags/netty/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="/tags/netty/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>NettyでWebSocketサーバーを実装する</title>
-      <link>http://blog.restartr.com/2010/12/29/websocket-server-written-in-scala-with-netty</link>
+      <link>/2010/12/29/websocket-server-written-in-scala-with-netty</link>
       <pubDate>Wed, 29 Dec 2010 18:45:53 +0900</pubDate>
       
-      <guid>http://blog.restartr.com/2010/12/29/websocket-server-written-in-scala-with-netty</guid>
+      <guid>/2010/12/29/websocket-server-written-in-scala-with-netty</guid>
       <description>&lt;p&gt;この記事は &lt;a href=&#34;http://atnd.org/events/10683&#34;&gt;Scala Advent Calendar JP 2010&lt;/a&gt; 23 日目(12/29)です。&lt;/p&gt;
 &lt;p&gt;前日の &lt;a href=&#34;http://twitter.com/cooldaemon&#34;&gt;@cooldaemon&lt;/a&gt; さんが&lt;a href=&#34;http://d.hatena.ne.jp/cooldaemon/20101228&#34;&gt;Scala Actor + NIO&lt;/a&gt;という、ものすごい記事を書いていらっしゃったのでこの流れの中で投稿するのが忍びないくらいです。&lt;br /&gt;
 ＃まさか前日にNIOネタがくるとはぁぁぁ…&lt;/p&gt;

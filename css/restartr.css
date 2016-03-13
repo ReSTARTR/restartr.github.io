@@ -1,0 +1,11 @@
+body, nav.main-nav {
+  background: #fefeff;
+}
+
+#wrapper, #wrapper.home {
+  max-width: 800px;
+}
+
+#post-list h2 {
+  max-width: 100%;
+}

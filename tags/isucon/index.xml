@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Isucon on I Will Survive</title>
-    <link>http://blog.restartr.com/tags/isucon/</link>
+    <link>/tags/isucon/</link>
     <description>Recent content in Isucon on I Will Survive</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Wed, 21 Oct 2015 19:32:17 +0900</lastBuildDate>
-    <atom:link href="http://blog.restartr.com/tags/isucon/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="/tags/isucon/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Elixir/PhoenixでISUCON5予選の参考実装を書いた</title>
-      <link>http://blog.restartr.com/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix</link>
+      <link>/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix</link>
       <pubDate>Wed, 21 Oct 2015 19:32:17 +0900</pubDate>
       
-      <guid>http://blog.restartr.com/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix</guid>
+      <guid>/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix</guid>
       <description>
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/isucon/isucon5-qualify&#34;&gt;ISUCON5予選の参考実装&lt;/a&gt;を、Elixir/Phoenixで実装してみました。&lt;/p&gt;

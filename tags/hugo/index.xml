@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Hugo on I Will Survive</title>
-    <link>http://blog.restartr.com/tags/hugo/</link>
+    <link>/tags/hugo/</link>
     <description>Recent content in Hugo on I Will Survive</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Sun, 13 Mar 2016 20:00:00 +0900</lastBuildDate>
-    <atom:link href="http://blog.restartr.com/tags/hugo/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="/tags/hugo/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>OctopressからHugoに移行</title>
-      <link>http://blog.restartr.com/2016/03/13/from-octopress-to-hugo</link>
+      <link>/2016/03/13/from-octopress-to-hugo</link>
       <pubDate>Sun, 13 Mar 2016 20:00:00 +0900</pubDate>
       
-      <guid>http://blog.restartr.com/2016/03/13/from-octopress-to-hugo</guid>
+      <guid>/2016/03/13/from-octopress-to-hugo</guid>
       <description>
 
 &lt;p&gt;Octopressを使い始めて約2年。&lt;a href=&#34;http://gohugo.io/&#34;&gt;Hugo&lt;/a&gt;に乗り換えました。&lt;/p&gt;
@@ -36,25 +36,15 @@
 &lt;ul&gt;
 &lt;li&gt;config.tomlで&lt;code&gt;post = /:year/:month/:day/:title&lt;/code&gt;とすると&lt;code&gt;/2016/01/01/2016-01-01-hogehoge&lt;/code&gt;のようなパーマリンクになってしまう&lt;/li&gt;
 &lt;li&gt;slugを設定しておけばそのままいけるので修正した。&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;生成元がマルチバイト含んでるとエスケープ処理まわりで互換性が壊れるのでaliasを設定した
-
-&lt;ul&gt;
+&lt;li&gt;生成元がマルチバイト含んでるとエスケープ処理まわりで互換性が壊れるのでaliasを設定した&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;http://yet.unresolved.xyz/blog/2015/01/07/how-to-use-multibyte-title-in-hugo/&#34;&gt;Hugoでマルチバイトのタイトルをうまいこと使う - Unresolved&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&#34;https://gohugo.io/extras/aliases/&#34;&gt;https://gohugo.io/extras/aliases/&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;テーマのhydeをカスタムして、最低限の要素を取り入れた
+&lt;li&gt;テーマのhydeをカスタムして最低限の要素を取り入れた後、&lt;a href=&#34;https://github.com/digitalcraftsman/hugo-cactus-theme&#34;&gt;cactus&lt;/a&gt;に乗り換えた
 
 &lt;ul&gt;
-&lt;li&gt;ページネーション&lt;/li&gt;
-&lt;li&gt;ソーシャルボタン&lt;/li&gt;
-&lt;li&gt;トップページの要素削減&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;テーマはforkしたリポジトリにpushした
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/ReSTARTR/hyde/commit/d98a487257865470f17d5682632fe37568907ea4&#34;&gt;github.com/ReSTARTR/hyde&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;本当はもう少しマシにしたいけどとりあえずここまで。&lt;/li&gt;
+&lt;li&gt;ソーシャルタグとか色日調整とか細かいところに手を入れた&lt;/li&gt;
+&lt;li&gt;本当はもう少しマシにしたいけどとりあえずここまで&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
 &lt;li&gt;最後に手動で1ファイルずつ調整した
 

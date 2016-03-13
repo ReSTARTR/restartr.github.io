@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Hadoop on I Will Survive</title>
-    <link>http://blog.restartr.com/tags/hadoop/</link>
+    <link>/tags/hadoop/</link>
     <description>Recent content in Hadoop on I Will Survive</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Thu, 24 Feb 2011 09:09:42 +0900</lastBuildDate>
-    <atom:link href="http://blog.restartr.com/tags/hadoop/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="/tags/hadoop/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Hadoop conference japan 2011に参加してきた #hcj2011</title>
-      <link>http://blog.restartr.com/2011/02/24/attended-hadoop-conference-japan-2011-hcj2011</link>
+      <link>/2011/02/24/attended-hadoop-conference-japan-2011-hcj2011</link>
       <pubDate>Thu, 24 Feb 2011 09:09:42 +0900</pubDate>
       
-      <guid>http://blog.restartr.com/2011/02/24/attended-hadoop-conference-japan-2011-hcj2011</guid>
+      <guid>/2011/02/24/attended-hadoop-conference-japan-2011-hcj2011</guid>
       <description>
 
 &lt;p&gt;Hadoop conference japan 2011に参加してきました。&lt;/p&gt;
@@ -341,10 +341,10 @@
     
     <item>
       <title>Hadoop Hack Nignt vol2に行ってきた</title>
-      <link>http://blog.restartr.com/2010/08/05/hadoop-hack-nignt-vol2</link>
+      <link>/2010/08/05/hadoop-hack-nignt-vol2</link>
       <pubDate>Thu, 05 Aug 2010 00:13:16 +0900</pubDate>
       
-      <guid>http://blog.restartr.com/2010/08/05/hadoop-hack-nignt-vol2</guid>
+      <guid>/2010/08/05/hadoop-hack-nignt-vol2</guid>
       <description>&lt;p&gt;今更ですが、8月4日に開催された&lt;a href=&#34;http://gihyo.jp/event/2010/hadoophn2&#34;&gt;Hadoop Hack Night vol.2&lt;/a&gt;に行ってきました。&lt;br /&gt;
 ハッシュタグは&lt;a href=&#34;http://twitter.com/#search?q=%23hadoophn&#34;&gt;#hadoophn&lt;/a&gt;。&lt;/p&gt;
 &lt;p&gt;詳細なレポートは以下を参照。&lt;/p&gt;
@@ -367,10 +367,10 @@
     
     <item>
       <title>Hadoop Hack Nightに行ってきた</title>
-      <link>http://blog.restartr.com/2010/03/09/hadoop-hack-night</link>
+      <link>/2010/03/09/hadoop-hack-night</link>
       <pubDate>Tue, 09 Mar 2010 23:39:08 +0900</pubDate>
       
-      <guid>http://blog.restartr.com/2010/03/09/hadoop-hack-night</guid>
+      <guid>/2010/03/09/hadoop-hack-night</guid>
       <description>&lt;p&gt;3月8日に開催された&lt;a href=&#34;http://gihyo.jp/event/2010/hadoophn&#34;&gt;Hadoop Hack Night&lt;/a&gt;に行ってきました。&lt;br /&gt;
 ハッシュタグは&lt;a href=&#34;http://twitter.com/#search?q=%23hadoophn&#34;&gt;#hadoophn&lt;/a&gt;。&lt;/p&gt;
 &lt;p&gt;最近Hadoop界隈を色々調査していたので、これは！と思い応募開始のアナウンスとともに申し込み。&lt;br /&gt;

@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>News Podcast on I Will Survive</title>
-    <link>http://blog.restartr.com/tags/news-podcast/</link>
+    <link>/tags/news-podcast/</link>
     <description>Recent content in News Podcast on I Will Survive</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Tue, 22 Apr 2014 23:58:29 +0900</lastBuildDate>
-    <atom:link href="http://blog.restartr.com/tags/news-podcast/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="/tags/news-podcast/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>技術系podcastまとめ</title>
-      <link>http://blog.restartr.com/2014/04/22/tech-podcast-list</link>
+      <link>/2014/04/22/tech-podcast-list</link>
       <pubDate>Tue, 22 Apr 2014 23:58:29 +0900</pubDate>
       
-      <guid>http://blog.restartr.com/2014/04/22/tech-podcast-list</guid>
+      <guid>/2014/04/22/tech-podcast-list</guid>
       <description>
 
 &lt;h3 id=&#34;rebuild-podcast:a59fe0993400f9c3be8a8871a1f2bfa9&#34;&gt;Rebuild Podcast&lt;/h3&gt;

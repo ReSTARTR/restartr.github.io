@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Vcl on I Will Survive</title>
-    <link>http://blog.restartr.com/tags/vcl/</link>
+    <link>/tags/vcl/</link>
     <description>Recent content in Vcl on I Will Survive</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Sun, 06 Apr 2014 15:38:08 +0900</lastBuildDate>
-    <atom:link href="http://blog.restartr.com/tags/vcl/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="/tags/vcl/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>VarnishのVCLを再起動なしに再読み込みする</title>
-      <link>http://blog.restartr.com/2014/04/06/reload-varnish-vcl</link>
+      <link>/2014/04/06/reload-varnish-vcl</link>
       <pubDate>Sun, 06 Apr 2014 15:38:08 +0900</pubDate>
       
-      <guid>http://blog.restartr.com/2014/04/06/reload-varnish-vcl</guid>
+      <guid>/2014/04/06/reload-varnish-vcl</guid>
       <description>
 
 &lt;p&gt;/etc/varnish/default.vclを書き換えた時、&lt;/p&gt;

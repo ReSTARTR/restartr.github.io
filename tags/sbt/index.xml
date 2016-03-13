@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Sbt on I Will Survive</title>
-    <link>http://blog.restartr.com/tags/sbt/</link>
+    <link>/tags/sbt/</link>
     <description>Recent content in Sbt on I Will Survive</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Mon, 09 May 2011 23:35:43 +0900</lastBuildDate>
-    <atom:link href="http://blog.restartr.com/tags/sbt/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="/tags/sbt/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>ScalaをDotCloudにアップロードするためのsbtサンプル</title>
-      <link>http://blog.restartr.com/2011/05/09/sample-sbt-project-for-dotcloud</link>
+      <link>/2011/05/09/sample-sbt-project-for-dotcloud</link>
       <pubDate>Mon, 09 May 2011 23:35:43 +0900</pubDate>
       
-      <guid>http://blog.restartr.com/2011/05/09/sample-sbt-project-for-dotcloud</guid>
+      <guid>/2011/05/09/sample-sbt-project-for-dotcloud</guid>
       <description>
 
 &lt;p&gt;&lt;a href=&#34;http://dotcloud.com/&#34;&gt;dotcloud&lt;/a&gt;を必要最低限操作するためのactionをsbtに追加してみました。&lt;/p&gt;

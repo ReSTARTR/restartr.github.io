@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Utf8 on I Will Survive</title>
-    <link>http://blog.restartr.com/tags/utf8/</link>
+    <link>/tags/utf8/</link>
     <description>Recent content in Utf8 on I Will Survive</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Mon, 07 Apr 2014 08:12:32 +0900</lastBuildDate>
-    <atom:link href="http://blog.restartr.com/tags/utf8/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="/tags/utf8/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>MySQLでutf8mb4を扱う場合は必要なカラムと接続時だけ明示的に指定する</title>
-      <link>http://blog.restartr.com/2014/04/07/mysql-character-set-utf8mb4</link>
+      <link>/2014/04/07/mysql-character-set-utf8mb4</link>
       <pubDate>Mon, 07 Apr 2014 08:12:32 +0900</pubDate>
       
-      <guid>http://blog.restartr.com/2014/04/07/mysql-character-set-utf8mb4</guid>
+      <guid>/2014/04/07/mysql-character-set-utf8mb4</guid>
       <description>
 
 &lt;p&gt;結論はタイトルの通り。&lt;/p&gt;

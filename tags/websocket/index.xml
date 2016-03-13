@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Websocket on I Will Survive</title>
-    <link>http://blog.restartr.com/tags/websocket/</link>
+    <link>/tags/websocket/</link>
     <description>Recent content in Websocket on I Will Survive</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Wed, 06 Apr 2011 09:00:50 +0900</lastBuildDate>
-    <atom:link href="http://blog.restartr.com/tags/websocket/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="/tags/websocket/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>ScalaとJetty7のWebSocketでリアルタイムチェックインマップを作ってみた</title>
-      <link>http://blog.restartr.com/2011/04/06/realtime-checkin-map-build-with-scala-and-jetty7-websocket</link>
+      <link>/2011/04/06/realtime-checkin-map-build-with-scala-and-jetty7-websocket</link>
       <pubDate>Wed, 06 Apr 2011 09:00:50 +0900</pubDate>
       
-      <guid>http://blog.restartr.com/2011/04/06/realtime-checkin-map-build-with-scala-and-jetty7-websocket</guid>
+      <guid>/2011/04/06/realtime-checkin-map-build-with-scala-and-jetty7-websocket</guid>
       <description>
 
 &lt;p&gt;&lt;a href=&#34;http://blog.restartr.com/wp-content/uploads/2011/04/check-in-map-screenshot.png&#34;&gt;&lt;img src=&#34;http://blog.restartr.com/wp-content/uploads/2011/04/check-in-map-screenshot.png&#34; alt=&#34;チェックインマップのスクリーンショット&#34; title=&#34;チェックインマップのスクリーンショット&#34; width=&#34;619&#34; height=&#34;441&#34; class=&#34;alignnone size-full wp-image-800&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
@@ -65,10 +65,10 @@ Scala内で完結するならまだしも、JavaScriptへ転送する場合はsj
     
     <item>
       <title>NettyでWebSocketサーバーを実装する</title>
-      <link>http://blog.restartr.com/2010/12/29/websocket-server-written-in-scala-with-netty</link>
+      <link>/2010/12/29/websocket-server-written-in-scala-with-netty</link>
       <pubDate>Wed, 29 Dec 2010 18:45:53 +0900</pubDate>
       
-      <guid>http://blog.restartr.com/2010/12/29/websocket-server-written-in-scala-with-netty</guid>
+      <guid>/2010/12/29/websocket-server-written-in-scala-with-netty</guid>
       <description>&lt;p&gt;この記事は &lt;a href=&#34;http://atnd.org/events/10683&#34;&gt;Scala Advent Calendar JP 2010&lt;/a&gt; 23 日目(12/29)です。&lt;/p&gt;
 &lt;p&gt;前日の &lt;a href=&#34;http://twitter.com/cooldaemon&#34;&gt;@cooldaemon&lt;/a&gt; さんが&lt;a href=&#34;http://d.hatena.ne.jp/cooldaemon/20101228&#34;&gt;Scala Actor + NIO&lt;/a&gt;という、ものすごい記事を書いていらっしゃったのでこの流れの中で投稿するのが忍びないくらいです。&lt;br /&gt;
 ＃まさか前日にNIOネタがくるとはぁぁぁ…&lt;/p&gt;

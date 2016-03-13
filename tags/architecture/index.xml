@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Architecture on I Will Survive</title>
-    <link>http://blog.restartr.com/tags/architecture/</link>
+    <link>/tags/architecture/</link>
     <description>Recent content in Architecture on I Will Survive</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Wed, 20 Aug 2014 00:14:35 +0900</lastBuildDate>
-    <atom:link href="http://blog.restartr.com/tags/architecture/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="/tags/architecture/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>InfoQ eMAG: Microservicesを少し読んだまとめと感想</title>
-      <link>http://blog.restartr.com/2014/08/20/microservices-architecture</link>
+      <link>/2014/08/20/microservices-architecture</link>
       <pubDate>Wed, 20 Aug 2014 00:14:35 +0900</pubDate>
       
-      <guid>http://blog.restartr.com/2014/08/20/microservices-architecture</guid>
+      <guid>/2014/08/20/microservices-architecture</guid>
       <description>
 
 &lt;p&gt;なんだか、世間的にMicroservicesが次の注目対象になりそうな感じです。&lt;/p&gt;

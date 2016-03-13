@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Config on I Will Survive</title>
-    <link>http://blog.restartr.com/tags/config/</link>
+    <link>/tags/config/</link>
     <description>Recent content in Config on I Will Survive</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Tue, 30 Aug 2011 00:02:15 +0900</lastBuildDate>
-    <atom:link href="http://blog.restartr.com/tags/config/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="/tags/config/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Scalaで設定ファイルを使いたい時どうしたらいいの？</title>
-      <link>http://blog.restartr.com/2011/08/30/config-libraries-in-scala</link>
+      <link>/2011/08/30/config-libraries-in-scala</link>
       <pubDate>Tue, 30 Aug 2011 00:02:15 +0900</pubDate>
       
-      <guid>http://blog.restartr.com/2011/08/30/config-libraries-in-scala</guid>
+      <guid>/2011/08/30/config-libraries-in-scala</guid>
       <description>
 
 &lt;p&gt;&lt;em style=&#34;color:red&#34;&gt;2011.08.31 kmizushimaさんから頂いた&lt;a href=&#34;http://blog.restartr.com/2011/08/30/config-libraries-in-scala/?preview=true&amp;preview_id=1049&amp;preview_nonce=ad0bbeeef6#comment-108&#34;&gt;コメント&lt;/a&gt;を元に、下記の記述を修正＆追記しました。&lt;/p&gt;

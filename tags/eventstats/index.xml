@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Eventstats on I Will Survive</title>
-    <link>http://blog.restartr.com/tags/eventstats/</link>
+    <link>/tags/eventstats/</link>
     <description>Recent content in Eventstats on I Will Survive</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Sat, 22 Dec 2012 22:54:54 +0900</lastBuildDate>
-    <atom:link href="http://blog.restartr.com/tags/eventstats/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="/tags/eventstats/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>EventStatsをConnpassに対応させました</title>
-      <link>http://blog.restartr.com/2012/12/22/eventstats-support-connpass</link>
+      <link>/2012/12/22/eventstats-support-connpass</link>
       <pubDate>Sat, 22 Dec 2012 22:54:54 +0900</pubDate>
       
-      <guid>http://blog.restartr.com/2012/12/22/eventstats-support-connpass</guid>
+      <guid>/2012/12/22/eventstats-support-connpass</guid>
       <description>
 
 &lt;p&gt;ふと思い立って、イベントの登録者数の推移が見れるEventStatsをConnpassにも対応させました。&lt;/p&gt;
@@ -35,13 +35,13 @@
     
     <item>
       <title>EventStatsはherokuとMongoLabとさくらVPSで動いている</title>
-      <link>http://blog.restartr.com/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps</link>
+      <link>/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps</link>
       <pubDate>Wed, 28 Dec 2011 21:27:52 +0900</pubDate>
       
-      <guid>http://blog.restartr.com/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps</guid>
+      <guid>/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps</guid>
       <description>
 
-&lt;p&gt;今月頭に&lt;a href=&#34;http://blog.restartr.com/2011/12/10/eventststs&#34;&gt;ブログ書きました&lt;/a&gt;が、EventStatsという勉強会の参加者の推移が見れるサービスを公開しました。&lt;/p&gt;
+&lt;p&gt;今月頭に&lt;a href=&#34;/2011/12/10/eventststs&#34;&gt;ブログ書きました&lt;/a&gt;が、EventStatsという勉強会の参加者の推移が見れるサービスを公開しました。&lt;/p&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;http://eventstats.restartr.com&#34;&gt;EventStats - イベントの統計情報が見れます&lt;/a&gt;&lt;/li&gt;
