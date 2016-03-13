@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Docker on I Will Survive</title>
-    <link>/tags/docker/</link>
+    <link>http://blog.restartr.com/tags/docker/</link>
     <description>Recent content in Docker on I Will Survive</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Sat, 28 Jun 2014 14:44:23 +0900</lastBuildDate>
-    <atom:link href="/tags/docker/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://blog.restartr.com/tags/docker/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Docker謹製ライブラリのlibchanについて調べてみた</title>
-      <link>/2014/06/28/about-docker-libchan</link>
+      <link>http://blog.restartr.com/2014/06/28/about-docker-libchan</link>
       <pubDate>Sat, 28 Jun 2014 14:44:23 +0900</pubDate>
       
-      <guid>/2014/06/28/about-docker-libchan</guid>
+      <guid>http://blog.restartr.com/2014/06/28/about-docker-libchan</guid>
       <description>
 
 &lt;p&gt;DockerCon2014で発表された&lt;a href=&#34;https://github.com/docker/libchan&#34;&gt;libchan&lt;/a&gt;について調べたことをまとめてみます。&lt;/p&gt;
@@ -195,10 +195,10 @@ _, err := msg.Ret.Send(&amp;amp;libchan.Message{Data: []byte(&amp;quot;World&amp
     
     <item>
       <title>Dockerを使って任意のrubyバージョンのrpmを作成する</title>
-      <link>/2014/05/11/build-rpm-on-docker-container</link>
+      <link>http://blog.restartr.com/2014/05/11/build-rpm-on-docker-container</link>
       <pubDate>Sun, 11 May 2014 00:00:00 +0900</pubDate>
       
-      <guid>/2014/05/11/build-rpm-on-docker-container</guid>
+      <guid>http://blog.restartr.com/2014/05/11/build-rpm-on-docker-container</guid>
       <description>
 
 &lt;p&gt;CentOSを使ってて不便なのがruby2系のインストール。&lt;/p&gt;

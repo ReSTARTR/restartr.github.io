@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>目標 on I Will Survive</title>
-    <link>/tags/%E7%9B%AE%E6%A8%99/</link>
+    <link>http://blog.restartr.com/tags/%E7%9B%AE%E6%A8%99/</link>
     <description>Recent content in 目標 on I Will Survive</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Mon, 10 Jan 2011 21:28:27 +0900</lastBuildDate>
-    <atom:link href="/tags/%E7%9B%AE%E6%A8%99/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://blog.restartr.com/tags/%E7%9B%AE%E6%A8%99/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>2011年に達成したい6つの目標</title>
-      <link>/2011/01/10/6-targets-i-want-to-achieve-in-2011</link>
+      <link>http://blog.restartr.com/2011/01/10/6-targets-i-want-to-achieve-in-2011</link>
       <pubDate>Mon, 10 Jan 2011 21:28:27 +0900</pubDate>
       
-      <guid>/2011/01/10/6-targets-i-want-to-achieve-in-2011</guid>
+      <guid>http://blog.restartr.com/2011/01/10/6-targets-i-want-to-achieve-in-2011</guid>
       <description>&lt;p&gt;新年開けて少し経ってしまいましたが、ここで2011年の目標を立てたいと思います。&lt;br /&gt;
 去年は10個挙げましたが、どうせ途中で気が変わると思うので、最低限やっておきたいこと5つに絞りました。&lt;br /&gt;
 本業はPHPなので、PHP5.3やSymfony2なんかも学習しなければいけないのですが、ここでは本業でなかなか携われないところを中心にセレクトしました。&lt;/p&gt;

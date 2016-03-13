@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Php on I Will Survive</title>
-    <link>/tags/php/</link>
+    <link>http://blog.restartr.com/tags/php/</link>
     <description>Recent content in Php on I Will Survive</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Tue, 23 Nov 2010 18:57:35 +0900</lastBuildDate>
-    <atom:link href="/tags/php/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://blog.restartr.com/tags/php/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>ScalaとErlangとPHPと私</title>
-      <link>/2010/11/23/scala-erlang-php-and-me</link>
+      <link>http://blog.restartr.com/2010/11/23/scala-erlang-php-and-me</link>
       <pubDate>Tue, 23 Nov 2010 18:57:35 +0900</pubDate>
       
-      <guid>/2010/11/23/scala-erlang-php-and-me</guid>
+      <guid>http://blog.restartr.com/2010/11/23/scala-erlang-php-and-me</guid>
       <description>&lt;p&gt;PHPよりScalaが簡単である、という議論に対するふたつのポストがあったので、自分向けにまとめました。&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;元記事：&lt;a href=&#34;http://wadearnold.com/blog/scala/scala-is-easier-than-php&#34;&gt;Wade Arnold ? Scala is easier than PHP&lt;/a&gt;&lt;/li&gt;
@@ -96,10 +96,10 @@ PHPはいまだに最高の言語であると最初に断っておきつつ、Sc
     
     <item>
       <title>CakePHPのDebugKitにプロファイル情報が見れるXHProfPanelを追加</title>
-      <link>/2010/10/10/the-xhprofpanel-debugkit-custom-panel-cakephp</link>
+      <link>http://blog.restartr.com/2010/10/10/the-xhprofpanel-debugkit-custom-panel-cakephp</link>
       <pubDate>Sun, 10 Oct 2010 00:59:04 +0900</pubDate>
       
-      <guid>/2010/10/10/the-xhprofpanel-debugkit-custom-panel-cakephp</guid>
+      <guid>http://blog.restartr.com/2010/10/10/the-xhprofpanel-debugkit-custom-panel-cakephp</guid>
       <description>&lt;p&gt;先日のPHPMatsuriのハッカソンにて作成したXHProfの結果がみれるCustomPanelですが、そのまま公開するにはお恥ずかしい感じだったので、多少マシに改修したものを公開してみます。&lt;/p&gt;
 &lt;h3&gt;DebugKit, XHProfPanelとは&lt;/h3&gt;
 &lt;p&gt;CakePHPのDebugKitというプラグインがあり、それを使えばいろんなデバッグ情報がWeb画面上で確認できます。で、これにXHProfというphp拡張を使ってプロファイラ情報を見れるようにしてみました。&lt;/p&gt;
@@ -175,10 +175,10 @@ cakeのアプリは&lt;strong&gt;cake.localhost&lt;/strong&gt;、xhprofビュー
     
     <item>
       <title>PHPMATSURI - PHPハッカー達による一泊二日のハックデイ</title>
-      <link>/2010/10/03/phpmatsuri-hack-days-by-php-hackers</link>
+      <link>http://blog.restartr.com/2010/10/03/phpmatsuri-hack-days-by-php-hackers</link>
       <pubDate>Sun, 03 Oct 2010 20:26:48 +0900</pubDate>
       
-      <guid>/2010/10/03/phpmatsuri-hack-days-by-php-hackers</guid>
+      <guid>http://blog.restartr.com/2010/10/03/phpmatsuri-hack-days-by-php-hackers</guid>
       <description>&lt;p&gt;&lt;a title=&#34;IMG_2470 by ReSTARTR_y, on Flickr&#34; href=&#34;http://www.flickr.com/photos/53244662@N04/5046336051/&#34;&gt;&lt;img src=&#34;http://farm5.static.flickr.com/4154/5046336051_aabef10eb4.jpg&#34; alt=&#34;IMG_2470&#34; width=&#34;500&#34; height=&#34;333&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;&lt;a href=&#34;http://2010.phpmatsuri.net/&#34;&gt;&lt;img class=&#34;alignnone size-medium wp-image-341&#34; title=&#34;PHPMATSURI&#34; src=&#34;http://blog.restartr.com/wp-content/uploads/2010/10/bunner-300x132.jpg&#34; alt=&#34;&#34; width=&#34;300&#34; height=&#34;132&#34; /&gt;&lt;/a&gt;&lt;br /&gt;
 10月02日と03日の、一泊二日の&lt;a href=&#34;http://2010.phpmatsuri.net/&#34;&gt;PHPMASTURI&lt;/a&gt;に参加してきました。&lt;/p&gt;
@@ -244,10 +244,10 @@ Thanks, Graham!&lt;br /&gt;
     
     <item>
       <title>phpのテンプレートエンジンtwigとは</title>
-      <link>/2009/12/31/twig-is-the-template-engine-written-in-php</link>
+      <link>http://blog.restartr.com/2009/12/31/twig-is-the-template-engine-written-in-php</link>
       <pubDate>Thu, 31 Dec 2009 02:10:55 +0900</pubDate>
       
-      <guid>/2009/12/31/twig-is-the-template-engine-written-in-php</guid>
+      <guid>http://blog.restartr.com/2009/12/31/twig-is-the-template-engine-written-in-php</guid>
       <description>&lt;p&gt;&lt;div&gt;最近、PHPのテンプレートエンジン&lt;a href=&#34;http://www.twig-project.org/&#34; target=&#34;_blank&#34;&gt;Twig&lt;/a&gt;の紹介記事をちらほら見かけるようになってきました。&lt;/div&gt;
 &lt;div&gt;
 &lt;ul&gt;

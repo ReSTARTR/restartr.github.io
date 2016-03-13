@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on I Will Survive</title>
-    <link>/post/</link>
+    <link>http://blog.restartr.com/post/</link>
     <description>Recent content in Posts on I Will Survive</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Sun, 13 Mar 2016 20:00:00 +0900</lastBuildDate>
-    <atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://blog.restartr.com/post/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>OctopressからHugoに移行</title>
-      <link>/2016/03/13/from-octopress-to-hugo</link>
+      <link>http://blog.restartr.com/2016/03/13/from-octopress-to-hugo</link>
       <pubDate>Sun, 13 Mar 2016 20:00:00 +0900</pubDate>
       
-      <guid>/2016/03/13/from-octopress-to-hugo</guid>
+      <guid>http://blog.restartr.com/2016/03/13/from-octopress-to-hugo</guid>
       <description>
 
 &lt;p&gt;Octopressを使い始めて約2年。&lt;a href=&#34;http://gohugo.io/&#34;&gt;Hugo&lt;/a&gt;に乗り換えました。&lt;/p&gt;
@@ -111,10 +111,10 @@ git push origin master
     
     <item>
       <title>ec2-ls-hosts: EC2インスタンスを一覧するだけのシンプルツール</title>
-      <link>/2016/02/27/ec2-ls-hosts</link>
+      <link>http://blog.restartr.com/2016/02/27/ec2-ls-hosts</link>
       <pubDate>Sat, 27 Feb 2016 17:28:53 +0900</pubDate>
       
-      <guid>/2016/02/27/ec2-ls-hosts</guid>
+      <guid>http://blog.restartr.com/2016/02/27/ec2-ls-hosts</guid>
       <description>
 
 &lt;p&gt;EC2インスタンスの一覧を表示するツールをgolangでつくりました。&lt;/p&gt;
@@ -241,10 +241,10 @@ bindkey &#39;^oo&#39; peco-ec2-ls-hosts
     
     <item>
       <title>ErgoDox EZを注文した(けどまだ届いてない)</title>
-      <link>/2016/02/17/ergodox-ez</link>
+      <link>http://blog.restartr.com/2016/02/17/ergodox-ez</link>
       <pubDate>Wed, 17 Feb 2016 22:57:45 +0900</pubDate>
       
-      <guid>/2016/02/17/ergodox-ez</guid>
+      <guid>http://blog.restartr.com/2016/02/17/ergodox-ez</guid>
       <description>
 
 &lt;p&gt;&lt;img src=&#34;http://res.cloudinary.com/indiegogo-media-prod-cld/image/upload/c_limit,w_620/v1435062448/e209onukdbrkpy4fygew.png&#34; alt=&#34;ErgoDox EZ&#34; /&gt;&lt;/p&gt;
@@ -416,10 +416,10 @@ HHKB pro2が荷重45gなので、赤軸がいちばん近いです。REALFORCE�
     
     <item>
       <title>2015年ふりかえり</title>
-      <link>/2015/12/31/things-of-2015</link>
+      <link>http://blog.restartr.com/2015/12/31/things-of-2015</link>
       <pubDate>Thu, 31 Dec 2015 18:59:46 +0900</pubDate>
       
-      <guid>/2015/12/31/things-of-2015</guid>
+      <guid>http://blog.restartr.com/2015/12/31/things-of-2015</guid>
       <description>
 
 &lt;p&gt;2015年も終わりが近づいているということでご報告もかねてふりかえりを…&lt;/p&gt;
@@ -496,10 +496,10 @@ HHKB pro2が荷重45gなので、赤軸がいちばん近いです。REALFORCE�
     
     <item>
       <title>Elixir/PhoenixでISUCON5予選の参考実装を書いた</title>
-      <link>/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix</link>
+      <link>http://blog.restartr.com/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix</link>
       <pubDate>Wed, 21 Oct 2015 19:32:17 +0900</pubDate>
       
-      <guid>/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix</guid>
+      <guid>http://blog.restartr.com/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix</guid>
       <description>
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/isucon/isucon5-qualify&#34;&gt;ISUCON5予選の参考実装&lt;/a&gt;を、Elixir/Phoenixで実装してみました。&lt;/p&gt;
@@ -640,10 +640,10 @@ Phoenix/Ectoの有効性を台無しにしていること間違いなし…
     
     <item>
       <title>&#34;Go Programming Blueprints&#34;を読んだ</title>
-      <link>/2015/10/15/go-programming-blueprints</link>
+      <link>http://blog.restartr.com/2015/10/15/go-programming-blueprints</link>
       <pubDate>Thu, 15 Oct 2015 19:54:29 +0900</pubDate>
       
-      <guid>/2015/10/15/go-programming-blueprints</guid>
+      <guid>http://blog.restartr.com/2015/10/15/go-programming-blueprints</guid>
       <description>
 
 &lt;p&gt;&lt;a href=&#34;http://www.amazon.co.jp/gp/product/B00T4ACPA0)&#34;&gt;
@@ -759,10 +759,10 @@ Phoenix/Ectoの有効性を台無しにしていること間違いなし…
     
     <item>
       <title>DockerとWeaveを使って1台のマシンでConsulを複数動かしてみる</title>
-      <link>/2015/03/09/consul-cluster-with-docker</link>
+      <link>http://blog.restartr.com/2015/03/09/consul-cluster-with-docker</link>
       <pubDate>Mon, 09 Mar 2015 00:22:13 +0900</pubDate>
       
-      <guid>/2015/03/09/consul-cluster-with-docker</guid>
+      <guid>http://blog.restartr.com/2015/03/09/consul-cluster-with-docker</guid>
       <description>
 
 &lt;p&gt;軽くConsulを試してみたくて、でもVagrantで複数台仮想マシンを立ち上げるのはちょっと気が重い…ということでUbuntu14.10 on MacBookAirにDockerコンテナを複数立ち上げてクラスタを構築してみるテストをしました。&lt;/p&gt;
@@ -890,10 +890,10 @@ weaveがプロダクション環境で使えるか、という点については
     
     <item>
       <title>Peek - Railsアプリのプロファイリングツール</title>
-      <link>/2015/01/18/peek-for-profiling-rails-app</link>
+      <link>http://blog.restartr.com/2015/01/18/peek-for-profiling-rails-app</link>
       <pubDate>Sun, 18 Jan 2015 13:26:53 +0900</pubDate>
       
-      <guid>/2015/01/18/peek-for-profiling-rails-app</guid>
+      <guid>http://blog.restartr.com/2015/01/18/peek-for-profiling-rails-app</guid>
       <description>
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/peek/peek&#34;&gt;Peek&lt;/a&gt;という、Railsアプリケーションに組み込めるプロファイリングツール（群）があります。
@@ -971,10 +971,10 @@ weaveがプロダクション環境で使えるか、という点については
     
     <item>
       <title>2014年に購入した技術書</title>
-      <link>/2014/12/31/books-2014</link>
+      <link>http://blog.restartr.com/2014/12/31/books-2014</link>
       <pubDate>Wed, 31 Dec 2014 20:22:02 +0900</pubDate>
       
-      <guid>/2014/12/31/books-2014</guid>
+      <guid>http://blog.restartr.com/2014/12/31/books-2014</guid>
       <description>
 
 &lt;p&gt;投稿数を稼ぐべく、とりあえず今年購入した（であろう）本をリストアップしつつ、今年の振り返りでも。&lt;/p&gt;
@@ -1043,10 +1043,10 @@ weaveがプロダクション環境で使えるか、という点については
     
     <item>
       <title>InfoQ eMAG: Microservicesを少し読んだまとめと感想</title>
-      <link>/2014/08/20/microservices-architecture</link>
+      <link>http://blog.restartr.com/2014/08/20/microservices-architecture</link>
       <pubDate>Wed, 20 Aug 2014 00:14:35 +0900</pubDate>
       
-      <guid>/2014/08/20/microservices-architecture</guid>
+      <guid>http://blog.restartr.com/2014/08/20/microservices-architecture</guid>
       <description>
 
 &lt;p&gt;なんだか、世間的にMicroservicesが次の注目対象になりそうな感じです。&lt;/p&gt;
@@ -1157,10 +1157,10 @@ weaveがプロダクション環境で使えるか、という点については
     
     <item>
       <title>Goのjson.Marshal/Unmarshalの仕様を整理してみる</title>
-      <link>/2014/08/13/golang-json-marshal-unmarshal</link>
+      <link>http://blog.restartr.com/2014/08/13/golang-json-marshal-unmarshal</link>
       <pubDate>Wed, 13 Aug 2014 00:02:42 +0900</pubDate>
       
-      <guid>/2014/08/13/golang-json-marshal-unmarshal</guid>
+      <guid>http://blog.restartr.com/2014/08/13/golang-json-marshal-unmarshal</guid>
       <description>
 
 &lt;h3 id=&#34;tl-dr:95b5ef122b0628eff42f880d34516c78&#34;&gt;TL;DR&lt;/h3&gt;
@@ -1323,10 +1323,10 @@ fmt.Printf(&amp;quot;%s\n&amp;quot;, user) // main.User{Name:&amp;quot;restartr&
     
     <item>
       <title>Docker謹製ライブラリのlibchanについて調べてみた</title>
-      <link>/2014/06/28/about-docker-libchan</link>
+      <link>http://blog.restartr.com/2014/06/28/about-docker-libchan</link>
       <pubDate>Sat, 28 Jun 2014 14:44:23 +0900</pubDate>
       
-      <guid>/2014/06/28/about-docker-libchan</guid>
+      <guid>http://blog.restartr.com/2014/06/28/about-docker-libchan</guid>
       <description>
 
 &lt;p&gt;DockerCon2014で発表された&lt;a href=&#34;https://github.com/docker/libchan&#34;&gt;libchan&lt;/a&gt;について調べたことをまとめてみます。&lt;/p&gt;
@@ -1507,10 +1507,10 @@ _, err := msg.Ret.Send(&amp;amp;libchan.Message{Data: []byte(&amp;quot;World&amp
     
     <item>
       <title>Dockerを使って任意のrubyバージョンのrpmを作成する</title>
-      <link>/2014/05/11/build-rpm-on-docker-container</link>
+      <link>http://blog.restartr.com/2014/05/11/build-rpm-on-docker-container</link>
       <pubDate>Sun, 11 May 2014 00:00:00 +0900</pubDate>
       
-      <guid>/2014/05/11/build-rpm-on-docker-container</guid>
+      <guid>http://blog.restartr.com/2014/05/11/build-rpm-on-docker-container</guid>
       <description>
 
 &lt;p&gt;CentOSを使ってて不便なのがruby2系のインストール。&lt;/p&gt;
@@ -1692,10 +1692,10 @@ RUN rpm -ihv ruby-2.0.0p481-2.el6.x86_64.rpm
     
     <item>
       <title>技術系podcastまとめ</title>
-      <link>/2014/04/22/tech-podcast-list</link>
+      <link>http://blog.restartr.com/2014/04/22/tech-podcast-list</link>
       <pubDate>Tue, 22 Apr 2014 23:58:29 +0900</pubDate>
       
-      <guid>/2014/04/22/tech-podcast-list</guid>
+      <guid>http://blog.restartr.com/2014/04/22/tech-podcast-list</guid>
       <description>
 
 &lt;h3 id=&#34;rebuild-podcast:a59fe0993400f9c3be8a8871a1f2bfa9&#34;&gt;Rebuild Podcast&lt;/h3&gt;
@@ -1898,10 +1898,10 @@ Practical insights for the engineering crowd
     
     <item>
       <title>Goでmemcachedのstatsを取得する</title>
-      <link>/2014/04/21/golang-memcache-stats-client</link>
+      <link>http://blog.restartr.com/2014/04/21/golang-memcache-stats-client</link>
       <pubDate>Mon, 21 Apr 2014 00:17:33 +0900</pubDate>
       
-      <guid>/2014/04/21/golang-memcache-stats-client</guid>
+      <guid>http://blog.restartr.com/2014/04/21/golang-memcache-stats-client</guid>
       <description>
 
 &lt;p&gt;YouTubeで使われている&lt;a href=&#34;https://github.com/youtube/vitess&#34;&gt;vitess&lt;/a&gt;の実装をざっと見てたところ、memcachedクライアント実装が簡潔でわかりやすかったので出来る限りラフに実装を写経してみました。&lt;/p&gt;

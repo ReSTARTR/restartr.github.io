@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Ruby Rails on I Will Survive</title>
-    <link>/tags/ruby-rails/</link>
+    <link>http://blog.restartr.com/tags/ruby-rails/</link>
     <description>Recent content in Ruby Rails on I Will Survive</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Sun, 18 Jan 2015 13:26:53 +0900</lastBuildDate>
-    <atom:link href="/tags/ruby-rails/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://blog.restartr.com/tags/ruby-rails/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Peek - Railsアプリのプロファイリングツール</title>
-      <link>/2015/01/18/peek-for-profiling-rails-app</link>
+      <link>http://blog.restartr.com/2015/01/18/peek-for-profiling-rails-app</link>
       <pubDate>Sun, 18 Jan 2015 13:26:53 +0900</pubDate>
       
-      <guid>/2015/01/18/peek-for-profiling-rails-app</guid>
+      <guid>http://blog.restartr.com/2015/01/18/peek-for-profiling-rails-app</guid>
       <description>
 
 &lt;p&gt;&lt;a href=&#34;https://github.com/peek/peek&#34;&gt;Peek&lt;/a&gt;という、Railsアプリケーションに組み込めるプロファイリングツール（群）があります。

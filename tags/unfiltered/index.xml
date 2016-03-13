@@ -2,22 +2,22 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Unfiltered on I Will Survive</title>
-    <link>/tags/unfiltered/</link>
+    <link>http://blog.restartr.com/tags/unfiltered/</link>
     <description>Recent content in Unfiltered on I Will Survive</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Wed, 28 Dec 2011 21:27:52 +0900</lastBuildDate>
-    <atom:link href="/tags/unfiltered/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://blog.restartr.com/tags/unfiltered/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>EventStatsはherokuとMongoLabとさくらVPSで動いている</title>
-      <link>/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps</link>
+      <link>http://blog.restartr.com/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps</link>
       <pubDate>Wed, 28 Dec 2011 21:27:52 +0900</pubDate>
       
-      <guid>/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps</guid>
+      <guid>http://blog.restartr.com/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps</guid>
       <description>
 
-&lt;p&gt;今月頭に&lt;a href=&#34;/2011/12/10/eventststs&#34;&gt;ブログ書きました&lt;/a&gt;が、EventStatsという勉強会の参加者の推移が見れるサービスを公開しました。&lt;/p&gt;
+&lt;p&gt;今月頭に&lt;a href=&#34;http://blog.restartr.com/2011/12/10/eventststs&#34;&gt;ブログ書きました&lt;/a&gt;が、EventStatsという勉強会の参加者の推移が見れるサービスを公開しました。&lt;/p&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;http://eventstats.restartr.com&#34;&gt;EventStats - イベントの統計情報が見れます&lt;/a&gt;&lt;/li&gt;

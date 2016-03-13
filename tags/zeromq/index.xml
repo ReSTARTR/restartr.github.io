@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Zeromq on I Will Survive</title>
-    <link>/tags/zeromq/</link>
+    <link>http://blog.restartr.com/tags/zeromq/</link>
     <description>Recent content in Zeromq on I Will Survive</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Fri, 26 Apr 2013 23:34:48 +0900</lastBuildDate>
-    <atom:link href="/tags/zeromq/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://blog.restartr.com/tags/zeromq/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>GoとPythonをZeroMQで繋ぐ</title>
-      <link>/2013/04/26/connect-go-and-python-with-zeromq</link>
+      <link>http://blog.restartr.com/2013/04/26/connect-go-and-python-with-zeromq</link>
       <pubDate>Fri, 26 Apr 2013 23:34:48 +0900</pubDate>
       
-      <guid>/2013/04/26/connect-go-and-python-with-zeromq</guid>
+      <guid>http://blog.restartr.com/2013/04/26/connect-go-and-python-with-zeromq</guid>
       <description>&lt;p&gt;最近Rubyでプロジェクトオイラーを解きながらRubyに慣れようとしてるのですが、ちょっと飽きてきたので息抜きにGoを書いたりしています。&lt;/p&gt;
 
 &lt;p&gt;ついでにZeroMQも試してみたかったので、GoとPythonをZeroMQで繋いでみました。&lt;/p&gt;

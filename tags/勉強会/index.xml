@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>勉強会 on I Will Survive</title>
-    <link>/tags/%E5%8B%89%E5%BC%B7%E4%BC%9A/</link>
+    <link>http://blog.restartr.com/tags/%E5%8B%89%E5%BC%B7%E4%BC%9A/</link>
     <description>Recent content in 勉強会 on I Will Survive</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Sat, 22 Dec 2012 22:54:54 +0900</lastBuildDate>
-    <atom:link href="/tags/%E5%8B%89%E5%BC%B7%E4%BC%9A/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://blog.restartr.com/tags/%E5%8B%89%E5%BC%B7%E4%BC%9A/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>EventStatsをConnpassに対応させました</title>
-      <link>/2012/12/22/eventstats-support-connpass</link>
+      <link>http://blog.restartr.com/2012/12/22/eventstats-support-connpass</link>
       <pubDate>Sat, 22 Dec 2012 22:54:54 +0900</pubDate>
       
-      <guid>/2012/12/22/eventstats-support-connpass</guid>
+      <guid>http://blog.restartr.com/2012/12/22/eventstats-support-connpass</guid>
       <description>
 
 &lt;p&gt;ふと思い立って、イベントの登録者数の推移が見れるEventStatsをConnpassにも対応させました。&lt;/p&gt;
@@ -35,10 +35,10 @@
     
     <item>
       <title>Hadoop conference japan 2011に参加してきた #hcj2011</title>
-      <link>/2011/02/24/attended-hadoop-conference-japan-2011-hcj2011</link>
+      <link>http://blog.restartr.com/2011/02/24/attended-hadoop-conference-japan-2011-hcj2011</link>
       <pubDate>Thu, 24 Feb 2011 09:09:42 +0900</pubDate>
       
-      <guid>/2011/02/24/attended-hadoop-conference-japan-2011-hcj2011</guid>
+      <guid>http://blog.restartr.com/2011/02/24/attended-hadoop-conference-japan-2011-hcj2011</guid>
       <description>
 
 &lt;p&gt;Hadoop conference japan 2011に参加してきました。&lt;/p&gt;
@@ -365,10 +365,10 @@
     
     <item>
       <title>第一回 にこにこテキストマイニングに参加してきた #nicoTextMining</title>
-      <link>/2011/02/20/attended-nicotextmining-1st</link>
+      <link>http://blog.restartr.com/2011/02/20/attended-nicotextmining-1st</link>
       <pubDate>Sun, 20 Feb 2011 09:30:52 +0900</pubDate>
       
-      <guid>/2011/02/20/attended-nicotextmining-1st</guid>
+      <guid>http://blog.restartr.com/2011/02/20/attended-nicotextmining-1st</guid>
       <description>
 
 &lt;p&gt;第一回 にこにこテキストマイニングに参加してきました。&lt;/p&gt;

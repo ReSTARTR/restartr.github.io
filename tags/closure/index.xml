@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Closure on I Will Survive</title>
-    <link>/tags/closure/</link>
+    <link>http://blog.restartr.com/tags/closure/</link>
     <description>Recent content in Closure on I Will Survive</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Wed, 17 Apr 2013 22:19:14 +0900</lastBuildDate>
-    <atom:link href="/tags/closure/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://blog.restartr.com/tags/closure/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>pythonのクロージャに変数を束縛する方法</title>
-      <link>/2013/04/17/bind-a-variable-to-closure-in-python</link>
+      <link>http://blog.restartr.com/2013/04/17/bind-a-variable-to-closure-in-python</link>
       <pubDate>Wed, 17 Apr 2013 22:19:14 +0900</pubDate>
       
-      <guid>/2013/04/17/bind-a-variable-to-closure-in-python</guid>
+      <guid>http://blog.restartr.com/2013/04/17/bind-a-variable-to-closure-in-python</guid>
       <description>
 
 &lt;p&gt;ハマったので。&lt;/p&gt;

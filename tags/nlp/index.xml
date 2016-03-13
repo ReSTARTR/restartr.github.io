@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Nlp on I Will Survive</title>
-    <link>/tags/nlp/</link>
+    <link>http://blog.restartr.com/tags/nlp/</link>
     <description>Recent content in Nlp on I Will Survive</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Sun, 20 Feb 2011 09:30:52 +0900</lastBuildDate>
-    <atom:link href="/tags/nlp/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://blog.restartr.com/tags/nlp/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>第一回 にこにこテキストマイニングに参加してきた #nicoTextMining</title>
-      <link>/2011/02/20/attended-nicotextmining-1st</link>
+      <link>http://blog.restartr.com/2011/02/20/attended-nicotextmining-1st</link>
       <pubDate>Sun, 20 Feb 2011 09:30:52 +0900</pubDate>
       
-      <guid>/2011/02/20/attended-nicotextmining-1st</guid>
+      <guid>http://blog.restartr.com/2011/02/20/attended-nicotextmining-1st</guid>
       <description>
 
 &lt;p&gt;第一回 にこにこテキストマイニングに参加してきました。&lt;/p&gt;
@@ -274,10 +274,10 @@ nltkとpython-twitterをつかったテキストマイニング。つまづき�
     
     <item>
       <title>入門 自然言語処理 第一章</title>
-      <link>/2011/02/13/analysing-text-with-the-natual-language-toolkit-chap1</link>
+      <link>http://blog.restartr.com/2011/02/13/analysing-text-with-the-natual-language-toolkit-chap1</link>
       <pubDate>Sun, 13 Feb 2011 09:00:29 +0900</pubDate>
       
-      <guid>/2011/02/13/analysing-text-with-the-natual-language-toolkit-chap1</guid>
+      <guid>http://blog.restartr.com/2011/02/13/analysing-text-with-the-natual-language-toolkit-chap1</guid>
       <description>
 
 &lt;p&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/4873114705/&#34;&gt;入門 自然言語処理&lt;/a&gt;は11月に購入してから寝かせたままでしたが、本日より読み始めることにしました。&lt;/p&gt;

@@ -2,22 +2,22 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Scala on I Will Survive</title>
-    <link>/tags/scala/</link>
+    <link>http://blog.restartr.com/tags/scala/</link>
     <description>Recent content in Scala on I Will Survive</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Wed, 28 Dec 2011 21:27:52 +0900</lastBuildDate>
-    <atom:link href="/tags/scala/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://blog.restartr.com/tags/scala/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>EventStatsはherokuとMongoLabとさくらVPSで動いている</title>
-      <link>/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps</link>
+      <link>http://blog.restartr.com/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps</link>
       <pubDate>Wed, 28 Dec 2011 21:27:52 +0900</pubDate>
       
-      <guid>/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps</guid>
+      <guid>http://blog.restartr.com/2011/12/28/eventstats-consist-of-heroku-mongolab-and-sakura-vps</guid>
       <description>
 
-&lt;p&gt;今月頭に&lt;a href=&#34;/2011/12/10/eventststs&#34;&gt;ブログ書きました&lt;/a&gt;が、EventStatsという勉強会の参加者の推移が見れるサービスを公開しました。&lt;/p&gt;
+&lt;p&gt;今月頭に&lt;a href=&#34;http://blog.restartr.com/2011/12/10/eventststs&#34;&gt;ブログ書きました&lt;/a&gt;が、EventStatsという勉強会の参加者の推移が見れるサービスを公開しました。&lt;/p&gt;
 
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;http://eventstats.restartr.com&#34;&gt;EventStats - イベントの統計情報が見れます&lt;/a&gt;&lt;/li&gt;
@@ -238,10 +238,10 @@ atndとの違い
     
     <item>
       <title>Scalaで設定ファイルを使いたい時どうしたらいいの？</title>
-      <link>/2011/08/30/config-libraries-in-scala</link>
+      <link>http://blog.restartr.com/2011/08/30/config-libraries-in-scala</link>
       <pubDate>Tue, 30 Aug 2011 00:02:15 +0900</pubDate>
       
-      <guid>/2011/08/30/config-libraries-in-scala</guid>
+      <guid>http://blog.restartr.com/2011/08/30/config-libraries-in-scala</guid>
       <description>
 
 &lt;p&gt;&lt;em style=&#34;color:red&#34;&gt;2011.08.31 kmizushimaさんから頂いた&lt;a href=&#34;http://blog.restartr.com/2011/08/30/config-libraries-in-scala/?preview=true&amp;preview_id=1049&amp;preview_nonce=ad0bbeeef6#comment-108&#34;&gt;コメント&lt;/a&gt;を元に、下記の記述を修正＆追記しました。&lt;/p&gt;
@@ -448,10 +448,10 @@ conf.str // &amp;quot;san&amp;quot;
     
     <item>
       <title>ScalaのORMapperのSquerylを試してみてハマった３つのこと</title>
-      <link>/2011/08/16/3-things-that-i-was-in-trouble-using-squeryl</link>
+      <link>http://blog.restartr.com/2011/08/16/3-things-that-i-was-in-trouble-using-squeryl</link>
       <pubDate>Tue, 16 Aug 2011 08:00:15 +0900</pubDate>
       
-      <guid>/2011/08/16/3-things-that-i-was-in-trouble-using-squeryl</guid>
+      <guid>http://blog.restartr.com/2011/08/16/3-things-that-i-was-in-trouble-using-squeryl</guid>
       <description>&lt;p&gt;ScalaのORMとしてSquerylってのがあります。&lt;/p&gt;
 
 &lt;p&gt;&lt;ul&gt;
@@ -589,10 +589,10 @@ override def supportsForeignKeyConstraints = true
     
     <item>
       <title>DotCloudのMongoDBをScalaから使ってみる</title>
-      <link>/2011/05/28/access-from-scala-to-mongodb-on-dotcloud</link>
+      <link>http://blog.restartr.com/2011/05/28/access-from-scala-to-mongodb-on-dotcloud</link>
       <pubDate>Sat, 28 May 2011 20:00:57 +0900</pubDate>
       
-      <guid>/2011/05/28/access-from-scala-to-mongodb-on-dotcloud</guid>
+      <guid>http://blog.restartr.com/2011/05/28/access-from-scala-to-mongodb-on-dotcloud</guid>
       <description>
 
 &lt;p&gt;DotCloudにDuoStackが&lt;a href=&#34;http://gigaom.com/cloud/exclusive-paas-startups-unite-dotcloud-buys-duostack/&#34;&gt;買収され&lt;/a&gt;て、DotCloudでもMongoDBが使えるようになりましたし、node.jsも使えるしで、ますますDotCloudが魅力的なものになってきました。&lt;/p&gt;
@@ -779,10 +779,10 @@ switched to db sampledb
     
     <item>
       <title>ScalaをDotCloudにアップロードするためのsbtサンプル</title>
-      <link>/2011/05/09/sample-sbt-project-for-dotcloud</link>
+      <link>http://blog.restartr.com/2011/05/09/sample-sbt-project-for-dotcloud</link>
       <pubDate>Mon, 09 May 2011 23:35:43 +0900</pubDate>
       
-      <guid>/2011/05/09/sample-sbt-project-for-dotcloud</guid>
+      <guid>http://blog.restartr.com/2011/05/09/sample-sbt-project-for-dotcloud</guid>
       <description>
 
 &lt;p&gt;&lt;a href=&#34;http://dotcloud.com/&#34;&gt;dotcloud&lt;/a&gt;を必要最低限操作するためのactionをsbtに追加してみました。&lt;/p&gt;
@@ -845,10 +845,10 @@ The java service will make your application available at &lt;a href=&#34;http://
     
     <item>
       <title>ScalaとJetty7のWebSocketでリアルタイムチェックインマップを作ってみた</title>
-      <link>/2011/04/06/realtime-checkin-map-build-with-scala-and-jetty7-websocket</link>
+      <link>http://blog.restartr.com/2011/04/06/realtime-checkin-map-build-with-scala-and-jetty7-websocket</link>
       <pubDate>Wed, 06 Apr 2011 09:00:50 +0900</pubDate>
       
-      <guid>/2011/04/06/realtime-checkin-map-build-with-scala-and-jetty7-websocket</guid>
+      <guid>http://blog.restartr.com/2011/04/06/realtime-checkin-map-build-with-scala-and-jetty7-websocket</guid>
       <description>
 
 &lt;p&gt;&lt;a href=&#34;http://blog.restartr.com/wp-content/uploads/2011/04/check-in-map-screenshot.png&#34;&gt;&lt;img src=&#34;http://blog.restartr.com/wp-content/uploads/2011/04/check-in-map-screenshot.png&#34; alt=&#34;チェックインマップのスクリーンショット&#34; title=&#34;チェックインマップのスクリーンショット&#34; width=&#34;619&#34; height=&#34;441&#34; class=&#34;alignnone size-full wp-image-800&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
@@ -899,10 +899,10 @@ Scala内で完結するならまだしも、JavaScriptへ転送する場合はsj
     
     <item>
       <title>ScalaからMongoDBへアクセスする - Salat編</title>
-      <link>/2011/03/09/access-to-mongodb-in-scala-with-salat</link>
+      <link>http://blog.restartr.com/2011/03/09/access-to-mongodb-in-scala-with-salat</link>
       <pubDate>Wed, 09 Mar 2011 09:00:38 +0900</pubDate>
       
-      <guid>/2011/03/09/access-to-mongodb-in-scala-with-salat</guid>
+      <guid>http://blog.restartr.com/2011/03/09/access-to-mongodb-in-scala-with-salat</guid>
       <description>&lt;p&gt;前回はCasbahというライブラリを使ってMongoDBへアクセスしてみました。&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&#34;http://blog.restartr.com/2011/03/07/access-to-mongodb-in-scala-with-casbah/&#34;&gt;ScalaからMongoDBへアクセスする ? Casbah編&lt;/a&gt;&lt;/p&gt;
@@ -1041,10 +1041,10 @@ println(grater[Group].asDBObject(group))
     
     <item>
       <title>ScalaからMongoDBへアクセスする - Casbah編</title>
-      <link>/2011/03/07/access-to-mongodb-in-scala-with-casbah</link>
+      <link>http://blog.restartr.com/2011/03/07/access-to-mongodb-in-scala-with-casbah</link>
       <pubDate>Mon, 07 Mar 2011 08:45:28 +0900</pubDate>
       
-      <guid>/2011/03/07/access-to-mongodb-in-scala-with-casbah</guid>
+      <guid>http://blog.restartr.com/2011/03/07/access-to-mongodb-in-scala-with-casbah</guid>
       <description>&lt;p&gt;ここ２，３日、ScalaからMongoDBへのアクセスのため、CasbahとSalatをお試し中です。&lt;/p&gt;
 
 &lt;p&gt;もともとはAkkaを弄ってたんですが、Akkaに含まれるPersistent(MongoDBなどNoSQLへの接続用)がなくなるらしいので、別のがないかなー、と寄り道したのがきっかけです。&lt;/p&gt;
@@ -1221,10 +1221,10 @@ println(obj(&amp;quot;name&amp;quot;)) //me
     
     <item>
       <title>pythonとscalaのファイルの自動クローズ</title>
-      <link>/2011/02/07/automatically-close-the-file-in-python-and-scala</link>
+      <link>http://blog.restartr.com/2011/02/07/automatically-close-the-file-in-python-and-scala</link>
       <pubDate>Mon, 07 Feb 2011 00:10:22 +0900</pubDate>
       
-      <guid>/2011/02/07/automatically-close-the-file-in-python-and-scala</guid>
+      <guid>http://blog.restartr.com/2011/02/07/automatically-close-the-file-in-python-and-scala</guid>
       <description>&lt;p&gt;エキスパートPythonプログラミングを少しずつ読み進めています。といっても気になるタイトルを拾い読みですが。&lt;/p&gt;
 
 &lt;p&gt;そのなかの&amp;rdquo;2.4 withとcontextlib&amp;rdquo;の章のwith文の例としてファイル読み込みのコードが書いてました。
@@ -1262,10 +1262,10 @@ pythonのwith文と同様の記述方法をScalaでやるとしたら…こん�
     
     <item>
       <title>NettyでWebSocketサーバーを実装する</title>
-      <link>/2010/12/29/websocket-server-written-in-scala-with-netty</link>
+      <link>http://blog.restartr.com/2010/12/29/websocket-server-written-in-scala-with-netty</link>
       <pubDate>Wed, 29 Dec 2010 18:45:53 +0900</pubDate>
       
-      <guid>/2010/12/29/websocket-server-written-in-scala-with-netty</guid>
+      <guid>http://blog.restartr.com/2010/12/29/websocket-server-written-in-scala-with-netty</guid>
       <description>&lt;p&gt;この記事は &lt;a href=&#34;http://atnd.org/events/10683&#34;&gt;Scala Advent Calendar JP 2010&lt;/a&gt; 23 日目(12/29)です。&lt;/p&gt;
 &lt;p&gt;前日の &lt;a href=&#34;http://twitter.com/cooldaemon&#34;&gt;@cooldaemon&lt;/a&gt; さんが&lt;a href=&#34;http://d.hatena.ne.jp/cooldaemon/20101228&#34;&gt;Scala Actor + NIO&lt;/a&gt;という、ものすごい記事を書いていらっしゃったのでこの流れの中で投稿するのが忍びないくらいです。&lt;br /&gt;
 ＃まさか前日にNIOネタがくるとはぁぁぁ…&lt;/p&gt;
@@ -1559,10 +1559,10 @@ Memcacheプロトコルを話すサービスをつくる場合とかには便利
     
     <item>
       <title>ScalaとErlangとPHPと私</title>
-      <link>/2010/11/23/scala-erlang-php-and-me</link>
+      <link>http://blog.restartr.com/2010/11/23/scala-erlang-php-and-me</link>
       <pubDate>Tue, 23 Nov 2010 18:57:35 +0900</pubDate>
       
-      <guid>/2010/11/23/scala-erlang-php-and-me</guid>
+      <guid>http://blog.restartr.com/2010/11/23/scala-erlang-php-and-me</guid>
       <description>&lt;p&gt;PHPよりScalaが簡単である、という議論に対するふたつのポストがあったので、自分向けにまとめました。&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;元記事：&lt;a href=&#34;http://wadearnold.com/blog/scala/scala-is-easier-than-php&#34;&gt;Wade Arnold ? Scala is easier than PHP&lt;/a&gt;&lt;/li&gt;
@@ -1644,10 +1644,10 @@ PHPはいまだに最高の言語であると最初に断っておきつつ、Sc
     
     <item>
       <title>TSVファイルを処理する</title>
-      <link>/2010/09/05/processing-the-file-formatted-tsv</link>
+      <link>http://blog.restartr.com/2010/09/05/processing-the-file-formatted-tsv</link>
       <pubDate>Sun, 05 Sep 2010 18:22:53 +0900</pubDate>
       
-      <guid>/2010/09/05/processing-the-file-formatted-tsv</guid>
+      <guid>http://blog.restartr.com/2010/09/05/processing-the-file-formatted-tsv</guid>
       <description>&lt;p&gt;Scalaプログラミング入門をざっと読んでから少し間が空いてしまいました。&lt;br /&gt;
 第１回Scala座を見たりして刺激もらったのでちょっとScala弄りなど。&lt;br /&gt;
 ※Scala座については非公式にトゥギャらせてもらっています。：&lt;a href=&#34;http://togetter.com/li/47287&#34;&gt;第１回Scala座非公式勝手まとめ&lt;/a&gt;&lt;/p&gt;
@@ -1707,10 +1707,10 @@ Map(Shiga -&gt; List(u08), Nagoya -&gt; List(u07, u06, u03), Tokyo -&gt; List(u0
     
     <item>
       <title>Scalaプログラミング入門(とその他Scala本)</title>
-      <link>/2010/08/23/beginning-scala</link>
+      <link>http://blog.restartr.com/2010/08/23/beginning-scala</link>
       <pubDate>Mon, 23 Aug 2010 00:21:16 +0900</pubDate>
       
-      <guid>/2010/08/23/beginning-scala</guid>
+      <guid>http://blog.restartr.com/2010/08/23/beginning-scala</guid>
       <description>&lt;ul&gt;
 &lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/4822284239&#34;&gt;SCALAプログラミング入門 [単行本]&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;

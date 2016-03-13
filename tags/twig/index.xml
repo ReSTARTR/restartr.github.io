@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Twig on I Will Survive</title>
-    <link>/tags/twig/</link>
+    <link>http://blog.restartr.com/tags/twig/</link>
     <description>Recent content in Twig on I Will Survive</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Thu, 31 Dec 2009 02:10:55 +0900</lastBuildDate>
-    <atom:link href="/tags/twig/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://blog.restartr.com/tags/twig/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>phpのテンプレートエンジンtwigとは</title>
-      <link>/2009/12/31/twig-is-the-template-engine-written-in-php</link>
+      <link>http://blog.restartr.com/2009/12/31/twig-is-the-template-engine-written-in-php</link>
       <pubDate>Thu, 31 Dec 2009 02:10:55 +0900</pubDate>
       
-      <guid>/2009/12/31/twig-is-the-template-engine-written-in-php</guid>
+      <guid>http://blog.restartr.com/2009/12/31/twig-is-the-template-engine-written-in-php</guid>
       <description>&lt;p&gt;&lt;div&gt;最近、PHPのテンプレートエンジン&lt;a href=&#34;http://www.twig-project.org/&#34; target=&#34;_blank&#34;&gt;Twig&lt;/a&gt;の紹介記事をちらほら見かけるようになってきました。&lt;/div&gt;
 &lt;div&gt;
 &lt;ul&gt;

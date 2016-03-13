@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Cache on I Will Survive</title>
-    <link>/tags/cache/</link>
+    <link>http://blog.restartr.com/tags/cache/</link>
     <description>Recent content in Cache on I Will Survive</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Tue, 21 Jun 2011 23:56:40 +0900</lastBuildDate>
-    <atom:link href="/tags/cache/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://blog.restartr.com/tags/cache/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Varnish勉強会 #tokyovcl に行ってきた</title>
-      <link>/2011/06/21/go-to-varnish-study-tokyovc</link>
+      <link>http://blog.restartr.com/2011/06/21/go-to-varnish-study-tokyovc</link>
       <pubDate>Tue, 21 Jun 2011 23:56:40 +0900</pubDate>
       
-      <guid>/2011/06/21/go-to-varnish-study-tokyovc</guid>
+      <guid>http://blog.restartr.com/2011/06/21/go-to-varnish-study-tokyovc</guid>
       <description>
 
 &lt;p&gt;&lt;a href=&#34;http://www.flickr.com/photos/53244662@N04/5856931526/&#34; title=&#34;IMAG0053 by ReSTARTR_y, on Flickr&#34;&gt;&lt;img src=&#34;http://farm6.static.flickr.com/5029/5856931526_1119c53a87.jpg&#34; width=&#34;500&#34; height=&#34;299&#34; alt=&#34;IMAG0053&#34;&gt;&lt;/a&gt;&lt;/p&gt;

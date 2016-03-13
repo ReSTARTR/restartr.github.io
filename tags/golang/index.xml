@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Golang on I Will Survive</title>
-    <link>/tags/golang/</link>
+    <link>http://blog.restartr.com/tags/golang/</link>
     <description>Recent content in Golang on I Will Survive</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Thu, 15 Oct 2015 19:54:29 +0900</lastBuildDate>
-    <atom:link href="/tags/golang/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://blog.restartr.com/tags/golang/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>&#34;Go Programming Blueprints&#34;を読んだ</title>
-      <link>/2015/10/15/go-programming-blueprints</link>
+      <link>http://blog.restartr.com/2015/10/15/go-programming-blueprints</link>
       <pubDate>Thu, 15 Oct 2015 19:54:29 +0900</pubDate>
       
-      <guid>/2015/10/15/go-programming-blueprints</guid>
+      <guid>http://blog.restartr.com/2015/10/15/go-programming-blueprints</guid>
       <description>
 
 &lt;p&gt;&lt;a href=&#34;http://www.amazon.co.jp/gp/product/B00T4ACPA0)&#34;&gt;
@@ -130,10 +130,10 @@
     
     <item>
       <title>Goのjson.Marshal/Unmarshalの仕様を整理してみる</title>
-      <link>/2014/08/13/golang-json-marshal-unmarshal</link>
+      <link>http://blog.restartr.com/2014/08/13/golang-json-marshal-unmarshal</link>
       <pubDate>Wed, 13 Aug 2014 00:02:42 +0900</pubDate>
       
-      <guid>/2014/08/13/golang-json-marshal-unmarshal</guid>
+      <guid>http://blog.restartr.com/2014/08/13/golang-json-marshal-unmarshal</guid>
       <description>
 
 &lt;h3 id=&#34;tl-dr:95b5ef122b0628eff42f880d34516c78&#34;&gt;TL;DR&lt;/h3&gt;
@@ -296,10 +296,10 @@ fmt.Printf(&amp;quot;%s\n&amp;quot;, user) // main.User{Name:&amp;quot;restartr&
     
     <item>
       <title>Docker謹製ライブラリのlibchanについて調べてみた</title>
-      <link>/2014/06/28/about-docker-libchan</link>
+      <link>http://blog.restartr.com/2014/06/28/about-docker-libchan</link>
       <pubDate>Sat, 28 Jun 2014 14:44:23 +0900</pubDate>
       
-      <guid>/2014/06/28/about-docker-libchan</guid>
+      <guid>http://blog.restartr.com/2014/06/28/about-docker-libchan</guid>
       <description>
 
 &lt;p&gt;DockerCon2014で発表された&lt;a href=&#34;https://github.com/docker/libchan&#34;&gt;libchan&lt;/a&gt;について調べたことをまとめてみます。&lt;/p&gt;
@@ -480,10 +480,10 @@ _, err := msg.Ret.Send(&amp;amp;libchan.Message{Data: []byte(&amp;quot;World&amp
     
     <item>
       <title>Goでmemcachedのstatsを取得する</title>
-      <link>/2014/04/21/golang-memcache-stats-client</link>
+      <link>http://blog.restartr.com/2014/04/21/golang-memcache-stats-client</link>
       <pubDate>Mon, 21 Apr 2014 00:17:33 +0900</pubDate>
       
-      <guid>/2014/04/21/golang-memcache-stats-client</guid>
+      <guid>http://blog.restartr.com/2014/04/21/golang-memcache-stats-client</guid>
       <description>
 
 &lt;p&gt;YouTubeで使われている&lt;a href=&#34;https://github.com/youtube/vitess&#34;&gt;vitess&lt;/a&gt;の実装をざっと見てたところ、memcachedクライアント実装が簡潔でわかりやすかったので出来る限りラフに実装を写経してみました。&lt;/p&gt;
@@ -542,10 +542,10 @@ STAT rusage_system 0.344947
     
     <item>
       <title>vimで特定のファイルタイプだけタブインデントにする方法</title>
-      <link>/2014/04/20/vimrc-noexpandtab-in-golang</link>
+      <link>http://blog.restartr.com/2014/04/20/vimrc-noexpandtab-in-golang</link>
       <pubDate>Sun, 20 Apr 2014 16:15:21 +0900</pubDate>
       
-      <guid>/2014/04/20/vimrc-noexpandtab-in-golang</guid>
+      <guid>http://blog.restartr.com/2014/04/20/vimrc-noexpandtab-in-golang</guid>
       <description>&lt;p&gt;rubyやpythonなど通常のプログラムを書く場合は、基本的にソフトタブ(2spaces)でインデントされるようにvimを設定しています。&lt;/p&gt;
 
 &lt;pre&gt;&lt;code class=&#34;language-vim&#34;&gt;set noexpandtab
@@ -577,10 +577,10 @@ endif
     
     <item>
       <title>GoとPythonをZeroMQで繋ぐ</title>
-      <link>/2013/04/26/connect-go-and-python-with-zeromq</link>
+      <link>http://blog.restartr.com/2013/04/26/connect-go-and-python-with-zeromq</link>
       <pubDate>Fri, 26 Apr 2013 23:34:48 +0900</pubDate>
       
-      <guid>/2013/04/26/connect-go-and-python-with-zeromq</guid>
+      <guid>http://blog.restartr.com/2013/04/26/connect-go-and-python-with-zeromq</guid>
       <description>&lt;p&gt;最近Rubyでプロジェクトオイラーを解きながらRubyに慣れようとしてるのですが、ちょっと飽きてきたので息抜きにGoを書いたりしています。&lt;/p&gt;
 
 &lt;p&gt;ついでにZeroMQも試してみたかったので、GoとPythonをZeroMQで繋いでみました。&lt;/p&gt;

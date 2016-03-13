@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Octopress on I Will Survive</title>
-    <link>/tags/octopress/</link>
+    <link>http://blog.restartr.com/tags/octopress/</link>
     <description>Recent content in Octopress on I Will Survive</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Sun, 13 Mar 2016 20:00:00 +0900</lastBuildDate>
-    <atom:link href="/tags/octopress/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://blog.restartr.com/tags/octopress/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>OctopressからHugoに移行</title>
-      <link>/2016/03/13/from-octopress-to-hugo</link>
+      <link>http://blog.restartr.com/2016/03/13/from-octopress-to-hugo</link>
       <pubDate>Sun, 13 Mar 2016 20:00:00 +0900</pubDate>
       
-      <guid>/2016/03/13/from-octopress-to-hugo</guid>
+      <guid>http://blog.restartr.com/2016/03/13/from-octopress-to-hugo</guid>
       <description>
 
 &lt;p&gt;Octopressを使い始めて約2年。&lt;a href=&#34;http://gohugo.io/&#34;&gt;Hugo&lt;/a&gt;に乗り換えました。&lt;/p&gt;
@@ -111,10 +111,10 @@ git push origin master
     
     <item>
       <title>WordpressからOctopressに移行</title>
-      <link>/2014/04/06/move-from-wordpress-to-octopress</link>
+      <link>http://blog.restartr.com/2014/04/06/move-from-wordpress-to-octopress</link>
       <pubDate>Sun, 06 Apr 2014 13:00:00 +0900</pubDate>
       
-      <guid>/2014/04/06/move-from-wordpress-to-octopress</guid>
+      <guid>http://blog.restartr.com/2014/04/06/move-from-wordpress-to-octopress</guid>
       <description>
 
 &lt;p&gt;もともとさくらのレンサバ上でWordpressで構築していたブログを&lt;a href=&#34;http://octopress.org/&#34;&gt;Octopress&lt;/a&gt;に移行してGithub Pagesでホスティングするように切り替え。

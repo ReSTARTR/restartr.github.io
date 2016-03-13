@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Mms on I Will Survive</title>
-    <link>/tags/mms/</link>
+    <link>http://blog.restartr.com/tags/mms/</link>
     <description>Recent content in Mms on I Will Survive</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Sun, 01 May 2011 22:18:15 +0900</lastBuildDate>
-    <atom:link href="/tags/mms/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://blog.restartr.com/tags/mms/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>SIMフリーのandroid端末でSoftBankのMMSを受信する方法</title>
-      <link>/2011/05/01/how-to-send-and-receive-softbank-mms-on-sim-free-android</link>
+      <link>http://blog.restartr.com/2011/05/01/how-to-send-and-receive-softbank-mms-on-sim-free-android</link>
       <pubDate>Sun, 01 May 2011 22:18:15 +0900</pubDate>
       
-      <guid>/2011/05/01/how-to-send-and-receive-softbank-mms-on-sim-free-android</guid>
+      <guid>http://blog.restartr.com/2011/05/01/how-to-send-and-receive-softbank-mms-on-sim-free-android</guid>
       <description>
 
 &lt;p&gt;Desire SでS!メールを受信しようと、apnの設定をしてみたのですが、全く送受信が成功しませんでした。

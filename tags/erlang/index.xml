@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Erlang on I Will Survive</title>
-    <link>/tags/erlang/</link>
+    <link>http://blog.restartr.com/tags/erlang/</link>
     <description>Recent content in Erlang on I Will Survive</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Tue, 23 Nov 2010 18:57:35 +0900</lastBuildDate>
-    <atom:link href="/tags/erlang/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://blog.restartr.com/tags/erlang/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>ScalaとErlangとPHPと私</title>
-      <link>/2010/11/23/scala-erlang-php-and-me</link>
+      <link>http://blog.restartr.com/2010/11/23/scala-erlang-php-and-me</link>
       <pubDate>Tue, 23 Nov 2010 18:57:35 +0900</pubDate>
       
-      <guid>/2010/11/23/scala-erlang-php-and-me</guid>
+      <guid>http://blog.restartr.com/2010/11/23/scala-erlang-php-and-me</guid>
       <description>&lt;p&gt;PHPよりScalaが簡単である、という議論に対するふたつのポストがあったので、自分向けにまとめました。&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;元記事：&lt;a href=&#34;http://wadearnold.com/blog/scala/scala-is-easier-than-php&#34;&gt;Wade Arnold ? Scala is easier than PHP&lt;/a&gt;&lt;/li&gt;

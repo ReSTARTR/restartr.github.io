@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Book on I Will Survive</title>
-    <link>/tags/book/</link>
+    <link>http://blog.restartr.com/tags/book/</link>
     <description>Recent content in Book on I Will Survive</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Thu, 31 Dec 2015 18:59:46 +0900</lastBuildDate>
-    <atom:link href="/tags/book/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://blog.restartr.com/tags/book/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>2015年ふりかえり</title>
-      <link>/2015/12/31/things-of-2015</link>
+      <link>http://blog.restartr.com/2015/12/31/things-of-2015</link>
       <pubDate>Thu, 31 Dec 2015 18:59:46 +0900</pubDate>
       
-      <guid>/2015/12/31/things-of-2015</guid>
+      <guid>http://blog.restartr.com/2015/12/31/things-of-2015</guid>
       <description>
 
 &lt;p&gt;2015年も終わりが近づいているということでご報告もかねてふりかえりを…&lt;/p&gt;
@@ -91,10 +91,10 @@
     
     <item>
       <title>&#34;Go Programming Blueprints&#34;を読んだ</title>
-      <link>/2015/10/15/go-programming-blueprints</link>
+      <link>http://blog.restartr.com/2015/10/15/go-programming-blueprints</link>
       <pubDate>Thu, 15 Oct 2015 19:54:29 +0900</pubDate>
       
-      <guid>/2015/10/15/go-programming-blueprints</guid>
+      <guid>http://blog.restartr.com/2015/10/15/go-programming-blueprints</guid>
       <description>
 
 &lt;p&gt;&lt;a href=&#34;http://www.amazon.co.jp/gp/product/B00T4ACPA0)&#34;&gt;
@@ -210,10 +210,10 @@
     
     <item>
       <title>2014年に購入した技術書</title>
-      <link>/2014/12/31/books-2014</link>
+      <link>http://blog.restartr.com/2014/12/31/books-2014</link>
       <pubDate>Wed, 31 Dec 2014 20:22:02 +0900</pubDate>
       
-      <guid>/2014/12/31/books-2014</guid>
+      <guid>http://blog.restartr.com/2014/12/31/books-2014</guid>
       <description>
 
 &lt;p&gt;投稿数を稼ぐべく、とりあえず今年購入した（であろう）本をリストアップしつつ、今年の振り返りでも。&lt;/p&gt;

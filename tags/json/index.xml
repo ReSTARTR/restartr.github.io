@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Json on I Will Survive</title>
-    <link>/tags/json/</link>
+    <link>http://blog.restartr.com/tags/json/</link>
     <description>Recent content in Json on I Will Survive</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Wed, 13 Aug 2014 00:02:42 +0900</lastBuildDate>
-    <atom:link href="/tags/json/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://blog.restartr.com/tags/json/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Goのjson.Marshal/Unmarshalの仕様を整理してみる</title>
-      <link>/2014/08/13/golang-json-marshal-unmarshal</link>
+      <link>http://blog.restartr.com/2014/08/13/golang-json-marshal-unmarshal</link>
       <pubDate>Wed, 13 Aug 2014 00:02:42 +0900</pubDate>
       
-      <guid>/2014/08/13/golang-json-marshal-unmarshal</guid>
+      <guid>http://blog.restartr.com/2014/08/13/golang-json-marshal-unmarshal</guid>
       <description>
 
 &lt;h3 id=&#34;tl-dr:95b5ef122b0628eff42f880d34516c78&#34;&gt;TL;DR&lt;/h3&gt;

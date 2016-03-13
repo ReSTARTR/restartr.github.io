@@ -2,19 +2,19 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Gearman on I Will Survive</title>
-    <link>/tags/gearman/</link>
+    <link>http://blog.restartr.com/tags/gearman/</link>
     <description>Recent content in Gearman on I Will Survive</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <lastBuildDate>Sun, 31 Jan 2010 00:16:51 +0900</lastBuildDate>
-    <atom:link href="/tags/gearman/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://blog.restartr.com/tags/gearman/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Gearmanでqueueing</title>
-      <link>/2010/01/31/gearmane381a7queueing</link>
+      <link>http://blog.restartr.com/2010/01/31/gearmane381a7queueing</link>
       <pubDate>Sun, 31 Jan 2010 00:16:51 +0900</pubDate>
       
-      <guid>/2010/01/31/gearmane381a7queueing</guid>
+      <guid>http://blog.restartr.com/2010/01/31/gearmane381a7queueing</guid>
       <description>&lt;p&gt;&lt;h3&gt;queueing&lt;/h3&gt;
 &lt;p&gt;webページを生成する際には、今すぐやらなきゃいけないことと、今すぐでなくても良いものがあります。&lt;br /&gt;
 今すぐやらなきゃいけないこととは、ユーザーリクエストに対するDB参照結果等のことで、今すぐでなくても良いものとはアクセスログなどの処理をDBに書き込んだりメール送信したりなど。それ以外にもあるかもですが大体そんな感じです。&lt;/p&gt;
