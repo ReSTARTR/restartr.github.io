@@ -65,8 +65,6 @@
 
 &lt;h3 id=&#34;ファイル名からslugを追記するシェルスクリプト:d50ea5a11adcf7e2a2a926330a4f05a0&#34;&gt;ファイル名からslugを追記するシェルスクリプト&lt;/h3&gt;
 
-&lt;p&gt;※シンタックスハイライト効かせたい&amp;hellip;&lt;/p&gt;
-
 &lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;#!/bin/bash
 
 for file in $(ls content/post | grep &#39;\.markdown$&#39;); do
@@ -85,6 +83,8 @@ EOF
 done
 &lt;/code&gt;&lt;/pre&gt;
 
+&lt;p&gt;※シンタックスハイライト効かせたい&amp;hellip;&lt;/p&gt;
+
 &lt;p&gt;これを実行する前に、content/post以下はコミットしておいたほうが安心かと。
 で、実行おわったら再度&lt;code&gt;git add&lt;/code&gt;して&lt;code&gt;git commit&lt;/code&gt;。&lt;/p&gt;
 
@@ -93,18 +93,31 @@ done
 &lt;p&gt;あとは&lt;a href=&#34;https://github.com/ReSTARTR/restartr.github.io&#34;&gt;ReSTARTR/restartr.github.io&lt;/a&gt;をsubmoduleにしてそこに生成ファイルを配置&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;git submodule add git@github.com:restartr/restartr.github.io public
+
+# 必要なファイルを生成元にコピー
+cp ./public/{CNAME,humans.txt,crossdomain.xml} ./content
+
+# いったん全削除
+cd public &amp;amp;&amp;amp; rm -rf ./$(git ls-files | grep -v gitignore) &amp;amp;&amp;amp; cd ..
+
+# コンテンツ生成
 hugo -d public
+
+# 別ブランチにcommit &amp;amp;&amp;amp; push
 cd publid
+git checkout migrate-to-hugo
 git add -A .
 git commit -m &#39;Migrate to Hugo&#39;
 git push origin master
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;CNAMEファイルとか、octopressで使用していたものはhugo用のリポジトリにコピーしてgit管理下にしておくのも忘れずに。&lt;/p&gt;
+&lt;p&gt;あとは、githubでプルリクエストつくってマージすればOK。
+失敗したらRevertできるので安心です。&lt;/p&gt;
 
-&lt;p&gt;テーマとか周辺環境はOctopressに比べると貧弱ですが、一度もろもろ設定してしまったらそんなにいじることもないしまぁ問題ないかと思います。&lt;/p&gt;
+&lt;p&gt;という感じで移行が完了したわけですが、テーマとか周辺環境はOctopressに比べると貧弱です。
+が、一度もろもろ設定してしまったらそんなにいじることもないしまぁ問題ないかと思います。&lt;/p&gt;
 
-&lt;p&gt;ストレス感じながら文章かくよりは、気持よく文章書けるほうが良い。&lt;/p&gt;
+&lt;p&gt;ストレス感じながら文章かくよりは、気持よく文章書けるほうが良いです。&lt;/p&gt;
 </description>
     </item>
     
