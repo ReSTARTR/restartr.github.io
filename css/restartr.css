@@ -9,3 +9,14 @@ body, nav.main-nav {
 #post-list h2 {
   max-width: 100%;
 }
+
+code {
+  background: rgba(0,0,0,0.04);
+  padding: 0 0.2em;
+  font-size: 85%;
+  border-radius: 3px;
+}
+
+#post-body ul {
+  padding: 1em;
+}

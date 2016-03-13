@@ -73,8 +73,6 @@ EOF
 done
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;※シンタックスハイライト効かせたい&amp;hellip;&lt;/p&gt;
-
 &lt;p&gt;これを実行する前に、content/post以下はコミットしておいたほうが安心かと。
 で、実行おわったら再度&lt;code&gt;git add&lt;/code&gt;して&lt;code&gt;git commit&lt;/code&gt;。&lt;/p&gt;
 
