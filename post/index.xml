@@ -17,7 +17,7 @@
       <guid>http://blog.restartr.com/2016/03/31/got-my-ergodox-ez</guid>
       <description>
 
-&lt;p&gt;&lt;a href=&#34;https://gyazo.com/9bcc696f65d8963f27662c4fcf9002d8&#34;&gt;&lt;img src=&#34;https://i.gyazo.com/9bcc696f65d8963f27662c4fcf9002d8.jpg&#34; alt=&#34;https://gyazo.com/9bcc696f65d8963f27662c4fcf9002d8&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://gyazo.com/e7e0f6876ad58f49a6962df2f3f60a08&#34;&gt;&lt;img src=&#34;https://i.gyazo.com/e7e0f6876ad58f49a6962df2f3f60a08.jpg&#34; alt=&#34;https://gyazo.com/e7e0f6876ad58f49a6962df2f3f60a08&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;a href=&#34;http://blog.restartr.com/2016/02/17/ergodox-ez&#34;&gt;ErgoDox EZを注文した(けどまだ届いてない)&lt;/a&gt;を書いてから1ヶ月半。昨日ようやく到着しました。&lt;/p&gt;
 
@@ -34,12 +34,12 @@
 
 &lt;h2 id=&#34;届いてみて:5f1599e0f50d6ebe05fa15a2c548f9ba&#34;&gt;届いてみて&lt;/h2&gt;
 
-&lt;p&gt;&lt;a href=&#34;https://gyazo.com/120648ec0b82ad1c4d37b3e47a266733&#34;&gt;&lt;img src=&#34;https://i.gyazo.com/120648ec0b82ad1c4d37b3e47a266733.jpg&#34; alt=&#34;https://gyazo.com/120648ec0b82ad1c4d37b3e47a266733&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://gyazo.com/5c5801ea3dec3f5fae76e5d4a992117e&#34;&gt;&lt;img src=&#34;https://i.gyazo.com/5c5801ea3dec3f5fae76e5d4a992117e.jpg&#34; alt=&#34;https://gyazo.com/5c5801ea3dec3f5fae76e5d4a992117e&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;何より箱がデカくてビビります。だいたいiPad4枚分。
 パームレストはどっしり重みのあるゴム製。ティルトさせる前提ならケチらずセットで買うべきです。&lt;/p&gt;
 
-&lt;p&gt;&lt;a href=&#34;https://gyazo.com/a371a610ca57c7d4bebd88588a7727f8&#34;&gt;&lt;img src=&#34;https://i.gyazo.com/a371a610ca57c7d4bebd88588a7727f8.jpg&#34; alt=&#34;https://gyazo.com/a371a610ca57c7d4bebd88588a7727f8&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://gyazo.com/491b07cd447c8fda6186e7dcd850b079&#34;&gt;&lt;img src=&#34;https://i.gyazo.com/491b07cd447c8fda6186e7dcd850b079.jpg&#34; alt=&#34;https://gyazo.com/491b07cd447c8fda6186e7dcd850b079&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;左右に3つづつ用意されたティルトテントは調整の幅があって結構自由度が高いです。最初の写真のように中心を上げて手前に少し傾けるのがしっくりきています。&lt;/p&gt;
 
@@ -49,7 +49,7 @@
 
 &lt;h3 id=&#34;キースイッチ-白軸-について:5f1599e0f50d6ebe05fa15a2c548f9ba&#34;&gt;キースイッチ(白軸)について&lt;/h3&gt;
 
-&lt;p&gt;&lt;a href=&#34;https://gyazo.com/1762cd89ab396e9d858520b413c02a69&#34;&gt;&lt;img src=&#34;https://i.gyazo.com/1762cd89ab396e9d858520b413c02a69.jpg&#34; alt=&#34;https://gyazo.com/1762cd89ab396e9d858520b413c02a69&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://gyazo.com/bbd65c66610fac24e98bcfd4090a069e&#34;&gt;&lt;img src=&#34;https://i.gyazo.com/bbd65c66610fac24e98bcfd4090a069e.jpg&#34; alt=&#34;https://gyazo.com/bbd65c66610fac24e98bcfd4090a069e&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;静電容量無接点からのりかえても十分に満足できるものだと思います。
 HHKBより断然軽く、リアルフォースよりも軽いのではないかと。
@@ -91,14 +91,14 @@ QWERTYなので英数字は問題ないですが、それ以外のメタキー�
 &lt;p&gt;下記にデフォルトのキーマップがあるのでこれをカスタマイズするのがよさそうです。&lt;/p&gt;
 
 &lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/msc654/qmk_firmware/tree/master/keyboard/ergodox_ez/keymaps/default&#34;&gt;https://github.com/msc654/qmk_firmware/tree/master/keyboard/ergodox_ez/keymaps/default&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/msc654/qmk_firmware/tree/master/keyboard/ergodox_ez/keymaps/default&#34;&gt;github.com/msc654/qmk_firmware&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;左右に配置された方向キーが思いの外便利。HHKBではFnとの組み合わせで移動するのが面倒でビジュアルモードでの移動を多用していたけど、これならインサートモードのまま左右の親指での移動で事足りる事が多くなりました。&lt;/p&gt;
 
 &lt;h3 id=&#34;結論:5f1599e0f50d6ebe05fa15a2c548f9ba&#34;&gt;結論&lt;/h3&gt;
 
-&lt;p&gt;&lt;a href=&#34;https://gyazo.com/2c8a33fbe07e16e1e81dd6c6e02a6cbe&#34;&gt;&lt;img src=&#34;https://i.gyazo.com/2c8a33fbe07e16e1e81dd6c6e02a6cbe.jpg&#34; alt=&#34;https://gyazo.com/2c8a33fbe07e16e1e81dd6c6e02a6cbe&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://gyazo.com/52d38352415a964796210d8de25c7d6c&#34;&gt;&lt;img src=&#34;https://i.gyazo.com/52d38352415a964796210d8de25c7d6c.jpg&#34; alt=&#34;https://gyazo.com/52d38352415a964796210d8de25c7d6c&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
 
 &lt;p&gt;まだ慣れていない時点で結論付けるのは早い気もしますが、慣れてしまえばきっと最高のツールとして長く使える代物になると思います。&lt;a href=&#34;http://ymotongpoo.hatenablog.com/entry/2016/03/25/203734&#34;&gt;ErgoDoxを購入して人生がバラ色になった - YAMAGUCHI::weblog&lt;/a&gt;でも絶賛されていたとおり。気になる方は今すぐ注文することをオススメします。&lt;/p&gt;
 
