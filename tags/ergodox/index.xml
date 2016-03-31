@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Ergodox on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/ergodox/</link>
+    <description>Recent content in Ergodox on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Thu, 31 Mar 2016 22:39:16 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/ergodox/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>ErgoDox EZが届いた</title>
+      <link>http://blog.restartr.com/2016/03/31/got-my-ergodox-ez</link>
+      <pubDate>Thu, 31 Mar 2016 22:39:16 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2016/03/31/got-my-ergodox-ez</guid>
+      <description>
+
+&lt;p&gt;&lt;a href=&#34;https://gyazo.com/9bcc696f65d8963f27662c4fcf9002d8&#34;&gt;&lt;img src=&#34;https://i.gyazo.com/9bcc696f65d8963f27662c4fcf9002d8.jpg&#34; alt=&#34;https://gyazo.com/9bcc696f65d8963f27662c4fcf9002d8&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://blog.restartr.com/2016/02/17/ergodox-ez&#34;&gt;ErgoDox EZを注文した(けどまだ届いてない)&lt;/a&gt;を書いてから1ヶ月半。昨日ようやく到着しました。&lt;/p&gt;
+
+&lt;h3 id=&#34;注文してから届くまで:5f1599e0f50d6ebe05fa15a2c548f9ba&#34;&gt;注文してから届くまで&lt;/h3&gt;
+
+&lt;p&gt;数日前に、ErgoDoxEZのサポートから「不在続きで届けられないからこっちに戻ってきてしまうよ」とメールが届いて事態を把握。
+配送業者に問い合わせたところ、住所が間違っていたみたいで、正しい住所を伝えたらすんなり届きました。安心のクロネコヤマトです。着払い1500円也。&lt;/p&gt;
+
+&lt;p&gt;サポートがちゃんとしてるので安心して注文出来ると思います。本当はあと一週間はやく受け取れたはずと思うと少し残念ですが、無事に受け取ったので結果オーライです。&lt;/p&gt;
+
+&lt;p&gt;まだまだ慣れきってない状況ですが、まずはファーストインプレッションをErgoDox EZで書きます。&lt;/p&gt;
+
+&lt;p&gt;既存の環境は&lt;code&gt;MacBook Air + HHKB pro2&lt;/code&gt;であり、それとの比較を交えつつの感想です。&lt;/p&gt;
+
+&lt;h2 id=&#34;届いてみて:5f1599e0f50d6ebe05fa15a2c548f9ba&#34;&gt;届いてみて&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://gyazo.com/120648ec0b82ad1c4d37b3e47a266733&#34;&gt;&lt;img src=&#34;https://i.gyazo.com/120648ec0b82ad1c4d37b3e47a266733.jpg&#34; alt=&#34;https://gyazo.com/120648ec0b82ad1c4d37b3e47a266733&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;何より箱がデカくてビビります。だいたいiPad4枚分。
+パームレストはどっしり重みのあるゴム製。ティルトさせる前提ならケチらずセットで買うべきです。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://gyazo.com/a371a610ca57c7d4bebd88588a7727f8&#34;&gt;&lt;img src=&#34;https://i.gyazo.com/a371a610ca57c7d4bebd88588a7727f8.jpg&#34; alt=&#34;https://gyazo.com/a371a610ca57c7d4bebd88588a7727f8&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;左右に3つづつ用意されたティルトテントは調整の幅があって結構自由度が高いです。最初の写真のように中心を上げて手前に少し傾けるのがしっくりきています。&lt;/p&gt;
+
+&lt;p&gt;余談ですが、妙な新品の匂いがします。どことなく嗅いだことのある匂いだけどなんだっけかな。。。ちょっと手に残りますがそのうちとれるでしょう。&lt;/p&gt;
+
+&lt;p&gt;筐体の完成度はかなり高いです。さすがに高級品だけあります。&lt;/p&gt;
+
+&lt;h3 id=&#34;キースイッチ-白軸-について:5f1599e0f50d6ebe05fa15a2c548f9ba&#34;&gt;キースイッチ(白軸)について&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://gyazo.com/1762cd89ab396e9d858520b413c02a69&#34;&gt;&lt;img src=&#34;https://i.gyazo.com/1762cd89ab396e9d858520b413c02a69.jpg&#34; alt=&#34;https://gyazo.com/1762cd89ab396e9d858520b413c02a69&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;静電容量無接点からのりかえても十分に満足できるものだと思います。
+HHKBより断然軽く、リアルフォースよりも軽いのではないかと。
+打鍵音はメカニカルらしい高めのシャコシャコした感じだけど、そこまで五月蠅いとは感じません。
+また、全く反発がないわけではなく、必要最低限に抑えられた感じ。
+これ以上軽いとさすがに物足りなさが生まれそうなギリギリのラインかと。&lt;/p&gt;
+
+&lt;p&gt;しばらく白軸を叩いた後でHHKBに戻るとものすごく沈み込み重く、跳ね返りも強く感じるようになりました。
+キートップがHHKBと同じPBTなので指先の感触はほぼ同じです。&lt;/p&gt;
+
+&lt;p&gt;軽すぎてミスタイプするといった現象はいまのところ皆無です。gのキーが若干引っかかるのがちょっと気になりますが…&lt;/p&gt;
+
+&lt;p&gt;ErogDoxの魅力の一つがこのCherry互換スイッチを採用しているところ。このErgoDox EZのキーのままでも良いのですが、気分を変えることも容易です。&lt;a href=&#34;https://www.massdrop.com&#34;&gt;Massdrop&lt;/a&gt;とかを覗いてみるとたくさんのCherry互換のキートップが出てきます。これは静電容量無接点界隈にはない魅力ではないかと思っています。&lt;/p&gt;
+
+&lt;h3 id=&#34;使ってみて:5f1599e0f50d6ebe05fa15a2c548f9ba&#34;&gt;使ってみて&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://ergodox-ez.com/ergodox_ez_keymap_highres.png&#34;&gt;&lt;img src=&#34;https://i.gyazo.com/6c78301042c8da169258cb2c5a400b5e.png&#34; alt=&#34;ErgoDox EZ Default Firmware Keymap&#34; /&gt;&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;デフォルトのファームでもそれなりに叩けます。
+QWERTYなので英数字は問題ないですが、それ以外のメタキーはどこになにがあるかわからなすぎるのでチートシート必須だし、どうにもならなくなった時の緊急避難先としてHHKBも近くにおいておくと安心です。&lt;/p&gt;
+
+&lt;p&gt;とりあえず今はこのデフォルトの配列のまま操作しています。&lt;/p&gt;
+
+&lt;p&gt;キーの並びが縦に揃っているので上下移動がこれまでとちょっと違ってミスタイプしやすいです。
+また、おなじメタキーが複数箇所に配置されていて、どのように使い分けたらよいかよくわからないのですが、これも慣れ次第でしょう。&lt;/p&gt;
+
+&lt;p&gt;左手親指でSpaceとBackspace、右手親指でEnterとTab。右手小指で「ッターン」しないのが新鮮です。&lt;/p&gt;
+
+&lt;p&gt;ファンクションキー等が配置される&amp;rdquo;CoderLayer&amp;rdquo;には一番右下のキーで切り替えを、マウスキーなどが配置される&amp;rdquo;Media Layer&amp;rdquo;には右手小指位置にある&amp;rdquo;:;&amp;ldquo;キーとの組み合わせで操作します。HHKBユーザーであればFnキーによる切り替えで慣れているので違和感は無いかと。&lt;/p&gt;
+
+&lt;p&gt;正直Media Layerまで使うかというとちょっと微妙ですが、使っていくうちに最高の使い方がみつかるかもしれません。&lt;/p&gt;
+
+&lt;h3 id=&#34;vimを操作してみて:5f1599e0f50d6ebe05fa15a2c548f9ba&#34;&gt;vimを操作してみて&lt;/h3&gt;
+
+&lt;p&gt;vimのキーバインドとの相性があまりよくないように思うのですが、なれてないだけなのか、それ用にファーム入れたほうが良いのかまだわかっていないです。CtrlはZ長押しか、右手親指の位置にあるキーのどちらかに割り当てられています。いまのところ右手親指のキーを使っていますがどうにも慣れず。。。&lt;/p&gt;
+
+&lt;p&gt;やはり長年手に染みこんだキーバインドを置き換えるのはちょっとしんどいです。ここは素直に左手小指のAの隣に割り当てるべきと考えています。また別の機会にでもそのあたりを書ければと。&lt;/p&gt;
+
+&lt;p&gt;下記にデフォルトのキーマップがあるのでこれをカスタマイズするのがよさそうです。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/msc654/qmk_firmware/tree/master/keyboard/ergodox_ez/keymaps/default&#34;&gt;https://github.com/msc654/qmk_firmware/tree/master/keyboard/ergodox_ez/keymaps/default&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;左右に配置された方向キーが思いの外便利。HHKBではFnとの組み合わせで移動するのが面倒でビジュアルモードでの移動を多用していたけど、これならインサートモードのまま左右の親指での移動で事足りる事が多くなりました。&lt;/p&gt;
+
+&lt;h3 id=&#34;結論:5f1599e0f50d6ebe05fa15a2c548f9ba&#34;&gt;結論&lt;/h3&gt;
+
+&lt;p&gt;慣れてしまえばきっと最高のツールとして長く使える代物です。&lt;a href=&#34;http://ymotongpoo.hatenablog.com/entry/2016/03/25/203734&#34;&gt;ErgoDoxを購入して人生がバラ色になった - YAMAGUCHI::weblog&lt;/a&gt;でも絶賛されていたとおり。気になる方は今すぐ注文することをオススメします。&lt;/p&gt;
+
+&lt;iframe src=&#34;https://www.indiegogo.com/project/ergodox-ez-an-incredible-mechanical-keyboard/embedded&#34; width=&#34;222px&#34; height=&#34;445px&#34; frameborder=&#34;0&#34; scrolling=&#34;no&#34;&gt;&lt;/iframe&gt;
+
+&lt;p&gt;また二週間くらい使い込んでからのインプレッションも書きたいと思います。&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
