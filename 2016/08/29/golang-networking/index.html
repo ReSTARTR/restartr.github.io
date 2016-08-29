@@ -1,0 +1,504 @@
+    <!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="author" content="ReSTARTR">
+		<meta name="description" content="">
+		<meta name="generator" content="Hugo 0.15" />
+		<title>Goの通信経路選択(net.LookupIP &amp; net.Dial) &middot; I Will Survive</title>
+		<link rel="shortcut icon" href="http://blog.restartr.com/images/favicon.ico">
+		<link rel="stylesheet" href="http://blog.restartr.com/css/style.css">
+		<link rel="stylesheet" href="http://blog.restartr.com/css/highlight.css">
+		<link rel="stylesheet" href="http://blog.restartr.com/css/monosocialiconsfont.css">
+		<link rel="stylesheet" href="http://blog.restartr.com/css/restartr.css">
+		
+		<link href="http://blog.restartr.com/index.xml" rel="alternate" type="application/rss+xml" title="I Will Survive" />
+    
+
+
+ <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-894530-10']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+  <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
+
+
+	</head>
+
+    <body>
+       <nav class="main-nav">
+	
+	
+		<a href='http://blog.restartr.com/'> <span class="arrow">←</span>Home</a>
+	
+
+	
+		<a href='http://blog.restartr.com/about'>About</a>
+	
+
+	
+	<a class="cta" href="http://blog.restartr.com/index.xml">Subscribe</a>
+	
+</nav>
+
+        <section id="wrapper">
+            <article class="post">
+                <header>
+                    <h1>Goの通信経路選択(net.LookupIP &amp; net.Dial)</h1>
+                    <h2 class="headline">August 29, 2016 -
+                    
+                    golang
+                    </h2>
+                </header>
+                <section id="post-body">
+                    
+
+<p>GoのHTTP通信経路選択の挙動について腑に落ちない点があり、<code>net.LookupIP</code>/<code>net.Dial</code>の仕様とそれに伴い生じる接続経路の選択問題、そしてその対策について調べてみました。</p>
+
+<h3 id="tl-dr:165353d24c0bb1dfa78b677fc4ac1461">TL;DR</h3>
+
+<p>unix環境におけるGoの名前解決まわりの仕様</p>
+
+<ul>
+<li><code>net.LookupIP</code>はDNSから取得できたアドレスリストをそのまま返すわけではない</li>
+<li>内部ネットワーク間の接続であれば<strong>接続元と接続先がビット列的に近いものを優先したアドレスリスト</strong>を返す</li>
+<li><code>net.Dial</code>は<code>net.LookupIP</code>がかえすアドレスリストの先頭から接続を試みる</li>
+<li>その後、最初に接続が成功したものとのみ通信を行う</li>
+<li>DNSラウンドロビン等で複数アドレスに分散したい場合、この仕様により経路が固定されてしまう可能性がある</li>
+</ul>
+
+<p>前提条件などによって挙動がかわりますので、ここから深掘りしていきます。</p>
+
+<h3 id="前提とする環境:165353d24c0bb1dfa78b677fc4ac1461">前提とする環境</h3>
+
+<p>今回は以下の環境を想定としています。</p>
+
+<ul>
+<li>unix系OSを利用している</li>
+<li>Go1.5以降を利用している</li>
+<li>IPv4を利用している</li>
+<li>AWSのVPCなど内部ネットワークを構築している</li>
+</ul>
+
+<h3 id="goの-net-lookupip-と-net-dial-の仕様:165353d24c0bb1dfa78b677fc4ac1461">Goの<code>net.LookupIP</code>と<code>net.Dial</code>の仕様</h3>
+
+<ul>
+<li><a href="https://golang.org/pkg/net/#LookupIP">net.LookupIP - The Go Programming Language</a></li>
+</ul>
+
+<p><code>net.LookupIP</code>は以下のような仕様となっています。</p>
+
+<ul>
+<li>名前解決は<code>getaddrinfo</code>相当をGoで実装</li>
+<li>解決した結果のアドレスリストを<a href="https://tools.ietf.org/html/rfc6724">RFC6724</a>にもとづいてソートを実施</li>
+<li>ソート済みアドレスリストを呼び出し元に返す</li>
+</ul>
+
+<p>このRFC6724に基づいたソート処理によって<strong>DNSが返すアドレスリストの順序が変更されてしまう可能性</strong>があり、
+その可能性は接続元と接続先の組み合わせに依存しています。
+(※ソート処理実装である<code>sortByRFC6724</code>の定義は<a href="https://github.com/golang/go/blob/release-branch.go1.7/src/net/addrselect.go">go/addrselect.go</a>を参照)</p>
+
+<p>ちなみに、このRFC6724によるソートはgo-1.5以降のバージョンに含まれる(<a href="https://github.com/golang/go/commit/adb1e030136f14ef8434930f15a04a74568a5948">net: RFC 6724 address selection · golang/go</a>)ので、それ以前のバージョンでは挙動が異なってくると思います。</p>
+
+<p><code>net.Dial</code>は<code>net.LookupIP</code>がかえすアドレスリストの先頭から接続を試みていき、最初に接続成功したアドレスを最終的な接続先とします。そのため、最終的なDial先IPは<code>net.LookupIP</code>の結果に強く依存することになります。</p>
+
+<h3 id="sortbyrfc6724-内部のソート仕様:165353d24c0bb1dfa78b677fc4ac1461"><code>sortByRFC6724</code>内部のソート仕様</h3>
+
+<p><a href="https://github.com/golang/go/blob/release-branch.go1.7/src/net/addrselect.go">src/net/addrselect.go</a>をみると、10ルールがソートにつかわれていることがわかります。</p>
+
+<pre><code class="language-go">// Less reports whether i is a better destination address for this
+// host than j.
+//
+// The algorithm and variable names comes from RFC 6724 section 6.
+func (s *byRFC6724) Less(i, j int) bool {
+        // Rule 1: Avoid unusable destinations.
+        // Rule 2: Prefer matching scope.
+        // Rule 3: Avoid deprecated addresses.
+        // Rule 4: Prefer home addresses.
+        // Rule 5: Prefer matching label.
+        // Rule 6: Prefer higher precedence.
+        // Rule 7: Prefer native transport.
+        // Rule 8: Prefer smaller scope.
+        // Rule 9: Use longest matching prefix.
+        // Rule 10: Otherwise, leave the order unchanged.
+}
+</code></pre>
+
+<p>このうち、<code>Rule 9: Use longest matching prefix.</code>が注目すべき処理となります。</p>
+
+<p><code>Rule 9</code>では<strong>接続元と接続先が特定のブロックに存在している場合に限り、アドレスのビット列の一致する長さをスコアとします。</strong>
+そして<code>sortByRFC6724</code>はこのスコアの高いものを優先してリストをソートします。</p>
+
+<h3 id="ソートのスコア算出処理の検証:165353d24c0bb1dfa78b677fc4ac1461">ソートのスコア算出処理の検証</h3>
+
+<p>このスコア算出処理はnetパッケージに閉じられていますが、なんとか動作を検証してみます。</p>
+
+<p>AWSのVPCにinternalELBを立てた場合を例を以下に記します。<code>10.0.0.0/16</code>のVPC内に以下4つのサブネットが存在する環境を想定しています。</p>
+
+<pre><code>10.0.0.0/24
+10.0.1.0/24
+10.0.2.0/24
+10.0.3.0/24
+</code></pre>
+
+<p>ここにinternal ELBを配置した結果、<code>10.0.0.2</code>のVPC用DNSにELBの名を問い合わせると以下4つのIPが取得できるようになったとします。</p>
+
+<pre><code>10.0.0.104
+10.0.1.12
+10.0.2.8
+10.0.3.221
+</code></pre>
+
+<p>このELBの名前解決を行う際にsortByRFC6724でどのようにソートされるかをみるために、
+以下に重要な関数のコピーして幾つかのパターンを試すサンプルを書きました。</p>
+
+<ul>
+<li><a href="https://play.golang.org/p/9P17Lm3-KX">https://play.golang.org/p/9P17Lm3-KX</a></li>
+</ul>
+
+<p>これは接続元と接続先のIPの組み合わせにおいて各スコアを表示するプログラムであり、
+検証する接続元と接続先IPの組み合わせは以下のとおりです。</p>
+
+<pre><code class="language-go">    // destination IPs
+    dsts := []net.IP{
+        net.IP{10, 0, 0, 104}, // 10.0.0.0/24
+        net.IP{10, 0, 1, 12},  // 10.0.1.0/24
+        net.IP{10, 0, 2, 8},   // 10.0.2.0/24
+        net.IP{10, 0, 3, 221}, // 10.0.3.0/24
+    }
+
+    // source IPs
+    srcs := []net.IP{
+        net.IP{123, 4, 5, 6},
+        net.IP{10, 0, 1, 3},
+        net.IP{10, 0, 1, 199},
+        net.IP{10, 0, 4, 211},
+    }
+</code></pre>
+
+<p>実行すると結果はこのようになります。</p>
+
+<pre><code class="language-bash"># case1: 外部から問い合わせた場合
+src: 123.4.5.6
+-&gt; 10.0.0.104   : 1 (same block=false)
+-&gt; 10.0.1.12    : 1 (same block=false)
+-&gt; 10.0.2.8     : 1 (same block=false)
+-&gt; 10.0.3.221   : 1 (same block=false)
+
+# case2: VPC内部の`10.0.1.0/24`から問い合わせた場合
+src: 10.0.1.3
+-&gt; 10.0.0.104   : 23 (same block=true)
+-&gt; 10.0.1.12    : 28 (same block=true)
+-&gt; 10.0.2.8     : 22 (same block=true)
+-&gt; 10.0.3.221   : 22 (same block=true)
+
+# case3: VPC内部の`10.0.1.0/24`から問い合わせた場合
+src: 10.0.1.199
+-&gt; 10.0.0.104   : 23 (same block=true)
+-&gt; 10.0.1.12    : 24 (same block=true)
+-&gt; 10.0.2.8     : 22 (same block=true)
+-&gt; 10.0.3.221   : 22 (same block=true)
+
+# case4: ELBが所属しない別サブネットから問い合わせた場合
+src: 10.0.4.211
+-&gt; 10.0.0.104   : 21 (same block=true)
+-&gt; 10.0.1.12    : 21 (same block=true)
+-&gt; 10.0.2.8     : 21 (same block=true)
+-&gt; 10.0.3.221   : 21 (same block=true)
+</code></pre>
+
+<p>表示内容は</p>
+
+<pre><code>-&gt; 10.0.1.12    : 24 (same block=true)
+</code></pre>
+
+<p>の場合、<code>10.0.0.12</code>に対するスコアが<code>24</code>であり、実際にそのスコアを採用するなら<code>same block=true</code>になります。</p>
+
+<p>ここで重要なのは、<strong>VPC外部のIPから問い合わせた場合はスコアはすべておなじ</strong>であることと、<strong>同じサブネットから問い合わせてもスコアが異なる接続先IPがある</strong>ことです。</p>
+
+<p>同じ<code>10.0.1.0/24</code>から問い合わせても、case3の<code>10.0.1.199</code>よりcase2の<code>10.0.1.3</code>のほうが<code>10.0.1.12</code>に対するスコアが高くなっています。
+これは、接続元IPと接続先IPの32bitのビット列から一致するビット長をもとにスコアを算出しているからです。
+接続元IPが同じサブネットに所属しているかどうかはスコアに影響しません。</p>
+
+<h3 id="経路が固定化されないための対策:165353d24c0bb1dfa78b677fc4ac1461">経路が固定化されないための対策</h3>
+
+<p>ここまでで書いたように<code>net.Lookup</code>が返すアドレスリストは特定の環境下で必ず同じ並びになってしまい、その結果<code>net.Dial</code>での接続先が固定化されてしまうケースが発生します。
+その対策として明示的にランダムなIPで接続する方法が使えます。</p>
+
+<p>http.Clientを使ったHTTP接続の例だと、手順はこうなります。</p>
+
+<ol>
+<li><code>net.LookupIP</code>でアドレスリストを取得</li>
+<li>アドレスリストからランダムに1つIPを選択</li>
+<li>URLにはホスト名ではなくIPを指定する</li>
+<li><code>Request.Host</code>に本来のホスト名(とポート)を指定する</li>
+</ol>
+
+<h4 id="簡単な実装例:165353d24c0bb1dfa78b677fc4ac1461">簡単な実装例</h4>
+
+<p>何かと貧弱な実装ではありますが、一応ランダムにIPが採用されるようになります。</p>
+
+<pre><code class="language-go">package main
+
+import (
+	&quot;fmt&quot;
+	&quot;math/rand&quot;
+	&quot;net&quot;
+	&quot;net/http&quot;
+	&quot;net/http/httputil&quot;
+	&quot;net/url&quot;
+	&quot;strings&quot;
+	&quot;time&quot;
+)
+
+// random selection from ipaddrs
+func pickupIP(host string) (string, error) {
+	addrs, err := net.LookupIP(host)
+	if err != nil {
+		return &quot;&quot;, err
+	}
+	rand.Seed(time.Now().UnixNano())
+	idx := rand.Intn(len(addrs))
+	ipaddr := addrs[idx].String()
+	return ipaddr, nil
+
+}
+
+func do(req *http.Request) (*http.Response, error) {
+	hostport := strings.Split(req.URL.Host, &quot;:&quot;)
+	ipaddr, err := pickupIP(hostport[0])
+	if err != nil {
+		return nil, err
+	}
+
+	urlstr := req.URL.Scheme + &quot;://&quot; + ipaddr
+	if len(hostport) &gt; 1 {
+		urlstr = urlstr + &quot;:&quot; + hostport[1]
+	}
+	u, err := url.Parse(urlstr)
+	if err != nil {
+		return nil, err
+	}
+
+	// set ipaddr to req.Host and
+	// keep the original `Host` header
+	req.Host = req.URL.Host
+	req.URL.Host = u.Host
+
+	b, err := httputil.DumpRequest(req, true)
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println(string(b))
+
+	client := http.DefaultClient
+	return client.Do(req)
+}
+
+func main() {
+	urlstr := &quot;http://internal-user-api-779196100.ap-northeast-1.elb.amazonaws.com:8888/ping&quot;
+	req, _ := NewRequest(&quot;GET&quot;, urlstr, nil)
+	res, err := do(req)
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println(res.Status)
+	}
+}
+</code></pre>
+
+<p>urlに含まれるホスト名から<code>pickupIP</code>を使って1つのIPアドレスの文字列を取得しています。</p>
+
+<pre><code>func pickupIP(host string) (string, error)
+</code></pre>
+
+<p>この結果を<a href="https://golang.org/pkg/net/url/#URL"><code>url.URL.Host</code></a>に上書きすることで<code>http://10.0.1.104/</code>のようなIPアドレスによる接続を行います。
+さらに、接続先サービスがHostヘッダの値に依存しているケースもあるので<a href="https://golang.org/pkg/net/http/#Request"><code>http.Request.Host</code></a>でオリジナルのホスト名を指定しています。</p>
+
+<pre><code class="language-go">// set ipaddr to req.Host and
+// keep the original `Host` header
+req.Host = req.URL.Host
+req.URL.Host = u.Host
+</code></pre>
+
+<p>これでランダムなIPによる接続が実現できますが、注意点があります。</p>
+
+<p>HTTP/HTTPSリスナーとしてのELB名から引けるアドレスリストの並びは負荷状況も考慮されています。 しかし、この実装ではそこまで考慮しておらず、単純なランダム選択になります。</p>
+
+<ul>
+<li>参考: <a href="http://dev.classmethod.jp/cloud/elb-configuration-guide-1/">AWS ELBの社内向け構成ガイドを公開してみる 負荷分散編 – Cross-Zone Routingを踏まえて ｜ Developers.IO</a></li>
+</ul>
+
+<p>そもそも、<code>net.LookupIP</code>にRFC6724によるソートを回避できるオプションがあると嬉しいのですが&hellip;</p>
+
+<h3 id="pure-goとcgoの2つの名前解決の実装:165353d24c0bb1dfa78b677fc4ac1461">Pure Goとcgoの2つの名前解決の実装</h3>
+
+<p>今回の主題からはそれますが<code>sortByRFC6724</code>するまでに行われるDNS問い合わせの実装はPure Goとcgoの2つから選択ができます。</p>
+
+<ul>
+<li><a href="https://golang.org/pkg/net/#hdr-Name_Resolution">Name Resolution | net - The Go Programming Language</a></li>
+</ul>
+
+<p>デフォルトはPure Goであり、環境変数<code>GODEBUG=netdns=cgo</code>でcgoを指定できたりします。</p>
+
+<blockquote>
+<p>By default the pure Go resolver is used, because a blocked DNS request consumes only a goroutine, while a blocked C call consumes an operating system thread.</p>
+</blockquote>
+
+<p>リソース消費効率がPure Goのほうが良いからというのがPure Goがデフォルトである理由のようです。とくに理由がない限りはデフォルトのままでも良いのではないかなと思っていますが、明示的に指定しなければいけない事例があったら聞いてみたいです。</p>
+
+<h3 id="さいごに:165353d24c0bb1dfa78b677fc4ac1461">さいごに</h3>
+
+<p>以上がGoの<code>net.LookupIP</code>/<code>net.Dial</code>の仕様とそれに伴い生じる接続経路の選択問題、そしてその対策になります。
+実際のところELBの場合はよしなにやってくれることが多いのでクリティカルな問題にはつながらない場合がほとんどだとは思いますが、
+この内部仕様を知らないことでドハマりすることもありますのでご注意を。私はこの仕様にたどり着くまでに結構手間取ってしまいました😢</p>
+
+                </section>
+            </article>
+            <footer id="post-meta" class="clearfix">
+            <p class="small">
+            
+            #go #golang
+            
+            </p>
+                <a href="https://twitter.com/ReSTARTR">
+                        <img class="avatar" src="http://blog.restartr.com/images/avatar.png">
+                        <div>
+                            <span class="dark">ReSTARTR</span>
+                            <span></span>
+                        </div>
+                    </a>
+                <section id="sharing">
+                    <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2016/08/29/golang-networking" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2016/08/29/golang-networking" >Tweet</a></li>
+<script type="text/javascript">
+  (function(){
+    var twitterWidgets = document.createElement('script');
+    twitterWidgets.type = 'text/javascript';
+    twitterWidgets.async = true;
+    twitterWidgets.src = '//platform.twitter.com/widgets.js';
+    document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+  })();
+</script>
+
+<a href="http://blog.restartr.com/2016/08/29/golang-networking" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+
+                </section>
+            </footer>
+
+            
+
+            <ul id="post-list" class="archive readmore">
+    <h3>Read more</h3>
+    
+    
+        
+        <li>
+            <a href="http://blog.restartr.com/2016/08/29/golang-networking">Goの通信経路選択(net.LookupIP &amp; net.Dial)<aside class="dates">Aug 29</aside></a>
+        </li>
+        
+   
+    
+        
+        <li>
+            <a href="http://blog.restartr.com/2016/07/04/became-a-freelance-engineer">フリーランスエンジニアになりました<aside class="dates">Jul 4</aside></a>
+        </li>
+        
+   
+    
+        
+        <li>
+            <a href="http://blog.restartr.com/2016/03/31/got-my-ergodox-ez">ErgoDox EZが届いた<aside class="dates">Mar 31</aside></a>
+        </li>
+        
+   
+    
+        
+        <li>
+            <a href="http://blog.restartr.com/2016/03/13/from-octopress-to-hugo">OctopressからHugoに移行<aside class="dates">Mar 13</aside></a>
+        </li>
+        
+   
+    
+        
+        <li>
+            <a href="http://blog.restartr.com/2016/02/27/ec2-ls-hosts">ec2-ls-hosts: EC2インスタンスを一覧するだけのシンプルツール<aside class="dates">Feb 27</aside></a>
+        </li>
+        
+   
+    
+        
+        <li>
+            <a href="http://blog.restartr.com/2016/02/17/ergodox-ez">ErgoDox EZを注文した(けどまだ届いてない)<aside class="dates">Feb 17</aside></a>
+        </li>
+        
+   
+    
+        
+        <li>
+            <a href="http://blog.restartr.com/2015/12/31/things-of-2015">2015年ふりかえり<aside class="dates">Dec 31</aside></a>
+        </li>
+        
+   
+    
+        
+        <li>
+            <a href="http://blog.restartr.com/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix">Elixir/PhoenixでISUCON5予選の参考実装を書いた<aside class="dates">Oct 21</aside></a>
+        </li>
+        
+   
+    
+        
+        <li>
+            <a href="http://blog.restartr.com/2015/10/15/go-programming-blueprints">&#34;Go Programming Blueprints&#34;を読んだ<aside class="dates">Oct 15</aside></a>
+        </li>
+        
+   
+    
+        
+        <li>
+            <a href="http://blog.restartr.com/2015/03/09/consul-cluster-with-docker">DockerとWeaveを使って1台のマシンでConsulを複数動かしてみる<aside class="dates">Mar 9</aside></a>
+        </li>
+        
+   
+</ul>
+            <footer id="footer">
+    
+        
+<div id="social">
+    
+    <a class="symbol" href="https://github.com/ReSTARTR">
+        github
+    </a>
+    
+    <a class="symbol" href="https://twitter.com/ReSTARTR">
+        twitterbird
+    </a>
+    
+</div>
+
+    
+    <p class="small">
+    
+        © Copyright 2016 ReSTARTR
+    
+    </p>
+</footer>
+
+        </section>
+
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="http://blog.restartr.com/js/main.js"></script>
+<script src="http://blog.restartr.com/js/highlight.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+    </body>
+</html>

@@ -6,8 +6,318 @@
     <description>Recent content on I Will Survive</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 04 Jul 2016 00:32:23 +0900</lastBuildDate>
+    <lastBuildDate>Mon, 29 Aug 2016 07:00:00 +0900</lastBuildDate>
     <atom:link href="http://blog.restartr.com/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Goの通信経路選択(net.LookupIP &amp; net.Dial)</title>
+      <link>http://blog.restartr.com/2016/08/29/golang-networking</link>
+      <pubDate>Mon, 29 Aug 2016 07:00:00 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2016/08/29/golang-networking</guid>
+      <description>
+
+&lt;p&gt;GoのHTTP通信経路選択の挙動について腑に落ちない点があり、&lt;code&gt;net.LookupIP&lt;/code&gt;/&lt;code&gt;net.Dial&lt;/code&gt;の仕様とそれに伴い生じる接続経路の選択問題、そしてその対策について調べてみました。&lt;/p&gt;
+
+&lt;h3 id=&#34;tl-dr:165353d24c0bb1dfa78b677fc4ac1461&#34;&gt;TL;DR&lt;/h3&gt;
+
+&lt;p&gt;unix環境におけるGoの名前解決まわりの仕様&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;net.LookupIP&lt;/code&gt;はDNSから取得できたアドレスリストをそのまま返すわけではない&lt;/li&gt;
+&lt;li&gt;内部ネットワーク間の接続であれば&lt;strong&gt;接続元と接続先がビット列的に近いものを優先したアドレスリスト&lt;/strong&gt;を返す&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;net.Dial&lt;/code&gt;は&lt;code&gt;net.LookupIP&lt;/code&gt;がかえすアドレスリストの先頭から接続を試みる&lt;/li&gt;
+&lt;li&gt;その後、最初に接続が成功したものとのみ通信を行う&lt;/li&gt;
+&lt;li&gt;DNSラウンドロビン等で複数アドレスに分散したい場合、この仕様により経路が固定されてしまう可能性がある&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;前提条件などによって挙動がかわりますので、ここから深掘りしていきます。&lt;/p&gt;
+
+&lt;h3 id=&#34;前提とする環境:165353d24c0bb1dfa78b677fc4ac1461&#34;&gt;前提とする環境&lt;/h3&gt;
+
+&lt;p&gt;今回は以下の環境を想定としています。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;unix系OSを利用している&lt;/li&gt;
+&lt;li&gt;Go1.5以降を利用している&lt;/li&gt;
+&lt;li&gt;IPv4を利用している&lt;/li&gt;
+&lt;li&gt;AWSのVPCなど内部ネットワークを構築している&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&#34;goの-net-lookupip-と-net-dial-の仕様:165353d24c0bb1dfa78b677fc4ac1461&#34;&gt;Goの&lt;code&gt;net.LookupIP&lt;/code&gt;と&lt;code&gt;net.Dial&lt;/code&gt;の仕様&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://golang.org/pkg/net/#LookupIP&#34;&gt;net.LookupIP - The Go Programming Language&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;code&gt;net.LookupIP&lt;/code&gt;は以下のような仕様となっています。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;名前解決は&lt;code&gt;getaddrinfo&lt;/code&gt;相当をGoで実装&lt;/li&gt;
+&lt;li&gt;解決した結果のアドレスリストを&lt;a href=&#34;https://tools.ietf.org/html/rfc6724&#34;&gt;RFC6724&lt;/a&gt;にもとづいてソートを実施&lt;/li&gt;
+&lt;li&gt;ソート済みアドレスリストを呼び出し元に返す&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;このRFC6724に基づいたソート処理によって&lt;strong&gt;DNSが返すアドレスリストの順序が変更されてしまう可能性&lt;/strong&gt;があり、
+その可能性は接続元と接続先の組み合わせに依存しています。
+(※ソート処理実装である&lt;code&gt;sortByRFC6724&lt;/code&gt;の定義は&lt;a href=&#34;https://github.com/golang/go/blob/release-branch.go1.7/src/net/addrselect.go&#34;&gt;go/addrselect.go&lt;/a&gt;を参照)&lt;/p&gt;
+
+&lt;p&gt;ちなみに、このRFC6724によるソートはgo-1.5以降のバージョンに含まれる(&lt;a href=&#34;https://github.com/golang/go/commit/adb1e030136f14ef8434930f15a04a74568a5948&#34;&gt;net: RFC 6724 address selection · golang/go&lt;/a&gt;)ので、それ以前のバージョンでは挙動が異なってくると思います。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;net.Dial&lt;/code&gt;は&lt;code&gt;net.LookupIP&lt;/code&gt;がかえすアドレスリストの先頭から接続を試みていき、最初に接続成功したアドレスを最終的な接続先とします。そのため、最終的なDial先IPは&lt;code&gt;net.LookupIP&lt;/code&gt;の結果に強く依存することになります。&lt;/p&gt;
+
+&lt;h3 id=&#34;sortbyrfc6724-内部のソート仕様:165353d24c0bb1dfa78b677fc4ac1461&#34;&gt;&lt;code&gt;sortByRFC6724&lt;/code&gt;内部のソート仕様&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&#34;https://github.com/golang/go/blob/release-branch.go1.7/src/net/addrselect.go&#34;&gt;src/net/addrselect.go&lt;/a&gt;をみると、10ルールがソートにつかわれていることがわかります。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;// Less reports whether i is a better destination address for this
+// host than j.
+//
+// The algorithm and variable names comes from RFC 6724 section 6.
+func (s *byRFC6724) Less(i, j int) bool {
+        // Rule 1: Avoid unusable destinations.
+        // Rule 2: Prefer matching scope.
+        // Rule 3: Avoid deprecated addresses.
+        // Rule 4: Prefer home addresses.
+        // Rule 5: Prefer matching label.
+        // Rule 6: Prefer higher precedence.
+        // Rule 7: Prefer native transport.
+        // Rule 8: Prefer smaller scope.
+        // Rule 9: Use longest matching prefix.
+        // Rule 10: Otherwise, leave the order unchanged.
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;このうち、&lt;code&gt;Rule 9: Use longest matching prefix.&lt;/code&gt;が注目すべき処理となります。&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;Rule 9&lt;/code&gt;では&lt;strong&gt;接続元と接続先が特定のブロックに存在している場合に限り、アドレスのビット列の一致する長さをスコアとします。&lt;/strong&gt;
+そして&lt;code&gt;sortByRFC6724&lt;/code&gt;はこのスコアの高いものを優先してリストをソートします。&lt;/p&gt;
+
+&lt;h3 id=&#34;ソートのスコア算出処理の検証:165353d24c0bb1dfa78b677fc4ac1461&#34;&gt;ソートのスコア算出処理の検証&lt;/h3&gt;
+
+&lt;p&gt;このスコア算出処理はnetパッケージに閉じられていますが、なんとか動作を検証してみます。&lt;/p&gt;
+
+&lt;p&gt;AWSのVPCにinternalELBを立てた場合を例を以下に記します。&lt;code&gt;10.0.0.0/16&lt;/code&gt;のVPC内に以下4つのサブネットが存在する環境を想定しています。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;10.0.0.0/24
+10.0.1.0/24
+10.0.2.0/24
+10.0.3.0/24
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;ここにinternal ELBを配置した結果、&lt;code&gt;10.0.0.2&lt;/code&gt;のVPC用DNSにELBの名を問い合わせると以下4つのIPが取得できるようになったとします。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;10.0.0.104
+10.0.1.12
+10.0.2.8
+10.0.3.221
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;このELBの名前解決を行う際にsortByRFC6724でどのようにソートされるかをみるために、
+以下に重要な関数のコピーして幾つかのパターンを試すサンプルを書きました。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://play.golang.org/p/9P17Lm3-KX&#34;&gt;https://play.golang.org/p/9P17Lm3-KX&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;これは接続元と接続先のIPの組み合わせにおいて各スコアを表示するプログラムであり、
+検証する接続元と接続先IPの組み合わせは以下のとおりです。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;    // destination IPs
+    dsts := []net.IP{
+        net.IP{10, 0, 0, 104}, // 10.0.0.0/24
+        net.IP{10, 0, 1, 12},  // 10.0.1.0/24
+        net.IP{10, 0, 2, 8},   // 10.0.2.0/24
+        net.IP{10, 0, 3, 221}, // 10.0.3.0/24
+    }
+
+    // source IPs
+    srcs := []net.IP{
+        net.IP{123, 4, 5, 6},
+        net.IP{10, 0, 1, 3},
+        net.IP{10, 0, 1, 199},
+        net.IP{10, 0, 4, 211},
+    }
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;実行すると結果はこのようになります。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;# case1: 外部から問い合わせた場合
+src: 123.4.5.6
+-&amp;gt; 10.0.0.104   : 1 (same block=false)
+-&amp;gt; 10.0.1.12    : 1 (same block=false)
+-&amp;gt; 10.0.2.8     : 1 (same block=false)
+-&amp;gt; 10.0.3.221   : 1 (same block=false)
+
+# case2: VPC内部の`10.0.1.0/24`から問い合わせた場合
+src: 10.0.1.3
+-&amp;gt; 10.0.0.104   : 23 (same block=true)
+-&amp;gt; 10.0.1.12    : 28 (same block=true)
+-&amp;gt; 10.0.2.8     : 22 (same block=true)
+-&amp;gt; 10.0.3.221   : 22 (same block=true)
+
+# case3: VPC内部の`10.0.1.0/24`から問い合わせた場合
+src: 10.0.1.199
+-&amp;gt; 10.0.0.104   : 23 (same block=true)
+-&amp;gt; 10.0.1.12    : 24 (same block=true)
+-&amp;gt; 10.0.2.8     : 22 (same block=true)
+-&amp;gt; 10.0.3.221   : 22 (same block=true)
+
+# case4: ELBが所属しない別サブネットから問い合わせた場合
+src: 10.0.4.211
+-&amp;gt; 10.0.0.104   : 21 (same block=true)
+-&amp;gt; 10.0.1.12    : 21 (same block=true)
+-&amp;gt; 10.0.2.8     : 21 (same block=true)
+-&amp;gt; 10.0.3.221   : 21 (same block=true)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;表示内容は&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;-&amp;gt; 10.0.1.12    : 24 (same block=true)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;の場合、&lt;code&gt;10.0.0.12&lt;/code&gt;に対するスコアが&lt;code&gt;24&lt;/code&gt;であり、実際にそのスコアを採用するなら&lt;code&gt;same block=true&lt;/code&gt;になります。&lt;/p&gt;
+
+&lt;p&gt;ここで重要なのは、&lt;strong&gt;VPC外部のIPから問い合わせた場合はスコアはすべておなじ&lt;/strong&gt;であることと、&lt;strong&gt;同じサブネットから問い合わせてもスコアが異なる接続先IPがある&lt;/strong&gt;ことです。&lt;/p&gt;
+
+&lt;p&gt;同じ&lt;code&gt;10.0.1.0/24&lt;/code&gt;から問い合わせても、case3の&lt;code&gt;10.0.1.199&lt;/code&gt;よりcase2の&lt;code&gt;10.0.1.3&lt;/code&gt;のほうが&lt;code&gt;10.0.1.12&lt;/code&gt;に対するスコアが高くなっています。
+これは、接続元IPと接続先IPの32bitのビット列から一致するビット長をもとにスコアを算出しているからです。
+接続元IPが同じサブネットに所属しているかどうかはスコアに影響しません。&lt;/p&gt;
+
+&lt;h3 id=&#34;経路が固定化されないための対策:165353d24c0bb1dfa78b677fc4ac1461&#34;&gt;経路が固定化されないための対策&lt;/h3&gt;
+
+&lt;p&gt;ここまでで書いたように&lt;code&gt;net.Lookup&lt;/code&gt;が返すアドレスリストは特定の環境下で必ず同じ並びになってしまい、その結果&lt;code&gt;net.Dial&lt;/code&gt;での接続先が固定化されてしまうケースが発生します。
+その対策として明示的にランダムなIPで接続する方法が使えます。&lt;/p&gt;
+
+&lt;p&gt;http.Clientを使ったHTTP接続の例だと、手順はこうなります。&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;net.LookupIP&lt;/code&gt;でアドレスリストを取得&lt;/li&gt;
+&lt;li&gt;アドレスリストからランダムに1つIPを選択&lt;/li&gt;
+&lt;li&gt;URLにはホスト名ではなくIPを指定する&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Request.Host&lt;/code&gt;に本来のホスト名(とポート)を指定する&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h4 id=&#34;簡単な実装例:165353d24c0bb1dfa78b677fc4ac1461&#34;&gt;簡単な実装例&lt;/h4&gt;
+
+&lt;p&gt;何かと貧弱な実装ではありますが、一応ランダムにIPが採用されるようになります。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;package main
+
+import (
+	&amp;quot;fmt&amp;quot;
+	&amp;quot;math/rand&amp;quot;
+	&amp;quot;net&amp;quot;
+	&amp;quot;net/http&amp;quot;
+	&amp;quot;net/http/httputil&amp;quot;
+	&amp;quot;net/url&amp;quot;
+	&amp;quot;strings&amp;quot;
+	&amp;quot;time&amp;quot;
+)
+
+// random selection from ipaddrs
+func pickupIP(host string) (string, error) {
+	addrs, err := net.LookupIP(host)
+	if err != nil {
+		return &amp;quot;&amp;quot;, err
+	}
+	rand.Seed(time.Now().UnixNano())
+	idx := rand.Intn(len(addrs))
+	ipaddr := addrs[idx].String()
+	return ipaddr, nil
+
+}
+
+func do(req *http.Request) (*http.Response, error) {
+	hostport := strings.Split(req.URL.Host, &amp;quot;:&amp;quot;)
+	ipaddr, err := pickupIP(hostport[0])
+	if err != nil {
+		return nil, err
+	}
+
+	urlstr := req.URL.Scheme + &amp;quot;://&amp;quot; + ipaddr
+	if len(hostport) &amp;gt; 1 {
+		urlstr = urlstr + &amp;quot;:&amp;quot; + hostport[1]
+	}
+	u, err := url.Parse(urlstr)
+	if err != nil {
+		return nil, err
+	}
+
+	// set ipaddr to req.Host and
+	// keep the original `Host` header
+	req.Host = req.URL.Host
+	req.URL.Host = u.Host
+
+	b, err := httputil.DumpRequest(req, true)
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println(string(b))
+
+	client := http.DefaultClient
+	return client.Do(req)
+}
+
+func main() {
+	urlstr := &amp;quot;http://internal-user-api-779196100.ap-northeast-1.elb.amazonaws.com:8888/ping&amp;quot;
+	req, _ := NewRequest(&amp;quot;GET&amp;quot;, urlstr, nil)
+	res, err := do(req)
+	if err != nil {
+		fmt.Println(err)
+	} else {
+		fmt.Println(res.Status)
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;urlに含まれるホスト名から&lt;code&gt;pickupIP&lt;/code&gt;を使って1つのIPアドレスの文字列を取得しています。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;func pickupIP(host string) (string, error)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;この結果を&lt;a href=&#34;https://golang.org/pkg/net/url/#URL&#34;&gt;&lt;code&gt;url.URL.Host&lt;/code&gt;&lt;/a&gt;に上書きすることで&lt;code&gt;http://10.0.1.104/&lt;/code&gt;のようなIPアドレスによる接続を行います。
+さらに、接続先サービスがHostヘッダの値に依存しているケースもあるので&lt;a href=&#34;https://golang.org/pkg/net/http/#Request&#34;&gt;&lt;code&gt;http.Request.Host&lt;/code&gt;&lt;/a&gt;でオリジナルのホスト名を指定しています。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;// set ipaddr to req.Host and
+// keep the original `Host` header
+req.Host = req.URL.Host
+req.URL.Host = u.Host
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これでランダムなIPによる接続が実現できますが、注意点があります。&lt;/p&gt;
+
+&lt;p&gt;HTTP/HTTPSリスナーとしてのELB名から引けるアドレスリストの並びは負荷状況も考慮されています。 しかし、この実装ではそこまで考慮しておらず、単純なランダム選択になります。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;参考: &lt;a href=&#34;http://dev.classmethod.jp/cloud/elb-configuration-guide-1/&#34;&gt;AWS ELBの社内向け構成ガイドを公開してみる 負荷分散編 – Cross-Zone Routingを踏まえて ｜ Developers.IO&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;そもそも、&lt;code&gt;net.LookupIP&lt;/code&gt;にRFC6724によるソートを回避できるオプションがあると嬉しいのですが&amp;hellip;&lt;/p&gt;
+
+&lt;h3 id=&#34;pure-goとcgoの2つの名前解決の実装:165353d24c0bb1dfa78b677fc4ac1461&#34;&gt;Pure Goとcgoの2つの名前解決の実装&lt;/h3&gt;
+
+&lt;p&gt;今回の主題からはそれますが&lt;code&gt;sortByRFC6724&lt;/code&gt;するまでに行われるDNS問い合わせの実装はPure Goとcgoの2つから選択ができます。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://golang.org/pkg/net/#hdr-Name_Resolution&#34;&gt;Name Resolution | net - The Go Programming Language&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;デフォルトはPure Goであり、環境変数&lt;code&gt;GODEBUG=netdns=cgo&lt;/code&gt;でcgoを指定できたりします。&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;By default the pure Go resolver is used, because a blocked DNS request consumes only a goroutine, while a blocked C call consumes an operating system thread.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;リソース消費効率がPure Goのほうが良いからというのがPure Goがデフォルトである理由のようです。とくに理由がない限りはデフォルトのままでも良いのではないかなと思っていますが、明示的に指定しなければいけない事例があったら聞いてみたいです。&lt;/p&gt;
+
+&lt;h3 id=&#34;さいごに:165353d24c0bb1dfa78b677fc4ac1461&#34;&gt;さいごに&lt;/h3&gt;
+
+&lt;p&gt;以上がGoの&lt;code&gt;net.LookupIP&lt;/code&gt;/&lt;code&gt;net.Dial&lt;/code&gt;の仕様とそれに伴い生じる接続経路の選択問題、そしてその対策になります。
+実際のところELBの場合はよしなにやってくれることが多いのでクリティカルな問題にはつながらない場合がほとんどだとは思いますが、
+この内部仕様を知らないことでドハマりすることもありますのでご注意を。私はこの仕様にたどり着くまでに結構手間取ってしまいました😢&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>フリーランスエンジニアになりました</title>
@@ -1642,191 +1952,6 @@ _, err := msg.Ret.Send(&amp;amp;libchan.Message{Data: []byte(&amp;quot;World&amp
 &lt;p&gt;ということに気づき、再度キーノートを見返してました。libchanについては以下動画の30:45あたりからどうぞ。&lt;/p&gt;
 
 &lt;iframe width=&#34;640&#34; height=&#34;360&#34; src=&#34;//www.youtube.com/embed/_DOXBVrlW78&#34; frameborder=&#34;0&#34; allowfullscreen&gt;&lt;/iframe&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Dockerを使って任意のrubyバージョンのrpmを作成する</title>
-      <link>http://blog.restartr.com/2014/05/11/build-rpm-on-docker-container</link>
-      <pubDate>Sun, 11 May 2014 00:00:00 +0900</pubDate>
-      
-      <guid>http://blog.restartr.com/2014/05/11/build-rpm-on-docker-container</guid>
-      <description>
-
-&lt;p&gt;CentOSを使ってて不便なのがruby2系のインストール。&lt;/p&gt;
-
-&lt;p&gt;rbenvやruby-buildを使うかソースからインストールするのですが、この場合、環境を構築するたびにビルドすることになり時間もかかるし大変面倒です。&lt;/p&gt;
-
-&lt;p&gt;なのでDockerを使ってクリーンな環境でRubyの最新rpmをビルドしてみました。&lt;/p&gt;
-
-&lt;p&gt;Dockerを使えばビルド環境がすぐに立ち上げられるので、rpmビルドに必要なパッケージを確認したりするのに最適です。&lt;/p&gt;
-
-&lt;p&gt;今回のソースはgithubにpushしてあります。&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/ReSTARTR/ruby-rpmbuild-container&#34;&gt;ReSTARTR/ruby-rpmbuild-container&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;環境:fbab2b1e29ed5eba7b45d118a6879eff&#34;&gt;環境&lt;/h2&gt;
-
-&lt;ul&gt;
-&lt;li&gt;ゲストOS：Vagrantで起動したUbuntu-14.04&lt;/li&gt;
-&lt;li&gt;コンテナ：centos:6.4&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;ファイルの配置:fbab2b1e29ed5eba7b45d118a6879eff&#34;&gt;ファイルの配置&lt;/h2&gt;
-
-&lt;p&gt;以下ファイルを同一ディレクトリに入れておきます。&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Vagrantfile&lt;/li&gt;
-&lt;li&gt;provision.sh&lt;/li&gt;
-&lt;li&gt;Dockerfile&lt;/li&gt;
-&lt;li&gt;rubybuild.sh&lt;/li&gt;
-&lt;li&gt;ruby-2.0.0-p481.spec&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;手順:fbab2b1e29ed5eba7b45d118a6879eff&#34;&gt;手順&lt;/h2&gt;
-
-&lt;ol&gt;
-&lt;li&gt;ゲストOSの起動(Vagrant)&lt;/li&gt;
-&lt;li&gt;ゲストOSにsshログイン&lt;/li&gt;
-&lt;li&gt;Dockerコンテナのビルド&lt;/li&gt;
-&lt;li&gt;Dockerコンテナ内でrpmビルド&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h2 id=&#34;1-ゲストosの起動:fbab2b1e29ed5eba7b45d118a6879eff&#34;&gt;1. ゲストOSの起動&lt;/h2&gt;
-
-&lt;p&gt;Vagrantfile&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-ruby&#34;&gt;# -*- mode: ruby -*-
-# vi: set ft=ruby :
-VAGRANTFILE_API_VERSION = &amp;quot;2&amp;quot;
-
-Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.box = &amp;quot;ubuntu/trusty64&amp;quot;
-
-  config.vm.synced_folder &amp;quot;.&amp;quot;, &amp;quot;/vagrant&amp;quot;
-
-  config.vm.provision &amp;quot;shell&amp;quot;, path: &#39;provision.sh&#39;
-
-  # お好みで
-  config.vm.provider :virtualbox do |vb|
-    vb.customize [&amp;quot;modifyvm&amp;quot;, :id, &amp;quot;--memory&amp;quot;, &amp;quot;2048&amp;quot;, &amp;quot;--cpus&amp;quot;, &amp;quot;2&amp;quot;, &amp;quot;--ioapic&amp;quot;, &amp;quot;on&amp;quot;]
-  end
-end
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;provision.sh&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;sudo apt-get update
-sudo apt-get install -y language-pack-ja
-
-# Docker
-sudo apt-get install -y docker.io
-sudo ln -sf /usr/bin/docker.io /usr/local/bin/docker
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;2-ゲストosにsshログイン:fbab2b1e29ed5eba7b45d118a6879eff&#34;&gt;2. ゲストOSにsshログイン&lt;/h2&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ vagrant up
-$ vagrant ssh
-$ cd /vagrant
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;3-dockerコンテナのビルド:fbab2b1e29ed5eba7b45d118a6879eff&#34;&gt;3. Dockerコンテナのビルド&lt;/h2&gt;
-
-&lt;p&gt;ビルド用specファイルを用意して、シェルスクリプトでビルドします。&lt;/p&gt;
-
-&lt;p&gt;すると、コンテナにマウントしたボリュームにビルド済みのrpmファイルがコピーされます。&lt;/p&gt;
-
-&lt;h3 id=&#34;ビルド用specシェルスクリプト:fbab2b1e29ed5eba7b45d118a6879eff&#34;&gt;ビルド用specシェルスクリプト&lt;/h3&gt;
-
-&lt;p&gt;環境変数RUBY_VERSIONに&amp;rdquo;2.0.0-p481&amp;rdquo;や&amp;rdquo;2.0.0-p451&amp;rdquo;を設定すれば任意のバージョンをビルドします。&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;※デフォルトの2.0.0-p481以外はそれ用のspecファイルが必要になります。&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;rubybuild.sh&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;#!/bin/env bash
-WORKDIR=/opt/rpmbuild
-
-RUBY_VER=${RUBY_VER:-&amp;quot;2.0.0-p481&amp;quot;}
-RUBY_MAJOUR_VER=$(echo $RUBY_VER|cut -d&amp;quot;-&amp;quot; -f1)
-RUBY_MINOR_VER=$(echo $RUBY_VER|cut -d&amp;quot;-&amp;quot; -f2)
-if [ -z &amp;quot;$RUBY_MINOR_VER&amp;quot; ]; then
-  RUBY_TARBALL=&amp;quot;ruby-$RUBY_MAJOUR_VER.tar.gz&amp;quot;
-else
-  RUBY_TARBALL=&amp;quot;ruby-$RUBY_MAJOUR_VER-$RUBY_MINOR_VER.tar.gz&amp;quot;
-fi
-RUBY_REMOTE_FILE=&amp;quot;http://cache.ruby-lang.org/pub/ruby/${RUBY_MAJOUR_VER:0:3}/$RUBY_TARBALL&amp;quot;
-
-mkdir -p $WORKDIR/rpm/{BUILD,SRPMS,SPECS,SOURCES,RPMS}
-echo &amp;quot;%_topdir $WORKDIR/rpm&amp;quot; &amp;gt; $WORKDIR/.rpmmacros
-if [ ! -f $WORKDIR/rpm/SOURCES/$RUBY_TARBALL ]; then
-  wget $RUBY_REMOTE_FILE -O $WORKDIR/rpm/SOURCES/$RUBY_TARBALL
-fi
-cp $WORKDIR/ruby-${RUBY_VER}.spec $WORKDIR/rpm/SPECS/ruby.spec
-rpmbuild -bb $WORKDIR/rpm/SPECS/ruby.spec
-
-cp $WORKDIR/rpm/RPMS/x86_64/* /shared/
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;4-dockerコンテナ内でrpmビルド:fbab2b1e29ed5eba7b45d118a6879eff&#34;&gt;4. Dockerコンテナ内でrpmビルド&lt;/h2&gt;
-
-&lt;p&gt;Dockerfile&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;FROM centos:6.4
-
-# setup
-RUN yum update -y
-RUN yum install -y rpm-build gcc
-
-# epel
-RUN rpm --import http://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-6
-RUN rpm -ihv http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
-
-# ruby-depends
-RUN yum install —enablerepo=epel -y libyaml-devel
-RUN yum install -y byacc readline-devel ncourses-devel tcl-devel openssl-devel gdbm-devel db4-devel
-
-# build rpm
-WORKDIR /opt/rpmbuild
-ADD rubybuild.sh /opt/rpmbuild/rubybuild.sh
-ADD ruby-2.0.0-p481.spec /opt/rpmbuild/ruby-2.0.0-p481.spec
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h2 id=&#34;コンテナ起動してrpmをビルド:fbab2b1e29ed5eba7b45d118a6879eff&#34;&gt;コンテナ起動してrpmをビルド&lt;/h2&gt;
-
-&lt;p&gt;コンテナを起動する際に、カレントディレクトリをマウントしておきます。&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;※&lt;code&gt;--rm&lt;/code&gt;オプションでrpm作成完了したらコンテナは破棄します&lt;/em&gt;&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-bash&#34;&gt;$ sudo docker build -t &amp;lt;USERNAME&amp;gt;/rpmbuild .
-$ sudo docker run --rm -v $PWD:/shared:rw -it &amp;lt;CONTAINER_ID&amp;gt; /bin/sh ./rubybuild.sh
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;成功すれば、ゲストOSのカレントディレクトリにrpmができてます。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;$ ls *.rpm
-ruby-2.0.0p481-2.el6.x86_64.rpm
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;これで、rpmコマンド一発で最新のrubyをインストールできます。&lt;/p&gt;
-
-&lt;p&gt;rubyインストール済みコンテナを作るなら、Dockerfileに以下のように書けばruby実行環境のできあがりです。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;FROM centos:6.4
-
-# EPEL
-RUN rpm --import http://dl.fedoraproject.org/pub/epel/RPM-GPG-KEY-EPEL-6
-RUN rpm -ihv http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
-
-# Install ruby rpm
-ADD ruby-2.0.0p481-2.el6.x86_64.rpm ruby-2.0.0p481-2.el6.x86_64.rpm
-RUN yum install -y --enablerepo=epel libyaml-devel
-RUN rpm -ihv ruby-2.0.0p481-2.el6.x86_64.rpm
-&lt;/code&gt;&lt;/pre&gt;
 </description>
     </item>
     
