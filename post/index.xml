@@ -123,21 +123,21 @@ func (s *byRFC6724) Less(i, j int) bool {
 &lt;p&gt;これは接続元と接続先のIPの組み合わせにおいて各スコアを表示するプログラムであり、
 検証する接続元と接続先IPの組み合わせは以下のとおりです。&lt;/p&gt;
 
-&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;    // destination IPs
-    dsts := []net.IP{
-        net.IP{10, 0, 0, 104}, // 10.0.0.0/24
-        net.IP{10, 0, 1, 12},  // 10.0.1.0/24
-        net.IP{10, 0, 2, 8},   // 10.0.2.0/24
-        net.IP{10, 0, 3, 221}, // 10.0.3.0/24
-    }
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;// destination IPs
+dsts := []net.IP{
+    net.IP{10, 0, 0, 104}, // 10.0.0.0/24
+    net.IP{10, 0, 1, 12},  // 10.0.1.0/24
+    net.IP{10, 0, 2, 8},   // 10.0.2.0/24
+    net.IP{10, 0, 3, 221}, // 10.0.3.0/24
+}
 
-    // source IPs
-    srcs := []net.IP{
-        net.IP{123, 4, 5, 6},
-        net.IP{10, 0, 1, 3},
-        net.IP{10, 0, 1, 199},
-        net.IP{10, 0, 4, 211},
-    }
+// source IPs
+srcs := []net.IP{
+    net.IP{123, 4, 5, 6},
+    net.IP{10, 0, 1, 3},
+    net.IP{10, 0, 1, 199},
+    net.IP{10, 0, 4, 211},
+}
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;実行すると結果はこのようになります。&lt;/p&gt;
@@ -176,7 +176,7 @@ src: 10.0.4.211
 &lt;pre&gt;&lt;code&gt;-&amp;gt; 10.0.1.12    : 24 (same block=true)
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;の場合、&lt;code&gt;10.0.0.12&lt;/code&gt;に対するスコアが&lt;code&gt;24&lt;/code&gt;であり、実際にそのスコアを採用するなら&lt;code&gt;same block=true&lt;/code&gt;になります。&lt;/p&gt;
+&lt;p&gt;の場合、&lt;code&gt;10.0.1.12&lt;/code&gt;に対するスコアが&lt;code&gt;24&lt;/code&gt;であり、実際にそのスコアを採用するなら&lt;code&gt;same block=true&lt;/code&gt;になります。&lt;/p&gt;
 
 &lt;p&gt;ここで重要なのは、&lt;strong&gt;VPC外部のIPから問い合わせた場合はスコアはすべておなじ&lt;/strong&gt;であることと、&lt;strong&gt;同じサブネットから問い合わせてもスコアが異なる接続先IPがある&lt;/strong&gt;ことです。&lt;/p&gt;
 
