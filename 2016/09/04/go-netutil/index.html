@@ -1,0 +1,331 @@
+    <!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="author" content="ReSTARTR">
+		<meta name="description" content="">
+		<meta name="generator" content="Hugo 0.15" />
+		<title>Re: Goの通信経路選択(net.LookupIP &amp; net.Dial) &middot; I Will Survive</title>
+		<link rel="shortcut icon" href="http://blog.restartr.com/images/favicon.ico">
+		<link rel="stylesheet" href="http://blog.restartr.com/css/style.css">
+		<link rel="stylesheet" href="http://blog.restartr.com/css/highlight.css">
+		<link rel="stylesheet" href="http://blog.restartr.com/css/monosocialiconsfont.css">
+		<link rel="stylesheet" href="http://blog.restartr.com/css/restartr.css">
+		
+		<link href="http://blog.restartr.com/index.xml" rel="alternate" type="application/rss+xml" title="I Will Survive" />
+    
+
+
+ <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-894530-10']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+  <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
+
+
+	</head>
+
+    <body>
+       <nav class="main-nav">
+	
+	
+		<a href='http://blog.restartr.com/'> <span class="arrow">←</span>Home</a>
+	
+
+	
+		<a href='http://blog.restartr.com/about'>About</a>
+	
+
+	
+	<a class="cta" href="http://blog.restartr.com/index.xml">Subscribe</a>
+	
+</nav>
+
+        <section id="wrapper">
+            <article class="post">
+                <header>
+                    <h1>Re: Goの通信経路選択(net.LookupIP &amp; net.Dial)</h1>
+                    <h2 class="headline">September 4, 2016 -
+                    
+                    golang
+                    </h2>
+                </header>
+                <section id="post-body">
+                    
+
+<p>先日<a href="http://blog.restartr.com/2016/08/29/golang-networking/">Goの通信経路選択(net.LookupIP &amp; net.Dial)</a>にて、特定のネットワーク内でのDNSRRが効かないという例と対策について書きました。
+いろいろ考えた結果、別の解決策が出てきたのでそれをライブラリ化しました。</p>
+
+<h3 id="前回の解決策:5aca68b866deaf219164ffebf1b12edf">前回の解決策</h3>
+
+<p>前回は、</p>
+
+<blockquote>
+<ul>
+<li>net.LookupIPでアドレスリストを取得</li>
+<li>アドレスリストからランダムに1つIPを選択</li>
+<li>URLにはホスト名ではなくIPを指定する</li>
+<li>Request.Hostに本来のホスト名(とポート)を指定する</li>
+</ul>
+</blockquote>
+
+<p>という手順で対策を行いました。簡潔にコードを書くとこのようになります。</p>
+
+<pre><code class="language-go">addrs, _ := net.Lookup(hostname)
+addr := addrs[rand.Intn(len(addrs))]
+req.Host = req.URL.Host
+req.URL.Host = addr
+</code></pre>
+
+<p>しかし、この手法だとHTTPS接続の際の証明書チェックでコケることになります。
+(マスクしてますが実際にはIPは具体的なIPアドレスが入ります)</p>
+
+<pre><code>Get https://***.***.***.***/: x509: cannot validate certificate for ***.***.***.*** because it doesn't contain any IP SANs
+</code></pre>
+
+<p>さて、この証明書チェックを回避するためにはどうしたら良いでしょう。
+どうにもHTTP層では解決できなそうな感じがします。</p>
+
+<h3 id="別案-コネクションだけ切り替える:5aca68b866deaf219164ffebf1b12edf">別案: コネクションだけ切り替える</h3>
+
+<p>http.DefaultClientは<code>http.DefaultTransport</code>を利用しており、この<code>http.DefaultTransport</code>は<code>Dial</code>という経路を開く関数への参照を保持しています。
+簡単に書くとこんな感じの構造。</p>
+
+<pre><code class="language-go">http.Client{
+	Transport: http.Transport{
+		Dial: (&amp;net.Dialer{}).Dial,
+	},
+}
+</code></pre>
+
+<p>で、<code>Dial</code>の定義はこんな感じで<code>net.Conn</code>を返します。</p>
+
+<pre><code class="language-go">type Transport struct {
+	Dial func(network, addr string) (net.Conn, error)
+}
+</code></pre>
+
+<p>この関数の中で名前解決とコネクション生成を行っているので、 その前にホスト名をIPに変えてやることができればうまくいきそうです。</p>
+
+<p>という発想をもとにライブラリを作りました。</p>
+
+<h3 id="restartr-go-netutil:5aca68b866deaf219164ffebf1b12edf">ReSTARTR/go-netutil</h3>
+
+<p>良い名前が思いつかなかったので<code>netutil</code>というパッケージのなかに突っ込みました。</p>
+
+<ul>
+<li><a href="https://github.com/ReSTARTR/go-netutil">github.com/ReSTARTR/go-netutil</a></li>
+</ul>
+
+<p>このライブラリのなかで<code>netutil.RRDialer</code>を定義しています。
+詳細は<a href="https://godoc.org/github.com/ReSTARTR/go-netutil">godoc</a>をみてもらうのがいちばんですが、やっていることはざっと以下のとおり。</p>
+
+<ul>
+<li><code>netutil.RRDialer</code>のフィールドに実際の接続を行う<code>net.Dialer{}</code>を保持</li>
+<li><code>Dial(network, address)</code>で与えられたアドレスをもとに<code>net.LookupIP</code>から得られたIP(ipv4限定)のリストを取得</li>
+<li>IPリストを任意のルールでソート(デフォルトはランダム)</li>
+<li><code>net.Dialer{}</code>を使って接続を試みる</li>
+</ul>
+
+<p>実際に使う場合は、</p>
+
+<pre><code class="language-go">import &quot;github.com/ReSTARTR/go-netutil&quot;
+</code></pre>
+
+<p>したうえで<code>http.Transport.Dial</code>を入れ替えてやるだけです。</p>
+
+<pre><code>req, _ := http.NewRequest(&quot;GET&quot;, &quot;https://www.google.co.jp/&quot;, nil)
+client := http.Client{
+	Transport: {
+		// 既存のDialを入れ替えてやるだけ
+		Dial: netutil.DefaultRRDialer.Dial,
+	},
+}
+res, _ := cleint.Do(req)
+fmt.Println(res.Status) // &quot;200 OK&quot;
+</code></pre>
+
+<p>これで、HTTP層は既存の処理を維持したままその下層のコネクションのみ挙動を変えることが出来ます。
+ソートアルゴリズムの変更は<code>netutil.RRDialer.Sort</code>にソート関数を指定します。</p>
+
+<pre><code class="language-go">dialer := netutil.RRDialer{
+	Sort: func(ips []net.IP) []net.IP {
+		return sort.Sort(ByFoo(ips))
+	}
+}
+</code></pre>
+
+<h3 id="rfc6724は維持すべきか否か:5aca68b866deaf219164ffebf1b12edf">RFC6724は維持すべきか否か</h3>
+
+<ul>
+<li><a href="http://d.hatena.ne.jp/rx7/20120413/p1">DNSラウンドロビンを使った時にアクセス・負荷が偏る話 - 元RX-7乗りの適当な日々</a></li>
+</ul>
+
+<blockquote>
+<p>ただし、アプリケーション(Firefox等のブラウザとか)によっては、上記のような環境においても、アプリケーション側でラウンドロビンにのっとった実装を行ってくれているようだ。</p>
+
+<p>ここで言いたかったのは、上記のような可能性がある以上、DNSラウンドロビンを採用している環境で、各IPアドレスでのアクセス・負荷に偏りが出ることは必然であり、RFC準拠である以上、DNSラウンドロビンは場合によっては使い物にならなくなる可能性があるということ。</p>
+</blockquote>
+
+<p>この記事は2012年とちょっと古くて触れられているのはRFC3484ですが、そのアップデート版がRFC6724になるので意味合い的には変わりません。
+アプリケーション側でRFCを上書きするような対応をしている例もある模様。
+ということで今回作成したようなライブラリの実装もアリ、という見方で良いような気がします。
+(が、実際どうなんでしょうか…)</p>
+
+<h3 id="さいごに:5aca68b866deaf219164ffebf1b12edf">さいごに</h3>
+
+<p>以上、前回提案したRFC6724対策案の問題点と、その問題を解決するためのライブラリReSTARTR/go-netutilを作ったお話になります。
+今回の対策を考えるにあたって<a href="https://golang.org/pkg/net/">net - The Go Programming Language</a>の実装をかなり読み込んだのですが、
+すべてGoで完結しているしコードも読みやすいし変な黒魔術もないからgrepしやすいな、とあらためて思いました。</p>
+
+<p><em>※go-netutilでは<code>golang.org/x/net/context</code>を使っているので<code>context</code>が同梱される前の1.6でも動くと思います</em></p>
+
+                </section>
+            </article>
+            <footer id="post-meta" class="clearfix">
+            <p class="small">
+            
+            #go #golang
+            
+            </p>
+                <a href="https://twitter.com/ReSTARTR">
+                        <img class="avatar" src="http://blog.restartr.com/images/avatar.png">
+                        <div>
+                            <span class="dark">ReSTARTR</span>
+                            <span></span>
+                        </div>
+                    </a>
+                <section id="sharing">
+                    <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2016/09/04/go-netutil" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2016/09/04/go-netutil" >Tweet</a></li>
+<script type="text/javascript">
+  (function(){
+    var twitterWidgets = document.createElement('script');
+    twitterWidgets.type = 'text/javascript';
+    twitterWidgets.async = true;
+    twitterWidgets.src = '//platform.twitter.com/widgets.js';
+    document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+  })();
+</script>
+
+<a href="http://blog.restartr.com/2016/09/04/go-netutil" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+
+                </section>
+            </footer>
+
+            
+
+            <ul id="post-list" class="archive readmore">
+    <h3>Read more</h3>
+    
+    
+        
+        <li>
+            <a href="http://blog.restartr.com/2016/09/04/go-netutil">Re: Goの通信経路選択(net.LookupIP &amp; net.Dial)<aside class="dates">Sep 4</aside></a>
+        </li>
+        
+   
+    
+        
+        <li>
+            <a href="http://blog.restartr.com/2016/08/29/golang-networking">Goの通信経路選択(net.LookupIP &amp; net.Dial)<aside class="dates">Aug 29</aside></a>
+        </li>
+        
+   
+    
+        
+        <li>
+            <a href="http://blog.restartr.com/2016/07/04/became-a-freelance-engineer">フリーランスエンジニアになりました<aside class="dates">Jul 4</aside></a>
+        </li>
+        
+   
+    
+        
+        <li>
+            <a href="http://blog.restartr.com/2016/03/31/got-my-ergodox-ez">ErgoDox EZが届いた<aside class="dates">Mar 31</aside></a>
+        </li>
+        
+   
+    
+        
+        <li>
+            <a href="http://blog.restartr.com/2016/03/13/from-octopress-to-hugo">OctopressからHugoに移行<aside class="dates">Mar 13</aside></a>
+        </li>
+        
+   
+    
+        
+        <li>
+            <a href="http://blog.restartr.com/2016/02/27/ec2-ls-hosts">ec2-ls-hosts: EC2インスタンスを一覧するだけのシンプルツール<aside class="dates">Feb 27</aside></a>
+        </li>
+        
+   
+    
+        
+        <li>
+            <a href="http://blog.restartr.com/2016/02/17/ergodox-ez">ErgoDox EZを注文した(けどまだ届いてない)<aside class="dates">Feb 17</aside></a>
+        </li>
+        
+   
+    
+        
+        <li>
+            <a href="http://blog.restartr.com/2015/12/31/things-of-2015">2015年ふりかえり<aside class="dates">Dec 31</aside></a>
+        </li>
+        
+   
+    
+        
+        <li>
+            <a href="http://blog.restartr.com/2015/10/21/write-an-isucon5-qualify-app-in-elixir-slash-phoenix">Elixir/PhoenixでISUCON5予選の参考実装を書いた<aside class="dates">Oct 21</aside></a>
+        </li>
+        
+   
+    
+        
+        <li>
+            <a href="http://blog.restartr.com/2015/10/15/go-programming-blueprints">&#34;Go Programming Blueprints&#34;を読んだ<aside class="dates">Oct 15</aside></a>
+        </li>
+        
+   
+</ul>
+            <footer id="footer">
+    
+        
+<div id="social">
+    
+    <a class="symbol" href="https://github.com/ReSTARTR">
+        github
+    </a>
+    
+    <a class="symbol" href="https://twitter.com/ReSTARTR">
+        twitterbird
+    </a>
+    
+</div>
+
+    
+    <p class="small">
+    
+        © Copyright 2016 ReSTARTR
+    
+    </p>
+</footer>
+
+        </section>
+
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="http://blog.restartr.com/js/main.js"></script>
+<script src="http://blog.restartr.com/js/highlight.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+    </body>
+</html>

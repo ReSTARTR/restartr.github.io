@@ -6,8 +6,145 @@
     <description>Recent content in Posts on I Will Survive</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 29 Aug 2016 07:00:00 +0900</lastBuildDate>
+    <lastBuildDate>Mon, 05 Sep 2016 09:00:00 +0900</lastBuildDate>
     <atom:link href="http://blog.restartr.com/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Re: Goの通信経路選択(net.LookupIP &amp; net.Dial)</title>
+      <link>http://blog.restartr.com/2016/09/05/go-netutil</link>
+      <pubDate>Mon, 05 Sep 2016 09:00:00 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2016/09/05/go-netutil</guid>
+      <description>
+
+&lt;p&gt;先日&lt;a href=&#34;http://blog.restartr.com/2016/08/29/golang-networking/&#34;&gt;Goの通信経路選択(net.LookupIP &amp;amp; net.Dial)&lt;/a&gt;にて、特定のネットワーク内でのDNSRRが効かないという例と対策について書きました。
+いろいろ考えた結果、別の解決策が出てきたのでそれをライブラリ化しました。&lt;/p&gt;
+
+&lt;h3 id=&#34;前回の解決策:735331bc13fd604725c856ff665db7d3&#34;&gt;前回の解決策&lt;/h3&gt;
+
+&lt;p&gt;前回は、&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;net.LookupIPでアドレスリストを取得&lt;/li&gt;
+&lt;li&gt;アドレスリストからランダムに1つIPを選択&lt;/li&gt;
+&lt;li&gt;URLにはホスト名ではなくIPを指定する&lt;/li&gt;
+&lt;li&gt;Request.Hostに本来のホスト名(とポート)を指定する&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;という手順で対策を行いました。簡潔にコードを書くとこのようになります。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;addrs, _ := net.Lookup(hostname)
+addr := addrs[rand.Intn(len(addrs))]
+req.Host = req.URL.Host
+req.URL.Host = addr
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;しかし、この手法だとHTTPS接続の際の証明書チェックでコケることになります。
+(マスクしてますが実際にはIPは具体的なIPアドレスが入ります)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Get https://***.***.***.***/: x509: cannot validate certificate for ***.***.***.*** because it doesn&#39;t contain any IP SANs
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;さて、この証明書チェックを回避するためにはどうしたら良いでしょう。
+どうにもHTTP層では解決できなそうな感じがします。&lt;/p&gt;
+
+&lt;h3 id=&#34;別案-コネクションだけ切り替える:735331bc13fd604725c856ff665db7d3&#34;&gt;別案: コネクションだけ切り替える&lt;/h3&gt;
+
+&lt;p&gt;http.DefaultClientは&lt;code&gt;http.DefaultTransport&lt;/code&gt;を利用しており、この&lt;code&gt;http.DefaultTransport&lt;/code&gt;は&lt;code&gt;Dial&lt;/code&gt;という経路を開く関数への参照を保持しています。
+簡単に書くとこんな感じの構造。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;http.Client{
+	Transport: http.Transport{
+		Dial: (&amp;amp;net.Dialer{}).Dial,
+	},
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;で、&lt;code&gt;Dial&lt;/code&gt;の定義はこんな感じで&lt;code&gt;net.Conn&lt;/code&gt;を返します。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;type Transport struct {
+	Dial func(network, addr string) (net.Conn, error)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;この関数の中で名前解決とコネクション生成を行っているので、 その前にホスト名をIPに変えてやることができればうまくいきそうです。&lt;/p&gt;
+
+&lt;p&gt;という発想をもとにライブラリを作りました。&lt;/p&gt;
+
+&lt;h3 id=&#34;restartr-go-netutil:735331bc13fd604725c856ff665db7d3&#34;&gt;ReSTARTR/go-netutil&lt;/h3&gt;
+
+&lt;p&gt;良い名前が思いつかなかったので&lt;code&gt;netutil&lt;/code&gt;というパッケージのなかに突っ込みました。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/ReSTARTR/go-netutil&#34;&gt;github.com/ReSTARTR/go-netutil&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;このライブラリのなかで&lt;code&gt;netutil.RRDialer&lt;/code&gt;を定義しています。
+詳細は&lt;a href=&#34;https://godoc.org/github.com/ReSTARTR/go-netutil&#34;&gt;godoc&lt;/a&gt;をみてもらうのがいちばんですが、やっていることはざっと以下のとおり。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;netutil.RRDialer&lt;/code&gt;のフィールドに実際の接続を行う&lt;code&gt;net.Dialer{}&lt;/code&gt;を保持&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Dial(network, address)&lt;/code&gt;で与えられたアドレスをもとに&lt;code&gt;net.LookupIP&lt;/code&gt;から得られたIP(ipv4限定)のリストを取得&lt;/li&gt;
+&lt;li&gt;IPリストを任意のルールでソート(デフォルトはランダム)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;net.Dialer{}&lt;/code&gt;を使って接続を試みる&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;実際に使う場合は、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;import &amp;quot;github.com/ReSTARTR/go-netutil&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;したうえで&lt;code&gt;http.Transport.Dial&lt;/code&gt;を入れ替えてやるだけです。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;req, _ := http.NewRequest(&amp;quot;GET&amp;quot;, &amp;quot;https://www.google.co.jp/&amp;quot;, nil)
+client := http.Client{
+	Transport: {
+		// 既存のDialを入れ替えてやるだけ
+		Dial: netutil.DefaultRRDialer.Dial,
+	},
+}
+res, _ := cleint.Do(req)
+fmt.Println(res.Status) // &amp;quot;200 OK&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これで、HTTP層は既存の処理を維持したままその下層のコネクションのみ挙動を変えることが出来ます。
+ソートアルゴリズムの変更は&lt;code&gt;netutil.RRDialer.Sort&lt;/code&gt;にソート関数を指定します。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;dialer := netutil.RRDialer{
+	Sort: func(ips []net.IP) []net.IP {
+		return sort.Sort(ByFoo(ips))
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;rfc6724は維持すべきか否か:735331bc13fd604725c856ff665db7d3&#34;&gt;RFC6724は維持すべきか否か&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://d.hatena.ne.jp/rx7/20120413/p1&#34;&gt;DNSラウンドロビンを使った時にアクセス・負荷が偏る話 - 元RX-7乗りの適当な日々&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;ただし、アプリケーション(Firefox等のブラウザとか)によっては、上記のような環境においても、アプリケーション側でラウンドロビンにのっとった実装を行ってくれているようだ。&lt;/p&gt;
+
+&lt;p&gt;ここで言いたかったのは、上記のような可能性がある以上、DNSラウンドロビンを採用している環境で、各IPアドレスでのアクセス・負荷に偏りが出ることは必然であり、RFC準拠である以上、DNSラウンドロビンは場合によっては使い物にならなくなる可能性があるということ。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;この記事は2012年とちょっと古くて触れられているのはRFC3484ですが、そのアップデート版がRFC6724になるので意味合い的には変わりません。
+アプリケーション側でRFCを上書きするような対応をしている例もある模様。
+ということで今回作成したようなライブラリの実装もアリ、という見方で良いような気がします。
+(が、実際どうなんでしょうか…)&lt;/p&gt;
+
+&lt;h3 id=&#34;さいごに:735331bc13fd604725c856ff665db7d3&#34;&gt;さいごに&lt;/h3&gt;
+
+&lt;p&gt;以上、前回提案したRFC6724対策案の問題点と、その問題を解決するためのライブラリReSTARTR/go-netutilを作ったお話でした。
+今回の対策を考えるにあたって&lt;a href=&#34;https://golang.org/pkg/net/&#34;&gt;net - The Go Programming Language&lt;/a&gt;の実装をかなり読み込んだのですが、
+すべてGoで完結しているしコードも読みやすいし変な黒魔術もないからgrepしやすいな、とあらためて思いました。&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;※go-netutilでは&lt;code&gt;golang.org/x/net/context&lt;/code&gt;を使っているので&lt;code&gt;context&lt;/code&gt;が同梱される前の1.6でも動くと思います&lt;/em&gt;&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Goの通信経路選択(net.LookupIP &amp; net.Dial)</title>
@@ -1768,190 +1905,6 @@ fmt.Printf(&amp;quot;%s\n&amp;quot;, user) // main.User{Name:&amp;quot;restartr&
 &lt;p&gt;実はこの時書いた&lt;code&gt;json:name&lt;/code&gt;というアノテーションは不正なフォーマットとして無視されていて、たまたまUser.Nameというフィールドにcase-insensitiveでUnmarshalした時にマッピングができていたにすぎなかったようです。&lt;/p&gt;
 
 &lt;p&gt;とまぁそんな感じでJSONの取り扱いについて正しい知識を得られたのですが、一人でやってた時には気づかなかった疑問とか知識として不足している点に気付けるので、ハンズオン形式も良いものですね。&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Docker謹製ライブラリのlibchanについて調べてみた</title>
-      <link>http://blog.restartr.com/2014/06/28/about-docker-libchan</link>
-      <pubDate>Sat, 28 Jun 2014 14:44:23 +0900</pubDate>
-      
-      <guid>http://blog.restartr.com/2014/06/28/about-docker-libchan</guid>
-      <description>
-
-&lt;p&gt;DockerCon2014で発表された&lt;a href=&#34;https://github.com/docker/libchan&#34;&gt;libchan&lt;/a&gt;について調べたことをまとめてみます。&lt;/p&gt;
-
-&lt;p&gt;libchanは&lt;a href=&#34;https://github.com/docker/libcontainer&#34;&gt;libcontainer&lt;/a&gt;や&lt;a href=&#34;https://github.com/docker/libswarm&#34;&gt;libswarm&lt;/a&gt;と共に発表されました。
-libswarmはDockerを中心にしたエコシステムにおけるベンダーロックインを回避するためのソリューションであり、libcontainerは&lt;a href=&#34;http://d.hatena.ne.jp/mainyaa/20140311/p1&#34;&gt;Docker 0.9リリースドキュメント日本語訳: Execution driversとlibcontainer導入 - Happy New World&lt;/a&gt;を参照するのがよいでしょう。&lt;/p&gt;
-
-&lt;p&gt;では、libchanとは何なのでしょうか。&lt;/p&gt;
-
-&lt;p&gt;READMEには&lt;code&gt;like Go channels over the network&lt;/code&gt;とあります。ネットワーク上のgo channel?よくかりませんね。。。&lt;/p&gt;
-
-&lt;p&gt;README.mdとPROTOCOL.md、いくつかのテストコードをもとに簡単な実装をしてみた結果をまとめます。&lt;/p&gt;
-
-&lt;h3 id=&#34;libchanとはなにか:420542fbd67b0f03cfaa082edb6d06ae&#34;&gt;libchanとはなにか&lt;/h3&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/docker/libchan/README.md&#34;&gt;README&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;libchanは超軽量なネットワークライブラリであり、多様な通信プロトコルの土台となるものです。
-同一プロセス内でも、同一ホストの別プロセス間でも、ネットワークを超えた別ホストの別プロセス間でも双方向通信可能にするための基礎的なAPIを提供しています。
-モダンなmicro-serviesなどRPCやRESTプロトコルにはフィットしない領域で、libchanを使うことが想定されています。&lt;/p&gt;
-
-&lt;p&gt;利用例はいまのところlibswarmのみです。というかlibswarmから抽出された汎用的な通信ライブラリだと思います。
-APIが安定してくると他のフレームワーク等への導入などもあるかもしれません。&lt;/p&gt;
-
-&lt;p&gt;では、具体的にどうやって双方向通信を可能にしてるのでしょう。&lt;/p&gt;
-
-&lt;h3 id=&#34;libchanのプロトコル:420542fbd67b0f03cfaa082edb6d06ae&#34;&gt;libchanのプロトコル&lt;/h3&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/docker/libchan/PROTOCOL.md&#34;&gt;PROTOCOL&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;libchanは以下のコンポーネントで構成されています。&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;channel&lt;/li&gt;
-&lt;li&gt;session&lt;/li&gt;
-&lt;li&gt;message&lt;/li&gt;
-&lt;li&gt;byte stream&lt;/li&gt;
-&lt;li&gt;nesting&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;channelとは、並行プログラム間の双方向通信用オブジェクトです。goのchannelに似てるけどそのものではありません。Sender/Receiverがそれぞれ1方向ずつの経路を持つため、ソケットというよりパイプの概念に近いです。&lt;/p&gt;
-
-&lt;p&gt;この２つの通信経路がsessionとなり、その間を流れるのがbyte stream。
-で、byte streamにはmessageが乗っかり、messageにはchannelを含めることができるという概念です。&lt;/p&gt;
-
-&lt;h3 id=&#34;libchanのメッセージ:420542fbd67b0f03cfaa082edb6d06ae&#34;&gt;libchanのメッセージ&lt;/h3&gt;
-
-&lt;p&gt;メッセージはlibchan.Message。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;type libchan.Message struct {
-  Data []byte // メッセージの内容
-  Fd *os.File
-  Ret Sender  // 受信者が返答するためのchannel
-}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;このメッセージ型を、各種通信方式に対応したSender/Receiver経由でやりとりすることになります。&lt;/p&gt;
-
-&lt;h3 id=&#34;メッセージの構造化:420542fbd67b0f03cfaa082edb6d06ae&#34;&gt;メッセージの構造化&lt;/h3&gt;
-
-&lt;p&gt;メッセージは以下のようにして生成します。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;message := libchan.Message{Data: []byte(&amp;quot;Hello, libchan&amp;quot;), Ret: libchan.RetPipe}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;で、ただのテキストではなく構造化されたデータも送れます。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;import &amp;quot;github.com/docker/libchan/data&amp;quot;
-
-d := data.Empty().Set(&amp;quot;foo&amp;quot;, &amp;quot;bar&amp;quot;)
-d.Get(&amp;quot;foo&amp;quot;) // &amp;quot;bar&amp;quot;
-d.Pretty() // foo=bar
-message := libchan.Message{Data: d, Ret: libchan.RetPipe))
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;ちなみに、各メソッド(Add,Set,Get,Del)はMessageのポインタをかえさないので、変数を上書きするかメソッドチェインにする必要があります。&lt;/p&gt;
-
-&lt;h3 id=&#34;メッセージの送受信:420542fbd67b0f03cfaa082edb6d06ae&#34;&gt;メッセージの送受信&lt;/h3&gt;
-
-&lt;p&gt;作成したメッセージををSender経由で送ります。（ここでのSender/Receiverは擬似コードです）&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;sender.Send(&amp;amp;libchan.Message{Data: []byte(msg)})
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;で、Receiverが受信したメッセージは&lt;code&gt;data.Decode()&lt;/code&gt;で&lt;code&gt;map[string][]string&lt;/code&gt;に変換できます。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;message, _ := receiver.Receive(0)
-decoded, _ := data.Decode(string(message.Data))
-fmt.Printf(&amp;quot;%$v\n&amp;quot;, docoded) // map[string][]string{&amp;quot;foo&amp;quot;:[]string{&amp;quot;bar&amp;quot;}}
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;sender-receiver:420542fbd67b0f03cfaa082edb6d06ae&#34;&gt;Sender/Receiver&lt;/h3&gt;
-
-&lt;p&gt;実際にメッセージを送受信するのは、Send/Receiverメソッドを持つinterfaceを実装したものを使います。
-定義はだいたいこんなかんじになっています。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;type Sender interface {
-  Send(msg *Message) (Receiver, error)
-}
-
-func (s *Sender) Send(msg *libchan.Message) (libchan.Receiver, error)
-
-type Receiver interface {
-  Receiver(mode int) (*Message, error)
-}
-
-func (r *Receiver) Receive(mode int) (*libchan.Message, error)
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;主要な実装は以下&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/docker/libchan/blob/master/nop.go&#34;&gt;nop&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/docker/libchan/blob/master/inmem.go&#34;&gt;inmem&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/docker/libchan/blob/master/unix&#34;&gt;unix&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/docker/libchan/blob/master/http2&#34;&gt;http2&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&#34;inmem-in-memory-go-channel:420542fbd67b0f03cfaa082edb6d06ae&#34;&gt;inmem (In-memory Go channel)&lt;/h3&gt;
-
-&lt;p&gt;&lt;a href=&#34;https://github.com/docker/libchan/blob/master/inmem_test.go&#34;&gt;inmem_test.go&lt;/a&gt;を参考に実装してみます。&lt;/p&gt;
-
-&lt;p&gt;まずは&lt;code&gt;libchan.Pipe()&lt;/code&gt;を使って、receiver/senderを取得します。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;receiver, sender := libchan.Pipe()
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;送信側はgorutine内でsender経由でメッセージを送信して、送信側から受信したメッセージに対してさらに返信します。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;go func() {
-  recv, _ := sender.Send(&amp;amp;libchan.Message{
-    Data: []byte(&amp;quot;Hello&amp;quot;),
-    Ret: libchan.RetPipe,
-  )
-  msg, _ := recv.Receive(0) // mode=0で自動Close()
-  fmt.Println(string(msg.Data)) // &amp;quot;World&amp;quot;
-}()
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;受信側はreceiver経由でメッセージ受信して、それに対して返信します。&lt;/p&gt;
-
-&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;msg, err := receiver.Receive(libchan.Ret)
-fmt.Println(string(msg.Data)) // &amp;quot;Hello&amp;quot;
-// msg.Retが返信用のchannelとなっている
-_, err := msg.Ret.Send(&amp;amp;libchan.Message{Data: []byte(&amp;quot;World&amp;quot;)})
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;h3 id=&#34;unix-http2の実装:420542fbd67b0f03cfaa082edb6d06ae&#34;&gt;unix/http2の実装&lt;/h3&gt;
-
-&lt;p&gt;それぞれにテストコードがあるので覗いてみるとだいたいのイメージがつかめます。&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/docker/libchan/blob/master/unix/unix_test.go&#34;&gt;unix/unix_test.go&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/docker/libchan/blob/master/http2/listener_test.go&#34;&gt;http2/listener_test.go&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&#34;まとめ:420542fbd67b0f03cfaa082edb6d06ae&#34;&gt;まとめ&lt;/h2&gt;
-
-&lt;p&gt;libchanにおけるchannelとgoのchannel、名前は同じでも別モノです。
-今のところこれといった用途が思いつかないですが、libswarmから派生したものとすると多様なプロトコルの差異を吸収するためのアダプター実装を手助けしてくれるレイヤーと考えるのがよさそうです。&lt;/p&gt;
-
-&lt;p&gt;というか、DockerConでちょくちょく言及されていた「マイクロサービス」という概念のほうが興味あります。&lt;/p&gt;
-
-&lt;h2 id=&#34;追記:420542fbd67b0f03cfaa082edb6d06ae&#34;&gt;追記&lt;/h2&gt;
-
-&lt;p&gt;&lt;blockquote class=&#34;twitter-tweet&#34; lang=&#34;ja&#34;&gt;&lt;p&gt;そういえば書き忘れてたけど、アプリケーションが成長する過程においてlibchanの統一的なインターフェースによって比較的容易にスケールできるんだよ、ってことをDockerConのキーノートでいってたような。。。あとでみかえそう。&lt;/p&gt;&amp;mdash; Masaki YOSHIDA (@ReSTARTR) &lt;a href=&#34;https://twitter.com/ReSTARTR/statuses/482775493511376896&#34;&gt;2014, 6月 28&lt;/a&gt;&lt;/blockquote&gt;
-&lt;script async src=&#34;//platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;&lt;/p&gt;
-
-&lt;p&gt;ということに気づき、再度キーノートを見返してました。libchanについては以下動画の30:45あたりからどうぞ。&lt;/p&gt;
-
-&lt;iframe width=&#34;640&#34; height=&#34;360&#34; src=&#34;//www.youtube.com/embed/_DOXBVrlW78&#34; frameborder=&#34;0&#34; allowfullscreen&gt;&lt;/iframe&gt;
 </description>
     </item>
     

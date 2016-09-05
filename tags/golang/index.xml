@@ -6,8 +6,145 @@
     <description>Recent content in Golang on I Will Survive</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Mon, 29 Aug 2016 07:00:00 +0900</lastBuildDate>
+    <lastBuildDate>Mon, 05 Sep 2016 09:00:00 +0900</lastBuildDate>
     <atom:link href="http://blog.restartr.com/tags/golang/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Re: Goの通信経路選択(net.LookupIP &amp; net.Dial)</title>
+      <link>http://blog.restartr.com/2016/09/05/go-netutil</link>
+      <pubDate>Mon, 05 Sep 2016 09:00:00 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2016/09/05/go-netutil</guid>
+      <description>
+
+&lt;p&gt;先日&lt;a href=&#34;http://blog.restartr.com/2016/08/29/golang-networking/&#34;&gt;Goの通信経路選択(net.LookupIP &amp;amp; net.Dial)&lt;/a&gt;にて、特定のネットワーク内でのDNSRRが効かないという例と対策について書きました。
+いろいろ考えた結果、別の解決策が出てきたのでそれをライブラリ化しました。&lt;/p&gt;
+
+&lt;h3 id=&#34;前回の解決策:735331bc13fd604725c856ff665db7d3&#34;&gt;前回の解決策&lt;/h3&gt;
+
+&lt;p&gt;前回は、&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;net.LookupIPでアドレスリストを取得&lt;/li&gt;
+&lt;li&gt;アドレスリストからランダムに1つIPを選択&lt;/li&gt;
+&lt;li&gt;URLにはホスト名ではなくIPを指定する&lt;/li&gt;
+&lt;li&gt;Request.Hostに本来のホスト名(とポート)を指定する&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;という手順で対策を行いました。簡潔にコードを書くとこのようになります。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;addrs, _ := net.Lookup(hostname)
+addr := addrs[rand.Intn(len(addrs))]
+req.Host = req.URL.Host
+req.URL.Host = addr
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;しかし、この手法だとHTTPS接続の際の証明書チェックでコケることになります。
+(マスクしてますが実際にはIPは具体的なIPアドレスが入ります)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Get https://***.***.***.***/: x509: cannot validate certificate for ***.***.***.*** because it doesn&#39;t contain any IP SANs
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;さて、この証明書チェックを回避するためにはどうしたら良いでしょう。
+どうにもHTTP層では解決できなそうな感じがします。&lt;/p&gt;
+
+&lt;h3 id=&#34;別案-コネクションだけ切り替える:735331bc13fd604725c856ff665db7d3&#34;&gt;別案: コネクションだけ切り替える&lt;/h3&gt;
+
+&lt;p&gt;http.DefaultClientは&lt;code&gt;http.DefaultTransport&lt;/code&gt;を利用しており、この&lt;code&gt;http.DefaultTransport&lt;/code&gt;は&lt;code&gt;Dial&lt;/code&gt;という経路を開く関数への参照を保持しています。
+簡単に書くとこんな感じの構造。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;http.Client{
+	Transport: http.Transport{
+		Dial: (&amp;amp;net.Dialer{}).Dial,
+	},
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;で、&lt;code&gt;Dial&lt;/code&gt;の定義はこんな感じで&lt;code&gt;net.Conn&lt;/code&gt;を返します。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;type Transport struct {
+	Dial func(network, addr string) (net.Conn, error)
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;この関数の中で名前解決とコネクション生成を行っているので、 その前にホスト名をIPに変えてやることができればうまくいきそうです。&lt;/p&gt;
+
+&lt;p&gt;という発想をもとにライブラリを作りました。&lt;/p&gt;
+
+&lt;h3 id=&#34;restartr-go-netutil:735331bc13fd604725c856ff665db7d3&#34;&gt;ReSTARTR/go-netutil&lt;/h3&gt;
+
+&lt;p&gt;良い名前が思いつかなかったので&lt;code&gt;netutil&lt;/code&gt;というパッケージのなかに突っ込みました。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/ReSTARTR/go-netutil&#34;&gt;github.com/ReSTARTR/go-netutil&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;このライブラリのなかで&lt;code&gt;netutil.RRDialer&lt;/code&gt;を定義しています。
+詳細は&lt;a href=&#34;https://godoc.org/github.com/ReSTARTR/go-netutil&#34;&gt;godoc&lt;/a&gt;をみてもらうのがいちばんですが、やっていることはざっと以下のとおり。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;netutil.RRDialer&lt;/code&gt;のフィールドに実際の接続を行う&lt;code&gt;net.Dialer{}&lt;/code&gt;を保持&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Dial(network, address)&lt;/code&gt;で与えられたアドレスをもとに&lt;code&gt;net.LookupIP&lt;/code&gt;から得られたIP(ipv4限定)のリストを取得&lt;/li&gt;
+&lt;li&gt;IPリストを任意のルールでソート(デフォルトはランダム)&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;net.Dialer{}&lt;/code&gt;を使って接続を試みる&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;実際に使う場合は、&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;import &amp;quot;github.com/ReSTARTR/go-netutil&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;したうえで&lt;code&gt;http.Transport.Dial&lt;/code&gt;を入れ替えてやるだけです。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;req, _ := http.NewRequest(&amp;quot;GET&amp;quot;, &amp;quot;https://www.google.co.jp/&amp;quot;, nil)
+client := http.Client{
+	Transport: {
+		// 既存のDialを入れ替えてやるだけ
+		Dial: netutil.DefaultRRDialer.Dial,
+	},
+}
+res, _ := cleint.Do(req)
+fmt.Println(res.Status) // &amp;quot;200 OK&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;これで、HTTP層は既存の処理を維持したままその下層のコネクションのみ挙動を変えることが出来ます。
+ソートアルゴリズムの変更は&lt;code&gt;netutil.RRDialer.Sort&lt;/code&gt;にソート関数を指定します。&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&#34;language-go&#34;&gt;dialer := netutil.RRDialer{
+	Sort: func(ips []net.IP) []net.IP {
+		return sort.Sort(ByFoo(ips))
+	}
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&#34;rfc6724は維持すべきか否か:735331bc13fd604725c856ff665db7d3&#34;&gt;RFC6724は維持すべきか否か&lt;/h3&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://d.hatena.ne.jp/rx7/20120413/p1&#34;&gt;DNSラウンドロビンを使った時にアクセス・負荷が偏る話 - 元RX-7乗りの適当な日々&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;ただし、アプリケーション(Firefox等のブラウザとか)によっては、上記のような環境においても、アプリケーション側でラウンドロビンにのっとった実装を行ってくれているようだ。&lt;/p&gt;
+
+&lt;p&gt;ここで言いたかったのは、上記のような可能性がある以上、DNSラウンドロビンを採用している環境で、各IPアドレスでのアクセス・負荷に偏りが出ることは必然であり、RFC準拠である以上、DNSラウンドロビンは場合によっては使い物にならなくなる可能性があるということ。&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;この記事は2012年とちょっと古くて触れられているのはRFC3484ですが、そのアップデート版がRFC6724になるので意味合い的には変わりません。
+アプリケーション側でRFCを上書きするような対応をしている例もある模様。
+ということで今回作成したようなライブラリの実装もアリ、という見方で良いような気がします。
+(が、実際どうなんでしょうか…)&lt;/p&gt;
+
+&lt;h3 id=&#34;さいごに:735331bc13fd604725c856ff665db7d3&#34;&gt;さいごに&lt;/h3&gt;
+
+&lt;p&gt;以上、前回提案したRFC6724対策案の問題点と、その問題を解決するためのライブラリReSTARTR/go-netutilを作ったお話でした。
+今回の対策を考えるにあたって&lt;a href=&#34;https://golang.org/pkg/net/&#34;&gt;net - The Go Programming Language&lt;/a&gt;の実装をかなり読み込んだのですが、
+すべてGoで完結しているしコードも読みやすいし変な黒魔術もないからgrepしやすいな、とあらためて思いました。&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;※go-netutilでは&lt;code&gt;golang.org/x/net/context&lt;/code&gt;を使っているので&lt;code&gt;context&lt;/code&gt;が同梱される前の1.6でも動くと思います&lt;/em&gt;&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Goの通信経路選択(net.LookupIP &amp; net.Dial)</title>
