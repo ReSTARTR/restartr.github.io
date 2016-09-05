@@ -154,6 +154,8 @@ fmt.Println(res.Status) // &amp;quot;200 OK&amp;quot;
       <guid>http://blog.restartr.com/2016/08/29/golang-networking</guid>
       <description>
 
+&lt;p&gt;&lt;em&gt;※2016-09-05追記: 本記事の対策では不備があるため&lt;a href=&#34;http://blog.restartr.com/2016/09/05/go-netutil/&#34;&gt;Re: Goの通信経路選択(net.LookupIP &amp;amp; net.Dial)&lt;/a&gt;に続編書きました。&lt;/em&gt;&lt;/p&gt;
+
 &lt;p&gt;GoのHTTP通信経路選択の挙動について腑に落ちない点があり、&lt;code&gt;net.LookupIP&lt;/code&gt;/&lt;code&gt;net.Dial&lt;/code&gt;の仕様とそれに伴い生じる接続経路の選択問題、そしてその対策について調べてみました。&lt;/p&gt;
 
 &lt;h3 id=&#34;tl-dr:165353d24c0bb1dfa78b677fc4ac1461&#34;&gt;TL;DR&lt;/h3&gt;
