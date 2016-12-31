@@ -3,8 +3,13 @@
   
   <url>
     <loc>http://blog.restartr.com/</loc>
-    <lastmod>2016-09-05T09:00:00+09:00</lastmod>
+    <lastmod>2016-12-31T22:00:00+09:00</lastmod>
     <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.restartr.com/2016/12/31/things-of-2016</loc>
+    <lastmod>2016-12-31T22:00:00+09:00</lastmod>
   </url>
   
   <url>
