@@ -1,0 +1,267 @@
+    <!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="author" content="ReSTARTR">
+		<meta name="description" content="">
+		<meta name="generator" content="Hugo 0.15" />
+		<title>フリーランス1社目の契約を満了した &middot; I Will Survive</title>
+		<link rel="shortcut icon" href="http://blog.restartr.com/images/favicon.ico">
+		<link rel="stylesheet" href="http://blog.restartr.com/css/style.css">
+		<link rel="stylesheet" href="http://blog.restartr.com/css/highlight.css">
+		<link rel="stylesheet" href="http://blog.restartr.com/css/monosocialiconsfont.css">
+		<link rel="stylesheet" href="http://blog.restartr.com/css/restartr.css">
+		
+		<link href="http://blog.restartr.com/index.xml" rel="alternate" type="application/rss+xml" title="I Will Survive" />
+    
+
+
+ <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-894530-10']);
+    _gaq.push(['_trackPageview']);
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+  <meta name="google-site-verification" content="NrAeSKEW2-UUxTVliLJ7-38Af1sR4lDMPeEnZwjVc6o" />
+
+
+	</head>
+
+    <body>
+       <nav class="main-nav">
+	
+	
+		<a href='http://blog.restartr.com/'> <span class="arrow">←</span>Home</a>
+	
+
+	
+		<a href='http://blog.restartr.com/about'>About</a>
+	
+
+	
+	<a class="cta" href="http://blog.restartr.com/index.xml">Subscribe</a>
+	
+</nav>
+
+        <section id="wrapper">
+            <article class="post">
+                <header>
+                    <h1>フリーランス1社目の契約を満了した</h1>
+                    <h2 class="headline">April 2, 2017 -
+                    
+                    雑記
+                    </h2>
+                </header>
+                <section id="post-body">
+                    
+
+<p>開業以来お世話になっていた企業との契約が2017年3月末で完了しました。</p>
+
+<ul>
+<li>期間: 2016年06月 - 2017年03月 (10ヶ月)</li>
+<li>担当: サーバーアプリケーション開発(ToCスマホアプリのバックエンド)</li>
+</ul>
+
+<p>参画した日がちょうどサービスローンチ日。
+出社して席についた時「ちょうど公開したところなんです」と言われたことが強く印象に残っています。
+それから2回ほど契約を延長いただき早10ヶ月。3月末で無事契約を満了することとなりました。</p>
+
+<p>コンシューマー向けスマートフォンアプリ(iOS/Android)のバックエンドAPIの開発運用を主に担当しました。
+開発チームのなかで、バックエンドAPIまわりの担当は1〜2人と少人数体制でした。</p>
+
+<h3 id="橋渡し的な役割:ee2ed74f14a57708c461489930223b44">橋渡し的な役割</h3>
+
+<p>初期はローンチまで開発を担った社員の方から徐々にタスクを引き継ぎつつ、ローンチ後の足場固めを行いました。
+中期になると単独でバックエンドAPIまわりを担当し、新規機能追加や日々の運用を行いました。
+後期は新しく社員の方がJOINされたのを契機として、主開発者としての引き継ぎやコードレビューによるサポートを主に行いました。</p>
+
+<p>全体を通してみると、社内の開発リソースが確保できるまでの橋渡し的な役割を果たせたのではないかと思います。</p>
+
+<h3 id="go-in-production:ee2ed74f14a57708c461489930223b44">Go in production</h3>
+
+<p>これまでGoは趣味プログラミングや社内向けの簡易的なツール程度に使った事しかなく、本番稼働するGoプロダクトの開発は今回が初めてのケースでした。
+ディレクトリ構成やインターフェース定義といった詳細なものから、ビルドフローやデプロイ方法まで、開発サイクルをまわすためのノウハウを学びました。
+基本的には他のメンバーがすでにレールを敷いてくれていたので、自分はその上を走っていただけですが。</p>
+
+<p>Goのテストまわりはまだまだ未成熟で、記述スタイルに多様性が生まれやすいかなというのが率直な感想です。
+がっちりフレームワークによるサポートがあるわけでもないので、その点は模索が必要であると感じました。</p>
+
+<h3 id="microservices-in-production:ee2ed74f14a57708c461489930223b44">Microservices in production</h3>
+
+<p>携わったシステムはMicroservices構成をとっていました。
+アプリの動作に関わるAPI系だけでも10数個のサービスから成り立っているため、全体を俯瞰するとそれなりの規模感でした。</p>
+
+<p>ローンチ時点でMicroservices構成をとっているサービスはまだまだ少ないと思います。
+チーム構成とシステム構成は密接に関係するため、現状の少人数なチーム構成を鑑みても改善の余地はあるかもしれません。</p>
+
+<p>ただ、新メンバーにとっては初期の関心事を限定できるというProsも確かに感じましたし、
+データアクセス経路を整然としたものに維持していくためにも有用なものと言えるでしょう。</p>
+
+<p>初期段階での落とし所としては、物理的なサービス分割を見据えた論理的分割が妥当なところなのかな、と。
+開発時のリポジトリ（＝サービス）の行き来と、それらの共有物（＝ライブラリ）のコントロールが大変なので、
+そのコストに見あるメリットを見いだせるか否かは常に意識しておかないといけないと感じました。</p>
+
+<p>システムアーキテクチャというのは取捨選択の連続である、ということを改めて実感できたように思います。</p>
+
+<h3 id="フリーランスとしての未経験分野への挑戦:ee2ed74f14a57708c461489930223b44">フリーランスとしての未経験分野への挑戦</h3>
+
+<p>実際フリーランスになるまでは、フリーランスは基本的にそれまで積み上げてきた技術や知識で戦っていくものだというイメージをもっていました。
+ですが、今回の案件に関してGoもMicroservicesも未経験分野にもかかわらず挑戦の機会が得られたことに、そのイメージを良い意味で覆されました。
+すべての案件で同じ事が言えるわけではないと思いますが、フリーランスでも当面はやっていけそうです。</p>
+
+<h3 id="今後の活動について:ee2ed74f14a57708c461489930223b44">今後の活動について</h3>
+
+<p>次の案件も１サービスにフルタイムで参画します。
+ただ、並行して案件を受けることも可能と考えているので、ご要望がありましたらお気軽にご相談いただければ幸いです。</p>
+
+<ul>
+<li><a href="http://www.restartr.com/#accounts">contact</a></li>
+</ul>
+
+                </section>
+            </article>
+            <footer id="post-meta" class="clearfix">
+            <p class="small">
+            
+            #freelance
+            
+            </p>
+                <a href="https://twitter.com/ReSTARTR">
+                        <img class="avatar" src="http://blog.restartr.com/images/avatar.png">
+                        <div>
+                            <span class="dark">ReSTARTR</span>
+                            <span></span>
+                        </div>
+                    </a>
+                <section id="sharing">
+                    <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2017/04/02/retrospective--a-newbie-freelancer" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2017/04/02/retrospective--a-newbie-freelancer" >Tweet</a></li>
+<script type="text/javascript">
+  (function(){
+    var twitterWidgets = document.createElement('script');
+    twitterWidgets.type = 'text/javascript';
+    twitterWidgets.async = true;
+    twitterWidgets.src = '//platform.twitter.com/widgets.js';
+    document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+  })();
+</script>
+
+<a href="http://blog.restartr.com/2017/04/02/retrospective--a-newbie-freelancer" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+
+                </section>
+            </footer>
+
+            
+
+            <ul id="post-list" class="archive readmore">
+    <h3>Read more</h3>
+    
+    
+        
+        <li>
+            <a href="http://blog.restartr.com/2017/04/02/retrospective--a-newbie-freelancer">フリーランス1社目の契約を満了した<aside class="dates">Apr 2</aside></a>
+        </li>
+        
+   
+    
+        
+        <li>
+            <a href="http://blog.restartr.com/2016/12/31/things-of-2016">2016年ふりかえり<aside class="dates">Dec 31</aside></a>
+        </li>
+        
+   
+    
+        
+        <li>
+            <a href="http://blog.restartr.com/2016/09/05/go-netutil">Re: Goの通信経路選択(net.LookupIP &amp; net.Dial)<aside class="dates">Sep 5</aside></a>
+        </li>
+        
+   
+    
+        
+        <li>
+            <a href="http://blog.restartr.com/2016/08/29/golang-networking">Goの通信経路選択(net.LookupIP &amp; net.Dial)<aside class="dates">Aug 29</aside></a>
+        </li>
+        
+   
+    
+        
+        <li>
+            <a href="http://blog.restartr.com/2016/07/04/became-a-freelance-engineer">フリーランスエンジニアになりました<aside class="dates">Jul 4</aside></a>
+        </li>
+        
+   
+    
+        
+        <li>
+            <a href="http://blog.restartr.com/2016/03/31/got-my-ergodox-ez">ErgoDox EZが届いた<aside class="dates">Mar 31</aside></a>
+        </li>
+        
+   
+    
+        
+        <li>
+            <a href="http://blog.restartr.com/2016/03/13/from-octopress-to-hugo">OctopressからHugoに移行<aside class="dates">Mar 13</aside></a>
+        </li>
+        
+   
+    
+        
+        <li>
+            <a href="http://blog.restartr.com/2016/02/27/ec2-ls-hosts">ec2-ls-hosts: EC2インスタンスを一覧するだけのシンプルツール<aside class="dates">Feb 27</aside></a>
+        </li>
+        
+   
+    
+        
+        <li>
+            <a href="http://blog.restartr.com/2016/02/17/ergodox-ez">ErgoDox EZを注文した(けどまだ届いてない)<aside class="dates">Feb 17</aside></a>
+        </li>
+        
+   
+    
+        
+        <li>
+            <a href="http://blog.restartr.com/2015/12/31/things-of-2015">2015年ふりかえり<aside class="dates">Dec 31</aside></a>
+        </li>
+        
+   
+</ul>
+            <footer id="footer">
+    
+        
+<div id="social">
+    
+    <a class="symbol" href="https://github.com/ReSTARTR">
+        github
+    </a>
+    
+    <a class="symbol" href="https://twitter.com/ReSTARTR">
+        twitterbird
+    </a>
+    
+</div>
+
+    
+    <p class="small">
+    
+        © Copyright 2017 ReSTARTR
+    
+    </p>
+</footer>
+
+        </section>
+
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script src="http://blog.restartr.com/js/main.js"></script>
+<script src="http://blog.restartr.com/js/highlight.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+
+    </body>
+</html>

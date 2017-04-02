@@ -6,8 +6,81 @@
     <description>Recent content in Posts on I Will Survive</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sat, 31 Dec 2016 22:00:00 +0900</lastBuildDate>
+    <lastBuildDate>Sun, 02 Apr 2017 14:24:40 +0900</lastBuildDate>
     <atom:link href="http://blog.restartr.com/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>フリーランス1社目の契約を満了した</title>
+      <link>http://blog.restartr.com/2017/04/02/retrospective--a-newbie-freelancer</link>
+      <pubDate>Sun, 02 Apr 2017 14:24:40 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2017/04/02/retrospective--a-newbie-freelancer</guid>
+      <description>
+
+&lt;p&gt;開業以来お世話になっていた企業との契約が2017年3月末で完了しました。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;期間: 2016年06月 - 2017年03月 (10ヶ月)&lt;/li&gt;
+&lt;li&gt;担当: サーバーアプリケーション開発(ToCスマホアプリのバックエンド)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;参画した日がちょうどサービスローンチ日。
+出社して席についた時「ちょうど公開したところなんです」と言われたことが強く印象に残っています。
+それから2回ほど契約を延長いただき早10ヶ月。3月末で無事契約を満了することとなりました。&lt;/p&gt;
+
+&lt;p&gt;コンシューマー向けスマートフォンアプリ(iOS/Android)のバックエンドAPIの開発運用を主に担当しました。
+開発チームのなかで、バックエンドAPIまわりの担当は1〜2人と少人数体制でした。&lt;/p&gt;
+
+&lt;h3 id=&#34;橋渡し的な役割:ee2ed74f14a57708c461489930223b44&#34;&gt;橋渡し的な役割&lt;/h3&gt;
+
+&lt;p&gt;初期はローンチまで開発を担った社員の方から徐々にタスクを引き継ぎつつ、ローンチ後の足場固めを行いました。
+中期になると単独でバックエンドAPIまわりを担当し、新規機能追加や日々の運用を行いました。
+後期は新しく社員の方がJOINされたのを契機として、主開発者としての引き継ぎやコードレビューによるサポートを主に行いました。&lt;/p&gt;
+
+&lt;p&gt;全体を通してみると、社内の開発リソースが確保できるまでの橋渡し的な役割を果たせたのではないかと思います。&lt;/p&gt;
+
+&lt;h3 id=&#34;go-in-production:ee2ed74f14a57708c461489930223b44&#34;&gt;Go in production&lt;/h3&gt;
+
+&lt;p&gt;これまでGoは趣味プログラミングや社内向けの簡易的なツール程度に使った事しかなく、本番稼働するGoプロダクトの開発は今回が初めてのケースでした。
+ディレクトリ構成やインターフェース定義といった詳細なものから、ビルドフローやデプロイ方法まで、開発サイクルをまわすためのノウハウを学びました。
+基本的には他のメンバーがすでにレールを敷いてくれていたので、自分はその上を走っていただけですが。&lt;/p&gt;
+
+&lt;p&gt;Goのテストまわりはまだまだ未成熟で、記述スタイルに多様性が生まれやすいかなというのが率直な感想です。
+がっちりフレームワークによるサポートがあるわけでもないので、その点は模索が必要であると感じました。&lt;/p&gt;
+
+&lt;h3 id=&#34;microservices-in-production:ee2ed74f14a57708c461489930223b44&#34;&gt;Microservices in production&lt;/h3&gt;
+
+&lt;p&gt;携わったシステムはMicroservices構成をとっていました。
+アプリの動作に関わるAPI系だけでも10数個のサービスから成り立っているため、全体を俯瞰するとそれなりの規模感でした。&lt;/p&gt;
+
+&lt;p&gt;ローンチ時点でMicroservices構成をとっているサービスはまだまだ少ないと思います。
+チーム構成とシステム構成は密接に関係するため、現状の少人数なチーム構成を鑑みても改善の余地はあるかもしれません。&lt;/p&gt;
+
+&lt;p&gt;ただ、新メンバーにとっては初期の関心事を限定できるというProsも確かに感じましたし、
+データアクセス経路を整然としたものに維持していくためにも有用なものと言えるでしょう。&lt;/p&gt;
+
+&lt;p&gt;初期段階での落とし所としては、物理的なサービス分割を見据えた論理的分割が妥当なところなのかな、と。
+開発時のリポジトリ（＝サービス）の行き来と、それらの共有物（＝ライブラリ）のコントロールが大変なので、
+そのコストに見あるメリットを見いだせるか否かは常に意識しておかないといけないと感じました。&lt;/p&gt;
+
+&lt;p&gt;システムアーキテクチャというのは取捨選択の連続である、ということを改めて実感できたように思います。&lt;/p&gt;
+
+&lt;h3 id=&#34;フリーランスとしての未経験分野への挑戦:ee2ed74f14a57708c461489930223b44&#34;&gt;フリーランスとしての未経験分野への挑戦&lt;/h3&gt;
+
+&lt;p&gt;実際フリーランスになるまでは、フリーランスは基本的にそれまで積み上げてきた技術や知識で戦っていくものだというイメージをもっていました。
+ですが、今回の案件に関してGoもMicroservicesも未経験分野にもかかわらず挑戦の機会が得られたことに、そのイメージを良い意味で覆されました。
+すべての案件で同じ事が言えるわけではないと思いますが、フリーランスでも当面はやっていけそうです。&lt;/p&gt;
+
+&lt;h3 id=&#34;今後の活動について:ee2ed74f14a57708c461489930223b44&#34;&gt;今後の活動について&lt;/h3&gt;
+
+&lt;p&gt;次の案件も１サービスにフルタイムで参画します。
+ただ、並行して案件を受けることも可能と考えているので、ご要望がありましたらお気軽にご相談いただければ幸いです。&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.restartr.com/#accounts&#34;&gt;contact&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+    </item>
     
     <item>
       <title>2016年ふりかえり</title>
@@ -1724,120 +1797,6 @@ weaveがプロダクション環境で使えるか、という点については
 &lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/4873114713&#34;&gt;言語設計者たちが考えること&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;(未読) &lt;a href=&#34;http://www.amazon.co.jp/gp/product/B00MIFE3BC&#34;&gt;アカマイ　知られざるインターネットの巨人&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;(未読) &lt;a href=&#34;http://www.amazon.co.jp/dp/4274064069&#34;&gt;UNIXという考え方―その設計思想と哲学&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>InfoQ eMAG: Microservicesを少し読んだまとめと感想</title>
-      <link>http://blog.restartr.com/2014/08/20/microservices-architecture</link>
-      <pubDate>Wed, 20 Aug 2014 00:14:35 +0900</pubDate>
-      
-      <guid>http://blog.restartr.com/2014/08/20/microservices-architecture</guid>
-      <description>
-
-&lt;p&gt;なんだか、世間的にMicroservicesが次の注目対象になりそうな感じです。&lt;/p&gt;
-
-&lt;p&gt;DockerConでも複数のセッションで言及があったり、はてブにもたまに関連記事があがってきたりしてます。&lt;/p&gt;
-
-&lt;p&gt;実態はどんなものかイメージしにくかったのですが、最近InfoQで公開されたeMAGが情報としてまとまっている気がしたので、これを読み進めています。&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.infoq.com/minibooks/emag-microservices&#34;&gt;InfoQ eMAG: Microservices&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&#34;本に含まれている内容:3bc6d647f365463ddc39c1b6a009ea70&#34;&gt;本に含まれている内容&lt;/h3&gt;
-
-&lt;p&gt;この本は、過去のInfoQ記事や各ブログを再構成したもので、以下の記事タイトルがまとめられています。&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Microservices: Decomposing Applications for Deployability and Scalability&lt;/li&gt;
-&lt;li&gt;Microservices and SOA&lt;/li&gt;
-&lt;li&gt;Adrian Cockcroft on Microservices and DevOps&lt;/li&gt;
-&lt;li&gt;Microservices? What about Nanoservices?&lt;/li&gt;
-&lt;li&gt;Building Products at SoundCloud&lt;/li&gt;
-&lt;li&gt;The Strengths and Weaknesses of Microservices&lt;/li&gt;
-&lt;li&gt;GOTO Berlin: Microservices as an Alternative to Monoliths&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;そのうち、以下を読んだので、まとめと雑感を書きます。&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;Microservices: Decomposing Applications for Deployability and Scalability&lt;/li&gt;
-&lt;li&gt;Building Products at SoundCloud&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;本の主題はMicroservices Architectureですが、それに伴うソフトウェアの設計手法などの参照もたくさん含まれているので、いろんな情報への入口としても勉強になると思います。&lt;/p&gt;
-
-&lt;h4 id=&#34;microservices-decomposing-applications-for-deployability-and-scalability:3bc6d647f365463ddc39c1b6a009ea70&#34;&gt;Microservices: Decomposing Applications for Deployability and Scalability&lt;/h4&gt;
-
-&lt;ul&gt;
-&lt;li&gt;ドメイン単位で複数に分割されたもの小さなサービスのの集合体をMicroservices Architectureと呼ぶ&lt;/li&gt;
-&lt;li&gt;既存フレームワークとかでservice層として定義していた単位が別々のプロセスに切りだされているイメージ&lt;/li&gt;
-&lt;li&gt;一方、既存のシステムはMonolithic Architectureと呼ばれる&lt;/li&gt;
-&lt;li&gt;システム設計における単一責任原則の適用ともいえる&lt;/li&gt;
-&lt;li&gt;現実に則したSOAの焼き直しである&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;メリット&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;個々にデプロイ可能である&lt;/li&gt;
-&lt;li&gt;個々のMicroserviceが独立しているため、サービス全体の可用性向上を期待できる&lt;/li&gt;
-&lt;li&gt;開発チームを小さい単位に分割しやすい&lt;/li&gt;
-&lt;li&gt;言語やフレームワークの移行が容易になる。変更が小規模なので仮に失敗しても取り戻しやすい。&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;デメリット&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;個々にはシンプルでも全体の複雑性は増す&lt;/li&gt;
-&lt;li&gt;サービス間のIPCメカニズムが必要&lt;/li&gt;
-&lt;li&gt;サービス間をまたいだテストがやりにくい&lt;/li&gt;
-&lt;li&gt;他サービスに影響する変更のデプロイは手順を十分に検討する必要がある&lt;/li&gt;
-&lt;li&gt;運用が大変。ハイレベルな自動化が要求される&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h4 id=&#34;building-products-at-soundcloud:3bc6d647f365463ddc39c1b6a009ea70&#34;&gt;Building Products at SoundCloud&lt;/h4&gt;
-
-&lt;p&gt;SoundCloudのMicroservices移行話は「Building Products at SoundCLoud」という三回分のブログ記事を再構成してまとめた内容になっています。&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://developers.soundcloud.com/blog/building-products-at-soundcloud-part-1-dealing-with-the-monolith&#34;&gt;Building Products at SoundCloud—Part I: Dealing with the Monolith&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://developers.soundcloud.com/blog/building-products-at-soundcloud-part-2-breaking-the-monolith&#34;&gt;Building Products at SoundCloud—Part II: Breaking the Monolith&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://developers.soundcloud.com/blog/building-products-at-soundcloud-part-3-microservices-in-scala-and-finagle&#34;&gt;Building Products at SoundCloud—Part III: Microservices in Scala and Finagle&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;MonolithicなRailsアプリからMicroservicesに移行するまでの手順や失敗が紹介されていて、これから移行を進めるチームにとって有益になるでしょう。&lt;/p&gt;
-
-&lt;p&gt;彼らは既存アプリの機能をいきなり別言語で切り出すのではなく、&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;分析→リファクタリング→Service分割→新技術の採用&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;という手順を踏んでいます。この移行における重要な点は、どのような新技術を採用するかではなく、DDDをベースとしたドメイン分析を行うことにあると思います。分割の単位を誤ったなら個々のサービスの依存性を排除しきれなくなり全体の複雑性は確実に高くなります。&lt;/p&gt;
-
-&lt;p&gt;ドメイン分割の一例として、&lt;a href=&#34;http://martinfowler.com/bliki/BoundedContext.html&#34;&gt;Bounded Context&lt;/a&gt;を利用した例が紹介されています。&lt;/p&gt;
-
-&lt;p&gt;また、依存性の低い個々のMicroserviceにできることで、それぞれに独立したチームを配置することも可能になります。
-ただ、それぞれのチームが無秩序に技術選定を行うことでスキルや情報の局所性(&lt;a href=&#34;http://en.wikipedia.org/wiki/Bus_factor&#34;&gt;Bus Factor&lt;/a&gt;の低下)を招くことになるため、一定のルールを決めることも重要になるようです。結果として彼らはJVMベースのScala,ClojureJRubyを中心としたシステムを作ることを決定しています。(同時にGoとRubyもサポート)&lt;/p&gt;
-
-&lt;h4 id=&#34;雑感:3bc6d647f365463ddc39c1b6a009ea70&#34;&gt;雑感&lt;/h4&gt;
-
-&lt;p&gt;Microservicesへ移行するにはサービス規模・システム規模・開発チーム規模が大きいことが前提であり、そうでない限りはMonolithicなシステムで頑張るほうが良いかな、というのが個人的な意見です。また、DDDのような適切なドメイン分析ができるアーキテクトが存在しない場合にもMicroservicesはあまり良い選択肢とはいえないと思います。それらの前提をクリアできるのであれば、長いプロダクトのライフスパンにおいて、システムそのものだけでなく開発チームも含めて良い影響をもらたすことになるのではないでしょうか。&lt;/p&gt;
-
-&lt;p&gt;ということで「Microservicesの本質はドメイン分析であり、デプロイ単位や技術選定などのメリットは副次的なものである」というのがこのeMAGを読んで得たとりあえずの結論です。&lt;/p&gt;
-
-&lt;h4 id=&#34;参考リンク:3bc6d647f365463ddc39c1b6a009ea70&#34;&gt;参考リンク&lt;/h4&gt;
-
-&lt;p&gt;Martin Fowler氏の記事だけでなく、DockerConでのYelpのスライドやInfoQのbitlyの記事も参考になります。&lt;/p&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://martinfowler.com/articles/microservices.html&#34;&gt;Microservices&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://recompile.net/posts/microservices.html&#34;&gt;マイクロサービス（microservices）とは何か — recompile.net&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.slideshare.net/dotCloud/building-a-smarter&#34;&gt;Building a smarter application Stack by Tomas Doran from Yelp&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.infoq.com/jp/news/2014/08/bitly-lessons-learned&#34;&gt;bitlyでの分散システム構築から学んだこと&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 </description>
     </item>
