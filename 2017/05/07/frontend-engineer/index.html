@@ -7,7 +7,7 @@
 		<meta name="author" content="ReSTARTR">
 		<meta name="description" content="">
 		<meta name="generator" content="Hugo 0.15" />
-		<title>第二回 #Playframework 勉強会 in Tokyo #play_ja に行ってきた &middot; I Will Survive</title>
+		<title>フロントエンドエンジニアになった &middot; I Will Survive</title>
 		<link rel="shortcut icon" href="http://blog.restartr.com/images/favicon.ico">
 		<link rel="stylesheet" href="http://blog.restartr.com/css/style.css">
 		<link rel="stylesheet" href="http://blog.restartr.com/css/highlight.css">
@@ -52,70 +52,39 @@
         <section id="wrapper">
             <article class="post">
                 <header>
-                    <h1>第二回 #Playframework 勉強会 in Tokyo #play_ja に行ってきた</h1>
-                    <h2 class="headline">October 10, 2011 -
+                    <h1>フロントエンドエンジニアになった</h1>
+                    <h2 class="headline">May 7, 2017 -
                     
-                    Scala
+                    雑記
                     </h2>
                 </header>
                 <section id="post-body">
-                    
+                    <p>５月からお世話になっている常駐先にて、フロントエンドエンジニアとしてプロジェクトに関わっています。
+かわりにインフラレイヤーにはほぼ関わらなくなったので、技術レイヤーがフロントにシフトした感じです。
+「フロントエンジニアになった」というより「入門した」のほうがしっくりくるかもしれません。</p>
 
-<ul>
-<li><a href="http://atnd.org/events/19107">第二回 #Playframework 勉強会 in Tokyo #play_ja</a></li>
-</ul>
+<p>ここ数年は、サーバーサイドのWebAPIより裏側のアプリケーション設計開発やインフラ運用を中心にやってきました。
+フロントエンドまわりに関わってみようと思った発端としては、
+たとえばAPI設計においてRESTfulが必ずしも最適解でないこともあるとはいいつつ、
+それを肌感として持てるか否かは実際やってみないとわからないよね、という思いがあります。
+本当に使いやすいAPI設計ができているのかと…</p>
 
-<p><a href="http://atnd.org/events/17724">第一回</a>は大阪開催だったのとそもそも開催を知らなくて参加できませんでしたが、第二回は有難いことに休日に東京で開催されたので行ってきました。運営の皆様、参加者の皆様、懇親会でお話させて頂いた皆様、どうも有難うございました。</p>
+<p>また、サービスが提供する機能そのもの（＝ユーザーが直接目にするもの）を手掛けるチャンスがあればという希望もあり、技術的視野を広げるべくフロントエンドにチャレンジしています。</p>
 
-<h3 id="勉強会のまとめ記事:d121c3417fcb38518fc44be4ea8f7b37">勉強会のまとめ記事</h3>
+<p>技術スタックとしては、Rails5+React/Redux製のSPAがGCP上で動いています。
+Rails以外は知らぬことばかり。</p>
 
-<p>下記ブログにありますのでそちらをどうぞ。</p>
+<p>小さなバグフィックスから始めて1ヶ月経過してやっと徐々にUIコンポーネントの修正や追加に慣れ始めたところ。
+当面はフロントエンド開発を中心にやっていく予定ですが、自分の得意としてきたバックエンドまわりの知識もすぐに陳腐化してしまわないようにメンテしていく必要性も感じています。</p>
 
-<ul>
-<li><a href="http://d.hatena.ne.jp/ikeike443/20111009/p1">第二回 Playframework 勉強会 in Tokyo やりました #play_ja - 複雑系スパゲティソース(はてな版)</a>
-
-<ul>
-<li>まとめ記事へのリンクが最後にあります。</li>
-</ul></li>
-<li><a href="http://ponta027.blogspot.com/2011/10/playframework.html">Playframework勉強会#2まとめ（スライド）</a>
-
-<ul>
-<li>発表資料をまとめてあります。</li>
-</ul></li>
-</ul>
-
-<p>なのでここでは、全体的な話しではなく関心の強いところに関してのみ書こうと思います。</p>
-
-<p>ただの感想文です。</p>
-
-<h3 id="play-の今とこれから:d121c3417fcb38518fc44be4ea8f7b37">Play!の今とこれから</h3>
-
-<p>Play!がどのような分野で使われ、どのように変化していくのかが今の大きな関心事であり、今回の参加理由でした。</p>
-
-<p>今回の発表を聞いていると、Java界隈の救世主（候補）的な位置づけとして期待されているという段階なのでしょう。</p>
-
-<p>主催者の@<a href="https://twitter.com/ikeike443">ikeike443</a>さんの会社のシャノンさんでは実際業務でPlay!を使われていたり、@<a href="https://twitter.com/genki_">genki_</a>さんは今まさに<a href="http://harp.ruru.ne.jp/sol/play/play2.pdf">SI案件で業務アプリケーションにPlay!を導入しようとしている</a>ところだそうで。</p>
-
-<h3 id="play-2-x系による変化:d121c3417fcb38518fc44be4ea8f7b37">Play!2.x系による変化</h3>
-
-<p>ただ、Play!が今後2.x系でScalaベースでの開発に切り替わるので、それによって今の勢いがどう変わっていくのでしょうか。JavaベースのPlay!1.xにScalaユーザーを引き込むのと、ScalaベースのPlay!2.xにJavaユーザーを引きこむのでは、大きく状況が変わってくると思います。自分はScalaユーザーなのでこの動きは非常に嬉しいですが、もしかしたら勢いが減速してしまうのではとちょっと不安になったり。</p>
-
-<p>（プラグインのサポートがどちらか一方の言語に限定されていて、結局導入を見送るなんてこともあると思います。）</p>
-
-<h3 id="play-の外部環境:d121c3417fcb38518fc44be4ea8f7b37">Play!の外部環境</h3>
-
-<p>とはいえ、外部環境としてはPlay!のサポートPassSがちょくちょく出てきているので当分は勢いが衰えることはないと思います。単体でサーバーとして動作させることが可能なだけでなく、war化も可能なのでTomcatやJettyに載っけることができる環境なら動かせてしまいます。とくに@<a href="http://twitter.com/hagikuratakeshi">hagikuratakeshi</a>さんや@<a href="https://twitter.com/mitsuhiro">mitsuhiro</a>さんが取り上げていたようにHerokuのPlay!サポートによって趣味プログラミングとして手を出しやすくなってますし。</p>
-
-<h3 id="scalaのフレームワークとしてのplay:d121c3417fcb38518fc44be4ea8f7b37">ScalaのフレームワークとしてのPlay!</h3>
-
-<p>Scala界隈ではUnfilteredやBlueEyesのような積極的にScalaの機能を利用したFWが注目されています。（少なくとも私のTwitterのTL上では…)ただし、日本語ベースのScalaのフレームワークのリファレンスや関連記事はまだまだ少ないのが現状です。</p>
-
-<p>Play!の場合は翻訳も積極的に行われていますし、勉強会に100人近く参加するような日本のPlay!コミュニティの存在は正直無視できないと思います。今後のPlay!界隈の動向に注目です。</p>
+<p>ということで、フルスタック（な視点をもった）エンジニア目指して精進します。</p>
 
                 </section>
             </article>
             <footer id="post-meta" class="clearfix">
             <p class="small">
+            
+            #freelance #frontend
             
             </p>
                 <a href="https://twitter.com/ReSTARTR">
@@ -126,7 +95,7 @@
                         </div>
                     </a>
                 <section id="sharing">
-                    <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2011/10/10/play-framework-study-in-tokyo" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2011/10/10/play-framework-study-in-tokyo" >Tweet</a></li>
+                    <a href="http://twitter.com/share" class="twitter-share-button" data-url="http://blog.restartr.com/2017/05/07/frontend-engineer" data-via="ReSTARTR" data-counturl="http://blog.restartr.com/2017/05/07/frontend-engineer" >Tweet</a></li>
 <script type="text/javascript">
   (function(){
     var twitterWidgets = document.createElement('script');
@@ -137,7 +106,7 @@
   })();
 </script>
 
-<a href="http://blog.restartr.com/2011/10/10/play-framework-study-in-tokyo" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
+<a href="http://blog.restartr.com/2017/05/07/frontend-engineer" class="hatena-bookmark-button" data-hatena-bookmark-layout="standard" title="このエントリーをはてな>ブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script></li>
 
                 </section>
             </footer>

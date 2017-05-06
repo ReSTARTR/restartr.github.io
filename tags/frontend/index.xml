@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Frontend on I Will Survive</title>
+    <link>http://blog.restartr.com/tags/frontend/</link>
+    <description>Recent content in Frontend on I Will Survive</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <lastBuildDate>Sun, 07 May 2017 08:00:00 +0900</lastBuildDate>
+    <atom:link href="http://blog.restartr.com/tags/frontend/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>フロントエンドエンジニアになった</title>
+      <link>http://blog.restartr.com/2017/05/07/frontend-engineer</link>
+      <pubDate>Sun, 07 May 2017 08:00:00 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2017/05/07/frontend-engineer</guid>
+      <description>&lt;p&gt;５月からお世話になっている常駐先にて、フロントエンドエンジニアとしてプロジェクトに関わっています。
+かわりにインフラレイヤーにはほぼ関わらなくなったので、技術レイヤーがフロントにシフトした感じです。
+「フロントエンジニアになった」というより「入門した」のほうがしっくりくるかもしれません。&lt;/p&gt;
+
+&lt;p&gt;ここ数年は、サーバーサイドのWebAPIより裏側のアプリケーション設計開発やインフラ運用を中心にやってきました。
+フロントエンドまわりに関わってみようと思った発端としては、
+たとえばAPI設計においてRESTfulが必ずしも最適解でないこともあるとはいいつつ、
+それを肌感として持てるか否かは実際やってみないとわからないよね、という思いがあります。
+本当に使いやすいAPI設計ができているのかと…&lt;/p&gt;
+
+&lt;p&gt;また、サービスが提供する機能そのもの（＝ユーザーが直接目にするもの）を手掛けるチャンスがあればという希望もあり、技術的視野を広げるべくフロントエンドにチャレンジしています。&lt;/p&gt;
+
+&lt;p&gt;技術スタックとしては、Rails5+React/Redux製のSPAがGCP上で動いています。
+Rails以外は知らぬことばかり。&lt;/p&gt;
+
+&lt;p&gt;小さなバグフィックスから始めて1ヶ月経過してやっと徐々にUIコンポーネントの修正や追加に慣れ始めたところ。
+当面はフロントエンド開発を中心にやっていく予定ですが、自分の得意としてきたバックエンドまわりの知識もすぐに陳腐化してしまわないようにメンテしていく必要性も感じています。&lt;/p&gt;
+
+&lt;p&gt;ということで、フルスタック（な視点をもった）エンジニア目指して精進します。&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -6,8 +6,36 @@
     <description>Recent content on I Will Survive</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <lastBuildDate>Sun, 02 Apr 2017 14:24:40 +0900</lastBuildDate>
+    <lastBuildDate>Sun, 07 May 2017 08:00:00 +0900</lastBuildDate>
     <atom:link href="http://blog.restartr.com/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>フロントエンドエンジニアになった</title>
+      <link>http://blog.restartr.com/2017/05/07/frontend-engineer</link>
+      <pubDate>Sun, 07 May 2017 08:00:00 +0900</pubDate>
+      
+      <guid>http://blog.restartr.com/2017/05/07/frontend-engineer</guid>
+      <description>&lt;p&gt;５月からお世話になっている常駐先にて、フロントエンドエンジニアとしてプロジェクトに関わっています。
+かわりにインフラレイヤーにはほぼ関わらなくなったので、技術レイヤーがフロントにシフトした感じです。
+「フロントエンジニアになった」というより「入門した」のほうがしっくりくるかもしれません。&lt;/p&gt;
+
+&lt;p&gt;ここ数年は、サーバーサイドのWebAPIより裏側のアプリケーション設計開発やインフラ運用を中心にやってきました。
+フロントエンドまわりに関わってみようと思った発端としては、
+たとえばAPI設計においてRESTfulが必ずしも最適解でないこともあるとはいいつつ、
+それを肌感として持てるか否かは実際やってみないとわからないよね、という思いがあります。
+本当に使いやすいAPI設計ができているのかと…&lt;/p&gt;
+
+&lt;p&gt;また、サービスが提供する機能そのもの（＝ユーザーが直接目にするもの）を手掛けるチャンスがあればという希望もあり、技術的視野を広げるべくフロントエンドにチャレンジしています。&lt;/p&gt;
+
+&lt;p&gt;技術スタックとしては、Rails5+React/Redux製のSPAがGCP上で動いています。
+Rails以外は知らぬことばかり。&lt;/p&gt;
+
+&lt;p&gt;小さなバグフィックスから始めて1ヶ月経過してやっと徐々にUIコンポーネントの修正や追加に慣れ始めたところ。
+当面はフロントエンド開発を中心にやっていく予定ですが、自分の得意としてきたバックエンドまわりの知識もすぐに陳腐化してしまわないようにメンテしていく必要性も感じています。&lt;/p&gt;
+
+&lt;p&gt;ということで、フルスタック（な視点をもった）エンジニア目指して精進します。&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>フリーランス1社目の契約を満了した</title>
@@ -1726,78 +1754,6 @@ weaveがプロダクション環境で使えるか、という点については
 &lt;h3 id=&#34;peekの惜しいところ:80f3a3d87dff3340fadb3d942d4923d0&#34;&gt;Peekの惜しいところ&lt;/h3&gt;
 
 &lt;p&gt;要素が増えるとブラウザの横幅に収まりきらなくなって、折り返し＆はみ出します。本当に必要な要素に絞る抑止力にはなりますが、もう少しコンパクトに収められるとよりよいかな、と。&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>2014年に購入した技術書</title>
-      <link>http://blog.restartr.com/2014/12/31/books-2014</link>
-      <pubDate>Wed, 31 Dec 2014 20:22:02 +0900</pubDate>
-      
-      <guid>http://blog.restartr.com/2014/12/31/books-2014</guid>
-      <description>
-
-&lt;p&gt;投稿数を稼ぐべく、とりあえず今年購入した（であろう）本をリストアップしつつ、今年の振り返りでも。&lt;/p&gt;
-
-&lt;p&gt;購入しただけで読めてないものや、途中のものもありますが、技術書なんてリファレンスなので全部読む必要もないわけで(言い訳)。
-一度手放した本とか角川祭りとかでKindleストアでの購入が増えた年でした。Kindle3からPaperwhiteにアップデートしたのも大きい。
-仕事上フロントエンド以外の広範囲を取り扱う機会が増えたため、読んだ本もわりと多岐にわたってます。&lt;/p&gt;
-
-&lt;p&gt;世の中的には、Immutable Infrastractureが一段落して、Docker, Golang, Microservicesなんかがバズワード化してました。&lt;/p&gt;
-
-&lt;p&gt;とくにGolangは日本語書籍は増えてないものの、Go製プロダクトが大量発生している状況は当分継続しそう。なので、いろんなRuby/Python/Perl/PHPなどLL製プロダクトのリプレースが進んでいくのでは。新しい流行としてはGolangにつづいてRust, Clojure, Elixrあたりがじわじわ来るんじゃないでしょうかね。&lt;/p&gt;
-
-&lt;p&gt;インフラ周りでいうと、コンテナ化、マルチクラウド、モニタリングまわりが大きく変化しそうです。&lt;/p&gt;
-
-&lt;p&gt;では、購入した書籍一覧です。購入日時はよくわからないので購入順には並んでません。(すべてアフィ無しリンクです)&lt;/p&gt;
-
-&lt;h3 id=&#34;プログラミング:9cb2f801aeb0f47fac1ec1855771aa70&#34;&gt;プログラミング&lt;/h3&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/gp/product/B0096BYG7C&#34;&gt;Practical Object-Oriented Design in Ruby&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/gp/product/B00HUEG8LE&#34;&gt;Build Awesome Command-Line Applications in Ruby 2&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.manning.com/ketelsen/&#34;&gt;Go in Action&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/B00MLUGZIS/&#34;&gt;すごいErlangゆかいに学ぼう！&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://tatsu-zine.com/books/naruhounix&#34;&gt;なるほどUnixプロセス ― Rubyで学ぶUnixの基礎&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;(未読) &lt;a href=&#34;http://www.jstorimer.com/products/working-with-tcp-sockets&#34;&gt;Working With TCP Sockets&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;(未読) &lt;a href=&#34;http://www.amazon.co.jp/dp/4756136494&#34;&gt;プログラミング作法&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&#34;アーキテクチャ:9cb2f801aeb0f47fac1ec1855771aa70&#34;&gt;アーキテクチャ&lt;/h3&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/gp/product/B00GRKD6XU&#34;&gt;エリック・エヴァンスのドメイン駆動設計&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://shop.oreilly.com/product/0636920033158.do&#34;&gt;Building Microservices&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&#34;ミドルウェア:9cb2f801aeb0f47fac1ec1855771aa70&#34;&gt;ミドルウェア&lt;/h3&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/gp/product/B00HSC64P8&#34;&gt;Redis入門　インメモリKVSによる高速データ管理&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.manning.com/grainger/&#34;&gt;Solr in Action&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://shop.oreilly.com/product/0636920026136.do&#34;&gt;ZeroMQ&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/gp/product/B00J4KDYZU&#34;&gt;高速スケーラブル検索エンジン　ElasticSearch Server&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&#34;インフラ:9cb2f801aeb0f47fac1ec1855771aa70&#34;&gt;インフラ&lt;/h3&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/4873116767/&#34;&gt;ハイパフォーマンス ブラウザネットワーキング&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/gp/product/B00FLYU9T2&#34;&gt;Systems Performance: Enterprise and the Cloud &lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/477416500X&#34;&gt;Chef実践入門 ~コードによるインフラ構成の自動化 &lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/gp/product/B00LRROTI4&#34;&gt;The Docker Book: Containerization is the new virtualization &lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/B00JWM4W2E&#34;&gt;Docker入門 Immutable Infrastructureを実現する&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&#34;読み物:9cb2f801aeb0f47fac1ec1855771aa70&#34;&gt;読み物&lt;/h3&gt;
-
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/gp/product/B00OJVMK5O&#34;&gt;How Google Works &lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/4274068471&#34;&gt;Coders at Work プログラミングの技をめぐる探求&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.amazon.co.jp/dp/4873114713&#34;&gt;言語設計者たちが考えること&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;(未読) &lt;a href=&#34;http://www.amazon.co.jp/gp/product/B00MIFE3BC&#34;&gt;アカマイ　知られざるインターネットの巨人&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;(未読) &lt;a href=&#34;http://www.amazon.co.jp/dp/4274064069&#34;&gt;UNIXという考え方―その設計思想と哲学&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
 </description>
     </item>
     
