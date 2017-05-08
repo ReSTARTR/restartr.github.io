@@ -3,8 +3,13 @@
   
   <url>
     <loc>http://blog.restartr.com/</loc>
-    <lastmod>2017-05-07T08:00:00+09:00</lastmod>
+    <lastmod>2017-05-08T08:00:00+09:00</lastmod>
     <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>http://blog.restartr.com/2017/05/08/restful-web-clients</loc>
+    <lastmod>2017-05-08T08:00:00+09:00</lastmod>
   </url>
   
   <url>
